@@ -17,6 +17,7 @@ FILES = (
     "src/document.rs", "src/decode.rs", "src/mmr.rs", "specs/document.rs",
     "specs/document/context.rs", "specs/document/results.rs", "specs/decode.rs", "specs/mmr.rs",
     "specs/document/catalogs.rs",
+    "specs/document/reference_types.rs",
     "proofs/shared/document.rs", "proofs/shared/decode.rs", "proofs/shared/mmr.rs",
 )
 TEST = "document::tests::container_inspection::"

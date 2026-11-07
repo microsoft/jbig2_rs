@@ -4,6 +4,7 @@
 mod container_inspection;
 mod payload_windows;
 mod quotas_and_references;
+mod reference_types;
 
 use super::pages::validate_page_profiles;
 use super::parsing::{

@@ -124,6 +124,7 @@ pub(super) proof fn global_fields(globals: &crate::document::GlobalSegments)
     ensures
         global_segment_count(globals) == globals.types@.len(),
         global_depth_count(globals) == globals.depths@.len(),
+        global_types(globals) == globals.types@,
         global_bytes(globals) == globals.bytes@,
 {}
 

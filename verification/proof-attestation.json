@@ -1,17 +1,17 @@
 {
   "schema_version": 1,
   "status": "verified_exact_project_scope_with_reviewed_limits",
-  "source_revision": "afca1d2bdcce911470c845ecb78d6bd6a14e1f7b",
-  "scope": "Fresh exact-source whole verification/compilation proves exact concrete reference/work quota results, first-match lookup/absence, input-order type/number catalogs and successful depth cardinality/bounds, plus arbitrary incoming depth-prefix and partial-error frames. Both public global parser results retain coherent type/depth counts alongside every prior ownership/quota/error/frame guarantee. A checked concrete prefix-monotonicity lemma supports overflow, and checked per-window/header-length projections isolate existing adjacency quantifiers without changing their guarantees/preconditions or resource limits. No runtime implementation, field visibility, admitted entry-domain, trust, full graph/depth-algorithm or normative-fidelity claim changes.",
+  "source_revision": "5d362a82051c875d09d1528a42c7ab08890cb85a",
+  "scope": "Exact-source whole verification/compilation proves all four concrete reference-type helpers: first local/global resolution and out-of-range absence; intermediate classification; symbol/table eligibility and owner-specific accepted/error result. Unresolved symbol/text references deliberately remain skipped here because preceding link validation owns missing-reference rejection. Existing index-range domains, native behavior, field privacy and trust are unchanged. Checked first-index uniqueness and prefix-table monotonicity support the owning contracts, not a normative bridge.",
   "toolchain": {
     "manifest": "config/toolchain.json",
     "verus_version": "0.2026.10.04.426d8b0",
     "verus_commit": "426d8b01e7ffb910a36c15e1f870ff985bb61eef",
     "archive_sha256": "624018662868563a7bec0dd07be5e4dd0c3d61124b4b55105765884bf2d4d1a0"
   },
-  "command": "CARGO_BUILD_JOBS=1 PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=/workspace/jbig2-reference-catalog-baseline-v02-20261106/target/reference-catalog/whole-final3-target cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --num-threads 1 --rlimit 30 --triggers-mode silent --output-json",
+  "command": "CARGO_BUILD_JOBS=1 PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=/workspace/jbig2-reference-type-baseline-v02-20261106/target/reference-types/whole-final-target cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --num-threads 1 --rlimit 30 --triggers-mode silent --output-json",
   "result": {
-    "verified_obligations": 1311,
+    "verified_obligations": 1314,
     "verified_production_functions": 648,
     "errors": 0,
     "proof_build_compiles": true,
@@ -24,7 +24,7 @@
     "runtime_proof_divergences": 0,
     "incomplete_functions": 0
   },
-  "production_proof_coverage_sha256": "ef67250b5cccc16bb9726f4943da69801403e3846ba5091df5c9b8e379ec29ae",
+  "production_proof_coverage_sha256": "32c871395b0efcd11d621ebc88b0be0debe90b775c89f12bcaa4aff3b40b9ccd",
   "proof_dispositions_sha256": "ec71578882af39d20e44e6f727e896d9a9cd69f5baa7ab4c942f9306b1ed268a",
   "standard_library_boundary": {
     "manifest": "verification/stdlib/review.json",
@@ -33,7 +33,7 @@
     "review_kind": "delegated_engineering_review",
     "normative_approval": false
   },
-  "current_evidence_note": "Actual whole1311/0/nonemptylibrary;668explicit/648direct20reviewed. Twelve real compiling positive/strong/weak contrasts split6accounting/6catalog, preserving previous lookup bounds/absence, existing index-rangepreconditions, depth prefix/error frames and all prior public globalownership/stream/retention/error guarantees. All295native faults compileand are actually detected. Four independent u128-accounting/first-key/catalog/prefix oracles also pass on original implementations; all148ordinary production executing projections are identical. Internal lengthmetadata/arbitrary prefixes are stated helper entry domains, not publiccompressed-image witnesses. No machine-code/allocator/full-graph ornormative equivalence follows. Actual155-file MSRV/offline/no-upload andnumerical coverage floors pass. Native1259identities/298derives unchanged. Live482contrasts/59groups/295native/414bindings retain14shards/16roles/max4/all1050s/jobcaps and every old case; new6+6cases useexisting shard10/12 headroom (accepted42221586471 measured515.818586s/547.002907s). Original42244087583attempt1 passed all59groups but rejected oldshard13=1103.601187s. Same complete preserved measurements and second42259441787attempt1 passed all59groups but rejectedshard0=1106.180176s. Third42278989577attempt1 passed all59groups but rejectedshard5=1158.802194s. Complete compatible per-group maxima from allthree preserved runs drive seven existing-group moves: mmr-span13->1,retention3->5,default-limits-3 8->7,collector-sink11->9,arithmetic-initialization7->6,default-decoder-4 4->12,default-decoder-3 5->8. No case/producer/pin/concurrency/measurement/job guard is removed or raised, and the failed profile grants no acceptance. All other old assignments are retained; historical measured profiles remain frozen. Owningsurfaces534->540 and raw verified no-local114->108. Separatelyrequalifying24existing inherited owners projects90->84remaining reviewcandidates, not missing-proof counts. Concrete ParsedSegment countinghas a different domain from existing abstract Segment reference/workmodels; no unproved bridge or new normative owner is credited. Registry218/266selected/257gap-bearing rows remain provisional. Original conformance executions/outcomes/approvals retain identities;no runtime/API defect needs0.1backport. Approved standards-processing/inventory and validator executable/version/input requirements remainunresolved external inputs; generated/profile/domain/semantic qualityqualification and complete statement mapping remain open. Fresh exacthead hosted/original-artifact acceptance remains required beforeprotected integration.",
+  "current_evidence_note": "Actual unfiltered whole1314/0/nonemptylibrary,668explicit/648direct20reviewed. Twelve real compiling positives/strong/weak contrasts split6lookup/6classes; all307native faults compile and are detected, including every old case. Four independent native oracles cover all22owner and22resolved kinds, selected cardinalities including4/8table boundaries, duplicate lookup precedence, local/global override and staged missing-reference policy. Same4oracles pass on original production; all148existing ordinary native projections match and the new source file is test-only. No runtime/domain/privacy/trust change, machine-code/allocator or independent normative fidelity claim. Native1259identities298derives andAPIdeclaration categories unchanged. Actual156-file MSRV/offline/no-upload and numericalcoveragefloors pass. Live494contrasts/61groups/307native/418bindings retain14shards/16roles/max4/all1050s/jobcaps/pins andeveryoldcase/assignment; new6+6groups use existing3/13headroom. Original42310047778attempt1 passedall61groups but rejectedshard11=1083.081350s. Onlynewreference-type-classes moves11->13;pergroupmaxima withacceptedbaseline predictmax967.594566s,planningonlynotacceptance. Failedprofile retainednofailed-headcredit. Owning surfaces540->544, rawverifiednoLocal108->104, minus24existing separatelyqualifiedowners projects84->80reviewcandidates,notmissingproofs/readinesspercentage. Registry218/266selected/257gaprows remainprovisional; sixconcretestagedmodels/globalprojection are separatelypurposeclassified unregistered support/results, no normativeowner invented. Statements-processing handoff remains blocked; validatorexecution/version/input adaptation is separate from internal plan. Native/Verus/generated/platform/domain/semanticquality qualification and complete statement mapping remainopen. Freshoriginalexactheadhostedacceptance/protectedintegration stillrequired.",
   "duplicate_executable_proof_source": false,
   "normative_approval": false,
   "release_gate": "blocked",
@@ -422,6 +422,46 @@
       },
       "production_proof_coverage_sha256": "ef67250b5cccc16bb9726f4943da69801403e3846ba5091df5c9b8e379ec29ae",
       "scope_note": "Historical component evidence; not a new execution or approval."
+    },
+    {
+      "source_revision": "afca1d2bdcce911470c845ecb78d6bd6a14e1f7b",
+      "scope": "Fresh exact-source whole verification/compilation proves exact concrete reference/work quota results, first-match lookup/absence, input-order type/number catalogs and successful depth cardinality/bounds, plus arbitrary incoming depth-prefix and partial-error frames. Both public global parser results retain coherent type/depth counts alongside every prior ownership/quota/error/frame guarantee. A checked concrete prefix-monotonicity lemma supports overflow, and checked per-window/header-length projections isolate existing adjacency quantifiers without changing their guarantees/preconditions or resource limits. No runtime implementation, field visibility, admitted entry-domain, trust, full graph/depth-algorithm or normative-fidelity claim changes.",
+      "result": {
+        "verified_obligations": 1314,
+        "verified_production_functions": 648,
+        "errors": 0,
+        "proof_build_compiles": true,
+        "exact_production_source_compiles": true,
+        "algorithm_bodies_verified": false,
+        "production_coverage_complete": true,
+        "native_assumptions": [],
+        "reviewed_verifier_limitations": 20,
+        "audited_forwarders": 0,
+        "runtime_proof_divergences": 0,
+        "incomplete_functions": 0
+      },
+      "production_proof_coverage_sha256": "ef67250b5cccc16bb9726f4943da69801403e3846ba5091df5c9b8e379ec29ae",
+      "scope_note": "Historical evidence, not a new execution or approval."
+    },
+    {
+      "source_revision": "f50f4d97b4bbe2be61cb0ea0efecac32f3670946",
+      "scope": "Exact-source whole verification/compilation proves all four concrete reference-type helpers: first local/global resolution and out-of-range absence; intermediate classification; symbol/table eligibility and owner-specific accepted/error result. Unresolved symbol/text references deliberately remain skipped here because preceding link validation owns missing-reference rejection. Existing index-range domains, native behavior, field privacy and trust are unchanged. Checked first-index uniqueness and prefix-table monotonicity support the owning contracts, not a normative bridge.",
+      "result": {
+        "verified_obligations": 1314,
+        "verified_production_functions": 648,
+        "errors": 0,
+        "proof_build_compiles": true,
+        "exact_production_source_compiles": true,
+        "algorithm_bodies_verified": false,
+        "production_coverage_complete": true,
+        "native_assumptions": [],
+        "reviewed_verifier_limitations": 20,
+        "audited_forwarders": 0,
+        "runtime_proof_divergences": 0,
+        "incomplete_functions": 0
+      },
+      "production_proof_coverage_sha256": "32c871395b0efcd11d621ebc88b0be0debe90b775c89f12bcaa4aff3b40b9ccd",
+      "scope_note": "Historical evidence, not a new execution or approval."
     }
   ]
 }

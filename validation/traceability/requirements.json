@@ -24,7 +24,7 @@
   "model_classifications": {
     "review": "author-navigation-only-not-independent-normative-approval",
     "registry_sha256": "6bc9065d1537f3c4193dbbcd7a17113d5bd2eb3c914147465b8db8afd6943c6f",
-    "project_source_sha256": "3213f387887534011111029ccb3b0892c49d5832ccc87684fb3f368639609f77",
+    "project_source_sha256": "139c966619b761b46f2e5acdcd28813793737500e5a4c64b38663ba878b8d383",
     "families": [
       {
         "file": "specs/huffman_lookup.rs",
@@ -599,6 +599,7 @@
           "spec::global_bytes",
           "spec::global_depth_count",
           "spec::global_segment_count",
+          "spec::global_types",
           "spec::header_byte_offset",
           "spec::page_information_count",
           "spec::payload_byte_offset",
@@ -1263,6 +1264,30 @@
         "justification": "Concrete ParsedSegment prefix fold counts actual referred-entry lengths for the owning count/work-quota contracts. A genuinely proved monotonicity helper lifts checked prefix overflow to the complete count.",
         "ambiguity": "",
         "caveats": "Existing abstract Segment reference_count/work models have a different input domain; no unproved native-to-abstract bridge is credited. Structural project catalog/accounting baseline only, not complete graph/depth semantics, normative fidelity or external-validation readiness."
+      },
+      {
+        "file": "specs/document/reference_types.rs",
+        "members": [
+          "spec::catalog_first_index",
+          "spec::resolved_table_count"
+        ],
+        "classification": "proof-support",
+        "justification": "Concrete arbitrary-key first-index projection and resolved-table prefix count support the actual staged runtime result contracts; checked uniqueness/monotonicity helpers compose through the callers.",
+        "ambiguity": "",
+        "caveats": "Concrete implementation-stage relation, not exhaustive normative representation or independent fidelity. Existing abstract reference-class models have a distinct domain; no unproved bridge, complete graph validity or new admissible-input restriction is credited."
+      },
+      {
+        "file": "specs/document/reference_types.rs",
+        "members": [
+          "spec::resolved_reference_type",
+          "spec::resolved_intermediate_reference",
+          "spec::resolved_symbol_resources",
+          "spec::reference_types_accepted"
+        ],
+        "classification": "project-result-model",
+        "justification": "Exact first-local/global resolution, intermediate classification, symbol/table eligibility and owner-specific type acceptance. Unresolved symbol/text references remain accepted by the type stage because preceding link validation owns missing-reference rejection.",
+        "ambiguity": "",
+        "caveats": "Concrete implementation-stage relation, not exhaustive normative representation or independent fidelity. Existing abstract reference-class models have a distinct domain; no unproved bridge, complete graph validity or new admissible-input restriction is credited."
       }
     ]
   },
@@ -1902,7 +1927,7 @@
   "bindings": {
     "proofs/model_support/arithmetic.rs": "2a564c7a80acf17401f877352abba023be522d3e1b3a4ef0b0c3dba1ddaa56bb",
     "proofs/model_support/decode.rs": "67e54d341dcb57f6b4ad8b2c8a489fa52928fd4f7e3c39406139c46dc3d5c2b4",
-    "proofs/model_support/document.rs": "2c173c58a98139c9fbb028419f7b9db71753e888012e0311c6cd4853d6490542",
+    "proofs/model_support/document.rs": "12e615aa25f644d11f071da534edba6f39218c754c87e96048da1fcdce9cdff3",
     "proofs/model_support/halftone.rs": "1966e1682a8068045c19e10d8c6db92caf6551f710d16ead37814fb9014e7ecf",
     "proofs/model_support/huffman.rs": "0eea371c344f65c8f9be5ba1022ee4dc5245acb5976ec1931e0aca5e4b26a788",
     "proofs/model_support/mmr.rs": "16bc3d8d0434cab9d062321962daf75341d8d6c286c60d801749c79c4bc6a04b",
@@ -1923,7 +1948,7 @@
     "specs/arithmetic.rs": "0d576d753574c2b2412ce8442aa3a3e50cd1b7b95be18347a8e62a6832b9b94a",
     "specs/bitmap.rs": "9d4da6608d7ee55fdf0ab7d8d47f6105e75e656c1f31589610d47a67a61218cf",
     "specs/decode.rs": "acc5afe72a14eb8e48e3a193608a2a89bec966b97757201d6ce3d9bc9a404e24",
-    "specs/document.rs": "fd9210b0301fe3a1b7e7a438318fdcc809f6e170dd8ab69634b6641748d3fe34",
+    "specs/document.rs": "0ef9f8a5f365ea1e3d61077d6844a6548044ab1827d81b09ad403e93acb0a739",
     "specs/file_header.rs": "d7bfe82359473ce879ac27879ccdac8130a401bacb8a9fd69fe1b3571e86d599",
     "specs/generic_region.rs": "179767792743db1d346a5681af60eef35c383f653a9fe17410b0c0aa8c49ab33",
     "specs/halftone.rs": "8bf3a8c46f5ff5f85f91e464cac5e3dbfedeff3ffb2568528525c744ee2130f6",
@@ -1958,8 +1983,8 @@
     "src/document.rs": "e6e29aef93b7fa08abbb4f3b4d6cdbd3bdbaddff4242cd6596e35d0ff640b9cc",
     "src/document/pages.rs": "f11a042b00dfab74c94454999b7d3c9ba575ff3c77b8fafd54ec692b7c4649a0",
     "src/document/parsing.rs": "ce5a558c99b64b8d3ec7af95a35bd8c563ddcf09f65c760a7cb31eaebc93aa54",
-    "src/document/references.rs": "3f400a9fbe16d3ae73e6eca921e91c4265e733a31cac82503385dbff0b1f7872",
-    "src/document/tests.rs": "0ed3149d3ba4071351e6b45e94bb7a9048c818a9157545c8269331fde5ed83d7",
+    "src/document/references.rs": "69acd07c8e2da002936fa8826f054dd254aecaec34c6904514daaf760841b9e4",
+    "src/document/tests.rs": "83c40558470af241ab9be812667f186de6b6dbffed8f3c8f03f5d5ab20923063",
     "src/document/tests/container_inspection.rs": "628cc9ab90a757d151893f851c9593fe51d6a456aeca07131e0d01ae41c06b94",
     "src/document/tests/payload_windows.rs": "a5ea365a525b36f3ca92894ab3157d8b03382419e3ca434e154b7cdc3000f02e",
     "src/file_header.rs": "9011f761698f3772c953980e2d2d56ed5ece4f792c8e318ca89a0e0f8d326e11",

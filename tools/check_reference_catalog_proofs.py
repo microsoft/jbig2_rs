@@ -16,6 +16,7 @@ FILES = (
     "src/document.rs", "specs/document.rs", "specs/document/catalogs.rs",
     "specs/document/results.rs", "specs/document/context.rs", "specs/segments.rs",
     "proofs/model_support/document.rs", "proofs/shared/document.rs",
+    "specs/document/reference_types.rs",
 )
 TEST = "document::tests::quotas_and_references::"
 TOTALS = TEST + "reference_catalog_totals_and_work_match_u128_admission"

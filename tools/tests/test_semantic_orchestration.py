@@ -18,8 +18,11 @@ import run_semantic_proofs as runner
 
 
 LIVE_CHECKS = runner.CHECKS
+PRE_REFERENCE_TYPE_CHECKS = tuple(
+    row for row in LIVE_CHECKS if row[0] not in {"reference-type-lookup", "reference-type-classes"}
+)
 PRE_REFERENCE_CATALOG_CHECKS = tuple(
-    row for row in LIVE_CHECKS if row[0] not in {"reference-accounting", "reference-catalog"}
+    row for row in PRE_REFERENCE_TYPE_CHECKS if row[0] not in {"reference-accounting", "reference-catalog"}
 )
 PRE_PUBLIC_RESULT_CHECKS = tuple(
     row for row in PRE_REFERENCE_CATALOG_CHECKS if row[0] not in {"public-decode-results", "public-global-results"}
@@ -282,9 +285,9 @@ class SemanticOrchestrationTests(unittest.TestCase):
         collector = runner.configured_collector_checks()
         assigned = [row for role in (whole, collector, *shards) for row in role]
         self.assertEqual(len(shards), 14)
-        self.assertEqual(len(assigned), 59)
-        self.assertEqual(len({row[0] for row in assigned}), 59)
-        self.assertEqual(sum(row[2] for row in assigned), 482)
+        self.assertEqual(len(assigned), 61)
+        self.assertEqual(len({row[0] for row in assigned}), 61)
+        self.assertEqual(sum(row[2] for row in assigned), 494)
         self.assertIn("clone-results", {row[0] for row in collector})
         self.assertEqual({row[0]: row[2] for row in whole}, {
             "arithmetic-codec": 27,
@@ -306,10 +309,10 @@ class SemanticOrchestrationTests(unittest.TestCase):
             self.assertEqual(counts[identity], len(cases))
         self.assertEqual(counts["value-bridge"], len(value_cases))
         self.assertEqual(counts["symbol-cardinality"], len(cardinality_cases))
-        self.assertEqual(sum(row[2] for row in checks), 482)
-        self.assertEqual(len(checks), 59)
+        self.assertEqual(sum(row[2] for row in checks), 494)
+        self.assertEqual(len(checks), 61)
 
-    @patch.object(runner, "CHECKS", LIVE_CHECKS)
+    @patch.object(runner, "CHECKS", PRE_REFERENCE_TYPE_CHECKS)
     @patch.multiple(runner, **LIVE_TOPOLOGY)
     def test_rejected_catalog_profile_rebalances_complete_original_measurements(self):
         # Complete per-group maxima of42244087583/42259441787/42278989577; none accepted.
@@ -342,7 +345,7 @@ class SemanticOrchestrationTests(unittest.TestCase):
             "mmr-span": 257.861, "default-limits-4": 117.115,
             "page-finish": 234.713, "default-limits-5": 119.913,
         }
-        self.assertEqual(set(costs), {row[0] for row in LIVE_CHECKS})
+        self.assertEqual(set(costs), {row[0] for row in PRE_REFERENCE_TYPE_CHECKS})
         rows = [{"id": name, "status": "passed", "seconds": seconds}
                 for name, seconds in costs.items()]
         with patch.object(runner, "DEFAULT_SHARD_REBALANCE",

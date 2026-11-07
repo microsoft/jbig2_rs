@@ -17,7 +17,10 @@ import run_semantic_proofs as runner
 class ReferenceCatalogProofTests(unittest.TestCase):
     def test_new_groups_use_only_existing_shard_ten_and_twelve_headroom(self):
         added = set(CASE_GROUPS)
-        old_checks = tuple(row for row in runner.CHECKS if row[0] not in added)
+        current = tuple(row for row in runner.CHECKS if row[0] not in {
+            "reference-type-lookup", "reference-type-classes",
+        })
+        old_checks = tuple(row for row in current if row[0] not in added)
         moved = {
             "retention": 3, "default-limits-3": 8, "collector-sink": 11, "mmr-span": 13,
             "arithmetic-initialization": 7, "default-decoder-4": 4,
@@ -31,10 +34,11 @@ class ReferenceCatalogProofTests(unittest.TestCase):
                 runner.configured_whole_checks(), runner.configured_collector_checks(),
                 *runner.configured_shards(),
             )
-        after = (
-            runner.configured_whole_checks(), runner.configured_collector_checks(),
-            *runner.configured_shards(),
-        )
+        with patch.object(runner, "CHECKS", current):
+            after = (
+                runner.configured_whole_checks(), runner.configured_collector_checks(),
+                *runner.configured_shards(),
+            )
         self.assertEqual(len(after), 16)
         for old, current in zip(before, after):
             self.assertEqual(

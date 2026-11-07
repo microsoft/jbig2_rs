@@ -242,7 +242,7 @@ class ContractMutationTests(unittest.TestCase):
 
     def test_mutation_sites_are_unique_and_not_noops(self):
         identifiers = [mutation["id"] for mutation in MUTATIONS]
-        self.assertEqual(len(identifiers), 295)
+        self.assertEqual(len(identifiers), 307)
         self.assertEqual(len(identifiers), len(set(identifiers)))
         for mutation in MUTATIONS:
             with self.subTest(mutation=mutation["id"]):

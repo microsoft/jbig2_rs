@@ -22,6 +22,7 @@ CI_SHARDS = 14
 WHOLE_GROUPS = ("arithmetic-codec",)
 COLLECTOR_GROUPS = ("arithmetic-decision", "reset", "clone-results", "context-callers")
 ADDED_SHARD_GROUPS = {
+    "reference-type-lookup": 3, "reference-type-classes": 13,
     "reference-accounting": 10, "reference-catalog": 12,
     "public-context": 7,
     "public-decode-results": 4, "public-global-results": 4,
@@ -116,6 +117,8 @@ CHECKS = (
     ("public-global-results", "check_public_result_proofs.py", 4, "strong_contract", "weaker_control"),
     ("reference-accounting", "check_reference_catalog_proofs.py", 6, "strong_contract", "weaker_control"),
     ("reference-catalog", "check_reference_catalog_proofs.py", 6, "strong_contract", "weaker_control"),
+    ("reference-type-lookup", "check_reference_type_proofs.py", 6, "strong_contract", "weaker_control"),
+    ("reference-type-classes", "check_reference_type_proofs.py", 6, "strong_contract", "weaker_control"),
 )
 
 SUMMARY = "semantic-proof-summary.json"
@@ -503,6 +506,7 @@ def run_checks(
                 "check_public_context_proofs.py",
                 "check_public_result_proofs.py",
                 "check_reference_catalog_proofs.py",
+                "check_reference_type_proofs.py",
             } else []
             with log.open("w", encoding="utf-8") as stream:
                 process = subprocess.run(

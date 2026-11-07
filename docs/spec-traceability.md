@@ -12,6 +12,31 @@ Deeper full functional proofs remain longer-term work, not a blanket
 prerequisite for that handoff.
 See [release validation](publication-readiness.md) for measured results.
 
+## Internal preparation versus validator execution
+
+Internal preparation uses the approved broad bi-level decoder scope in the
+[support matrix](../config/support-matrix.json), T.88 (08/2018) /
+ISO/IEC 14492:2019 Edition 2 and the distinct T.6 (1988) MMR reference.
+Standalone sequential/random and embedded/global APIs remain in scope;
+the existing encoder, colour and container exclusions are not expanded to
+improve coverage. The actual native root API and compiler profile come from
+the source-bound compiler export, not a hand-edited list of callable names.
+
+Internal completion requires native/Verus/generated identity reconciliation,
+explicit caller-stage or admitted-input domains, consistent meaningful
+contracts and the complete applicable statement-to-obligation-to-consumer
+matrix. Missing local syntax alone does not identify an absent trait contract;
+line coverage and verified obligation counts do not establish those criteria.
+Approved source-statement processing or an original rights-cleared inventory
+is needed for exhaustive enumeration. That dependency is distinct from
+selecting, invoking and adapting inputs to an external validator.
+
+Generic reproducibility evidence can be prepared before a validator is chosen.
+Validator identity/version/input adaptation, execution and adjudication are
+separate work. The stronger full external-readiness and independent-review
+claims remain false until their own requirements are met; internal preparation
+does not require every deeper end-to-end/raster theorem.
+
 ## Records and scope
 
 - [`config/support-matrix.json`](../config/support-matrix.json) defines supported,
@@ -176,6 +201,27 @@ limit is removed or raised. Combining timings predicts capacity only; neither
 rejected run is acceptance evidence.
 
 ### Source-only purpose inventory
+
+The [concrete reference-type models](../specs/document/reference_types.rs)
+describe first-local/global lookup, intermediate kinds, symbol/table limits
+and exact type-stage acceptance/error results. They preserve all existing
+index-range preconditions and do not introduce public field access or trust.
+Missing symbol/text references are deliberately ignored by this classifier;
+the preceding link validator rejects them. Treating the classifier alone as
+complete reference validity would misstate its admitted stage domain.
+
+Independent native oracles cover all 22 owner kinds against every resolved
+kind and selected reference counts, first duplicate-key matches, local/global
+precedence and exact owner-number diagnostics. Twelve real compiling
+[type contrasts](../tools/check_reference_type_proofs.py) remove only the
+selected owning result guarantee; table/class faults also remove invalid
+new preservation invariants while keeping existing domains. These are
+implementation-stage results, not independent normative approval or a proved
+bridge to the distinct abstract reference-class model.
+The first complete hosted profile passed all individual groups but rejected
+shard 11 at 1,083.08 seconds. Only the new class group moves to existing shard
+13; maxima with the accepted baseline fit the unchanged guards. The original
+failed profile is preserved and gives no acceptance credit.
 
 `model_classifications` identifies exact declaration families as project
 results, policies, representation invariants, proof support or candidate

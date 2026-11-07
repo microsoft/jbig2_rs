@@ -16,6 +16,7 @@ FILES = (
     "src/document.rs", "src/decode.rs", "specs/document.rs",
     "specs/document/results.rs", "specs/document/context.rs", "specs/decode.rs",
     "specs/document/catalogs.rs",
+    "specs/document/reference_types.rs",
     "proofs/shared/document.rs", "proofs/shared/decode.rs",
 )
 DECODE_TEST = "decode::tests::container_routes::public_results_preserve_exact_standalone_and_embedded_metadata"

@@ -18,6 +18,7 @@ from check_clone_result_proofs import CASES as CLONE_RESULT_CASES
 from check_public_context_proofs import CASES as PUBLIC_CONTEXT_CASES
 from check_public_result_proofs import CASES as PUBLIC_RESULT_CASES
 from check_reference_catalog_proofs import CASES as REFERENCE_CATALOG_CASES
+from check_reference_type_proofs import CASES as REFERENCE_TYPE_CASES
 from check_document_count_proof import CASES as DOCUMENT_CASES
 from check_huffman_assignment_proofs import CASES as HUFFMAN_ASSIGNMENT_CASES
 from check_iaid_state_proofs import CASES as IAID_STATE_CASES
@@ -67,6 +68,13 @@ DOCUMENT_WINDOW_TESTS = {
     "embedded_discards_first_input_byte": "raw_sequential_and_embedded_layouts_match_literal_windows_and_order_policy",
 }
 MUTATIONS = tuple(
+    {
+        "id": "reference-type-" + case["id"],
+        "file": case["file"], "before": case["site"], "after": case["replacement"],
+        "target": "lib", "test": case["native_test"], "whitespace_flexible": True,
+    }
+    for case in REFERENCE_TYPE_CASES
+) + tuple(
     {
         "id": "reference-catalog-" + case["id"],
         "file": case["file"], "before": case["site"], "after": case["replacement"],
@@ -701,11 +709,10 @@ MUTATIONS = tuple(
     {
         "id": "global-reference-type-misclassification",
         "file": "src/document.rs",
-        "before": "let kind = keyed_get(&state.types, number)?;\n    Some(*kind)",
-        "after": (
-            "let _kind = keyed_get(&state.types, number)?;\n"
-            "    Some(SegmentType::SymbolDictionary)"
-        ),
+        "before": next(case["site"] for case in REFERENCE_TYPE_CASES
+                       if case["id"] == "resolved_global_type_discarded"),
+        "after": next(case["replacement"] for case in REFERENCE_TYPE_CASES
+                      if case["id"] == "resolved_global_type_discarded"),
         "target": "public_envelope",
         "test": "references::global_reference_roles_are_rechecked_without_mutating_shared_state",
     },

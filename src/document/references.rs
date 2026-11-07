@@ -487,9 +487,14 @@ pub(super) fn validate_reference_depth_ordered(
     Ok(())
 }
 
-#[cfg_attr(verus_keep_ghost, verus_spec(
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires forall|index: int| 0 <= index < indexes@.len() ==>
         indexes@[index].1 < segments@.len(),
+    ensures out == if document_spec::reference_types_accepted(header, segments@, indexes@, globals) {
+        Ok(())
+    } else {
+        Err(DecodeError::Malformed(MalformedError::InvalidSegmentReferences(header.number)))
+    },
 ))]
 pub(super) fn validate_reference_types(
     header: &SegmentHeader,
@@ -545,9 +550,12 @@ pub(super) fn validate_reference_types(
     Ok(())
 }
 
-#[cfg_attr(verus_keep_ghost, verus_spec(
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires forall|index: int| 0 <= index < indexes@.len() ==>
         indexes@[index].1 < segments@.len(),
+    ensures out == document_spec::resolved_reference_type(
+        header.referred_segments@, reference_index as nat, segments@, indexes@, globals,
+    ),
 ))]
 pub(super) fn known_reference_type(
     header: &SegmentHeader,
@@ -561,17 +569,31 @@ pub(super) fn known_reference_type(
     }
     let number = header.referred_segments[reference_index];
     if let Some(entry) = keyed_index(indexes, number) {
+        #[cfg(verus_keep_ghost)]
+        proof! { document_spec::catalog_first_index_value(indexes@, number, entry as int); }
         let segment_index = indexes[entry].1;
         return Some(segments[segment_index].header.segment_type);
     }
     let state = globals?;
+    #[cfg(verus_keep_ghost)]
+    proof! { document_spec::global_fields(state); }
     let kind = keyed_get(&state.types, number)?;
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        let entry = choose|entry: int| 0 <= entry < state.types@.len()
+            && state.types@[entry].0 == number && *kind == state.types@[entry].1
+            && forall|prior: int| 0 <= prior < entry ==> state.types@[prior].0 != number;
+        document_spec::catalog_first_index_value(state.types@, number, entry);
+    }
     Some(*kind)
 }
 
-#[cfg_attr(verus_keep_ghost, verus_spec(
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires forall|index: int| 0 <= index < indexes@.len() ==>
         indexes@[index].1 < segments@.len(),
+    ensures out == document_spec::resolved_intermediate_reference(
+        header.referred_segments@, segments@, indexes@, globals,
+    ),
 ))]
 pub(super) fn known_reference_is_intermediate(
     header: &SegmentHeader,
@@ -585,9 +607,12 @@ pub(super) fn known_reference_is_intermediate(
     }
 }
 
-#[cfg_attr(verus_keep_ghost, verus_spec(
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires forall|entry: int| 0 <= entry < indexes@.len() ==>
         indexes@[entry].1 < segments@.len(),
+    ensures out == document_spec::resolved_symbol_resources(
+        header.referred_segments@, segments@, indexes@, globals, maximum_tables as nat,
+    ),
 ))]
 pub(super) fn references_are_symbol_resources(
     header: &SegmentHeader,
@@ -602,11 +627,30 @@ pub(super) fn references_are_symbol_resources(
         invariant
             index <= header.referred_segments@.len(),
             table_count <= index,
+            table_count <= maximum_tables,
+            table_count as nat == document_spec::resolved_table_count(
+                header.referred_segments@, segments@, indexes@, globals, index as nat,
+            ),
+            forall|prior: int| 0 <= prior < index ==> match
+                #[trigger] document_spec::resolved_reference_type(
+                    header.referred_segments@, prior as nat, segments@, indexes@, globals,
+                ) {
+                    Some(kind) => kind == SegmentType::SymbolDictionary || kind == SegmentType::Tables,
+                    None => true,
+                },
             forall|entry: int| 0 <= entry < indexes@.len() ==>
                 indexes@[entry].1 < segments@.len(),
         decreases header.referred_segments@.len() - index,
     ))]
     while index < header.referred_segments.len() {
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            document_spec::resolved_table_count_monotone(
+                header.referred_segments@, segments@, indexes@, globals,
+                index as nat + 1, header.referred_segments@.len(),
+            );
+            reveal_with_fuel(document_spec::resolved_table_count, 1);
+        }
         if let Some(kind) = known_reference_type(header, index, segments, indexes, globals) {
             match kind {
                 SegmentType::SymbolDictionary => {}

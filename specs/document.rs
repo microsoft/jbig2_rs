@@ -23,6 +23,10 @@ pub use results::global_parse_result;
 mod catalogs;
 pub(crate) use catalogs::{reference_total, reference_total_monotone};
 
+#[path = "document/reference_types.rs"]
+mod reference_types;
+pub(crate) use reference_types::*;
+
 verus! {
 
 // Project metadata transitions; caller sequencing and raster semantics are separate.
@@ -545,6 +549,15 @@ pub closed spec fn global_depth_count(
     globals: &crate::document::GlobalSegments,
 ) -> nat {
     globals.depths@.len()
+}
+
+// Model navigation: spec::global_types [proof-support]
+// Purpose: Private global type catalog used by concrete staged reference lookup.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
+pub closed spec fn global_types(globals: &crate::document::GlobalSegments)
+    -> Seq<(u32, crate::segment_header::SegmentType)> {
+    globals.types@
 }
 
 // Model navigation: spec::global_bytes [proof-support]
