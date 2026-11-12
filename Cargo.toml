@@ -1,6 +1,6 @@
 [package]
 name = "jbig2-decoder"
-version = "0.2.0-dev"
+version = "0.3.0-dev"
 edition = "2021"
 rust-version = "1.88.0"
 license = "MIT"
