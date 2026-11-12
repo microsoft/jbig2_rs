@@ -18,7 +18,7 @@ from urllib.request import Request, urlopen
 
 REPOSITORY = "microsoft/jbig2_rs"
 PACKAGE = "jbig2-decoder"
-RELEASE_BRANCH = "release/0.1"
+RELEASE_BRANCHES = {"0.1": "release/0.1", "0.2": "release/0.2"}
 PUBLISHED_MAIN_RELEASES = {
     "v0.1.0": {
         "commit": "ace4fae35afc4e17830d339cc61484e64d2d5870",
@@ -182,20 +182,21 @@ def validate_tag(root, tag, api=github, wait_for_checks=False):
     deadline = time.monotonic() + (CHECK_WAIT_SECONDS if wait_for_checks else 0)
     if not TAG.fullmatch(tag):
         raise ValueError("tag must be a vMAJOR.MINOR.PATCH Cargo version")
-    if not tag.startswith("v0.1."):
-        raise ValueError("only the 0.1.x maintenance line is configured for publication")
+    release_branch = RELEASE_BRANCHES.get(".".join(tag[1:].split(".")[:2]))
+    if release_branch is None:
+        raise ValueError("only the 0.1.x and 0.2.x release lines are configured for publication")
     commit = git(root, "rev-parse", "--verify", f"refs/tags/{tag}^{{commit}}")
     if not SHA.fullmatch(commit):
         raise ValueError("tag did not resolve to a GitHub commit")
     ancestor = subprocess.run(
-        ["git", "-C", str(root), "merge-base", "--is-ancestor", commit, f"origin/{RELEASE_BRANCH}"],
+        ["git", "-C", str(root), "merge-base", "--is-ancestor", commit, f"origin/{release_branch}"],
         check=False,
     )
     if ancestor.returncode == 1:
-        raise ValueError(f"release source is not reachable from {RELEASE_BRANCH}")
+        raise ValueError(f"release source is not reachable from {release_branch}")
     ancestor.check_returncode()
     check_manifest(tomllib.loads(git(root, "show", f"{commit}:Cargo.toml")), tag[1:])
-    base_branch = RELEASE_BRANCH
+    base_branch = release_branch
     legacy = PUBLISHED_MAIN_RELEASES.get(tag)
     if legacy is not None:
         if commit != legacy["commit"]:
@@ -223,7 +224,7 @@ def validate_tag(root, tag, api=github, wait_for_checks=False):
         raise ValueError("release tree differs from the reviewed PR head; update/retest the PR")
     return {
         "tag": tag, "version": tag[1:], "commit": commit, "pull_request": pr["number"],
-        "release_branch": RELEASE_BRANCH, "pull_request_base": base_branch,
+        "release_branch": release_branch, "pull_request_base": base_branch,
         "pull_request_checks": await_checks(head, "pull_request", deadline, api),
         "integrated_source_checks": await_checks(commit, "integrated", deadline, api),
     }

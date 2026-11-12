@@ -45,7 +45,7 @@ dependencies = [
 
 [[package]]
 name = "jbig2-decoder"
-version = "0.2.0-dev"
+version = "0.3.0-dev"
 
 [[package]]
 name = "jbig2-decoder-fuzz"

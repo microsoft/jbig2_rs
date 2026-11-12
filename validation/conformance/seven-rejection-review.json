@@ -263,15 +263,15 @@
     "validation/differential/run_oracles.py": "0ddc98d3d9a443b9a3b0ee1241916d7096fab90198a27e08a55caa5f9b373c8c",
     "tools/tests/test_validation_gates.py": "75ccd838aaa7d6bc9aa8487d43c101f074b62bb8af4c842935d37c651b564711",
     "tools/tests/test_proof_audits.py": "2cf96d8d44510559f9af56e6714137c7a84b471479d9a28d4b69c4da8782ce9d",
-    "tools/evidence.schema.json": "98d12fbb1b224cc18b25379c0cbe27d4a7fd662c661421c0bf32de9dd9117091",
+    "tools/evidence.schema.json": "0685bcdce957360fdbdb2638499abc9570c6daaceea65676530852730b51b41f",
     "tools/evidence.py": "1286345e1679a72362fc4cc60f3ef1d6294b19df4edcea7c6d0f74970d117571",
     "tools/verify_provenance.py": "0d9be7e393273d59adf5d38adeb828cb8299d63365412dee3e61f565d7ee9aed",
     "validation/source-provenance.json": "95e21a8330540c2f1be6ae7446764a97047ee6cd9412516775da935f3c3b8571",
     "validation/conformance/expected-differences.json": "723941c97cb32dbfbd73a37028c143c6ecf59f7afc36f0d74e7ee8ca6e73d613",
     "validation/conformance/fetch_itu.py": "ef7d846d05440ff052581de0d04caaa76f6e9cc9582ee1b9fb8baff34b89e86b",
     "tools/tests/test_conformance_acquisition.py": "57535afa7a966244302b51554c3dd6dc1fc00dac11fec7f33f49906fe35258f7",
-    "tools/check_workflows.py": "d8d77c6923a60e6a604cc4a8e60e061fa4641c49e6dcbb7f09d01f846471bbd3",
-    "tools/tests/test_workflows.py": "de5b9fb40cd5e274828415e2dc099f6da22a9dcfdf844929c06435fcd4024024",
+    "tools/check_workflows.py": "87b60e17f0db77c901ead2cb8da715a7454b2053883aa5c34b96bb7260857ae4",
+    "tools/tests/test_workflows.py": "19342fc0f07efc38116fda6c3e69b6abf857baf714be6a3165bb5a87efdbdb2e",
     ".github/workflows/conformance.yml": "3da7b1553cd8c0661dab3538866712afe5c9b017b2d4e93db36e01a6dec98dc3"
   },
   "normalization_controls": {
@@ -1187,5 +1187,14 @@
     "unsupported_profile": 1,
     "unresolved_failures": 0,
     "scope": "Actual replay after DEV-952C7B7561 of all ten previously approved local streams with the unmodified normal decoder. Both bitmap passes and all seven exact strict rejections are unchanged. Only current source bindings are renewed; historical reference-source analysis, engineering dispositions and diagnostic artifacts retain their original revisions. No additional normative approval or conformance credit."
+  },
+  "release_policy_binding_update": {
+    "approved_at": "2026-11-12T20:19:28.161+00:00",
+    "scope": "Validation policy and publication metadata only: support release/0.2 and unpublished 0.3 development. Runtime Rust, the conformance runner, original vectors, exact outcomes, historical source analysis and normative approval flags are unchanged.",
+    "validation_files_updated": [
+      "tools/evidence.schema.json",
+      "tools/check_workflows.py",
+      "tools/tests/test_workflows.py"
+    ]
   }
 }

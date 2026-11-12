@@ -73,6 +73,28 @@ class InternalProfileTests(unittest.TestCase):
         self.assertFalse(report["source_statement_inventory_qualified"])
         self.assertFalse(report["code_domains_and_contract_baseline_qualified"])
 
+    def test_release_and_next_development_metadata_preserve_the_frozen_api_scope(self):
+        manifest = self.root / "Cargo.toml"
+        for version, publish, accepted in (
+            ("0.3.0-dev", "false", True),
+            ("0.2.0", '["crates-io"]', True),
+            ("0.3.0-dev", '["crates-io"]', False),
+            ("0.2.0", "false", False),
+            ("0.4.0-dev", "false", False),
+        ):
+            manifest.write_text(
+                f'[package]\nname = "jbig2-decoder"\nversion = "{version}"\npublish = {publish}\n',
+            )
+            with self.subTest(version=version, publish=publish):
+                if accepted:
+                    report = checker.snapshot(self.root, self.directory)
+                    self.assertEqual(report["declared_api_entries"][0]["declaration_surface"],
+                                     self.compiler["records"][0]["declaration_surface"])
+                    self.assertFalse(report["ready_for_external_validation"])
+                else:
+                    with self.assertRaisesRegex(ValueError, "approved"):
+                        checker.snapshot(self.root, self.directory)
+
     def test_replay_rejects_rehashed_flags_scope_omissions_and_signature_changes(self):
         report = checker.snapshot(self.root, self.directory)
         path = self.root / "profile.json"

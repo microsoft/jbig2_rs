@@ -49,11 +49,14 @@ def snapshot(root, compiler_directory):
         or matrix["public_api"]["status"] != "approved"
         or matrix["normative_baseline"]["itu"] != "ITU-T T.88 (08/2018)"
         or matrix["normative_baseline"]["iso"] != "ISO/IEC 14492:2019, Edition 2"
-        or package["version"] != "0.2.0-dev" or package["publish"] is not False
+        or not (
+            package["version"] in {"0.2.0-dev", "0.3.0-dev"} and package["publish"] is False
+            or package["version"] == "0.2.0" and package["publish"] == ["crates-io"]
+        )
         or proof["rust-version"] != toolchain["verus"]["rust_toolchain"]
         or provenance["policy"]["third_party_uploads_permitted"] is not False
     ):
-        raise ValueError("internal profile needs the existing approved unpublished scope and toolchain")
+        raise ValueError("internal profile needs the approved release/development scope and toolchain")
     rows = matrix["rows"]
     if (
         not rows or len({row["feature"] for row in rows}) != len(rows)

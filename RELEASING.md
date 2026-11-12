@@ -1,11 +1,12 @@
 # Releasing jbig2-decoder
 
-`main` is the unpublished `0.2.0-dev` development line with Cargo publication
-disabled. The 0.1.x maintenance line lives on `release/0.1`; its publication
-policy and version metadata are independent. Main CI checks actual proof/test
-evidence under `--require-development-scope` without declaring the deferred
-functional-proof target complete. The historical 0.1 scope is retained as
-`maintenance_release_scope`, not applied as a 0.2 release authorization.
+`main` is the unpublished `0.3.0-dev` development line with Cargo publication
+disabled. The 0.2.x release line lives on `release/0.2`; the 0.1.x maintenance
+line remains on `release/0.1`. Their version metadata and approval scopes are
+independent. Current CI checks actual proof/test evidence under
+`--require-current-scope`, selecting either the unpublished development scope
+or the explicitly approved partial-Verus `publication_scope`. The historical
+0.1 scope remains separate; no complete functional-proof claim is inferred.
 
 Assess runtime/API correctness fixes for a minimal maintenance backport with
 its own branch-specific tests and source-bound evidence. Proof-only, tooling
@@ -44,10 +45,10 @@ python3 -B tools/audit_production_coverage.py \
   --require-complete --require-exact
 python3 -B tools/check_traceability.py \
   --verus-json target/verification/verus-production.json --discover-tests \
-  --require-development-scope --output target/release/development-scope.json
+  --require-current-scope --output target/release/current-scope.json
 ```
 
-On `release/0.1`, use `--require-v01-scope` instead of the development flag.
+On the existing `release/0.1` line, use `--require-v01-scope`.
 Inventory completeness is not complete functional proof. The 0.1 scope check
 requires matching versioned scope, proof identities and test discovery; it does
 not make the stronger `--require-reviewed-decomposition --require-complete`
@@ -100,22 +101,21 @@ credentials, require publishing-environment approval or upload a crate.
 
 ### Branch policy
 
-`release/0.1` maintains the 0.1.x line; `main` carries ongoing development.
-The maintenance branch starts at the reviewed publication-policy baseline.
-Both branches require the same 30 checks, strict up-to-date status checks,
-and no bypass, force pushes or deletion. CI also runs on both branch heads.
-Publishing requires a tag reachable from `release/0.1` and the exact integration
-commit of a merged PR targeting that branch, with a matching reviewed tree.
-A new 0.1.x version merged only to `main` is not a release candidate.
+`release/0.1` maintains 0.1.x, `release/0.2` maintains 0.2.x, and `main` carries
+ongoing 0.3 development. All three branches require the same 30 checks, strict
+up-to-date status checks, and no bypass, force pushes or deletion. CI also runs
+on all three branch heads. Publishing requires a tag reachable from the matching
+release branch and the exact integration commit of a merged PR targeting that
+branch, with a matching reviewed tree. A version merged only to `main` is not
+a release candidate.
 
-Make release fixes and version bumps in PRs against `release/0.1`. Backport only
+Make release fixes and version bumps in PRs against the matching release branch. Backport only
 selected changes; do not routinely merge future development from `main` into
 the maintenance line. Port applicable maintenance fixes to `main` separately.
 Keep package metadata, all local decoder lockfile entries, versioned release
 scope/schema and their source-bound provenance consistent on each branch.
-The next version on `main` is a separate development decision, not a maintenance
-release prerequisite. Publication of other version lines requires an explicit
-workflow/policy update.
+Only 0.1.x and 0.2.x are configured for publication; publication of another
+version line requires an explicit workflow/policy update.
 
 The immutable, already-published `v0.1.0` and `v0.1.1` retain their original
 `main` PR provenance. Rehearsals accept those two tags only at their original
@@ -126,7 +126,8 @@ republished. New versions have no `main` exception.
 
 1. Create the GitHub environment `crates-io` in the repository settings.
    Require a release maintainer's approval, disable administrator bypass, and
-   allow deployments only from branch `release/0.1` and tags matching `v0.1.*`.
+   allow deployments only from `release/0.1`, `release/0.2`, and tags matching
+   `v0.1.*` or `v0.2.*`.
    Allow self-review if the same maintainer creates and approves releases.
    Merely naming an environment in a workflow does not configure these rules.
 2. On crates.io, open **jbig2-decoder → Settings → Trusted Publishing → Add**,
@@ -145,15 +146,16 @@ republished. New versions have no `main` exception.
 
 ### Each release
 
-1. Prepare and merge the final versioned release PR into `release/0.1`. Its integrated tree must
+1. Prepare and merge the final versioned release PR into the matching release branch
+   (`release/0.2` for 0.2.0). Its integrated tree must
    equal the PR head tree; update and retest the PR if integration changes it.
-2. Create `vVERSION` at that exact integration commit on `release/0.1`. Wait for all
+2. Create `vVERSION` at that exact integration commit on the release branch. Wait for all
    required checks on the PR and integrated/tagged source to pass.
-3. In **Actions → Publish crate → Run workflow**, select branch `release/0.1`, enter
+3. In **Actions → Publish crate → Run workflow**, select the release branch, enter
    the tag and leave **dry_run** enabled for a credential-free rehearsal.
 4. Publish a GitHub Release using that existing tag, then approve the `crates-io`
-   environment deployment. Alternatively, run the workflow manually from `release/0.1`
-   with **dry_run** disabled and approve the same environment.
+   environment deployment. Alternatively, run the workflow manually from the release
+   branch with **dry_run** disabled and approve the same environment.
 
 The read-only validation job checks tag/version/registry policy, merged PR and
 tree identity, all 30 PR checks and 29 final-commit native checks. It verifies

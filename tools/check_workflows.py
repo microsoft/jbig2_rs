@@ -33,7 +33,12 @@ OFFICIAL_TRUST = (
 )
 RELEASE_VALIDATE = (
     "github.repository == 'microsoft/jbig2_rs' && (github.event_name == 'release'"
-    " || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/release/0.1'))"
+    " || (github.event_name == 'workflow_dispatch'"
+    " && (github.ref == 'refs/heads/release/0.1' || github.ref == 'refs/heads/release/0.2')))"
+)
+RELEASE_POLICY_REF = (
+    "${{ startsWith(github.event.release.tag_name || inputs.tag, 'v0.2.')"
+    " && 'release/0.2' || 'release/0.1' }}"
 )
 RELEASE_PUBLISH = (
     "needs.validate.outputs.publish_needed == 'true'"
@@ -234,7 +239,7 @@ def check_release_workflow(document):
         if actual != expected:
             raise ValueError("release command, order, credentials or verification changed")
     actions = (
-        (validate, 0, "actions/checkout", {"ref": "release/0.1", "fetch-depth": "0", "persist-credentials": "false"}),
+        (validate, 0, "actions/checkout", {"ref": RELEASE_POLICY_REF, "fetch-depth": "0", "persist-credentials": "false"}),
         (validate, 1, "actions/setup-python", {"python-version": "3.13"}),
         (validate, 3, "actions/checkout", {"ref": "${{ steps.source.outputs.commit }}",
                                         "fetch-depth": "0", "persist-credentials": "false"}),
@@ -243,7 +248,7 @@ def check_release_workflow(document):
             "name": "release-validation-${{ github.run_id }}-${{ github.run_attempt }}",
             "path": "target/release-validation/*.json", "if-no-files-found": "error",
         }),
-        (publish, 0, "actions/checkout", {"ref": "release/0.1", "fetch-depth": "0", "persist-credentials": "false"}),
+        (publish, 0, "actions/checkout", {"ref": RELEASE_POLICY_REF, "fetch-depth": "0", "persist-credentials": "false"}),
         (publish, 2, "actions/checkout", {"ref": "${{ needs.validate.outputs.commit }}",
                                        "fetch-depth": "0", "persist-credentials": "false"}),
         (publish, 3, "actions/setup-python", {"python-version": "3.13"}),
@@ -416,7 +421,7 @@ def check_verus_sharding(document):
         "tools/check_traceability.py": [
             "python", "tools/check_traceability.py",
             "--verus-json", "target/verification/verus-production.json",
-            "--discover-tests", "--require-development-scope",
+            "--discover-tests", "--require-current-scope",
             "--output", "target/traceability/verifier-report.json",
         ],
     }
@@ -594,9 +599,9 @@ def check_workflow(document, name):
         not isinstance(events, dict) or "pull_request" not in events
         or events.get("pull_request") not in ("", None, {})
         or "workflow_dispatch" not in events
-        or events.get("push") != {"branches": ["main", "release/0.1"], "tags": ["**"]}
+        or events.get("push") != {"branches": ["main", "release/0.1", "release/0.2"], "tags": ["**"]}
     ):
-        raise ValueError("validation runs on every PR, main/release/0.1/tag pushes and manual dispatch")
+        raise ValueError("validation runs on every PR, main/release/0.1/release/0.2/tag pushes and manual dispatch")
     jobs = document.get("jobs")
     if not isinstance(jobs, dict) or not jobs:
         raise ValueError(f"{name}: workflow must contain jobs")

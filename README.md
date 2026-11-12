@@ -14,7 +14,7 @@ The runtime MSRV is **Rust 1.88.0**.
 
 ```toml
 [dependencies]
-jbig2-decoder = "0.1"
+jbig2-decoder = "0.2"
 ```
 
 ```rust,no_run
