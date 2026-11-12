@@ -1,11 +1,17 @@
 {
   "schema_version": 1,
-  "development_scope": {
-    "profile": "0.2-development",
-    "crate_version": "0.2.0-dev",
-    "maintenance_branch": "release/0.1",
-    "proof_completion_issue": "https://github.com/microsoft/jbig2_rs/issues/135",
-    "publication_enabled": false
+  "publication_scope": {
+    "profile": "0.2-partial-verus",
+    "crate_version": "0.2.0",
+    "release_branch": "release/0.2",
+    "authority": "repository_owner_release_scope",
+    "approved_at": "2026-11-12T20:19:28.161+00:00",
+    "instruction": "I would prefer publishing 0.2.0 To this end we should create the corresponding release branch for 0.2, update main to be 0.3 after that and publish the crate to crates.io",
+    "decision_reference": "agent-host-session://ahp-session/0940700e-faa1-4257-a786-58cf3bd4a573",
+    "exhaustive_requirement_coverage_required": false,
+    "complete_functional_proof_required": false,
+    "existing_proof_and_quality_gates_required": true,
+    "full_spec_conformance_claim": false
   },
   "maintenance_release_scope": {
     "profile": "0.1-partial-verus",
