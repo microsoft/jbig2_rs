@@ -248,6 +248,59 @@ def evidence():
 
 
 class SemanticOrchestrationTests(unittest.TestCase):
+    @patch.object(runner, "CHECKS", LIVE_CHECKS)
+    @patch.multiple(runner, **LIVE_TOPOLOGY)
+    def test_dictionary_fix_profile_preserves_checks_within_the_original_guard(self):
+        # Complete rejected run 43244487615/attempt1, rounded to milliseconds.
+        costs = {
+            "clone-results": 276.333, "context-callers": 212.532,
+            "arithmetic-decision": 416.912, "reset": 85.768,
+            "mmr-run": 134.377, "mmr-reference": 335.612,
+            "default-limits-1": 103.152, "reader-error": 248.683,
+            "document-count": 288.516, "default-decoder-2": 87.769,
+            "iaid-state": 195.804, "mmr-span": 189.675,
+            "reference-accounting": 155.796, "segment-header": 238.212,
+            "region-dispatch": 92.809, "integer-state": 230.156,
+            "operator-bit": 134.713, "error-conversion": 297.505,
+            "value-bridge": 530.211, "reference-catalog": 128.659,
+            "default-decoder-4": 69.719, "page-public": 172.827,
+            "default-decoder-1": 73.365, "default-decoder-5": 72.423,
+            "arithmetic-normalization": 129.193, "reference-type-classes": 173.126,
+            "session-framing": 303.066, "default-limits-4": 95.521,
+            "page-finish": 188.999, "default-limits-5": 97.001,
+            "default-limits-2": 103.079, "error-wrappers-symbol": 211.399,
+            "symbol-cardinality": 561.671, "arithmetic-refill": 178.347,
+            "page-state": 354.072, "huffman-codec": 353.474,
+            "public-decode-results": 237.117, "public-global-results": 137.558,
+            "text-batch": 309.546, "arithmetic-integer": 265.637,
+            "retention": 105.142, "error-wrappers-regions": 233.958,
+            "document-layout": 329.283, "halftone-header": 242.266,
+            "mmr-horizontal": 203.594, "black-span": 186.773,
+            "segment-data": 282.094, "arithmetic-initialization": 177.080,
+            "public-context": 275.664, "error-wrappers-basic": 266.548,
+            "bitmap-copy": 228.732, "default-limits-3": 104.771,
+            "mmr-prefix": 129.761, "bitmap-chunk": 126.226,
+            "default-decoder-3": 102.741, "bitmap-compose": 198.195,
+            "context-lifecycle": 316.887, "reference-type-lookup": 180.709,
+            "huffman-assignment": 862.111, "collector-sink": 83.043,
+            "arithmetic-codec": 846.407,
+        }
+        rows = [{"id": name, "status": "passed", "seconds": seconds}
+                for name, seconds in costs.items()]
+        previous = {**runner.ADDED_SHARD_GROUPS, "reference-type-lookup": 9}
+        with patch.object(runner, "ADDED_SHARD_GROUPS", previous):
+            with self.assertRaisesRegex(ValueError, "1050-second guard"):
+                runner.measured_shard_seconds(rows)
+        measured = runner.measured_shard_seconds(rows)
+        roles = [runner.configured_whole_checks(), runner.configured_collector_checks(),
+                 *runner.configured_shards()]
+        assigned = [check for role in roles for check in role]
+        self.assertEqual(len(measured), 14)
+        self.assertEqual(len(assigned), len(costs))
+        self.assertEqual({check[0] for check in assigned}, set(costs))
+        self.assertEqual(sum(check[2] for check in assigned), 494)
+        self.assertLess(max(measured), 1050)
+
     def test_entropy_partition_preserves_every_recipe_and_valid_selected_baseline(self):
         from check_arithmetic_codec_proofs import CASES, CASE_GROUPS, CASE_BASELINE_GROUPS
 

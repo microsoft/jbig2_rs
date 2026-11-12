@@ -35,6 +35,23 @@
   },
   "current_evidence_note": "Fresh integrated-source whole Verus verification and nonempty library compilation: 1314 verified obligations, zero errors; 648 direct production functions and 20 reviewed limitations. All 84 symbol/text tests pass, including the 119-case encoded aggregate-ID regression, invalid-ID rejection and chained aggregates. Nine owner-review policy tests, strict Clippy, formatting and development-scope traceability pass. All ten previously approved conformance streams were replayed with unchanged two bitmap passes, seven exact reviewed strict rejections and one unsupported colour case. Earlier reference/catalog contrast, mutation, capacity and hosted-resource measurements remain historical in Git at 046d371 and the retained component history; they are not newly claimed executions by this correction. Complete aggregate-output proofs and independent normative fidelity remain open.",
   "duplicate_executable_proof_source": false,
+  "dictionary_fix_ci_profile_correction": {
+    "rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/43244487615",
+    "attempt": 1,
+    "source_revision": "70807eb5b5b1149f17dafa35bb2c77619ab410c9",
+    "all_semantic_groups_passed": true,
+    "group_count": 61,
+    "contrast_count": 494,
+    "rejected_shard": 9,
+    "rejected_shard_seconds": 1125.863,
+    "moved_group": "reference-type-lookup",
+    "destination_shard": 12,
+    "projected_source_shard_seconds": 945.154,
+    "projected_destination_shard_seconds": 826.896,
+    "guard_seconds_unchanged": 1050,
+    "semantic_shards_unchanged": 14,
+    "scope": "Planning from the complete rejected same-run profile, not acceptance credit. Every contrast, checker, resource cap, whole/collector role and parallelism setting is retained. Only this existing group's shard assignment changes; a fresh complete same-run profile must pass before protected integration."
+  },
   "normative_approval": false,
   "release_gate": "blocked",
   "release_blockers": [
