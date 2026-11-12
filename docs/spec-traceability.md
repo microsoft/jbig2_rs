@@ -380,6 +380,20 @@ order. They do not alone identify encoded export flags or prove complete
 refinement/aggregation/text output. Pattern/halftone header contracts bind raw
 fields and parser extent, not the complete grid/raster/caller interpretation.
 
+The DEV-952C7B7561 regression in
+[`dictionary_dispatch.rs`](../src/symbol_text/tests/dictionary_dispatch.rs)
+covers 119 encoded Huffman refinement/aggregate dictionary cases with exact
+pixels and consumed lengths. These use implicit fixed-width IDs based on all
+imported and declared new symbols (T.88 6.5.8.2.3), not a transmitted text-region
+symbol-ID table. The dictionary table-selection contract also binds the nested
+text fields to Table 17's standard tables. This is bounded regression evidence
+and a table-selection contract, not an end-to-end aggregate-output proof.
+The user approved integrating and pushing this targeted correction on
+2026-11-12; `semantic_review_renewal` records that approval and the integrated
+source hash. Upstream historical review receipts are preserved. This does not
+renew global normative/model review, constitute an authenticated GitHub review
+or authorize publication.
+
 ## Checker contract
 
 `tools/check_traceability.py` checks schema/IDs, exact feature membership,

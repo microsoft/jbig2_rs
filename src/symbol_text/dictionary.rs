@@ -5,9 +5,8 @@ use super::bitmap::{
     refinement_template_from_u8,
 };
 use super::codec::{
-    byte_align, decode_checked_symbol_id, decode_symbol_id_code_lengths, new_arithmetic_codec,
-    new_huffman_codec, normalized_bounded_arithmetic, read_symbol_id_runcode_lines,
-    validate_bounded_arithmetic_marker,
+    byte_align, decode_checked_symbol_id, new_arithmetic_codec, new_huffman_codec,
+    normalized_bounded_arithmetic, validate_bounded_arithmetic_marker,
 };
 #[cfg(verus_keep_ghost)]
 use super::symbol_text_spec;
@@ -106,7 +105,6 @@ pub(crate) fn decode_symbol_dictionary(
                 &header,
                 input.imported_symbols,
                 body,
-                code_length,
                 total_symbols,
                 refinement_adaptive,
                 input.custom_tables,

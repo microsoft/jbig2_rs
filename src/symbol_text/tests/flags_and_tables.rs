@@ -536,15 +536,15 @@ fn raw_table_associations_reject_missing_fields_and_preserve_borrowed_tables(
         IntegerField::RefinementY,
         IntegerField::RefinementSize,
         IntegerField::DictionaryBitmapSize,
-    ] {
-        assert!(dictionary_tables.table_for(field).is_some());
-    }
-    for field in [
         IntegerField::StripDelta,
         IntegerField::FirstS,
         IntegerField::SubsequentS,
         IntegerField::RefinementWidth,
         IntegerField::RefinementHeight,
+    ] {
+        assert!(dictionary_tables.table_for(field).is_some());
+    }
+    for field in [
         IntegerField::WithinStripT,
         IntegerField::RefinementIndicator,
     ] {

@@ -6,12 +6,12 @@ use super::*;
 use super::{
     assemble_exported_symbols, associate_dictionary_tables, bitmap_from_packed_bytes, byte_align,
     crop_bitmap_columns, decode_export_runs, decode_mmr, decode_one_new_symbol,
-    decode_symbol_id_code_lengths, materialize_huffman_table, new_huffman_codec,
-    read_symbol_id_runcode_lines, refinement_template_from_u8, required_integer,
-    select_dictionary_tables, wrap_custom_tables, BitReader, Bitmap, DecodeError,
-    DictionaryClassState, EntropyInteger, EofbPolicy, HuffmanChoiceSet, HuffmanFieldTables,
-    HuffmanTable, IntegerField, Limits, MalformedError, RefinementContextSnapshot, ResourceTracker,
-    StandardHuffmanTables, SymbolCodebook, SymbolCodec, SymbolDictionaryHeader, SymbolTextError,
+    materialize_huffman_table, new_huffman_codec, refinement_template_from_u8, required_integer,
+    select_dictionary_tables, symbol_id_code_length, wrap_custom_tables, BitReader, Bitmap,
+    DecodeError, DictionaryClassState, EntropyInteger, EofbPolicy, HuffmanChoiceSet,
+    HuffmanFieldTables, HuffmanTable, IntegerField, Limits, MalformedError,
+    RefinementContextSnapshot, ResourceTracker, StandardHuffmanTables, SymbolCodebook, SymbolCodec,
+    SymbolDictionaryHeader, SymbolTextError,
 };
 
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
@@ -89,13 +89,14 @@ pub(in crate::symbol_text) fn decode_symbol_dictionary_huffman(
     header: &SymbolDictionaryHeader,
     imported: SymbolCodebook<'_>,
     body: &[u8],
-    code_length: u8,
     total_symbols: u32,
     refinement_adaptive: [(i8, i8); 2],
     custom_tables: &[&HuffmanTable],
     limits: &Limits,
 ) -> Result<(Vec<Bitmap>, Option<RefinementContextSnapshot>, usize), SymbolTextError> {
     let config = header.config;
+    // T.88 6.5.8.2.3: implicit fixed-width IDs, constant for this dictionary.
+    let code_length = symbol_id_code_length(total_symbols)?.max(1);
     let custom_wrapped = wrap_custom_tables(custom_tables)?;
     let bindings = associate_dictionary_tables(&config, &custom_wrapped)?;
     let choices = select_dictionary_tables(&config, &bindings)?;
@@ -194,18 +195,6 @@ pub(in crate::symbol_text) fn decode_symbol_dictionary_huffman(
                 let instances = required_integer(&mut codec, IntegerField::AggregationInstances)?;
                 let instances = u32::try_from(instances)
                     .map_err(|_| SymbolTextError::InvalidEntropyValue("aggregation instances"))?;
-                if instances > 1 {
-                    let SymbolCodec::Huffman(huffman) = &mut codec else {
-                        return Err(SymbolTextError::InvalidState(
-                            "Huffman dictionary has non-Huffman state",
-                        ));
-                    };
-                    prepare_symbol_ids!(huffman, total_symbols, limits)?;
-                    #[cfg(verus_keep_ghost)]
-                    proof! {
-                        reveal(symbol_text_spec::codec_valid);
-                    }
-                }
                 let bitmap = decode_one_new_symbol(
                     header,
                     &mut codec,

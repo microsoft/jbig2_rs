@@ -216,9 +216,9 @@ impl HuffmanCodec<'_> {
     ) -> Result<u32, SymbolTextError> {
         // When a symbol-ID Huffman table has been prepared (T.88 7.4.3.1.7,
         // normal text-region decoding), decode through it. Otherwise this is
-        // the symbol dictionary's own single-instance aggregate refinement ID
-        // (T.88 6.5.8.2.2), which T.88 specifies as a literal fixed-width
-        // field of `code_length` bits, not a Huffman code.
+        // a symbol dictionary's refinement/aggregate ID (T.88 6.5.8.2.3):
+        // an implicit index code of `code_length` bits, for both single-
+        // and multiple-instance symbols.
         if let Some(table) = self.symbol_id_table.as_ref() {
             match table.decode(&mut self.reader)? {
                 HuffmanValue::Integer(value) => u32::try_from(value).map_err(|_| {

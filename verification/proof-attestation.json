@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "status": "verified_exact_project_scope_with_reviewed_limits",
-  "source_revision": "5d362a82051c875d09d1528a42c7ab08890cb85a",
-  "scope": "Exact-source whole verification/compilation proves all four concrete reference-type helpers: first local/global resolution and out-of-range absence; intermediate classification; symbol/table eligibility and owner-specific accepted/error result. Unresolved symbol/text references deliberately remain skipped here because preceding link validation owns missing-reference rejection. Existing index-range domains, native behavior, field privacy and trust are unchanged. Checked first-index uniqueness and prefix-table monotonicity support the owning contracts, not a normative bridge.",
+  "source_revision": "3a1b3b4bf6bb3d6bd0090fce2b3268fe6aed8dce",
+  "scope": "Fresh exact-source whole verification/compilation of DEV-952C7B7561 integrated onto current main. Huffman aggregate dictionaries retain implicit fixed-width symbol IDs and materialize the nested Table 17 bindings. The table-selection contract identifies the required standard tables. Existing upstream contracts and trust boundaries remain unchanged; 119 encoded challenges, unavailable-ID rejection and chained aggregates are finite native output evidence, not a complete aggregate-output theorem or independent normative certificate.",
   "toolchain": {
     "manifest": "config/toolchain.json",
     "verus_version": "0.2026.10.04.426d8b0",
     "verus_commit": "426d8b01e7ffb910a36c15e1f870ff985bb61eef",
     "archive_sha256": "624018662868563a7bec0dd07be5e4dd0c3d61124b4b55105765884bf2d4d1a0"
   },
-  "command": "CARGO_BUILD_JOBS=1 PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=/workspace/jbig2-reference-type-baseline-v02-20261106/target/reference-types/whole-final-target cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --num-threads 1 --rlimit 30 --triggers-mode silent --output-json",
+  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-cargo cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --output-json",
   "result": {
     "verified_obligations": 1314,
     "verified_production_functions": 648,
@@ -24,7 +24,7 @@
     "runtime_proof_divergences": 0,
     "incomplete_functions": 0
   },
-  "production_proof_coverage_sha256": "32c871395b0efcd11d621ebc88b0be0debe90b775c89f12bcaa4aff3b40b9ccd",
+  "production_proof_coverage_sha256": "d56bfb4a5cbc4c705230fb0faab6f026a8b1092dd4504ee23f732c6fe92a1eb5",
   "proof_dispositions_sha256": "ec71578882af39d20e44e6f727e896d9a9cd69f5baa7ab4c942f9306b1ed268a",
   "standard_library_boundary": {
     "manifest": "verification/stdlib/review.json",
@@ -33,8 +33,26 @@
     "review_kind": "delegated_engineering_review",
     "normative_approval": false
   },
-  "current_evidence_note": "Actual unfiltered whole1314/0/nonemptylibrary,668explicit/648direct20reviewed. Twelve real compiling positives/strong/weak contrasts split6lookup/6classes; all307native faults compile and are detected, including every old case. Four independent native oracles cover all22owner and22resolved kinds, selected cardinalities including4/8table boundaries, duplicate lookup precedence, local/global override and staged missing-reference policy. Same4oracles pass on original production; all148existing ordinary native projections match and the new source file is test-only. No runtime/domain/privacy/trust change, machine-code/allocator or independent normative fidelity claim. Native1259identities298derives andAPIdeclaration categories unchanged. Actual156-file MSRV/offline/no-upload and numericalcoveragefloors pass. Live494contrasts/61groups/307native/418bindings retain14shards/16roles/max4/all1050s/jobcaps/pins andeveryoldcase/assignment; new6+6groups use existing3/13headroom. Original42310047778attempt1 passedall61groups but rejectedshard11=1083.081350s. Onlynewreference-type-classes moves11->13;pergroupmaxima withacceptedbaseline predictmax967.594566s,planningonlynotacceptance. Failedprofile retainednofailed-headcredit. Owning surfaces540->544, rawverifiednoLocal108->104, minus24existing separatelyqualifiedowners projects84->80reviewcandidates,notmissingproofs/readinesspercentage. Registry218/266selected/257gaprows remainprovisional; sixconcretestagedmodels/globalprojection are separatelypurposeclassified unregistered support/results, no normativeowner invented. Statements-processing handoff remains blocked; validatorexecution/version/input adaptation is separate from internal plan. Native/Verus/generated/platform/domain/semanticquality qualification and complete statement mapping remainopen. Freshoriginalexactheadhostedacceptance/protectedintegration stillrequired.",
+  "current_evidence_note": "Fresh integrated-source whole Verus verification and nonempty library compilation: 1314 verified obligations, zero errors; 648 direct production functions and 20 reviewed limitations. All 84 symbol/text tests pass, including the 119-case encoded aggregate-ID regression, invalid-ID rejection and chained aggregates. Nine owner-review policy tests, strict Clippy, formatting and development-scope traceability pass. All ten previously approved conformance streams were replayed with unchanged two bitmap passes, seven exact reviewed strict rejections and one unsupported colour case. Earlier reference/catalog contrast, mutation, capacity and hosted-resource measurements remain historical in Git at 046d371 and the retained component history; they are not newly claimed executions by this correction. Complete aggregate-output proofs and independent normative fidelity remain open.",
   "duplicate_executable_proof_source": false,
+  "dictionary_fix_ci_profile_correction": {
+    "rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/43244487615",
+    "attempt": 1,
+    "source_revision": "70807eb5b5b1149f17dafa35bb2c77619ab410c9",
+    "all_semantic_groups_passed": true,
+    "group_count": 61,
+    "contrast_count": 494,
+    "rejected_shard": 9,
+    "rejected_shard_seconds": 1125.863,
+    "moved_group": "reference-type-lookup",
+    "destination_shard": 10,
+    "projected_source_shard_seconds": 945.154,
+    "projected_destination_shard_seconds": 897.681,
+    "complete_historical_profile_maximum_seconds": 1028.924,
+    "guard_seconds_unchanged": 1050,
+    "semantic_shards_unchanged": 14,
+    "scope": "Planning from complete preserved historical profiles and the rejected same-run profile, not acceptance credit. Shard 12 was discarded because it overflows the preserved expanded-profile measurement; shard 10 fits their per-group maxima. Every contrast, checker, resource cap, whole/collector role and parallelism setting is retained. Only this existing group's shard assignment changes; a fresh complete same-run profile must pass before protected integration."
+  },
   "normative_approval": false,
   "release_gate": "blocked",
   "release_blockers": [
