@@ -1,5 +1,21 @@
 # Release validation
 
+## 0.2.0 scope
+
+The 0.2.0 release includes the fixed-width Huffman aggregate-dictionary
+correction from #173 and stronger selected contracts for symbol IDs, reusable
+contexts, decoded metadata, globals and references. Compared with 0.1.2,
+application obligations increase from 1,287 to 1,314 and semantic contrasts
+from 357 to 494. These are bounded contract and sensitivity results, not
+percentages of standards coverage or complete decoded-output proofs.
+
+Rust 1.88.0 remains the runtime MSRV and the crate has no runtime dependencies.
+The early-release warning and partial-Verus/conformance limitations below
+remain in effect. The [versioned release](https://github.com/microsoft/jbig2_rs/releases/tag/v0.2.0)
+records the final source, registry checksum and publication evidence.
+
+## Initial 0.1.0 release evidence
+
 `jbig2-decoder` 0.1.0 is published on
 [crates.io](https://crates.io/crates/jbig2-decoder/0.1.0).
 Its Rust import is `jbig2_decoder`, its runtime MSRV is Rust 1.88.0, and it has

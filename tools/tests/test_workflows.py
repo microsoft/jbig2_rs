@@ -343,7 +343,8 @@ class WorkflowPolicyTests(unittest.TestCase):
         for name in ("ci", "coverage", "fuzz", "performance", "verus"):
             original = load_workflow((TOOLS.parent / f".github/workflows/{name}.yml").read_text())
             self.assertTrue(check_workflow(original, f"{name}.yml"))
-            for branches in (["main"], ["release/0.1"], ["main", "release/**"], ["**"]):
+            for branches in (["main"], ["release/0.1"], ["main", "release/0.1"],
+                             ["main", "release/**"], ["**"]):
                 document = copy.deepcopy(original)
                 document["on"]["push"]["branches"] = branches
                 with self.subTest(workflow=name, branches=branches), self.assertRaises(ValueError):
@@ -370,10 +371,10 @@ class WorkflowPolicyTests(unittest.TestCase):
             with self.subTest(mutation=mutation), self.assertRaisesRegex(ValueError, "dry run"):
                 check_workflow(document, "ci.yml")
 
-    def test_development_verus_scope_cannot_skip_checked_report_or_test_discovery(self):
+    def test_current_verus_scope_cannot_skip_checked_report_or_test_discovery(self):
         actual = load_workflow((TOOLS.parent / ".github/workflows/verus.yml").read_text())
         check_workflow(actual, "verus.yml")
-        for flag in ("--require-development-scope", "--discover-tests"):
+        for flag in ("--require-current-scope", "--discover-tests"):
             document = copy.deepcopy(actual)
             step = next(
                 item for item in document["jobs"]["whole"]["steps"]

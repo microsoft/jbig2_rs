@@ -149,12 +149,37 @@
         "development_scope": {
           "type": "object", "additionalProperties": false,
           "required": ["profile", "crate_version", "maintenance_branch", "proof_completion_issue", "publication_enabled"],
+          "oneOf": [
+            {"properties": {"profile": {"const": "0.2-development"}, "crate_version": {"const": "0.2.0-dev"}, "maintenance_branch": {"const": "release/0.1"}}},
+            {"properties": {"profile": {"const": "0.3-development"}, "crate_version": {"const": "0.3.0-dev"}, "maintenance_branch": {"const": "release/0.2"}}}
+          ],
           "properties": {
-            "profile": {"const": "0.2-development"},
-            "crate_version": {"const": "0.2.0-dev"},
-            "maintenance_branch": {"const": "release/0.1"},
+            "profile": {"enum": ["0.2-development", "0.3-development"]},
+            "crate_version": {"enum": ["0.2.0-dev", "0.3.0-dev"]},
+            "maintenance_branch": {"enum": ["release/0.1", "release/0.2"]},
             "proof_completion_issue": {"const": "https://github.com/microsoft/jbig2_rs/issues/135"},
             "publication_enabled": {"const": false}
+          }
+        },
+        "publication_scope": {
+          "type": "object", "additionalProperties": false,
+          "required": [
+            "profile", "crate_version", "release_branch", "authority", "approved_at", "instruction",
+            "decision_reference", "exhaustive_requirement_coverage_required", "complete_functional_proof_required",
+            "existing_proof_and_quality_gates_required", "full_spec_conformance_claim"
+          ],
+          "properties": {
+            "profile": {"const": "0.2-partial-verus"},
+            "crate_version": {"const": "0.2.0"},
+            "release_branch": {"const": "release/0.2"},
+            "authority": {"const": "repository_owner_release_scope"},
+            "approved_at": {"$ref": "#/$defs/nonempty"},
+            "instruction": {"$ref": "#/$defs/nonempty"},
+            "decision_reference": {"type": "string", "pattern": "^agent-host-session://ahp-session/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"},
+            "exhaustive_requirement_coverage_required": {"const": false},
+            "complete_functional_proof_required": {"const": false},
+            "existing_proof_and_quality_gates_required": {"const": true},
+            "full_spec_conformance_claim": {"const": false}
           }
         },
         "historical_owner_review_confirmation": {"$ref": "#/$defs/traceability/properties/owner_review_confirmation"},

@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Existing reviewed version tag (for example v0.1.1)
+        description: Existing reviewed version tag (for example v0.2.0)
         required: true
         type: string
       dry_run:
@@ -20,7 +20,7 @@ permissions:
 
 jobs:
   validate:
-    if: github.repository == 'microsoft/jbig2_rs' && (github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/release/0.1'))
+    if: github.repository == 'microsoft/jbig2_rs' && (github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && (github.ref == 'refs/heads/release/0.1' || github.ref == 'refs/heads/release/0.2')))
     runs-on: ubuntu-latest
     timeout-minutes: 120
     permissions:
@@ -38,7 +38,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: release/0.1
+          ref: ${{ startsWith(github.event.release.tag_name || inputs.tag, 'v0.2.') && 'release/0.2' || 'release/0.1' }}
           fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
@@ -102,7 +102,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: release/0.1
+          ref: ${{ startsWith(github.event.release.tag_name || inputs.tag, 'v0.2.') && 'release/0.2' || 'release/0.1' }}
           fetch-depth: 0
           persist-credentials: false
       - name: Preserve trusted validation helper

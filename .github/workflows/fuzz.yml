@@ -3,7 +3,7 @@ name: Bounded fuzz validation
 on:
   pull_request:
   push:
-    branches: [main, release/0.1]
+    branches: [main, release/0.1, release/0.2]
     tags: ["**"]
   schedule:
     - cron: "30 2 * * *"

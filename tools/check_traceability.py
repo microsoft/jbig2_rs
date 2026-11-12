@@ -1091,8 +1091,8 @@ def check_v01_scope(root, ledger, report):
 
 def check_development_scope(root, ledger, report):
     scope = ledger.get("development_scope")
-    if not isinstance(scope, dict) or scope.get("profile") != "0.2-development":
-        raise ValueError("development scope requires the recorded 0.2 development profile")
+    if not isinstance(scope, dict) or scope.get("profile") not in {"0.2-development", "0.3-development"}:
+        raise ValueError("development scope requires a recorded supported development profile")
     package = tomllib.loads((root / "Cargo.toml").read_text())["package"]
     if package["version"] != scope["crate_version"] or package.get("publish") is not False:
         raise ValueError("development version must match its scope and keep publication disabled")
@@ -1103,6 +1103,36 @@ def check_development_scope(root, ledger, report):
         "exhaustive_requirement_coverage": report["decomposition_review_complete"],
         "complete_functional_proof": report["semantic_claims_complete"],
         "remaining_quality_and_release_checks_required": True,
+        "publication_performed": False,
+    }
+
+
+def check_current_scope(root, ledger, report):
+    if ("development_scope" in ledger) == ("publication_scope" in ledger):
+        raise ValueError("exactly one current development or publication scope is required")
+    if "development_scope" in ledger:
+        return check_development_scope(root, ledger, report)
+    scope = ledger["publication_scope"]
+    package = tomllib.loads((root / "Cargo.toml").read_text())["package"]
+    if (
+        scope["profile"] != "0.2-partial-verus"
+        or scope["crate_version"] != package["version"]
+        or package.get("publish") != ["crates-io"]
+        or scope["release_branch"] != "release/0.2"
+    ):
+        raise ValueError("publication version, branch and crates.io-only target must match the approved scope")
+    try:
+        approved_at = datetime.fromisoformat(scope["approved_at"])
+    except (TypeError, ValueError):
+        raise ValueError("publication scope requires a timezone-qualified approval") from None
+    if approved_at.tzinfo is None:
+        raise ValueError("publication scope requires a timezone-qualified approval")
+    if not report["verifier_report_checked"] or not report["cargo_test_discovery_checked"]:
+        raise ValueError("publication scope requires checked Verus and Cargo discovery evidence")
+    return {
+        **scope,
+        "exhaustive_requirement_coverage": report["decomposition_review_complete"],
+        "complete_functional_proof": report["semantic_claims_complete"],
         "publication_performed": False,
     }
 
@@ -1124,7 +1154,11 @@ def main():
     )
     parser.add_argument(
         "--require-development-scope", action="store_true",
-        help="Require the unpublished 0.2 development scope and actual proof/test discovery, not full coverage.",
+        help="Require the unpublished development scope and actual proof/test discovery, not full coverage.",
+    )
+    parser.add_argument(
+        "--require-current-scope", action="store_true",
+        help="Require the branch's explicit development or publication scope and actual proof/test discovery.",
     )
     parser.add_argument(
         "--require-reviewed-decomposition", action="store_true",
@@ -1169,10 +1203,12 @@ def main():
             or arguments.audit_packet.resolve() in output_paths
         ):
             parser.error("create audit packets separately from reports under target/")
-    if arguments.require_v01_scope and arguments.require_development_scope:
+    if sum((arguments.require_v01_scope, arguments.require_development_scope,
+            arguments.require_current_scope)) > 1:
         parser.error("development and publication scope profiles are mutually exclusive")
     if (arguments.require_complete or arguments.require_reviewed_decomposition
-        or arguments.require_v01_scope or arguments.require_development_scope) and (
+        or arguments.require_v01_scope or arguments.require_development_scope
+        or arguments.require_current_scope) and (
         not arguments.verus_json or not arguments.discover_tests
     ):
         parser.error("completion gates need Verus evidence and Cargo test discovery")
@@ -1191,6 +1227,8 @@ def main():
             report["scoped_release"] = check_v01_scope(ROOT, ledger, report)
         if arguments.require_development_scope:
             report["development_scope"] = check_development_scope(ROOT, ledger, report)
+        if arguments.require_current_scope:
+            report["current_scope"] = check_current_scope(ROOT, ledger, report)
         if arguments.audit_packet or arguments.check_audit_packet:
             ledger_path = arguments.ledger.resolve().relative_to(ROOT.resolve()).as_posix()
             if arguments.check_audit_packet:
@@ -1351,6 +1389,8 @@ def main():
             summary["scoped_release"] = report["scoped_release"]
         if "development_scope" in report:
             summary["development_scope"] = report["development_scope"]
+        if "current_scope" in report:
+            summary["current_scope"] = report["current_scope"]
         print(json.dumps(summary, indent=2))
         enforce_completion(
             report, arguments.require_reviewed_decomposition, arguments.require_complete,
