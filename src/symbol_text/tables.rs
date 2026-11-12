@@ -400,9 +400,22 @@ impl HuffmanFieldChoices<'_> {
                 && choices.dictionary_bitmap_size.is_some()
                 && (config.refinement_aggregation ==> (
                     choices.aggregation_instances.is_some()
-                        && choices.refinement_x.is_some()
-                        && choices.refinement_y.is_some()
-                        && choices.refinement_size.is_some()
+                        && choices.first_s
+                            == Some(BoundHuffmanTable::Standard(StandardHuffmanTable::F))
+                        && choices.subsequent_s
+                            == Some(BoundHuffmanTable::Standard(StandardHuffmanTable::H))
+                        && choices.strip_delta
+                            == Some(BoundHuffmanTable::Standard(StandardHuffmanTable::K))
+                        && choices.refinement_width
+                            == Some(BoundHuffmanTable::Standard(StandardHuffmanTable::O))
+                        && choices.refinement_height
+                            == Some(BoundHuffmanTable::Standard(StandardHuffmanTable::O))
+                        && choices.refinement_x
+                            == Some(BoundHuffmanTable::Standard(StandardHuffmanTable::O))
+                        && choices.refinement_y
+                            == Some(BoundHuffmanTable::Standard(StandardHuffmanTable::O))
+                        && choices.refinement_size
+                            == Some(BoundHuffmanTable::Standard(StandardHuffmanTable::A))
                 )),
         Err(_) => true,
     },
@@ -439,6 +452,12 @@ pub(super) fn select_dictionary_tables<'a>(
                 SymbolTextError::InvalidTableAssociation("missing aggregation-instances table"),
             )?,
         );
+        // T.88 Table 17 fixes the nested text decoder's tables.
+        choices.first_s = Some(BoundHuffmanTable::Standard(StandardHuffmanTable::F));
+        choices.subsequent_s = Some(BoundHuffmanTable::Standard(StandardHuffmanTable::H));
+        choices.strip_delta = Some(BoundHuffmanTable::Standard(StandardHuffmanTable::K));
+        choices.refinement_width = Some(BoundHuffmanTable::Standard(StandardHuffmanTable::O));
+        choices.refinement_height = Some(BoundHuffmanTable::Standard(StandardHuffmanTable::O));
         choices.refinement_x = Some(BoundHuffmanTable::Standard(StandardHuffmanTable::O));
         choices.refinement_y = Some(BoundHuffmanTable::Standard(StandardHuffmanTable::O));
         choices.refinement_size = Some(BoundHuffmanTable::Standard(StandardHuffmanTable::A));

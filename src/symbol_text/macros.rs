@@ -18,6 +18,11 @@ macro_rules! materialize_huffman_tables {
                 let export_run = resolve!(choices.export_run);
                 let dictionary_bitmap_size = resolve!(choices.dictionary_bitmap_size);
                 let aggregation_instances = resolve!(choices.aggregation_instances);
+                let strip_delta = resolve!(choices.strip_delta);
+                let first_s = resolve!(choices.first_s);
+                let subsequent_s = resolve!(choices.subsequent_s);
+                let refinement_width = resolve!(choices.refinement_width);
+                let refinement_height = resolve!(choices.refinement_height);
                 let refinement_x = resolve!(choices.refinement_x);
                 let refinement_y = resolve!(choices.refinement_y);
                 let refinement_size = resolve!(choices.refinement_size);
@@ -27,11 +32,11 @@ macro_rules! materialize_huffman_tables {
                     height_delta,
                     width_delta,
                     export_run,
-                    strip_delta: None,
-                    first_s: None,
-                    subsequent_s: None,
-                    refinement_width: None,
-                    refinement_height: None,
+                    strip_delta,
+                    first_s,
+                    subsequent_s,
+                    refinement_width,
+                    refinement_height,
                     refinement_x,
                     refinement_y,
                     refinement_size,

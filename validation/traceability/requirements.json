@@ -24,7 +24,7 @@
   "model_classifications": {
     "review": "author-navigation-only-not-independent-normative-approval",
     "registry_sha256": "6bc9065d1537f3c4193dbbcd7a17113d5bd2eb3c914147465b8db8afd6943c6f",
-    "project_source_sha256": "139c966619b761b46f2e5acdcd28813793737500e5a4c64b38663ba878b8d383",
+    "project_source_sha256": "215432e43f016210639205a7c9299f32766748cd5c1ee2b85ea25d3efc8ab941",
     "families": [
       {
         "file": "specs/huffman_lookup.rs",
@@ -2037,7 +2037,7 @@
     "src/symbol_text/codebook.rs": "3ad3dd4131dbb7343a3267f32718d4c5278f029c1b90937f45d06363b8defbcc",
     "src/symbol_text/codec.rs": "433dd49f3cb5f88b50038993b8bbc276346900966ea41c721c02555e6d44b5a7",
     "src/symbol_text/codec/arithmetic.rs": "448f9b67ecf868936070a11d1a2d794c4e1e0c85a3a699e194d90882f9c54f89",
-    "src/symbol_text/codec/huffman.rs": "3ae0a0c9c2a0db2d34f7e117738d01e8e7597e42554c8f2c57c9aae6be196ea9",
+    "src/symbol_text/codec/huffman.rs": "a706f6674a164c1398d6fdc199a4a0ef8614a86e0be69e6eb13e3a8c2f6b83a1",
     "src/symbol_text/codec/refinement.rs": "71d5bb90d828932191eba96f52982c1f7adc24433cb5e4d21dc721b3f6997d83",
     "src/symbol_text/codec/symbols.rs": "01f2f2d2739c42ce2ed5fe4ed170451082478dcfc7f405b73ac9f6a819ce3248",
     "src/symbol_text/dictionary/arithmetic.rs": "ec5f35829b9804df281950f3bbc33dd16ac766c9aa58c9a396e97f1caf7e9638",
@@ -2045,8 +2045,8 @@
     "src/symbol_text/headers.rs": "25cefaa81ed375250782b118c3410fadd9531ee28c1dac87c5e8688a6f88f288",
     "src/symbol_text/placement.rs": "6fe7228afc13c0735fcfe0d9359e07e03dfdd5a6883ba8d79523dcfde8885e5d",
     "src/symbol_text/tests/codec_and_exports.rs": "0df482da2750590d9de90111ccac1583cde0c20b3d68c28ffe76b7eecd7a793d",
-    "src/symbol_text/tests/dictionary_dispatch.rs": "a14f71e015d84a3bf1640956ab9c49b235880673962ca6564bf2bf84f6d53d8e",
-    "src/symbol_text/tests/flags_and_tables.rs": "baf5d5b4ad7794a248d292b733abb4f56185aae639fceba33472d609a13fd651",
+    "src/symbol_text/tests/dictionary_dispatch.rs": "6b82a9db329cd8fdb1b7773398015cdcbfc88b9d9927d433ceb727671a9e63fb",
+    "src/symbol_text/tests/flags_and_tables.rs": "ac4e3ee2b5aadda78ebbe2c7804584f49a48a96816c85fa37adb99aa2a0113fe",
     "src/symbol_text/tests/huffman_fields.rs": "222ee8d81f8b0acd926e3cfb85288464919ba835027353024447d9f108ace38d",
     "src/symbol_text/tests/placement_render.rs": "5d07c12827335abdba47df041992ea76e1b12d1a2ae1fb598ba3d4ecba1350b1",
     "src/symbol_text/tests/placement_state.rs": "4842dd4690593cf25b854787030a1e99f93c5611801899a22fce35f9625c75e3",
@@ -2062,8 +2062,8 @@
     "specs/symbol_text/huffman_codec.rs": "3a56e2a0f9c27443b1ee91029c92584a45df3398fc4f433de4ffc1e717246295",
     "src/symbol_text/tests/huffman_symbol_ids.rs": "89dce150f0deb0e9eb16bb38cda5238c6546589d8022829680c412ff4f3becd0",
     "src/symbol_text/tests/text_termination.rs": "3b629b51e16bdf7dfcedf2a6c46b99c95a2fe6042b8b0da4e74f069722789eeb",
-    "src/symbol_text/dictionary.rs": "edf276aaf02772cda1a66d7b0a50f4a038086ddb41422225f902abc04faaabaa",
-    "src/symbol_text/dictionary/huffman.rs": "d741f90a472575929b06b5b3b8bfa0c3078f05369519ba7810f846eb8e5c6984",
+    "src/symbol_text/dictionary.rs": "b99bd4a230dc44203b933cd9043bd8ad0eda89dfd6d33935fc8cdc403714bdda",
+    "src/symbol_text/dictionary/huffman.rs": "ee2608bd3a80d469484cfd086228f07ce789cd9c7b058a20f240e890c075249f",
     "src/generic_region/tests/sessions_and_snapshots.rs": "bd8218eef90ffc10ec9731e44669fe819bd87f194264dcb16ac077bddf371b12",
     "specs/generic_region/framing.rs": "4cd4e9b1c381135ae89acdec59a7f9fda2a610625ed24ce0ffcbcb84fc5a02e7",
     "src/generic_region/segments.rs": "d84e912d208b1dd85160d4e0065a0b682cc48f63fbcf53ada5488ccaf2a8e59a",
@@ -5817,6 +5817,18 @@
         {
           "target": "lib",
           "name": "symbol_text::tests::dictionary_dispatch::refinement_still_rejects_missing_and_zero_instance_counts"
+        },
+        {
+          "target": "lib",
+          "name": "symbol_text::tests::dictionary_dispatch::huffman_dictionary_aggregation_preserves_standard_fixed_symbol_ids"
+        },
+        {
+          "target": "lib",
+          "name": "symbol_text::tests::dictionary_dispatch::huffman_dictionary_aggregate_rejects_unavailable_fixed_ids"
+        },
+        {
+          "target": "lib",
+          "name": "symbol_text::tests::dictionary_dispatch::huffman_dictionary_aggregates_can_reference_previous_new_symbols"
         }
       ],
       "strength": "functional_contract",
@@ -5827,7 +5839,7 @@
       ],
       "gaps": [
         "Prove field extraction, instance-count decoding, count-one/count-many dispatch and all aggregation parameter/output relations.",
-        "Raw scripted dispatch regressions cover the required count-one route and invalid-count rejection only; they do not establish encoded refinement/aggregation or normative output fidelity."
+        "Raw scripted dispatch regressions cover the required count-one route and invalid-count rejection. DEV-952C7B7561 adds 119 encoded unrefined multi-instance cases with exact pixels and consumed lengths, unavailable-ID rejection and previous-new-symbol references. These finite cases do not establish complete encoded refinement/aggregation fidelity or an aggregate-output theorem."
       ],
       "functional_evidence": [
         {
@@ -19618,5 +19630,14 @@
     "complete_functional_proof": false,
     "independent_certificate": false,
     "scope": "Effective source snapshot after documentation-only rebinding. All non-comment Rust tokens, literal contents, cfg branches, signatures, contracts, models, proofs and fenced examples match the exact base across207Rustfiles. The original confirmation is preserved in documentation_only_rebinding; its date is not a new semantic review of this documentation. Requirement rows, strengths and gaps are unchanged."
+  },
+  "semantic_review_renewal": {
+    "finding": "DEV-952C7B7561",
+    "confirmed_at": "2026-11-12T14:59:37.237+00:00",
+    "instruction": "Why aren't you completing the changes in main? Please, go ahead pushing them and stop slowing down so much!",
+    "decision_reference": "agent-host-session://ahp-session/0940700e-faa1-4257-a786-58cf3bd4a573",
+    "base_revision": "046d3716f249a869c980c2c09df5aaffaf234a5b",
+    "project_source_sha256": "215432e43f016210639205a7c9299f32766748cd5c1ee2b85ea25d3efc8ab941",
+    "scope": "User approval to integrate and push the targeted fixed-width dictionary-ID and Table 17 correction on current main. Upstream proof work and historical review receipts are preserved; this completion approval does not renew global normative/model review, enable publication or assert full aggregate-output correctness."
   }
 }
