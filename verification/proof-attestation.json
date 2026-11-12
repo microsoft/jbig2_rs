@@ -45,12 +45,13 @@
     "rejected_shard": 9,
     "rejected_shard_seconds": 1125.863,
     "moved_group": "reference-type-lookup",
-    "destination_shard": 12,
+    "destination_shard": 10,
     "projected_source_shard_seconds": 945.154,
-    "projected_destination_shard_seconds": 826.896,
+    "projected_destination_shard_seconds": 897.681,
+    "complete_historical_profile_maximum_seconds": 1028.924,
     "guard_seconds_unchanged": 1050,
     "semantic_shards_unchanged": 14,
-    "scope": "Planning from the complete rejected same-run profile, not acceptance credit. Every contrast, checker, resource cap, whole/collector role and parallelism setting is retained. Only this existing group's shard assignment changes; a fresh complete same-run profile must pass before protected integration."
+    "scope": "Planning from complete preserved historical profiles and the rejected same-run profile, not acceptance credit. Shard 12 was discarded because it overflows the preserved expanded-profile measurement; shard 10 fits their per-group maxima. Every contrast, checker, resource cap, whole/collector role and parallelism setting is retained. Only this existing group's shard assignment changes; a fresh complete same-run profile must pass before protected integration."
   },
   "normative_approval": false,
   "release_gate": "blocked",

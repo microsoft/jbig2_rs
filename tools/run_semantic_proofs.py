@@ -22,7 +22,7 @@ CI_SHARDS = 14
 WHOLE_GROUPS = ("arithmetic-codec",)
 COLLECTOR_GROUPS = ("arithmetic-decision", "reset", "clone-results", "context-callers")
 ADDED_SHARD_GROUPS = {
-    "reference-type-lookup": 12, "reference-type-classes": 13,
+    "reference-type-lookup": 10, "reference-type-classes": 13,
     "reference-accounting": 10, "reference-catalog": 12,
     "public-context": 7,
     "public-decode-results": 4, "public-global-results": 4,
