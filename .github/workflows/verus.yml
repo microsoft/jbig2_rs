@@ -3,7 +3,7 @@ name: Pinned Verus bootstrap
 on:
   pull_request:
   push:
-    branches: [main, release/0.1]
+    branches: [main, release/0.1, release/0.2]
     tags: ["**"]
   workflow_dispatch:
 
@@ -68,7 +68,7 @@ jobs:
             --output-dir target/traceability/expanded-verifier
           python tools/check_traceability.py \
             --verus-json target/verification/verus-production.json \
-            --discover-tests --require-development-scope \
+            --discover-tests --require-current-scope \
             --output target/traceability/verifier-report.json
       - name: Stage whole-crate outputs including failed diagnostics
         if: always()

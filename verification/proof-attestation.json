@@ -58,7 +58,7 @@
   "release_blockers": [
     "Exhaustive supported-scope requirement enumeration and complete functional proofs remain unfinished.",
     "Independent source/table/coordinate fidelity is not established by the new project algebra.",
-    "Entropy-to-region/page/document composition remains incomplete; the 0.2 development crate is unpublished."
+    "Entropy-to-region/page/document composition remains incomplete; publication under a separately approved partial-Verus scope is not full verification."
   ],
   "historical_evidence": "Earlier accepted-main inventories, disposition reasons and detailed component notes remain in Git history at6b7e08a659975d7a7547242a91765ebb9b8f052d. They are not relabeled current evidence. All266 selected requirement records remain provisional; no official rejection credit or new protected fixture consent is granted by this integration.",
   "historical_baseline": {

@@ -1,13 +1,13 @@
 [package]
 name = "jbig2-decoder"
-version = "0.2.0-dev"
+version = "0.2.0"
 edition = "2021"
 rust-version = "1.88.0"
 license = "MIT"
 description = "Memory-safe JBIG2 decoder under development"
 repository = "https://github.com/microsoft/jbig2_rs"
 readme = "README.md"
-publish = false
+publish = ["crates-io"]
 include = [
   "/src/**/*.rs",
   "/README.md",
