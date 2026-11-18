@@ -189,7 +189,14 @@ functions and the same 20 reviewed limitations. Expanded verifier inventory
 reconciliation also passes. Existing aggregate/per-file coverage floors pass
 without modification (12,314/13,259 lines; 2,365/2,704 branches). These local
 results are not a fresh full hosted semantic profile or a PDFium suite result.
-All 817 audit-tool tests pass. Replaying all ten previously approved standalone
+All 818 audit-tool tests pass. Replaying all ten previously approved standalone
 conformance inputs reproduces byte-identical outcomes: two bitmap passes,
 seven existing reviewed strict rejections and one unsupported colour case.
 This renews neither historical normative approval nor full-conformance claims.
+
+The first hosted candidate run verified/compiled all 61 semantic groups and 494
+contrasts, but its collector correctly rejected a 1,080.353-second shard against
+the unchanged 1,050-second guard. One complete `region-dispatch` group is moved
+from shard 10 to shard 0, using complete measured profiles and a regression.
+No check, contrast, worker count, whole/collector role or guard is removed or
+relaxed. A fresh complete hosted profile is required after that allocation change.
