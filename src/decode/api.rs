@@ -42,6 +42,10 @@ impl Decoder {
 
     /// Decodes a contiguous embedded page stream without external globals.
     ///
+    /// A complete input may omit the final end-of-page segment. An initially
+    /// unknown page height must still be established by a completed final stripe.
+    /// This does not permit truncated segment or compressed bitmap data.
+    ///
     /// # Errors
     ///
     /// Returns a typed error for malformed, unresolved, unsupported, or
@@ -57,6 +61,8 @@ impl Decoder {
     }
 
     /// Decodes a contiguous embedded page stream with validated globals.
+    ///
+    /// Final-page completion follows [`Decoder::decode_embedded`].
     ///
     /// # Errors
     ///
@@ -154,6 +160,7 @@ impl Decoder {
             mmr_scratch,
             global_resources,
             &mut collector,
+            true,
         )?;
         let out = DecodedDocument {
             info,
@@ -213,6 +220,7 @@ impl DecoderContext<'_> {
             &mut self.mmr,
             None,
             &mut collector,
+            false,
         )?;
         let out = DecodedDocument {
             info,

@@ -407,6 +407,10 @@ impl Decoder {
 
     /// Parses a contiguous embedded segment stream such as PDF page data.
     ///
+    /// The end of the complete input may terminate the final page without an
+    /// end-of-page segment. An initially unknown height still requires a final
+    /// completed stripe. Segment headers and payloads must not be truncated.
+    ///
     /// # Errors
     ///
     /// Returns a typed error for malformed, unsupported, over-limit, or
@@ -422,6 +426,8 @@ impl Decoder {
     }
 
     /// Parses an embedded page stream with reusable validated global segments.
+    ///
+    /// Final-page completion follows [`Decoder::inspect_embedded`].
     ///
     /// # Errors
     ///

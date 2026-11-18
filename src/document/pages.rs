@@ -31,6 +31,7 @@ pub(super) fn build_document_info(
     segments: &[ParsedSegment<'_>],
     limits: &Limits,
     globals: Option<&GlobalSegments>,
+    embedded: bool,
 ) -> Result<DocumentInfo, DecodeError> {
     validate_references(segments, globals, limits)?;
     validate_profiles(segments)?;
@@ -47,7 +48,7 @@ pub(super) fn build_document_info(
             .into());
         }
     }
-    let pages = finalize_pages(page_states, &page_order)?;
+    let pages = finalize_pages(page_states, &page_order, segments, limits, embedded)?;
 
     let Ok(segment_count) = u32::try_from(segments.len()) else {
         return Err(MalformedError::IntegerOverflow.into());
@@ -192,6 +193,9 @@ pub(super) fn collect_page_states_into(
 pub(super) fn finalize_pages(
     mut page_states: PageStates,
     page_order: &[u32],
+    segments: &[ParsedSegment<'_>],
+    limits: &Limits,
+    embedded: bool,
 ) -> Result<Vec<PageInfo>, DecodeError> {
     let mut pages: Vec<PageInfo> = Vec::new();
     let page_allocation = allocation_size::<PageInfo>(page_states.len())?;
@@ -211,9 +215,16 @@ pub(super) fn finalize_pages(
         let number = page_order[order_index];
         let state_index = keyed_index(&page_states, number)
             .ok_or(MalformedError::MissingPageInformation(number))?;
-        let state = page_states.remove(state_index).1;
+        let mut state = page_states.remove(state_index).1;
         if !state.ended {
-            return Err(MalformedError::MissingEndOfPage(number).into());
+            // Only the final page can use the enclosing embedded stream's end.
+            if !embedded || order_index + 1 != page_order.len() {
+                return Err(MalformedError::MissingEndOfPage(number).into());
+            }
+            if state.info.height.is_none() {
+                validate_implicit_stripes(segments, number, state.info.width, limits)?;
+            }
+            state.finish()?;
         }
         let page = state.into_public(number)?;
         let mut position = 0_usize;
@@ -229,6 +240,73 @@ pub(super) fn finalize_pages(
     }
     validate_public_page_numbers(&pages)?;
     Ok(pages)
+}
+
+#[cfg_attr(verus_keep_ghost, verus_verify)]
+fn validate_implicit_stripes(
+    segments: &[ParsedSegment<'_>],
+    page: u32,
+    width: u32,
+    limits: &Limits,
+) -> Result<(), DecodeError> {
+    let mut region_since_stripe = false;
+    let mut bottom = 0_u64;
+    let mut index = 0_usize;
+    #[cfg_attr(verus_keep_ghost, verus_spec(
+        invariant index <= segments@.len(),
+        decreases segments@.len() - index,
+    ))]
+    while index < segments.len() {
+        let segment = &segments[index];
+        if segment.header.page_association == page {
+            match segment.header.segment_type {
+                SegmentType::EndOfStripe => {
+                    if let ParsedData::EndOfStripe(row) = segment.data {
+                        if bottom > u64::from(row) + 1 {
+                            return Err(MalformedError::InvalidPageState(
+                                "region preceding stripe extends below its end row",
+                            )
+                            .into());
+                        }
+                        region_since_stripe = false;
+                        bottom = 0;
+                    }
+                }
+                SegmentType::ImmediateTextRegion
+                | SegmentType::ImmediateLosslessTextRegion
+                | SegmentType::ImmediateHalftoneRegion
+                | SegmentType::ImmediateLosslessHalftoneRegion
+                | SegmentType::ImmediateGenericRegion
+                | SegmentType::ImmediateLosslessGenericRegion
+                | SegmentType::ImmediateGenericRefinementRegion
+                | SegmentType::ImmediateLosslessGenericRefinementRegion => {
+                    region_since_stripe = true;
+                    let region = crate::segment_data::parse_region_info(
+                        &mut crate::reader::ByteReader::new(segment.payload),
+                        limits,
+                    )?;
+                    if region.x < width && region.width != 0 && region.height != 0 {
+                        bottom = bottom.max(u64::from(region.y) + u64::from(region.height));
+                    }
+                }
+                SegmentType::IntermediateTextRegion
+                | SegmentType::IntermediateHalftoneRegion
+                | SegmentType::IntermediateGenericRegion
+                | SegmentType::IntermediateGenericRefinementRegion => {
+                    region_since_stripe = true;
+                }
+                _ => {}
+            }
+        }
+        index += 1;
+    }
+    if region_since_stripe {
+        return Err(MalformedError::InvalidPageState(
+            "unknown-height page has an unfinished stripe",
+        )
+        .into());
+    }
+    Ok(())
 }
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]

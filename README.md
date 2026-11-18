@@ -67,6 +67,13 @@ compressed input incremental or guarantee constant process memory. Reader
 position and sink side effects are not restored on failure. I/O errors,
 including `Interrupted`, remain typed errors rather than being silently retried.
 
+For embedded page streams, the end of the complete supplied input may replace
+the final end-of-page segment. Initially unknown-height pages still require a
+completed final stripe; malformed headers, truncated payloads and incomplete
+bitmap data are not recovered. Standalone files still require end-of-page
+segments. A page-information segment must contain its complete 19-byte payload;
+PDF image dimensions are not guessed or substituted.
+
 Packed pixels use **1 / `true` for black and 0 / `false` for white**.
 The first pixel is the most significant bit of its byte; row stride is in
 bytes. Read only the declared width, not padding bits. An 8-bit grayscale
