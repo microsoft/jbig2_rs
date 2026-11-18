@@ -108,6 +108,7 @@ pub(crate) fn decode_symbol_dictionary(
                 total_symbols,
                 refinement_adaptive,
                 input.custom_tables,
+                input.used_contexts,
                 limits,
             )?;
             (exported, None, retained_refinement, consumed)

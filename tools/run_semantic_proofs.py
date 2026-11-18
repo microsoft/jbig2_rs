@@ -49,7 +49,7 @@ DEFAULT_SHARD_REBALANCE = {
     "bitmap-compose": 8, "mmr-prefix": 8, "bitmap-chunk": 8, "default-limits-3": 7,
     "context-lifecycle": 8,
     "reader-error": 0, "huffman-assignment": 9, "halftone-header": 5,
-    "segment-header": 10, "region-dispatch": 10, "integer-state": 10,
+    "segment-header": 10, "region-dispatch": 0, "integer-state": 10,
     "error-conversion": 11, "collector-sink": 9, "operator-bit": 11, "value-bridge": 11,
     "page-public": 12, "default-decoder-1": 12, "default-decoder-5": 12,
     "arithmetic-normalization": 12,

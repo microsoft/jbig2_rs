@@ -10,6 +10,49 @@ use super::{
 };
 
 impl DictionaryClassState {
+    /// Advances a class whose symbols are decoded individually, not joined into
+    /// the collective bitmap used only by Huffman non-aggregation dictionaries.
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        requires symbol_text_spec::dictionary_state_valid(old(self)),
+        ensures match out {
+            Ok((width, height)) =>
+                symbol_text_spec::dictionary_state_valid(final(self))
+                && symbol_text_spec::work_units(final(resources))
+                    == symbol_text_spec::work_units(old(resources)) + 1
+                && symbol_text_spec::work_units(final(resources)) <= limits.max_work_units
+                && final(self).class_open
+                && final(self).declared_new_symbols == old(self).declared_new_symbols
+                && final(self).decoded_symbols == old(self).decoded_symbols + 1
+                && width == final(self).width
+                && height == final(self).height
+                && final(self).total_width == width
+                && width <= limits.max_width,
+            Err(_) => true,
+        },
+    ))]
+    pub(crate) fn add_individual_symbol(
+        &mut self,
+        width_delta: i64,
+        limits: &Limits,
+        resources: &mut ResourceTracker,
+    ) -> Result<(u32, u32), SymbolTextError> {
+        if !self.class_open {
+            return Err(SymbolTextError::InvalidState("no open height class"));
+        }
+        if self.decoded_symbols >= self.declared_new_symbols {
+            return Err(SymbolTextError::InvalidCount("too many new symbols"));
+        }
+        resources.charge_work(1, limits)?;
+        self.width = checked_unsigned_delta(self.width, width_delta, limits.max_width)?;
+        check_dimensions(self.width, self.height, limits)?;
+        self.total_width = self.width;
+        self.decoded_symbols = self
+            .decoded_symbols
+            .checked_add(1)
+            .ok_or(MalformedError::IntegerOverflow)?;
+        Ok((self.width, self.height))
+    }
+
     #[cfg_attr(verus_keep_ghost, verus_spec(out =>
         ensures match out {
             Ok(state) =>
