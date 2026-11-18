@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
   "status": "verified_exact_project_scope_with_reviewed_limits",
-  "source_revision": "3a1b3b4bf6bb3d6bd0090fce2b3268fe6aed8dce",
-  "scope": "Fresh exact-source whole verification/compilation of DEV-952C7B7561 integrated onto current main. Huffman aggregate dictionaries retain implicit fixed-width symbol IDs and materialize the nested Table 17 bindings. The table-selection contract identifies the required standard tables. Existing upstream contracts and trust boundaries remain unchanged; 119 encoded challenges, unavailable-ID rejection and chained aggregates are finite native output evidence, not a complete aggregate-output theorem or independent normative certificate.",
+  "source_revision": "0a8dc925facb36872e96fb8c60e4dcbb6d6d6c4f",
+  "scope": "Fresh whole verification and compilation of the embedded-stream completion maintenance candidate. Only the final page of a fully parsed embedded input may finish without an explicit page-end marker; unknown heights require completed terminal stripe metadata and bounded immediate-region rows. Standalone validation, existing public APIs, resource guards and reader/callback trust boundaries remain. Exact-output crate and independent extracted-stream comparisons are finite tests, not a complete decoded-output proof. Requested PDFium GN/Ninja integration and full baseline remain unavailable and are release blockers.",
   "toolchain": {
     "manifest": "config/toolchain.json",
     "verus_version": "0.2026.10.04.426d8b0",
     "verus_commit": "426d8b01e7ffb910a36c15e1f870ff985bb61eef",
     "archive_sha256": "624018662868563a7bec0dd07be5e4dd0c3d61124b4b55105765884bf2d4d1a0"
   },
-  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-cargo cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --output-json",
+  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-cargo cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/verus-expanded-raw\" --output-json",
   "result": {
-    "verified_obligations": 1314,
-    "verified_production_functions": 648,
+    "verified_obligations": 1316,
+    "verified_production_functions": 649,
     "errors": 0,
     "proof_build_compiles": true,
     "exact_production_source_compiles": true,
@@ -24,8 +24,8 @@
     "runtime_proof_divergences": 0,
     "incomplete_functions": 0
   },
-  "production_proof_coverage_sha256": "d56bfb4a5cbc4c705230fb0faab6f026a8b1092dd4504ee23f732c6fe92a1eb5",
-  "proof_dispositions_sha256": "ec71578882af39d20e44e6f727e896d9a9cd69f5baa7ab4c942f9306b1ed268a",
+  "production_proof_coverage_sha256": "1b91c54d10f1c82e368616351bf3f8c4f77384ae542b227030ce954cc843a817",
+  "proof_dispositions_sha256": "f1ba6274950452df5cf1ddf17b0c1321499dc4e9f14aae887c309c179ceecc16",
   "standard_library_boundary": {
     "manifest": "verification/stdlib/review.json",
     "manifest_sha256": "5f007f853c6caad16d6d318bde996373c6a6f886e8949cd0df62612e5408a92c",
@@ -33,7 +33,7 @@
     "review_kind": "delegated_engineering_review",
     "normative_approval": false
   },
-  "current_evidence_note": "Fresh integrated-source whole Verus verification and nonempty library compilation: 1314 verified obligations, zero errors; 648 direct production functions and 20 reviewed limitations. All 84 symbol/text tests pass, including the 119-case encoded aggregate-ID regression, invalid-ID rejection and chained aggregates. Nine owner-review policy tests, strict Clippy, formatting and development-scope traceability pass. All ten previously approved conformance streams were replayed with unchanged two bitmap passes, seven exact reviewed strict rejections and one unsupported colour case. Earlier reference/catalog contrast, mutation, capacity and hosted-resource measurements remain historical in Git at 046d371 and the retained component history; they are not newly claimed executions by this correction. Complete aggregate-output proofs and independent normative fidelity remain open.",
+  "current_evidence_note": "Local candidate: 1316 whole-crate obligations, zero errors, nonempty compiled library, 649 directly verified functions and the same 20 reviewed limitations. Existing reader/sink callback bodies remain unchanged, and the standalone callback dispatcher still selects embedded=false. All 573 native tests and one doctest pass, with 14 ignored benchmarks; nine public lifecycle regressions pass on Rust 1.88. Expanded verifier inventory reconciliation and actual MSRV archive checks pass. The original 0.2.0 runtime fails three of those lifecycle regressions as expected. Three named public corpus streams decode with exact native image pixels, all six recoverable named pixel fixtures decode at the crate API boundary, and shared-extent pixels match the independently versioned native PDFium build. PDF canvas-size differences and bug_867501 remain explicitly qualified. No requested integration build/full-PDFium baseline or new hosted-profile acceptance is claimed. Historical contrast/native-mutation counts retain their original scope; new signature-sensitive recipe tests are updated without changing cases or resource caps. All 817 local audit-tool gate tests pass. The 13 document-count/parser and seven page-finish compiling strong/weaker contrasts were also executed successfully on this source; other semantic groups are not newly claimed executions.",
   "duplicate_executable_proof_source": false,
   "dictionary_fix_ci_profile_correction": {
     "rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/43244487615",
@@ -480,6 +480,25 @@
       },
       "production_proof_coverage_sha256": "32c871395b0efcd11d621ebc88b0be0debe90b775c89f12bcaa4aff3b40b9ccd",
       "scope_note": "Historical evidence, not a new execution or approval."
+    },
+    {
+      "source_revision": "3a1b3b4bf6bb3d6bd0090fce2b3268fe6aed8dce",
+      "scope": "Fresh exact-source whole verification/compilation of DEV-952C7B7561 integrated onto current main. Huffman aggregate dictionaries retain implicit fixed-width symbol IDs and materialize the nested Table 17 bindings. The table-selection contract identifies the required standard tables. Existing upstream contracts and trust boundaries remain unchanged; 119 encoded challenges, unavailable-ID rejection and chained aggregates are finite native output evidence, not a complete aggregate-output theorem or independent normative certificate.",
+      "result": {
+        "verified_obligations": 1316,
+        "verified_production_functions": 649,
+        "errors": 0,
+        "proof_build_compiles": true,
+        "exact_production_source_compiles": true,
+        "algorithm_bodies_verified": false,
+        "production_coverage_complete": true,
+        "native_assumptions": [],
+        "reviewed_verifier_limitations": 20,
+        "audited_forwarders": 0,
+        "runtime_proof_divergences": 0,
+        "incomplete_functions": 0
+      },
+      "production_proof_coverage_sha256": "d56bfb4a5cbc4c705230fb0faab6f026a8b1092dd4504ee23f732c6fe92a1eb5"
     }
   ]
 }

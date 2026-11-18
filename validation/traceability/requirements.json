@@ -30,7 +30,7 @@
   "model_classifications": {
     "review": "author-navigation-only-not-independent-normative-approval",
     "registry_sha256": "6bc9065d1537f3c4193dbbcd7a17113d5bd2eb3c914147465b8db8afd6943c6f",
-    "project_source_sha256": "215432e43f016210639205a7c9299f32766748cd5c1ee2b85ea25d3efc8ab941",
+    "project_source_sha256": "10f88d3669aaaba2b53acc681f8155a218936f006860589ef21a7d496c67980a",
     "families": [
       {
         "file": "specs/huffman_lookup.rs",
@@ -1986,9 +1986,9 @@
     "src/decode/tests/container_routes.rs": "7835eb46892ce1006564c570535694fe957f72af6ab4a9aa43780580b472e853",
     "src/decode/tests/direct_and_reuse.rs": "d46a5cbd0ee0791141d8b6115f090faa7a0315dc51437dcfb643dce6b58e116c",
     "src/decode/tests/symbol_resources.rs": "f23d5ba103db106eed1cf7d9c8eef395ce060e7eedf2226d7eb38f923dff3431",
-    "src/document.rs": "e6e29aef93b7fa08abbb4f3b4d6cdbd3bdbaddff4242cd6596e35d0ff640b9cc",
-    "src/document/pages.rs": "f11a042b00dfab74c94454999b7d3c9ba575ff3c77b8fafd54ec692b7c4649a0",
-    "src/document/parsing.rs": "ce5a558c99b64b8d3ec7af95a35bd8c563ddcf09f65c760a7cb31eaebc93aa54",
+    "src/document.rs": "ae4233af0a2f9185f0cf80edfd8294184dd960315e1860b54ff086dc262864d4",
+    "src/document/pages.rs": "e939c3c80163d6d1fa67206b1b4d9626f0ccb50fa21dfffe549bc6fe46ba8b80",
+    "src/document/parsing.rs": "ca9a0b19dce67e65fff6a85af20693715130d34702794a154c7860f0aeab94bc",
     "src/document/references.rs": "69acd07c8e2da002936fa8826f054dd254aecaec34c6904514daaf760841b9e4",
     "src/document/tests.rs": "83c40558470af241ab9be812667f186de6b6dbffed8f3c8f03f5d5ab20923063",
     "src/document/tests/container_inspection.rs": "628cc9ab90a757d151893f851c9593fe51d6a456aeca07131e0d01ae41c06b94",
@@ -2073,7 +2073,7 @@
     "src/generic_region/tests/sessions_and_snapshots.rs": "bd8218eef90ffc10ec9731e44669fe819bd87f194264dcb16ac077bddf371b12",
     "specs/generic_region/framing.rs": "4cd4e9b1c381135ae89acdec59a7f9fda2a610625ed24ce0ffcbcb84fc5a02e7",
     "src/generic_region/segments.rs": "d84e912d208b1dd85160d4e0065a0b682cc48f63fbcf53ada5488ccaf2a8e59a",
-    "src/decode/api.rs": "d463529a1b0fe2952951ac476d4b97bce905234a189d5e59869625b1228070f5"
+    "src/decode/api.rs": "7f8df4682ddbcbc91ac5ca578c8f75a246974e091e5726f068397d85b8344c52"
   },
   "definitions": {
     "mmr-mode-table-entry": {

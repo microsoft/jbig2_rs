@@ -50,6 +50,8 @@ implementation passes all nine (exit 0).
 | Whole pinned Verus build and compilation | 0 | 1,316 obligations verified; zero errors |
 | Exact production proof accounting | 0 | 649 verified functions; 20 existing reviewed limitations |
 | Expanded verifier inventory reconciliation | 0 | New helper and existing functions reconciled |
+| Count/parser and page-finish proof sensitivity | 0 | 13 and seven compiling strong/weaker contrasts passed |
+| Audit-tool validation gates | 0 | All 817 passed |
 | Rust 1.88 actual-archive distribution check | 0 | Extracted tests, doctest, downstream output and API isolation passed |
 | Existing standalone conformance replay | 0 | Unchanged: two bitmap passes, seven reviewed rejections, one unsupported case |
 

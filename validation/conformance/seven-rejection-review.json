@@ -97,10 +97,10 @@
     "src/bitmap/tests/region_composition.rs": "9b059776773fdce73c105724ac01d4bb9e113a5d081c798a536eb67b6b714fc1",
     "src/bitmap/tests.rs": "110da1a5bdd42442c35c31a2053f8994ab4eb4a5041eb220471fcf2ad3ea794d",
     "src/bitmap.rs": "7151eb22ac6ebf41ed4cb75d3698e43eab4277dbf6667dc8c7fd699a48988e94",
-    "src/decode/api.rs": "d463529a1b0fe2952951ac476d4b97bce905234a189d5e59869625b1228070f5",
+    "src/decode/api.rs": "7f8df4682ddbcbc91ac5ca578c8f75a246974e091e5726f068397d85b8344c52",
     "src/decode/dispatch/references.rs": "52e7500e0cef622729c3b19f535c8d0824644b5a954dd373ffeadeb34e649c67",
     "src/decode/dispatch.rs": "636eb2717215824a75f634291c3a47854f6e942383de0bdf93746742ef24d31a",
-    "src/decode/orchestration.rs": "5489fe3de5d94ea54997b64ad12357a0ba30bff7edf1cce06680ee3332e93925",
+    "src/decode/orchestration.rs": "e43bccb4a9c40c1b17653a233e3fc2f18bd38155329c19670cbf8541e4f34f71",
     "src/decode/rendering.rs": "fa259425d937b3933ee01ccffdd2ddfe55d11097c5e5881645b1e09cf6ab3bad",
     "src/decode/resources.rs": "55f9ee8e2daa02d57b3778847780e98dd8e2b7cf0b7331d45f76e429011dfd1a",
     "src/decode/tests/budgets_and_pages.rs": "6722bfaca28932881be9c72bc81ad5669064d5736edf777e6cf7716fc4f127e5",
@@ -112,15 +112,15 @@
     "src/decode/tests.rs": "0da0513bc053c044219352ffbec37db612a53e01ede8fc8a77346dda95e792cd",
     "src/decode.rs": "25f6a7996ad876f05a9ec1db834ffc113f101a5861913491551ca2b0d18bf6e7",
     "src/document/input.rs": "cd2d90bb5effc07e557ac05970aba16846c5ec01eb59451b76c3d1d1aa787121",
-    "src/document/pages.rs": "f11a042b00dfab74c94454999b7d3c9ba575ff3c77b8fafd54ec692b7c4649a0",
-    "src/document/parsing.rs": "ce5a558c99b64b8d3ec7af95a35bd8c563ddcf09f65c760a7cb31eaebc93aa54",
+    "src/document/pages.rs": "e939c3c80163d6d1fa67206b1b4d9626f0ccb50fa21dfffe549bc6fe46ba8b80",
+    "src/document/parsing.rs": "ca9a0b19dce67e65fff6a85af20693715130d34702794a154c7860f0aeab94bc",
     "src/document/references.rs": "69acd07c8e2da002936fa8826f054dd254aecaec34c6904514daaf760841b9e4",
     "src/document/tests/container_inspection.rs": "628cc9ab90a757d151893f851c9593fe51d6a456aeca07131e0d01ae41c06b94",
     "src/document/tests/payload_windows.rs": "a5ea365a525b36f3ca92894ab3157d8b03382419e3ca434e154b7cdc3000f02e",
     "src/document/tests/quotas_and_references.rs": "4135ace54de6b4d1feb55e63d5f8a5535e8386e2941c6451773c18f250ba5b2b",
     "src/document/tests/reference_types.rs": "20ad47e2155a5b815a830919091c1c6b57cf52df314744536f44a58033cb0347",
     "src/document/tests.rs": "83c40558470af241ab9be812667f186de6b6dbffed8f3c8f03f5d5ab20923063",
-    "src/document.rs": "e6e29aef93b7fa08abbb4f3b4d6cdbd3bdbaddff4242cd6596e35d0ff640b9cc",
+    "src/document.rs": "ae4233af0a2f9185f0cf80edfd8294184dd960315e1860b54ff086dc262864d4",
     "src/error/tests.rs": "f76fdacaa09e8ff7503ca1e0694241b715182d4dc047bbc9c069a43cabb271c8",
     "src/error.rs": "35e87338ed815bdc4b77a519217d5b2a14cf547af689ab2d00d9e4d2222bf737",
     "src/file_header/tests.rs": "9cf885b2dbb65a3ad32c364237ef7eb96974eacc6812f24bc710564a057b0f2d",
@@ -1196,5 +1196,15 @@
       "tools/check_workflows.py",
       "tools/tests/test_workflows.py"
     ]
+  },
+  "embedded_completion_replay": {
+    "source_revision": "0a8dc925facb36872e96fb8c60e4dcbb6d6d6c4f",
+    "results_sha256": "b6607a6ce27fe85c06441a8f276a192afe95dceb8e7db462c924d713b533260c",
+    "total": 10,
+    "passed": 2,
+    "reviewed_strict_rejections": 7,
+    "unsupported_profile": 1,
+    "unresolved_failures": 0,
+    "scope": "Actual replay of the same previously approved standalone streams with the unmodified normal decode adapter after the embedded-only completion fix. Exact bitmap and rejection outcomes are unchanged; historical source analysis and engineering dispositions retain their original revisions. No new normative approval or conformance credit."
   }
 }
