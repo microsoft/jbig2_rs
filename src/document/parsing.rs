@@ -64,6 +64,7 @@ pub(crate) fn parse_standalone_document<'a>(
         &segments,
         limits,
         None,
+        false,
     )?;
     Ok((info, segments))
 }
@@ -88,7 +89,14 @@ pub(crate) fn parse_embedded_document<'a>(
     enforce_input_work(input.len(), limits)?;
     let segments = parse_sequential(input, limits, false)?;
     enforce_work_limit(input.len(), &segments, limits)?;
-    let info = build_document_info(Organization::Sequential, None, &segments, limits, globals)?;
+    let info = build_document_info(
+        Organization::Sequential,
+        None,
+        &segments,
+        limits,
+        globals,
+        true,
+    )?;
     Ok((info, segments))
 }
 

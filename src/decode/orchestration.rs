@@ -109,6 +109,7 @@ macro_rules! decode_segments_body {
         $mmr_scratch:expr,
         $initial_resources:expr,
         $sink:expr,
+        $embedded:expr,
         $write_page:path
     ) => {{
         let segments = $segments;
@@ -404,7 +405,13 @@ macro_rules! decode_segments_body {
             segment_position += 1;
         }
         if !pages.is_empty() {
-            return Err(MalformedError::InvalidPageState("active page after final segment").into());
+            if !$embedded || pages.len() != 1 {
+                return Err(MalformedError::InvalidPageState("active page after final segment").into());
+            }
+            // Parsing has validated the complete embedded stream and final page.
+            let (number, page) = pages.remove(0);
+            retained.release(bitmap_byte_len(&page.bitmap)?)?;
+            $write_page(sink, Page { number, bitmap: page.bitmap })?;
         }
         Ok(())
     }};
@@ -426,6 +433,7 @@ pub(super) fn decode_segments_collected(
     mmr_scratch: &mut MmrScratch,
     initial_resources: Option<InitialResources>,
     sink: &mut PageCollector,
+    embedded: bool,
 ) -> Result<(), DecodeError> {
     decode_segments_body!(
         segments,
@@ -436,6 +444,7 @@ pub(super) fn decode_segments_collected(
         mmr_scratch,
         initial_resources,
         sink,
+        embedded,
         PageCollector::push_page
     )
 }
@@ -460,6 +469,7 @@ pub(super) fn decode_segments<S: PageSink>(
         mmr_scratch,
         initial_resources,
         sink,
+        false,
         write_page_to_sink::<S>
     )
 }

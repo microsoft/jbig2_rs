@@ -33,6 +33,7 @@ mod document_properties;
 #[path = "../proofs/shared/document.rs"]
 mod document_shared;
 
+pub(crate) mod embedded;
 mod input;
 mod pages;
 mod parsing;
@@ -407,6 +408,12 @@ impl Decoder {
 
     /// Parses a contiguous embedded segment stream such as PDF page data.
     ///
+    /// For PDF integration, including [PDFium](https://pdfium.googlesource.com/pdfium/),
+    /// the end of the complete input may terminate the final page without an
+    /// end-of-page segment. An initially unknown height still requires a final
+    /// completed stripe. Segment headers and payloads must not be truncated.
+    /// Standalone validation remains strict.
+    ///
     /// # Errors
     ///
     /// Returns a typed error for malformed, unsupported, over-limit, or
@@ -422,6 +429,8 @@ impl Decoder {
     }
 
     /// Parses an embedded page stream with reusable validated global segments.
+    ///
+    /// Final-page completion follows [`Decoder::inspect_embedded`].
     ///
     /// # Errors
     ///
