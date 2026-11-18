@@ -3,6 +3,8 @@
 Comparison baseline: PR #176 at
 `51e5fb05bdfbf5d7d8cf2378d197afd7892d7bfb`. Its clean embedded final-page
 completion, standalone validation and all original tests are preserved.
+Tested implementation revision: `d368ccf89dbaf9ab352e254840a8211452c1824e`;
+subsequent evidence/documentation commits do not change production Rust.
 
 ## Strict remains the default
 
@@ -42,8 +44,9 @@ entropy data; its success does not imply a subsequent decode will succeed.
 
 The allowlist inserts or removes no bytes. The existing strict known-length
 final-FF convention is unchanged; no additional missing-data synthesis is added.
-Unknown-length markers/row counts, absent marker prefixes, other nonstandard marker codes, early markers, malformed headers,
-truncation, invalid references, unsupported syntax and resource exhaustion
+Unknown-length markers/row counts, absent marker prefixes, other nonstandard
+marker codes, early markers, malformed headers, truncation, invalid references,
+unsupported syntax and resource exhaustion
 remain fatal. Zero-length page information is never repaired. Dictionary/table
 selectors are not part of this initial allowlist.
 
@@ -186,3 +189,7 @@ functions and the same 20 reviewed limitations. Expanded verifier inventory
 reconciliation also passes. Existing aggregate/per-file coverage floors pass
 without modification (12,314/13,259 lines; 2,365/2,704 branches). These local
 results are not a fresh full hosted semantic profile or a PDFium suite result.
+All 817 audit-tool tests pass. Replaying all ten previously approved standalone
+conformance inputs reproduces byte-identical outcomes: two bitmap passes,
+seven existing reviewed strict rejections and one unsupported colour case.
+This renews neither historical normative approval nor full-conformance claims.
