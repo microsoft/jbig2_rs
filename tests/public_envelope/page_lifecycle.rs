@@ -274,26 +274,45 @@ fn pdfium_embedded_completion_rejects_truncated_segments_and_unfinished_stripes(
         decoder.inspect_embedded(&incomplete_stripe),
         Err(DecodeError::Malformed(MalformedError::UnexpectedEof { .. }))
     ));
-    for segments in [
-        vec![striped_page(1, u32::MAX, 2)],
-        vec![striped_page(1, u32::MAX, 2), white_row(2, 0)],
-        vec![striped_page(1, u32::MAX, 2), stripe(2, 0), white_row(3, 1)],
-        vec![striped_page(1, u32::MAX, 2), white_row(2, 1), stripe(3, 0)],
-        vec![
-            striped_page(1, u32::MAX, 2),
-            stripe(2, 0),
-            Segment::new(3, 36, 1, white_row(3, 1).payload),
-        ],
+    for (segments, expected) in [
+        (
+            vec![striped_page(1, u32::MAX, 2)],
+            MalformedError::InvalidStripeEndRow(0),
+        ),
+        (
+            vec![striped_page(1, u32::MAX, 2), white_row(2, 0)],
+            MalformedError::InvalidPageState("unknown-height page has an unfinished stripe"),
+        ),
+        (
+            vec![striped_page(1, u32::MAX, 2), stripe(2, 0), white_row(3, 1)],
+            MalformedError::InvalidPageState("unknown-height page has an unfinished stripe"),
+        ),
+        (
+            vec![striped_page(1, u32::MAX, 2), white_row(2, 1), stripe(3, 0)],
+            MalformedError::InvalidPageState("region preceding stripe extends below its end row"),
+        ),
+        (
+            vec![
+                striped_page(1, u32::MAX, 2),
+                stripe(2, 0),
+                Segment::new(3, 36, 1, white_row(3, 1).payload),
+            ],
+            MalformedError::InvalidPageState("unknown-height page has an unfinished stripe"),
+        ),
     ] {
         let bytes = embedded(&segments);
-        assert!(decoder.inspect_embedded(&bytes).is_err());
-        assert!(decoder.decode_embedded(&bytes).is_err());
-        assert!(decoder
-            .inspect_embedded_with_globals(&bytes, &globals)
-            .is_err());
-        assert!(decoder
-            .decode_embedded_with_globals(&bytes, &globals)
-            .is_err());
+        for error in [
+            decoder.inspect_embedded(&bytes).unwrap_err(),
+            decoder.decode_embedded(&bytes).unwrap_err(),
+            decoder
+                .inspect_embedded_with_globals(&bytes, &globals)
+                .unwrap_err(),
+            decoder
+                .decode_embedded_with_globals(&bytes, &globals)
+                .unwrap_err(),
+        ] {
+            assert_malformed(error, &expected);
+        }
     }
     let mut limits = Limits::default();
     limits.max_height = 2;
