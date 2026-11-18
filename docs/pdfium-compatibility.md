@@ -67,6 +67,26 @@ implementation passes all nine (exit 0).
 These are local results, not fresh hosted CI or complete formal output proofs.
 The existing reader/callback trust-boundary dispositions are preserved.
 
+### Verus non-regression gate
+
+The maintenance candidate must pass the complete
+[Verus workflow](../.github/workflows/verus.yml): whole-crate verification and
+compilation, exact production accounting, original expanded-verifier inventory,
+source-bound traceability, all 61 semantic groups / 494 compiling strong/weaker
+contrasts, and the complete same-run measured-profile guard. A successful
+whole build or selected group alone does not satisfy this gate.
+
+The existing contracts, assumptions, trust boundaries, contrast cases, native
+mutation controls, shard count and resource limits are retained. The explicit
+PDF/PDFium documentation follow-up was additionally checked for identical
+non-comment runtime/model/proof/contract/cfg tokens across all 217 Rust files
+under `src/`, `specs/` and `proofs/`; the regression changes only name the
+integration purpose, without weakening their assertions.
+
+Hosted proof results remain separate from the unavailable PDFium GN/Ninja
+integration and full baseline described below. Passing one does not establish
+the other.
+
 ### Independent public-fixture API comparisons
 
 The three requested corpus fixtures were fetched and hash-checked at

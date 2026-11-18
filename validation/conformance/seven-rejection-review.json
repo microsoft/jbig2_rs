@@ -97,7 +97,7 @@
     "src/bitmap/tests/region_composition.rs": "9b059776773fdce73c105724ac01d4bb9e113a5d081c798a536eb67b6b714fc1",
     "src/bitmap/tests.rs": "110da1a5bdd42442c35c31a2053f8994ab4eb4a5041eb220471fcf2ad3ea794d",
     "src/bitmap.rs": "7151eb22ac6ebf41ed4cb75d3698e43eab4277dbf6667dc8c7fd699a48988e94",
-    "src/decode/api.rs": "7f8df4682ddbcbc91ac5ca578c8f75a246974e091e5726f068397d85b8344c52",
+    "src/decode/api.rs": "2cee3d7bd3b6bb63708a367b6b322b5d1340dd65e7a85bd40f69a9fd7f8b682d",
     "src/decode/dispatch/references.rs": "52e7500e0cef622729c3b19f535c8d0824644b5a954dd373ffeadeb34e649c67",
     "src/decode/dispatch.rs": "636eb2717215824a75f634291c3a47854f6e942383de0bdf93746742ef24d31a",
     "src/decode/orchestration.rs": "e43bccb4a9c40c1b17653a233e3fc2f18bd38155329c19670cbf8541e4f34f71",
@@ -120,7 +120,7 @@
     "src/document/tests/quotas_and_references.rs": "4135ace54de6b4d1feb55e63d5f8a5535e8386e2941c6451773c18f250ba5b2b",
     "src/document/tests/reference_types.rs": "20ad47e2155a5b815a830919091c1c6b57cf52df314744536f44a58033cb0347",
     "src/document/tests.rs": "83c40558470af241ab9be812667f186de6b6dbffed8f3c8f03f5d5ab20923063",
-    "src/document.rs": "ae4233af0a2f9185f0cf80edfd8294184dd960315e1860b54ff086dc262864d4",
+    "src/document.rs": "bf3884838192e6b343f088dfd58cc5ad09227b3d1ffc046224b3ad4bc688ebda",
     "src/error/tests.rs": "f76fdacaa09e8ff7503ca1e0694241b715182d4dc047bbc9c069a43cabb271c8",
     "src/error.rs": "35e87338ed815bdc4b77a519217d5b2a14cf547af689ab2d00d9e4d2222bf737",
     "src/file_header/tests.rs": "9cf885b2dbb65a3ad32c364237ef7eb96974eacc6812f24bc710564a057b0f2d",
@@ -1206,5 +1206,12 @@
     "unsupported_profile": 1,
     "unresolved_failures": 0,
     "scope": "Actual replay of the same previously approved standalone streams with the unmodified normal decode adapter after the embedded-only completion fix. Exact bitmap and rejection outcomes are unchanged; historical source analysis and engineering dispositions retain their original revisions. No new normative approval or conformance credit."
+  },
+  "explicit_pdf_documentation_rebinding": {
+    "base_revision": "b2c8b6b0a4c8352b604b2569f41f5675bc8fdc2f",
+    "source_revision": "fe3d7874622a07275745abf507183a4b9d296ca8",
+    "runtime_model_proof_contract_and_cfg_tokens_unchanged": true,
+    "rust_source_files_checked": 217,
+    "scope": "PDF/PDFium API documentation and regression naming only. No conformance output or historical disposition is re-executed or reapproved by this rebinding; previous actual replay and all normative limitations remain unchanged."
   }
 }
