@@ -45,22 +45,25 @@ No external PDF fixture is required to run these crate regressions.
 
 ## Local results
 
-The final generated lifecycle tests were run against the original 0.2.0
+The initial nine generated lifecycle tests were run against the original 0.2.0
 implementation with only the test file replaced: six passed and three failed
 (exit 101), including the expected `MissingEndOfPage(1)` rejections. The patched
-implementation passes all nine (exit 0).
+implementation passes those cases. Further coverage adds clipped/empty regions,
+an intermediate region after the final stripe, a truncated region header, and
+direct checks that the standalone dispatcher never enables implicit completion.
 
 | Candidate check | Exit status | Result |
 |---|---|---|
 | `cargo fmt --all --check` | 0 | Formatted |
 | `cargo clippy --all-targets --all-features -- -D warnings` | 0 | Passed |
-| `cargo test --all-features` | 0 | 573 native tests and one doctest passed; 14 benchmarks ignored |
-| Rust 1.88 public lifecycle tests | 0 | All nine passed |
+| `cargo test --all-features` | 0 | 575 native tests and one doctest passed; 14 benchmarks ignored |
+| Rust 1.88 public lifecycle tests | 0 | All ten passed |
 | Whole pinned Verus build and compilation | 0 | 1,316 obligations verified; zero errors |
 | Exact production proof accounting | 0 | 649 verified functions; 20 existing reviewed limitations |
 | Expanded verifier inventory reconciliation | 0 | New helper and existing functions reconciled |
 | Count/parser and page-finish proof sensitivity | 0 | 13 and seven compiling strong/weaker contrasts passed |
 | Audit-tool validation gates | 0 | All 817 passed |
+| Aggregate and per-file runtime coverage | 0 | Existing floors retained; 11,907/12,895 lines and 2,320/2,658 branches covered |
 | Rust 1.88 actual-archive distribution check | 0 | Extracted tests, doctest, downstream output and API isolation passed |
 | Existing standalone conformance replay | 0 | Unchanged: two bitmap passes, seven reviewed rejections, one unsupported case |
 
@@ -77,11 +80,11 @@ contrasts, and the complete same-run measured-profile guard. A successful
 whole build or selected group alone does not satisfy this gate.
 
 The existing contracts, assumptions, trust boundaries, contrast cases, native
-mutation controls, shard count and resource limits are retained. The explicit
-PDF/PDFium documentation follow-up was additionally checked for identical
-non-comment runtime/model/proof/contract/cfg tokens across all 217 Rust files
-under `src/`, `specs/` and `proofs/`; the regression changes only name the
-integration purpose, without weakening their assertions.
+mutation controls, shard count and resource limits are retained. The initial
+PDF/PDFium documentation/naming follow-up was checked for identical non-comment
+runtime/model/proof/contract/cfg tokens across all 217 Rust files under `src/`,
+`specs/` and `proofs/`. Subsequent coverage additions extend only tests, without
+weakening assertions or changing production logic or contracts.
 
 Hosted proof results remain separate from the unavailable PDFium GN/Ninja
 integration and full baseline described below. Passing one does not establish

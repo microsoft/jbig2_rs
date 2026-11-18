@@ -279,6 +279,11 @@ fn pdfium_embedded_completion_rejects_truncated_segments_and_unfinished_stripes(
         vec![striped_page(1, u32::MAX, 2), white_row(2, 0)],
         vec![striped_page(1, u32::MAX, 2), stripe(2, 0), white_row(3, 1)],
         vec![striped_page(1, u32::MAX, 2), white_row(2, 1), stripe(3, 0)],
+        vec![
+            striped_page(1, u32::MAX, 2),
+            stripe(2, 0),
+            Segment::new(3, 36, 1, white_row(3, 1).payload),
+        ],
     ] {
         let bytes = embedded(&segments);
         assert!(decoder.inspect_embedded(&bytes).is_err());
@@ -302,6 +307,40 @@ fn pdfium_embedded_completion_rejects_truncated_segments_and_unfinished_stripes(
             3,
         );
     }
+}
+
+#[test]
+fn pdfium_unknown_height_completion_preserves_clipped_and_empty_regions() {
+    let decoder = Decoder::default();
+    for (width, height, x, entropy) in [
+        (9_u32, 1_u32, 9_u32, &[0x80][..]),
+        (0, 1, 0, &[][..]),
+        (9, 0, 0, &[][..]),
+    ] {
+        let mut region = white_row(2, 10);
+        region.payload[..4].copy_from_slice(&width.to_be_bytes());
+        region.payload[4..8].copy_from_slice(&height.to_be_bytes());
+        region.payload[8..12].copy_from_slice(&x.to_be_bytes());
+        region.payload.truncate(18);
+        region.payload.extend_from_slice(entropy);
+        let bytes = embedded(&[implicit_page(true).remove(0), region, stripe(3, 0)]);
+        let info = decoder.inspect_embedded(&bytes).unwrap();
+        let document = decoder.decode_embedded(&bytes).unwrap();
+        assert_eq!(document.info(), &info);
+        assert_pixels(&document.pages()[0], 1, 9, 1, &[0xff, 0x80]);
+    }
+    let bytes = embedded(&[
+        striped_page(1, u32::MAX, 2),
+        Segment::new(2, 38, 1, vec![0; 16]),
+        stripe(3, 0),
+    ]);
+    let expected = MalformedError::UnexpectedEof {
+        offset: 16,
+        needed: 1,
+        remaining: 0,
+    };
+    assert_malformed(decoder.inspect_embedded(&bytes).unwrap_err(), &expected);
+    assert_malformed(decoder.decode_embedded(&bytes).unwrap_err(), &expected);
 }
 
 #[test]

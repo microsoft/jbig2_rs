@@ -4,6 +4,60 @@
 use super::*;
 
 #[test]
+fn pdfium_completion_is_not_enabled_for_the_standalone_dispatcher() {
+    let limits = Limits::default();
+    let bytes = document_with_generic(&[0x80]);
+    let (info, mut segments) = parse_standalone_document(&bytes, &limits).unwrap();
+    segments.retain(|segment| {
+        !matches!(
+            segment.header.segment_type,
+            SegmentType::EndOfPage | SegmentType::EndOfFile
+        )
+    });
+    let work = structural_work(bytes.len(), &segments).unwrap();
+    let mut calls = 0;
+    let result = decode_segments(
+        &segments,
+        &info,
+        work,
+        0,
+        &limits,
+        &mut MmrScratch::default(),
+        None,
+        &mut |_| {
+            calls += 1;
+            Ok(())
+        },
+    );
+    assert!(matches!(
+        result,
+        Err(DecodeError::Malformed(MalformedError::InvalidPageState(
+            "active page after final segment"
+        )))
+    ));
+    assert_eq!(calls, 0);
+    let mut collector = PageCollector::new(&limits);
+    let result = decode_segments_collected(
+        &segments,
+        &info,
+        work,
+        0,
+        &limits,
+        &mut MmrScratch::default(),
+        None,
+        &mut collector,
+        false,
+    );
+    assert!(matches!(
+        result,
+        Err(DecodeError::Malformed(MalformedError::InvalidPageState(
+            "active page after final segment"
+        )))
+    ));
+    assert!(collector.pages.is_empty());
+}
+
+#[test]
 fn public_results_preserve_exact_standalone_and_embedded_metadata() {
     let decoder = Decoder::default();
     let sequential = all_white_mmr_document(9, 3);
