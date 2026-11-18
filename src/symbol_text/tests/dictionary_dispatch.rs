@@ -4,6 +4,125 @@ use super::super::dictionary::decode_one_new_symbol;
 use super::*;
 use std::fmt::Write;
 
+#[test]
+fn aggregate_dictionary_limits_each_bitmap_not_an_unallocated_collective() {
+    let limits = Limits {
+        max_width: 16,
+        ..Limits::default()
+    };
+    let imported = [bitmap_from_packed_bytes(8, 1, &[0xa5], &limits).unwrap()];
+    let mut payload = 0x1003_u16.to_be_bytes().to_vec();
+    payload.extend_from_slice(&2_u32.to_be_bytes());
+    payload.extend_from_slice(&2_u32.to_be_bytes());
+    let mut bits = String::from("0"); // DH=1.
+    for width_delta in ["11110000101", "0"] {
+        // DW=16, then DW=0.
+        bits.push_str(width_delta);
+        bits.push_str("00010"); // Two instances.
+        bits.push_str("00"); // Initial DT and strip DT.
+        bits.push_str("000000000"); // FS=0.
+        bits.push_str("000"); // Two-bit ID=0, RI=0.
+        bits.push_str("001"); // DS=1.
+        bits.push_str("000"); // ID=0, RI=0.
+        bits.push_str("01"); // Strip OOB.
+    }
+    bits.push_str("111111");
+    bits.push_str(&dictionary_export_run(1));
+    bits.push_str(&dictionary_export_run(2));
+    payload.extend_from_slice(&dictionary_bits(&bits));
+    let output = decode_symbol_dictionary(&SymbolDictionaryInput {
+        payload: &payload,
+        imported_symbols: SymbolCodebook::Contiguous(&imported),
+        custom_tables: &[],
+        used_contexts: None,
+        limits: &limits,
+    })
+    .unwrap();
+    assert_eq!(output.exported_symbols.len(), 2);
+    for bitmap in &output.exported_symbols {
+        assert_eq!((bitmap.width(), bitmap.height()), (16, 1));
+        assert_eq!(bitmap.bytes(), &[0xa5, 0xa5]);
+    }
+    assert_eq!(output.consumed_bytes, payload.len());
+}
+
+#[test]
+fn huffman_dictionary_restores_retained_refinement_statistics() {
+    let limits = Limits::default();
+    let imported = [bitmap_from_packed_bytes(8, 1, &[0xa5], &limits).unwrap()];
+    for (template, flags) in [
+        (RefinementTemplate::Template0, 0x0303_u16),
+        (RefinementTemplate::Template1, 0x1303_u16),
+    ] {
+        let mut bank = RefinementContexts::new(template, &limits).unwrap();
+        bank.contexts[8] = ArithmeticContext::from_state(10, 1).unwrap();
+        let used = DictionaryContexts {
+            generic: None,
+            refinement: Some(bank.try_snapshot(&limits).unwrap()),
+        };
+        let mut payload = flags.to_be_bytes().to_vec();
+        if template == RefinementTemplate::Template0 {
+            payload.extend_from_slice(&[0; 4]);
+        }
+        payload.extend_from_slice(&1_u32.to_be_bytes());
+        payload.extend_from_slice(&0_u32.to_be_bytes());
+        payload.extend_from_slice(&[0, 0x40]); // Export the one imported symbol.
+        let output = decode_symbol_dictionary(&SymbolDictionaryInput {
+            payload: &payload,
+            imported_symbols: SymbolCodebook::Contiguous(&imported),
+            custom_tables: &[],
+            used_contexts: Some(&used),
+            limits: &limits,
+        })
+        .unwrap();
+        assert_eq!(output.exported_symbols[0].bytes(), &[0xa5]);
+        assert_eq!(output.consumed_bytes, payload.len());
+        let retained = output.retained_contexts.unwrap();
+        let mut restored = RefinementContexts::new(template, &limits).unwrap();
+        restored
+            .restore(retained.refinement.as_ref().unwrap(), &limits)
+            .unwrap();
+        assert_eq!(restored.contexts.len(), bank.contexts.len());
+        assert_eq!(
+            restored
+                .contexts
+                .iter()
+                .zip(&bank.contexts)
+                .position(|(actual, expected)| actual != expected),
+            None,
+            "retained arithmetic statistics changed",
+        );
+        let other_template = if template == RefinementTemplate::Template0 {
+            RefinementTemplate::Template1
+        } else {
+            RefinementTemplate::Template0
+        };
+        let incompatible = DictionaryContexts {
+            generic: None,
+            refinement: Some(
+                RefinementContexts::new(other_template, &limits)
+                    .unwrap()
+                    .try_snapshot(&limits)
+                    .unwrap(),
+            ),
+        };
+        assert!(matches!(
+            decode_symbol_dictionary(&SymbolDictionaryInput {
+                payload: &payload,
+                imported_symbols: SymbolCodebook::Contiguous(&imported),
+                custom_tables: &[],
+                used_contexts: Some(&incompatible),
+                limits: &limits,
+            }),
+            Err(SymbolTextError::Decode(DecodeError::Malformed(
+                MalformedError::InvalidGenericRegion(crate::GenericRegionErrorKind::InvalidFlags(
+                    _
+                ))
+            )))
+        ));
+    }
+}
+
 fn header(huffman: bool, refinement: bool) -> SymbolDictionaryHeader {
     let flags = u16::from(huffman) | (u16::from(refinement) << 1);
     SymbolDictionaryHeader {

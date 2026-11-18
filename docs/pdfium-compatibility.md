@@ -1,5 +1,9 @@
 # Embedded page completion and PDFium
 
+The subsequent [explicit embedded recovery follow-up](embedded-recovery.md)
+addresses the remaining strict decoder defects and individually allowlisted
+nonconforming input. The baseline and measurements below describe PR #176.
+
 ## Maintenance scope
 
 This patch is based on the published 0.2.0 source,

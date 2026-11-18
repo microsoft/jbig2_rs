@@ -246,6 +246,58 @@ fn checks_cumulative_dictionary_dimensions_and_counts() {
     ));
 }
 
+#[test]
+fn individual_symbols_do_not_charge_a_nonexistent_collective_bitmap_width() {
+    let limits = Limits {
+        max_width: 8,
+        max_height: 1,
+        max_pixels_per_page: 8,
+        ..Limits::default()
+    };
+    let mut resources = ResourceTracker::default();
+    let mut individual = DictionaryClassState::new(2, &limits).unwrap();
+    individual
+        .begin_height_class(1, &limits, &mut resources)
+        .unwrap();
+    assert_eq!(
+        individual
+            .add_individual_symbol(8, &limits, &mut resources)
+            .unwrap(),
+        (8, 1)
+    );
+    assert_eq!(
+        individual
+            .add_individual_symbol(0, &limits, &mut resources)
+            .unwrap(),
+        (8, 1)
+    );
+    individual.finish_height_class().unwrap();
+    individual.finish().unwrap();
+    let mut collective = DictionaryClassState::new(2, &limits).unwrap();
+    collective
+        .begin_height_class(1, &limits, &mut resources)
+        .unwrap();
+    collective.add_symbol(8, &limits, &mut resources).unwrap();
+    assert!(matches!(
+        collective.add_symbol(0, &limits, &mut resources),
+        Err(SymbolTextError::Decode(DecodeError::LimitExceeded(
+            LimitExceeded {
+                kind: LimitKind::Width,
+                limit: 8,
+                actual: 16,
+            }
+        )))
+    ));
+    let mut too_wide = DictionaryClassState::new(1, &limits).unwrap();
+    too_wide
+        .begin_height_class(1, &limits, &mut resources)
+        .unwrap();
+    assert!(matches!(
+        too_wide.add_individual_symbol(9, &limits, &mut resources),
+        Err(SymbolTextError::InvalidDimensions)
+    ));
+}
+
 fn independent_symbol_width(count: u32) -> u8 {
     let mut capacity = 1_u64;
     let mut width = 0_u8;
