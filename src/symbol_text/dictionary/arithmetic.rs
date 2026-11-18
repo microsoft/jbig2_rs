@@ -406,7 +406,8 @@ pub(in crate::symbol_text) fn decode_symbol_dictionary_arithmetic(
         while let EntropyInteger::Value(width_delta) =
             codec.decode_integer(IntegerField::WidthDelta)?
         {
-            let (width, height) = class_state.add_symbol(width_delta, limits, &mut resources)?;
+            let (width, height) =
+                class_state.add_individual_symbol(width_delta, limits, &mut resources)?;
             let aggregation_instances = if config.refinement_aggregation {
                 let instances = required_integer(&mut codec, IntegerField::AggregationInstances)?;
                 Some(

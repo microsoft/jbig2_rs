@@ -113,8 +113,8 @@ CASES = (
     {
         "id": "invent_embedded_header_count",
         "function": "parse_embedded_document",
-        "site": "build_document_info(Organization::Sequential, None, &segments, limits, globals)?",
-        "replacement": "build_document_info(Organization::Sequential, Some(0), &segments, limits, globals)?",
+        "site": "Organization::Sequential,\n        None,\n        &segments,\n        limits,\n        globals,\n        true,",
+        "replacement": "Organization::Sequential,\n        Some(0),\n        &segments,\n        limits,\n        globals,\n        true,",
         "control_file": "specs/document.rs",
         "control_site": "&&& document_declared_page_count(document) == None",
         "control_replacement": "",

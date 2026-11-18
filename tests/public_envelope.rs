@@ -3,6 +3,8 @@
 #![cfg(test)]
 #![allow(clippy::duplicated_attributes)]
 
+#[path = "public_envelope/embedded_policy.rs"]
+mod embedded_policy;
 #[path = "public_envelope/metadata_extensions.rs"]
 mod metadata_extensions;
 #[path = "public_envelope/organization_and_limits.rs"]

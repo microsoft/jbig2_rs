@@ -11,6 +11,32 @@ use super::decode_spec;
 use vstd::prelude::*;
 
 impl Decoder {
+    /// Decodes embedded PDF/JBIG2 data with an explicit recovery policy.
+    ///
+    /// See [`Decoder::inspect_embedded_with_policy`] for the allowlist and budget
+    /// accounting. Inspect `recoveries` on the returned result to distinguish
+    /// normalized metadata from a strict success. No partial image is returned.
+    ///
+    /// # Errors
+    ///
+    /// Returns the normal typed errors; there is no implicit retry or fallback.
+    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures match out {
+            Ok(output) => crate::document::embedded_metadata(decode_spec::document_info(&output.value)),
+            Err(_) => true,
+        },
+    ))]
+    pub fn decode_embedded_with_policy(
+        &self,
+        input: &[u8],
+        globals: Option<&GlobalSegments>,
+        policy: crate::EmbeddedPolicy,
+    ) -> Result<crate::EmbeddedResult<DecodedDocument>, DecodeError> {
+        self.context()
+            .decode_embedded_with_policy(input, globals, policy)
+    }
+
     /// Decodes a standalone document into owned pages.
     ///
     /// # Errors
@@ -42,6 +68,12 @@ impl Decoder {
 
     /// Decodes a contiguous embedded page stream without external globals.
     ///
+    /// For PDF integration, including [PDFium](https://pdfium.googlesource.com/pdfium/),
+    /// a complete input may omit the final end-of-page segment. An initially
+    /// unknown page height must still be established by a completed final stripe.
+    /// This does not permit truncated segment or compressed bitmap data, or
+    /// substitute PDF image dimensions.
+    ///
     /// # Errors
     ///
     /// Returns a typed error for malformed, unresolved, unsupported, or
@@ -57,6 +89,8 @@ impl Decoder {
     }
 
     /// Decodes a contiguous embedded page stream with validated globals.
+    ///
+    /// Final-page completion follows [`Decoder::decode_embedded`].
     ///
     /// # Errors
     ///
@@ -154,6 +188,7 @@ impl Decoder {
             mmr_scratch,
             global_resources,
             &mut collector,
+            true,
         )?;
         let out = DecodedDocument {
             info,
@@ -166,6 +201,58 @@ impl Decoder {
 }
 
 impl DecoderContext<'_> {
+    /// Decodes with the explicit policy of [`Decoder::decode_embedded_with_policy`].
+    ///
+    /// # Errors
+    ///
+    /// Returns the same typed errors and always performs normal context cleanup.
+    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures
+            crate::document::decoder_context_finished(old(self), final(self)),
+            match out {
+                Ok(output) => crate::document::embedded_metadata(decode_spec::document_info(&output.value)),
+                Err(_) => true,
+            },
+    ))]
+    pub fn decode_embedded_with_policy(
+        &mut self,
+        input: &[u8],
+        globals: Option<&GlobalSegments>,
+        policy: crate::EmbeddedPolicy,
+    ) -> Result<crate::EmbeddedResult<DecodedDocument>, DecodeError> {
+        let result = self.decode_embedded_policy_internal(input, globals, policy);
+        self.finish_call();
+        result
+    }
+
+    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures
+            crate::document::decoder_context_state(final(self)).0
+                == crate::document::decoder_context_state(old(self)).0,
+            match out {
+                Ok(output) => crate::document::embedded_metadata(decode_spec::document_info(&output.value)),
+                Err(_) => true,
+            },
+    ))]
+    fn decode_embedded_policy_internal(
+        &mut self,
+        input: &[u8],
+        globals: Option<&GlobalSegments>,
+        policy: crate::EmbeddedPolicy,
+    ) -> Result<crate::EmbeddedResult<DecodedDocument>, DecodeError> {
+        #[cfg(verus_keep_ghost)]
+        proof! { crate::document::decoder_context_fields(); }
+        let prepared = crate::document::embedded::prepare(input, globals, policy, self.limits())?;
+        let result = Decoder::new(prepared.limits()).decode_embedded_internal(
+            prepared.input(input),
+            globals,
+            &mut self.mmr,
+        );
+        prepared.finish(result)
+    }
+
     /// Decodes one standalone document using retained scratch capacity.
     ///
     /// # Errors
@@ -213,6 +300,7 @@ impl DecoderContext<'_> {
             &mut self.mmr,
             None,
             &mut collector,
+            false,
         )?;
         let out = DecodedDocument {
             info,

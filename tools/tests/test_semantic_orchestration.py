@@ -59,7 +59,7 @@ PRE_REFERENCE_CATALOG_TOPOLOGY = {
         **runner.DEFAULT_SHARD_REBALANCE,
         "retention": 3, "default-limits-3": 8, "collector-sink": 11, "mmr-span": 13,
         "arithmetic-initialization": 7, "default-decoder-4": 4,
-        "default-decoder-3": 5,
+        "default-decoder-3": 5, "region-dispatch": 10,
     },
 }
 CURRENT_TOPOLOGY = {
@@ -248,6 +248,59 @@ def evidence():
 
 
 class SemanticOrchestrationTests(unittest.TestCase):
+    @patch.object(runner, "CHECKS", LIVE_CHECKS)
+    @patch.multiple(runner, **LIVE_TOPOLOGY)
+    def test_embedded_recovery_profile_preserves_the_original_timing_guard(self):
+        # Per-group maxima of complete runs 44359238184/1 and 44308334379/1.
+        costs = {
+            "arithmetic-codec": 710.054, "arithmetic-decision": 415.692,
+            "arithmetic-initialization": 170.471, "arithmetic-integer": 194.773,
+            "arithmetic-normalization": 175.922, "arithmetic-refill": 176.274,
+            "bitmap-chunk": 131.514, "bitmap-compose": 207.159,
+            "bitmap-copy": 211.667, "black-span": 179.624,
+            "clone-results": 286.930, "collector-sink": 73.393,
+            "context-callers": 212.081, "context-lifecycle": 325.993,
+            "default-decoder-1": 105.068, "default-decoder-2": 93.261,
+            "default-decoder-3": 107.784, "default-decoder-4": 106.509,
+            "default-decoder-5": 106.043, "default-limits-1": 105.944,
+            "default-limits-2": 109.650, "default-limits-3": 96.995,
+            "default-limits-4": 98.149, "default-limits-5": 98.597,
+            "document-count": 305.252, "document-layout": 362.020,
+            "error-conversion": 258.586, "error-wrappers-basic": 250.542,
+            "error-wrappers-regions": 253.299, "error-wrappers-symbol": 221.214,
+            "halftone-header": 259.616, "huffman-assignment": 777.424,
+            "huffman-codec": 357.223, "iaid-state": 206.832,
+            "integer-state": 293.598, "mmr-horizontal": 195.975,
+            "mmr-prefix": 139.055, "mmr-reference": 343.719,
+            "mmr-run": 137.215, "mmr-span": 197.419,
+            "operator-bit": 118.843, "page-finish": 194.419,
+            "page-public": 252.640, "page-state": 354.187,
+            "public-context": 258.302, "public-decode-results": 188.292,
+            "public-global-results": 103.821, "reader-error": 255.522,
+            "reference-accounting": 199.505, "reference-catalog": 181.169,
+            "reference-type-classes": 176.142, "reference-type-lookup": 188.335,
+            "region-dispatch": 111.610, "reset": 86.058,
+            "retention": 110.963, "segment-data": 271.517,
+            "segment-header": 287.305, "session-framing": 308.239,
+            "symbol-cardinality": 594.550, "text-batch": 227.937,
+            "value-bridge": 438.330,
+        }
+        rows = [{"id": name, "status": "passed", "seconds": seconds}
+                for name, seconds in costs.items()]
+        previous = {**runner.DEFAULT_SHARD_REBALANCE, "region-dispatch": 10}
+        with patch.object(runner, "DEFAULT_SHARD_REBALANCE", previous):
+            with self.assertRaisesRegex(ValueError, "1050-second guard"):
+                runner.measured_shard_seconds(rows)
+        measured = runner.measured_shard_seconds(rows)
+        roles = [runner.configured_whole_checks(), runner.configured_collector_checks(),
+                 *runner.configured_shards()]
+        assigned = [check for role in roles for check in role]
+        self.assertEqual(len(measured), 14)
+        self.assertEqual(len(assigned), len(costs))
+        self.assertEqual({check[0] for check in assigned}, set(costs))
+        self.assertEqual(sum(check[2] for check in assigned), 494)
+        self.assertLess(max(measured), 1050)
+
     @patch.object(runner, "CHECKS", LIVE_CHECKS)
     @patch.multiple(runner, **LIVE_TOPOLOGY)
     def test_dictionary_fix_profile_preserves_checks_within_the_original_guard(self):

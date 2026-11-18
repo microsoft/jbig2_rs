@@ -8,8 +8,8 @@ use super::{
     crop_bitmap_columns, decode_export_runs, decode_mmr, decode_one_new_symbol,
     materialize_huffman_table, new_huffman_codec, refinement_template_from_u8, required_integer,
     select_dictionary_tables, symbol_id_code_length, wrap_custom_tables, BitReader, Bitmap,
-    DecodeError, DictionaryClassState, EntropyInteger, EofbPolicy, HuffmanChoiceSet,
-    HuffmanFieldTables, HuffmanTable, IntegerField, Limits, MalformedError,
+    DecodeError, DictionaryClassState, DictionaryContexts, EntropyInteger, EofbPolicy,
+    HuffmanChoiceSet, HuffmanFieldTables, HuffmanTable, IntegerField, Limits, MalformedError,
     RefinementContextSnapshot, ResourceTracker, StandardHuffmanTables, SymbolCodebook, SymbolCodec,
     SymbolDictionaryHeader, SymbolTextError,
 };
@@ -92,6 +92,7 @@ pub(in crate::symbol_text) fn decode_symbol_dictionary_huffman(
     total_symbols: u32,
     refinement_adaptive: [(i8, i8); 2],
     custom_tables: &[&HuffmanTable],
+    used_contexts: Option<&DictionaryContexts>,
     limits: &Limits,
 ) -> Result<(Vec<Bitmap>, Option<RefinementContextSnapshot>, usize), SymbolTextError> {
     let config = header.config;
@@ -130,6 +131,20 @@ pub(in crate::symbol_text) fn decode_symbol_dictionary_huffman(
         config.refinement_aggregation,
         config.refinement_template
     );
+    if let Some(used) = used_contexts.and_then(|used| used.refinement.as_ref()) {
+        let SymbolCodec::Huffman(huffman) = &mut codec else {
+            return Err(SymbolTextError::InvalidState(
+                "Huffman dictionary has non-Huffman state",
+            ));
+        };
+        let contexts = huffman
+            .refinement
+            .as_mut()
+            .ok_or(SymbolTextError::InvalidState(
+                "missing Huffman refinement contexts",
+            ))?;
+        contexts.restore(used, limits)?;
+    }
     let mut resources = ResourceTracker {
         work_units: 0,
         decoded_bitmap_bytes: 0,
@@ -191,7 +206,7 @@ pub(in crate::symbol_text) fn decode_symbol_dictionary_huffman(
                 codec.decode_integer(IntegerField::WidthDelta)?
             {
                 let (width, height) =
-                    class_state.add_symbol(width_delta, limits, &mut resources)?;
+                    class_state.add_individual_symbol(width_delta, limits, &mut resources)?;
                 let instances = required_integer(&mut codec, IntegerField::AggregationInstances)?;
                 let instances = u32::try_from(instances)
                     .map_err(|_| SymbolTextError::InvalidEntropyValue("aggregation instances"))?;
