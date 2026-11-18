@@ -1,5 +1,33 @@
 # Release validation
 
+## 0.2.1 scope
+
+The 0.2.1 maintenance release includes the embedded PDF/PDFium completion fix
+and follow-up compatibility changes from #176 and #177, also integrated into
+main by #178:
+
+- Finalize only a complete embedded final page at clean stream termination;
+  standalone validation and incomplete stripe/truncation rejection stay strict.
+- Restore retained Huffman refinement statistics and limit individually coded
+  symbols by their actual bitmap widths rather than a nonexistent collective.
+- Add explicit embedded-only best effort with observable recovery diagnostics
+  for inconsistent auxiliary/refinement page flags and a complete known-length
+  arithmetic FF D0 terminator. Existing APIs remain strict by default.
+
+Regression tests verify exact pixels/dimensions, globals and reusable contexts,
+nearby unrecoverable input and unchanged resource guards. The complete existing
+proof pipeline, contrasts, native controls and quality gates remain required.
+Versioned source, checksums and publication receipts belong to the
+[0.2.1 release](https://github.com/microsoft/jbig2_rs/releases/tag/v0.2.1).
+
+The prepared PDFium full-runner and adapter validation remains unavailable and
+is **not** claimed as passing. Three PDF canvas-composition cases are adapter
+work; malformed zero-length page information, the real collective width limit,
+and the unsupported custom-table recovery remain rejected as documented in
+[embedded recovery](embedded-recovery.md). This is not full PDFium compatibility.
+Rust 1.88.0 MSRV, dependency-free runtime, early-release warnings and all partial
+Verus/conformance limitations remain unchanged. Main stays unpublished 0.3.0-dev.
+
 ## 0.2.0 scope
 
 The 0.2.0 release includes the fixed-width Huffman aggregate-dictionary

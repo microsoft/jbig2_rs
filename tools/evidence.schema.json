@@ -170,7 +170,7 @@
           ],
           "properties": {
             "profile": {"const": "0.2-partial-verus"},
-            "crate_version": {"const": "0.2.0"},
+            "crate_version": {"enum": ["0.2.0", "0.2.1"]},
             "release_branch": {"const": "release/0.2"},
             "authority": {"const": "repository_owner_release_scope"},
             "approved_at": {"$ref": "#/$defs/nonempty"},
