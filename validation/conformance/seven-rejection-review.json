@@ -104,7 +104,7 @@
     "src/decode/rendering.rs": "fa259425d937b3933ee01ccffdd2ddfe55d11097c5e5881645b1e09cf6ab3bad",
     "src/decode/resources.rs": "55f9ee8e2daa02d57b3778847780e98dd8e2b7cf0b7331d45f76e429011dfd1a",
     "src/decode/tests/budgets_and_pages.rs": "6722bfaca28932881be9c72bc81ad5669064d5736edf777e6cf7716fc4f127e5",
-    "src/decode/tests/container_routes.rs": "7835eb46892ce1006564c570535694fe957f72af6ab4a9aa43780580b472e853",
+    "src/decode/tests/container_routes.rs": "f4afcf2b843893ae272f89c349e5286fd6ff40f7fdf6d2109fdd3ab9340b546d",
     "src/decode/tests/direct_and_reuse.rs": "d46a5cbd0ee0791141d8b6115f090faa7a0315dc51437dcfb643dce6b58e116c",
     "src/decode/tests/dispatch_and_resources.rs": "76315dc7e019fae9cc4abece4df46a94e12895dfcc0be2e5f82c1e55f5621995",
     "src/decode/tests/error_adapters.rs": "9ac3cef9467c3e007eba07beb57007762b30c0729023a2daa1c3fa5b3a5331cf",
@@ -1209,9 +1209,9 @@
   },
   "explicit_pdf_documentation_rebinding": {
     "base_revision": "b2c8b6b0a4c8352b604b2569f41f5675bc8fdc2f",
-    "source_revision": "fe3d7874622a07275745abf507183a4b9d296ca8",
+    "source_revision": "1f9ad86171ea8c276a54928a9f0d956a4c12cb6e",
     "runtime_model_proof_contract_and_cfg_tokens_unchanged": true,
     "rust_source_files_checked": 217,
-    "scope": "PDF/PDFium API documentation and regression naming only. No conformance output or historical disposition is re-executed or reapproved by this rebinding; previous actual replay and all normative limitations remain unchanged."
+    "scope": "PDF/PDFium API documentation and regression naming only. No conformance output or historical disposition is re-executed or reapproved by this rebinding; previous actual replay and all normative limitations remain unchanged. Subsequent additions are test-only clipping/empty-region/standalone-dispatch guard regressions; no executing production or proof tokens change."
   }
 }
