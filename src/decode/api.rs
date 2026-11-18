@@ -42,9 +42,11 @@ impl Decoder {
 
     /// Decodes a contiguous embedded page stream without external globals.
     ///
-    /// A complete input may omit the final end-of-page segment. An initially
+    /// For PDF integration, including [PDFium](https://pdfium.googlesource.com/pdfium/),
+    /// a complete input may omit the final end-of-page segment. An initially
     /// unknown page height must still be established by a completed final stripe.
-    /// This does not permit truncated segment or compressed bitmap data.
+    /// This does not permit truncated segment or compressed bitmap data, or
+    /// substitute PDF image dimensions.
     ///
     /// # Errors
     ///

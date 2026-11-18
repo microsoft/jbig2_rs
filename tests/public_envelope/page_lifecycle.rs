@@ -1,3 +1,6 @@
+//! PDF/[PDFium](https://pdfium.googlesource.com/pdfium/) embedded-page regressions
+//! alongside strict standalone lifecycle checks.
+
 #![cfg(test)]
 #![allow(clippy::duplicated_attributes)]
 
@@ -79,7 +82,7 @@ fn implicit_page(unknown_height: bool) -> Vec<Segment> {
 }
 
 #[test]
-fn clean_embedded_stream_end_completes_the_final_page_with_and_without_globals() {
+fn pdfium_embedded_stream_end_completes_the_final_page_with_and_without_globals() {
     let decoder = Decoder::default();
     let globals = decoder
         .parse_globals(&embedded(&[extension(0, 0, 0, &[])]))
@@ -164,7 +167,7 @@ fn clean_embedded_stream_end_completes_the_final_page_with_and_without_globals()
 }
 
 #[test]
-fn missing_page_end_is_not_recovered_in_standalone_or_before_another_page() {
+fn pdf_integration_does_not_relax_standalone_or_earlier_page_boundaries() {
     let decoder = Decoder::default();
     for unknown_height in [false, true] {
         let mut segments = implicit_page(unknown_height);
@@ -204,7 +207,7 @@ fn missing_page_end_is_not_recovered_in_standalone_or_before_another_page() {
 }
 
 #[test]
-fn embedded_completion_preserves_explicit_earlier_pages_and_stream_order() {
+fn pdfium_embedded_completion_preserves_explicit_earlier_pages_and_stream_order() {
     let decoder = Decoder::default();
     let mut segments = vec![page(10, 2, 8, 1), end(11, 2)];
     segments.extend(implicit_page(true));
@@ -231,7 +234,7 @@ fn embedded_completion_preserves_explicit_earlier_pages_and_stream_order() {
 }
 
 #[test]
-fn embedded_completion_does_not_hide_truncated_segments_or_unfinished_stripes() {
+fn pdfium_embedded_completion_rejects_truncated_segments_and_unfinished_stripes() {
     let decoder = Decoder::default();
     let globals = decoder.parse_globals(&[]).unwrap();
     let complete = embedded(&implicit_page(false));
@@ -302,7 +305,7 @@ fn embedded_completion_does_not_hide_truncated_segments_or_unfinished_stripes() 
 }
 
 #[test]
-fn empty_page_information_is_not_recovered_from_following_segment_bytes() {
+fn pdfium_empty_page_information_is_not_recovered_from_following_segment_bytes() {
     let decoder = Decoder::default();
     let globals = decoder.parse_globals(&[]).unwrap();
     for association in [0, 1] {

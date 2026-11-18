@@ -407,9 +407,11 @@ impl Decoder {
 
     /// Parses a contiguous embedded segment stream such as PDF page data.
     ///
-    /// The end of the complete input may terminate the final page without an
+    /// For PDF integration, including [PDFium](https://pdfium.googlesource.com/pdfium/),
+    /// the end of the complete input may terminate the final page without an
     /// end-of-page segment. An initially unknown height still requires a final
     /// completed stripe. Segment headers and payloads must not be truncated.
+    /// Standalone validation remains strict.
     ///
     /// # Errors
     ///

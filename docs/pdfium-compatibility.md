@@ -34,6 +34,15 @@ optional end-of-file, parsed globals (including actual reference resolution),
 reusable decoder contexts, standalone rejection, truncated input, unfinished
 stripes and the unchanged height limit.
 
+The public API documentation explicitly identifies this as PDF/PDFium
+integration behavior. First-party, generated regressions live in
+[`page_lifecycle.rs`](../tests/public_envelope/page_lifecycle.rs), including
+`pdfium_embedded_stream_end_completes_the_final_page_with_and_without_globals`,
+`pdfium_embedded_completion_rejects_truncated_segments_and_unfinished_stripes`,
+and `pdf_integration_does_not_relax_standalone_or_earlier_page_boundaries`.
+They verify dimensions and packed pixels rather than just successful returns.
+No external PDF fixture is required to run these crate regressions.
+
 ## Local results
 
 The final generated lifecycle tests were run against the original 0.2.0

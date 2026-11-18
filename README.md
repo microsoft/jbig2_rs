@@ -67,10 +67,10 @@ compressed input incremental or guarantee constant process memory. Reader
 position and sink side effects are not restored on failure. I/O errors,
 including `Interrupted`, remain typed errors rather than being silently retried.
 
-For embedded page streams, the end of the complete supplied input may replace
-the final end-of-page segment. Initially unknown-height pages still require a
-completed final stripe; malformed headers, truncated payloads and incomplete
-bitmap data are not recovered. Standalone files still require end-of-page
+For PDF integration, including PDFium, the end of the complete supplied embedded
+page stream may replace the final end-of-page segment. Initially unknown-height
+pages still require a completed final stripe; malformed headers, truncated
+payloads and incomplete bitmap data are not recovered. Standalone files still require end-of-page
 segments. A page-information segment must contain its complete 19-byte payload;
 PDF image dimensions are not guessed or substituted.
 
