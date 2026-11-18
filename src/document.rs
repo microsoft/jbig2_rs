@@ -33,6 +33,7 @@ mod document_properties;
 #[path = "../proofs/shared/document.rs"]
 mod document_shared;
 
+pub(crate) mod embedded;
 mod input;
 mod pages;
 mod parsing;

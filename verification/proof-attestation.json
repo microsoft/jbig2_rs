@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "status": "verified_exact_project_scope_with_reviewed_limits",
-  "source_revision": "1f9ad86171ea8c276a54928a9f0d956a4c12cb6e",
-  "scope": "Fresh whole verification and compilation of the embedded-stream completion maintenance candidate. Only the final page of a fully parsed embedded input may finish without an explicit page-end marker; unknown heights require completed terminal stripe metadata and bounded immediate-region rows. Standalone validation, existing public APIs, resource guards and reader/callback trust boundaries remain. Exact-output crate and independent extracted-stream comparisons are finite tests, not a complete decoded-output proof. Requested PDFium GN/Ninja integration and full baseline remain unavailable and are release blockers.",
+  "source_revision": "d368ccf89dbaf9ab352e254840a8211452c1824e",
+  "scope": "Fresh whole pinned verification and compilation of the PDF/PDFium follow-up based on validated PR #176 head 51e5fb05bdfbf5d7d8cf2378d197afd7892d7bfb. Restores retained Huffman refinement statistics and limits actual individual bitmaps rather than nonexistent collective width. Existing entry points remain strict; explicit embedded-only best effort returns typed recovery diagnostics for two inconsistent page flags and a complete known-length arithmetic FFD0 terminator. New contracts cover result/error identity, embedded metadata, context cleanup and individual-symbol accounting. All resource guards, segment boundaries, reference/truncation checks, standalone validation and the prior embedded final-page completion behavior remain. Finite exact-output regressions and public-stream comparisons are not full decoded-output proofs. Requested prepared PDFium checkouts/logs are unavailable and full integration remains blocked.",
   "toolchain": {
     "manifest": "config/toolchain.json",
     "verus_version": "0.2026.10.04.426d8b0",
@@ -11,8 +11,8 @@
   },
   "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-cargo cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/verus-expanded-raw\" --output-json",
   "result": {
-    "verified_obligations": 1316,
-    "verified_production_functions": 649,
+    "verified_obligations": 1339,
+    "verified_production_functions": 665,
     "errors": 0,
     "proof_build_compiles": true,
     "exact_production_source_compiles": true,
@@ -24,8 +24,8 @@
     "runtime_proof_divergences": 0,
     "incomplete_functions": 0
   },
-  "production_proof_coverage_sha256": "9b6267b94c38400d6d886c7a47ecfea9c783f5c70e37412dcd0e0464a41e4f5b",
-  "proof_dispositions_sha256": "ef6f52f14816a521b29f55fcdce77506b7163d7c07e52d1c6afd387efb8136be",
+  "production_proof_coverage_sha256": "a7b9ccbfc9d1718f555d947f4dac1c729e1fe52a0e6a062ce9b26afb66d429a2",
+  "proof_dispositions_sha256": "5bda1065a42f46c30775ff36280aad025bb294df0ac3f0accfb8e4b420763b85",
   "standard_library_boundary": {
     "manifest": "verification/stdlib/review.json",
     "manifest_sha256": "5f007f853c6caad16d6d318bde996373c6a6f886e8949cd0df62612e5408a92c",
@@ -33,8 +33,28 @@
     "review_kind": "delegated_engineering_review",
     "normative_approval": false
   },
-  "current_evidence_note": "Current explicitly named PDF/PDFium candidate: 575 native tests plus one doctest pass, with 14 ignored benchmarks; all ten public lifecycle cases pass on Rust 1.88. All 817 local audit tests passed before the coverage-only test additions. Pinned full runtime coverage passes unchanged aggregate and per-file floors (11907/12895 lines, 2320/2658 branches); the failed initial coverage profile is retained as historical CI evidence. Executing production/model/proof/contract/cfg tokens are unchanged from the 1316-obligation zero-error whole build; the latest additions extend only tests. Exact production accounting remains 649 direct and the same 20 reviewed limitations. Existing 13 parser/count and seven page-finish contrasts retain their actual implementation execution scope. The full existing hosted Verus/semantic/native-mutation pipeline is required on the exact PR head; no case, guard, resource limit or assumption is removed or weakened. The unavailable prepared PDFium full baseline remains a separate release blocker.",
+  "current_evidence_note": "Rust 1.89.0 formatting, locked all-target/all-feature strict Clippy and locked all-feature tests pass: 581 native tests plus one doctest, 14 existing ignored benchmarks. All 817 audit-tool tests pass. Approved standalone conformance replay preserves all ten exact bitmap/error outcomes. Fresh unfiltered pinned whole Verus verifies 1339 obligations with zero errors; expanded inventory reconciles 665 direct functions and the same 20 reviewed limitations. No new assumptions, incomplete functions, trusted bodies or runtime/proof divergences. Full pinned runtime coverage passes all unchanged aggregate and per-file floors: 12314/13259 lines and 2365/2704 branches. The 112-image immutable public-stream comparison changes 92 matches/19 errors/one mismatch at baseline to 94/18/zero in strict mode and 110/two/zero in best effort; all formerly correct packed bitmaps remain identical. These are crate API observations against a separate native PDFium oracle, not the requested ARM64 Debug runners. All existing hosted semantic, contrast, mutation, timing and coverage gates are unchanged and remain required on the exact candidate. No full hosted candidate profile or unavailable prepared PDFium execution is claimed.",
   "duplicate_executable_proof_source": false,
+  "embedded_recovery_ci_profile_correction": {
+    "rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/44359238184",
+    "attempt": 1,
+    "source_revision": "58635a5cbdc9c558b899c71a973e3e0bd270b773",
+    "all_semantic_groups_passed": true,
+    "group_count": 61,
+    "contrast_count": 494,
+    "rejected_shard": 10,
+    "rejected_shard_seconds": 1080.353,
+    "moved_group": "region-dispatch",
+    "destination_shard": 0,
+    "projected_source_shard_seconds": 968.743,
+    "projected_destination_shard_seconds": 954.010,
+    "complete_per_group_maximum_shard_seconds": 985.898,
+    "complete_per_group_maximum_collector_seconds": 1000.762,
+    "guard_seconds_unchanged": 1050,
+    "semantic_shards_unchanged": 14,
+    "post_allocation_audit_tests_passed": 818,
+    "scope": "Planning from all 61 measured successful groups in the rejected candidate run and the complete validated PR176 profile. Their per-group maxima, plus the preserved earlier dictionary-profile regression, fit the unchanged guard after moving one complete group from shard10 to shard0. No case, checker, contract, compiler, resource cap, whole/collector role or parallelism changes. This is not acceptance credit: a fresh complete same-run profile must pass on the final head."
+  },
   "dictionary_fix_ci_profile_correction": {
     "rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/43244487615",
     "attempt": 1,

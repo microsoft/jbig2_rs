@@ -74,6 +74,12 @@ payloads and incomplete bitmap data are not recovered. Standalone files still re
 segments. A page-information segment must contain its complete 19-byte payload;
 PDF image dimensions are not guessed or substituted.
 
+Existing entry points remain strict. For explicitly selected recovery of a small
+set of nonconforming embedded inputs, use `decode_embedded_with_policy` or
+`inspect_embedded_with_policy` with `EmbeddedPolicy::BestEffort`. Their
+`EmbeddedResult` includes every applied recovery; errors never return a partial
+bitmap. See the [allowlist, budgets and compatibility dispositions](docs/embedded-recovery.md).
+
 Packed pixels use **1 / `true` for black and 0 / `false` for white**.
 The first pixel is the most significant bit of its byte; row stride is in
 bytes. Read only the declared width, not padding bits. An 8-bit grayscale
