@@ -296,7 +296,7 @@ impl GenericContextDescriptor {
 
     #[allow(clippy::similar_names)]
     #[cfg_attr(verus_keep_ghost, verus_verify)]
-    pub(super) fn context(self, bitmap: &Bitmap, x: u32, y: u32, history: usize) -> usize {
+    pub(super) fn context(&self, bitmap: &Bitmap, x: u32, y: u32, history: usize) -> usize {
         match self {
             Self::NominalTemplate0 => {
                 let top = packed_row_bits(bitmap, i64::from(x), i64::from(y) - 2, -2, 5);
@@ -339,7 +339,7 @@ impl GenericContextDescriptor {
             Self::Template1(adaptive) => {
                 let top = packed_row_bits(bitmap, i64::from(x), i64::from(y) - 2, -1, 4);
                 let previous = packed_row_bits(bitmap, i64::from(x), i64::from(y) - 1, -2, 5);
-                let adaptive = usize::from(sample_cached(bitmap, x, y, adaptive));
+                let adaptive = usize::from(sample_cached(bitmap, x, y, *adaptive));
                 (((top << 5) | previous) << 4) | (adaptive << 3) | history & 0x07
             }
             Self::NominalTemplate2 => {
@@ -350,7 +350,7 @@ impl GenericContextDescriptor {
             Self::Template2(adaptive) => {
                 let top = packed_row_bits(bitmap, i64::from(x), i64::from(y) - 2, -1, 3);
                 let previous = packed_row_bits(bitmap, i64::from(x), i64::from(y) - 1, -2, 4);
-                let adaptive = usize::from(sample_cached(bitmap, x, y, adaptive));
+                let adaptive = usize::from(sample_cached(bitmap, x, y, *adaptive));
                 (((top << 4) | previous) << 3) | (adaptive << 2) | history & 0x03
             }
             Self::NominalTemplate3 => {
@@ -359,7 +359,7 @@ impl GenericContextDescriptor {
             }
             Self::Template3(adaptive) => {
                 let previous = packed_row_bits(bitmap, i64::from(x), i64::from(y) - 1, -3, 5);
-                let adaptive = usize::from(sample_cached(bitmap, x, y, adaptive));
+                let adaptive = usize::from(sample_cached(bitmap, x, y, *adaptive));
                 (previous << 5) | (adaptive << 4) | history & 0x0f
             }
         }
