@@ -128,7 +128,7 @@
     "src/file_header.rs": "9011f761698f3772c953980e2d2d56ed5ece4f792c8e318ca89a0e0f8d326e11",
     "src/generic_region/contexts.rs": "3e86887633490b1d135db2f9b1f8aa9f92e097e43f22f8b29dd1ed3521ed66cb",
     "src/generic_region/generic.rs": "3ee87782e68a4116568f88e2f31dc53b4acd4ef90ead17b2e73241a9d19c3161",
-    "src/generic_region/generic_context.rs": "bc96535f3197dfa73655d475c04b5c49bdd55f9b9417d7b5a580d337c2c91f44",
+    "src/generic_region/generic_context.rs": "e75c4b4f7006497747e3d2a6be940531ca3ea420524ee9f8d3b9214df3d43492",
     "src/generic_region/headers.rs": "d116c691bcc2c0f94f4a39a0984b7576a492f9b4411159aaf00a901cce2d3ac8",
     "src/generic_region/refinement.rs": "defb4386d60cf2b85b7de320ce5c8a53e83d4483ee30668e0cc3ab5a54e7b35c",
     "src/generic_region/segments.rs": "d84e912d208b1dd85160d4e0065a0b682cc48f63fbcf53ada5488ccaf2a8e59a",
@@ -1238,5 +1238,15 @@
     "unsupported_profile": 1,
     "unresolved_failures": 0,
     "scope": "Actual replay of all ten previously approved original standalone streams after the proved-valid dictionary context-bank route and conditional generic snapshot creation. Complete bitmap outputs and exact errors are byte-identical. Existing checked boundaries, retained-context checks and resource limits remain. Only current source identities are rebound; historical owner dispositions and normative limitations are not renewed or weakened."
+  },
+  "packed_row_specialization_replay": {
+    "source_revision": "0f3ca201a8102a206b628eee7f7e97999a05b3fa",
+    "results_sha256": "b6607a6ce27fe85c06441a8f276a192afe95dceb8e7db462c924d713b533260c",
+    "total": 10,
+    "passed": 2,
+    "reviewed_strict_rejections": 7,
+    "unsupported_profile": 1,
+    "unresolved_failures": 0,
+    "scope": "Actual replay of all ten previously approved original standalone streams after forcing compiler specialization of fixed-width packed-row calls. The helper body and every checked boundary are unchanged. Complete bitmap outputs and exact errors remain byte-identical. Only current source identities are rebound; historical owner dispositions and normative limitations are not renewed or weakened."
   }
 }
