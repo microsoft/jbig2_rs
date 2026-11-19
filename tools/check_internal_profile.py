@@ -51,7 +51,7 @@ def snapshot(root, compiler_directory):
         or matrix["normative_baseline"]["iso"] != "ISO/IEC 14492:2019, Edition 2"
         or not (
             package["version"] in {"0.2.0-dev", "0.3.0-dev"} and package["publish"] is False
-            or package["version"] == "0.2.0" and package["publish"] == ["crates-io"]
+            or package["version"] in {"0.2.0", "0.2.1"} and package["publish"] == ["crates-io"]
         )
         or proof["rust-version"] != toolchain["verus"]["rust_toolchain"]
         or provenance["policy"]["third_party_uploads_permitted"] is not False
