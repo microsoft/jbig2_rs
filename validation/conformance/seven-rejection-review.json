@@ -272,7 +272,7 @@
     "validation/conformance/fetch_itu.py": "ef7d846d05440ff052581de0d04caaa76f6e9cc9582ee1b9fb8baff34b89e86b",
     "tools/tests/test_conformance_acquisition.py": "57535afa7a966244302b51554c3dd6dc1fc00dac11fec7f33f49906fe35258f7",
     "tools/check_workflows.py": "87b60e17f0db77c901ead2cb8da715a7454b2053883aa5c34b96bb7260857ae4",
-    "tools/tests/test_workflows.py": "19342fc0f07efc38116fda6c3e69b6abf857baf714be6a3165bb5a87efdbdb2e",
+    "tools/tests/test_workflows.py": "ee863583184cf72d922e72352013007b28bdfe7ae63d44bcf4ccd02043f345e9",
     ".github/workflows/conformance.yml": "3da7b1553cd8c0661dab3538866712afe5c9b017b2d4e93db36e01a6dec98dc3"
   },
   "normalization_controls": {
@@ -1219,6 +1219,10 @@
     "runtime_source_revision": "612ed6799f8331e1640c892f0dcde6ccdd7329fa",
     "crate_version": "0.2.1",
     "scope": "Owner-requested 0.2.1 publication metadata only. The evidence schema and internal-profile checker additionally permit this exact patch version, with validation-tool regression cases. Every runtime, model, proof, decoder-regression and conformance-runner source byte is unchanged from the merged fixes. Historical execution results, approvals, dispositions and normative limitations are not renewed."
+  },
+  "image_companion_validation_binding": {
+    "runtime_source_revision": "4d737bd26183b26f3358477301df71b90e48e997",
+    "scope": "A separate unpublished image companion and its CI are added without changing decoder/model/proof sources or decoder regression tests. The existing workflow-toolchain audit adds the companion's pinned MSRV and quality lanes; no existing selection or gate is removed. Only that validation-test source hash is rebound. Historical conformance execution, approvals, dispositions and limitations remain unchanged."
   },
   "embedded_best_effort_replay": {
     "source_revision": "d368ccf89dbaf9ab352e254840a8211452c1824e",
