@@ -374,7 +374,7 @@ pub(super) fn find_run_code(black: bool, bits: u16, length: u8) -> Option<RunCod
                 index <= BLACK_TERMINATING@.len(),
             decreases BLACK_TERMINATING@.len() - index,
         ))]
-        while index < BLACK_TERMINATING.len() {
+        while (2..=12).contains(&length) && index < BLACK_TERMINATING.len() {
             let code = BLACK_TERMINATING[index];
             if code.length == length && code.bits == bits {
                 #[cfg(verus_keep_ghost)]
@@ -398,7 +398,7 @@ pub(super) fn find_run_code(black: bool, bits: u16, length: u8) -> Option<RunCod
                 index <= BLACK_MAKEUP@.len(),
             decreases BLACK_MAKEUP@.len() - index,
         ))]
-        while index < BLACK_MAKEUP.len() {
+        while (10..=13).contains(&length) && index < BLACK_MAKEUP.len() {
             let code = BLACK_MAKEUP[index];
             if code.length == length && code.bits == bits {
                 #[cfg(verus_keep_ghost)]
@@ -414,7 +414,7 @@ pub(super) fn find_run_code(black: bool, bits: u16, length: u8) -> Option<RunCod
                 index <= WHITE_TERMINATING@.len(),
             decreases WHITE_TERMINATING@.len() - index,
         ))]
-        while index < WHITE_TERMINATING.len() {
+        while (4..=8).contains(&length) && index < WHITE_TERMINATING.len() {
             let code = WHITE_TERMINATING[index];
             if code.length == length && code.bits == bits {
                 #[cfg(verus_keep_ghost)]
@@ -438,7 +438,7 @@ pub(super) fn find_run_code(black: bool, bits: u16, length: u8) -> Option<RunCod
                 index <= WHITE_MAKEUP@.len(),
             decreases WHITE_MAKEUP@.len() - index,
         ))]
-        while index < WHITE_MAKEUP.len() {
+        while (5..=9).contains(&length) && index < WHITE_MAKEUP.len() {
             let code = WHITE_MAKEUP[index];
             if code.length == length && code.bits == bits {
                 #[cfg(verus_keep_ghost)]
@@ -453,7 +453,7 @@ pub(super) fn find_run_code(black: bool, bits: u16, length: u8) -> Option<RunCod
         invariant index <= COMMON_MAKEUP@.len(),
         decreases COMMON_MAKEUP@.len() - index,
     ))]
-    while index < COMMON_MAKEUP.len() {
+    while (11..=12).contains(&length) && index < COMMON_MAKEUP.len() {
         let code = COMMON_MAKEUP[index];
         if code.length == length && code.bits == bits {
             #[cfg(verus_keep_ghost)]
