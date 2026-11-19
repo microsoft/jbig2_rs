@@ -3,62 +3,6 @@
 
 use super::*;
 
-fn scalar_run_code(reader: &mut BitReader<'_>, black: bool) -> Result<RunCode, MmrError> {
-    let start = reader.bit_position;
-    let mut prefix = 0_u16;
-    for length in 1..=MAX_RUN_CODE_BITS {
-        let bit = u16::try_from(reader.read_bits(1)?).unwrap();
-        prefix = append_code_bit(prefix, bit)?;
-        if let Some(code) = find_run_code(black, prefix, length) {
-            return Ok(code);
-        }
-    }
-    Err(MmrError::InvalidRunCode {
-        bit_offset: start,
-        black,
-    })
-}
-
-fn run_result(result: Result<RunCode, MmrError>) -> Result<(u16, u8, u16, bool), MalformedError> {
-    result
-        .map(|code| (code.bits, code.length, code.value, code.terminal))
-        .map_err(horizontal_error)
-}
-
-#[test]
-fn short_run_lookahead_preserves_every_byte_tail_cursor_and_exact_error() {
-    for black in [false, true] {
-        let mut empty = bit_reader(&[]);
-        let mut scalar_empty = empty;
-        assert_eq!(
-            run_result(decode_run_code(&mut empty, black)),
-            run_result(scalar_run_code(&mut scalar_empty, black))
-        );
-        assert_eq!(empty.bit_position, scalar_empty.bit_position);
-        for byte in 0..=u8::MAX {
-            for start in 0..=8 {
-                let bytes = [byte];
-                let mut actual = BitReader {
-                    bytes: &bytes,
-                    bit_position: start,
-                };
-                let mut expected = actual;
-                let actual_result = run_result(decode_run_code(&mut actual, black));
-                let expected_result = run_result(scalar_run_code(&mut expected, black));
-                assert_eq!(
-                    actual_result, expected_result,
-                    "black={black} byte={byte} start={start}"
-                );
-                assert_eq!(
-                    actual.bit_position, expected.bit_position,
-                    "black={black} byte={byte} start={start}"
-                );
-                assert_eq!(actual.bytes.as_ptr(), bytes.as_ptr());
-            }
-        }
-    }
-}
-
 #[test]
 fn every_mode_window_and_alignment_matches_scalar_prefix_lookup() {
     for window in 0..(1_u16 << MAX_MODE_CODE_BITS) {

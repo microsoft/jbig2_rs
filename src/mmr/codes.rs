@@ -311,9 +311,6 @@ pub(super) fn decode_run_code(
     black: bool,
 ) -> Result<RunCode, MmrError> {
     let start = reader.bit_position;
-    if let Some(code) = try_one_pixel_run(reader, black)? {
-        return Ok(code);
-    }
     let mut prefix = 0_u16;
     let mut length = 1_u8;
     #[cfg_attr(verus_keep_ghost, verus_spec(
@@ -358,62 +355,6 @@ pub(super) fn decode_run_code(
         bit_offset: start,
         black,
     })
-}
-
-#[cfg_attr(verus_keep_ghost, verus_spec(out =>
-    requires mmr_spec::reader_valid(old(reader)),
-    ensures
-        mmr_spec::reader_valid(final(reader)),
-        final(reader).bytes@ == old(reader).bytes@,
-        match out {
-            Ok(Some(code)) =>
-                mmr_spec::run_code_in_implementation_tables(black, code)
-                && 0 < code.length <= MAX_RUN_CODE_BITS
-                && final(reader).bit_position
-                    == old(reader).bit_position + code.length as usize
-                && code.bits as nat == crate::spec::readers::bits_value(
-                    old(reader).bytes@, old(reader).bit_position as nat, code.length as nat,
-                ),
-            _ => final(reader).bit_position == old(reader).bit_position,
-        },
-))]
-fn try_one_pixel_run(reader: &mut BitReader<'_>, black: bool) -> Result<Option<RunCode>, MmrError> {
-    let count = if black { 3_u8 } else { 6_u8 };
-    let code = if black {
-        BLACK_TERMINATING[1]
-    } else {
-        WHITE_TERMINATING[1]
-    };
-    let total = reader
-        .bytes
-        .len()
-        .checked_mul(8)
-        .ok_or(MmrError::IntegerOverflow)?;
-    if total - reader.bit_position < usize::from(count) {
-        return Ok(None);
-    }
-    // Probe a copy so misses and short tails retain the scalar decoder's cursor/errors.
-    let mut probe = BitReader {
-        bytes: reader.bytes,
-        bit_position: reader.bit_position,
-    };
-    let bits = probe.read_bits(count)?;
-    if code.length != count || u32::from(code.bits) != bits {
-        return Ok(None);
-    }
-    #[cfg(verus_keep_ghost)]
-    proof! {
-        reveal(mmr_spec::run_code_in_implementation_tables);
-        if black {
-            assert(BLACK_TERMINATING@[1] == code);
-            assert(BLACK_TERMINATING@.contains(code));
-        } else {
-            assert(WHITE_TERMINATING@[1] == code);
-            assert(WHITE_TERMINATING@.contains(code));
-        }
-    }
-    *reader = probe;
-    Ok(Some(code))
 }
 
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
