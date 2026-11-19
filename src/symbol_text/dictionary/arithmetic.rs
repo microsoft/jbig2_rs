@@ -476,12 +476,12 @@ pub(in crate::symbol_text) fn decode_symbol_dictionary_arithmetic(
     validate_bounded_arithmetic_marker(&arithmetic.decoder, normalized.len())?;
 
     let retained_generic = match generic_contexts.as_ref() {
-        Some(contexts) => Some(contexts.try_snapshot(limits)?),
-        None => None,
+        Some(contexts) if config.bitmap_context_retained => Some(contexts.try_snapshot(limits)?),
+        _ => None,
     };
     let retained_refinement = match arithmetic.refinement.as_ref() {
-        Some(contexts) => Some(contexts.try_snapshot(limits)?),
-        None => None,
+        Some(contexts) if config.bitmap_context_retained => Some(contexts.try_snapshot(limits)?),
+        _ => None,
     };
 
     let exported_symbols = assemble_exported_symbols(imported, &new_symbols, &exported, limits)?;
