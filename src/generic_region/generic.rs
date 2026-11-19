@@ -101,7 +101,7 @@ impl<'a> GenericArithmeticSession<'a> {
         call: GenericArithmeticCall<'_>,
         rows: u32,
     ) -> Result<Bitmap, GenericRegionError> {
-        decode_generic_on(
+        decode_generic_on_validated(
             &mut self.decoder,
             &mut self.contexts,
             call,
