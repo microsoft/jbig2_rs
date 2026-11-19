@@ -131,14 +131,14 @@
     {
       "id": "generic_region::GenericRegionError::fmt",
       "file": "src/generic_region.rs",
-      "file_sha256": "3c916de49adad814ed62bb8afc37f9051ab36b95b4e6b45034b4b071ca187f01",
+      "file_sha256": "5aa90d8f1259d05a9b8285076b813ffa4751d07360c3ef000f92149aaba8219d",
       "status": "reviewed-verifier-limitation",
       "reason": "The remaining standard Formatter operations used by this Display body are unsupported by the pin. Formatting trait precondition models exist; this is not a claim that every formatting model is absent. No standard formatting behavior or complete diagnostic text is inferred from codec proofs."
     },
     {
       "id": "generic_region::GenericRegionError::source",
       "file": "src/generic_region.rs",
-      "file_sha256": "3c916de49adad814ed62bb8afc37f9051ab36b95b4e6b45034b4b071ca187f01",
+      "file_sha256": "5aa90d8f1259d05a9b8285076b813ffa4751d07360c3ef000f92149aaba8219d",
       "status": "reviewed-verifier-limitation",
       "reason": "The pinned verifier does not declare the remaining core::error::Error source interface used here. This is a standard diagnostic trait boundary, not a raster or allocation-kernel limitation."
     }

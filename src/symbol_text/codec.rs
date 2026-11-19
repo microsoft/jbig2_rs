@@ -3,15 +3,15 @@
 #[cfg(verus_keep_ghost)]
 use super::symbol_text_spec;
 use super::{
-    bit_reader, check_dimensions, checked_unsigned_delta, decode_generic_on, decode_refinement_on,
-    enforce_limit, required_integer, widen_bool_i64, ArithmeticCodec, ArithmeticContext,
-    ArithmeticDecoder, ArithmeticInteger, BitReader, Bitmap, DecodeError, EntropyInteger,
-    GenericArithmeticCall, GenericContexts, HuffmanCodec, HuffmanFieldTables, HuffmanLine,
-    HuffmanTable, HuffmanValue, IntegerContexts, IntegerField, LimitKind, Limits, MalformedError,
-    NormalizedArithmetic, RefinementArithmeticCall, RefinementContexts, RefinementGeometry,
-    RefinementParameters, RefinementRequest, RefinementTemplate, ResourceTracker, SymbolCodec,
-    SymbolIdRequest, SymbolLengthRun, SymbolTextError, TemplateOffset,
-    BOUNDED_ARITHMETIC_TERMINATOR, INTEGER_FIELD_COUNT,
+    bit_reader, check_dimensions, checked_unsigned_delta, decode_generic_on_validated,
+    decode_refinement_on, enforce_limit, required_integer, widen_bool_i64, ArithmeticCodec,
+    ArithmeticContext, ArithmeticDecoder, ArithmeticInteger, BitReader, Bitmap, DecodeError,
+    EntropyInteger, GenericArithmeticCall, GenericContexts, HuffmanCodec, HuffmanFieldTables,
+    HuffmanLine, HuffmanTable, HuffmanValue, IntegerContexts, IntegerField, LimitKind, Limits,
+    MalformedError, NormalizedArithmetic, RefinementArithmeticCall, RefinementContexts,
+    RefinementGeometry, RefinementParameters, RefinementRequest, RefinementTemplate,
+    ResourceTracker, SymbolCodec, SymbolIdRequest, SymbolLengthRun, SymbolTextError,
+    TemplateOffset, BOUNDED_ARITHMETIC_TERMINATOR, INTEGER_FIELD_COUNT,
 };
 #[cfg(verus_keep_ghost)]
 use vstd::prelude::*;

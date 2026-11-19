@@ -215,7 +215,7 @@ pub(in crate::symbol_text) fn decode_symbol_dictionary_huffman(
                     &mut codec,
                     imported,
                     &new_symbols,
-                    None,
+                    &mut None,
                     &mut 0,
                     Some(instances),
                     width,

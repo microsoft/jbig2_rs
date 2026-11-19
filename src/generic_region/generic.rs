@@ -101,7 +101,7 @@ impl<'a> GenericArithmeticSession<'a> {
         call: GenericArithmeticCall<'_>,
         rows: u32,
     ) -> Result<Bitmap, GenericRegionError> {
-        decode_generic_on(
+        decode_generic_on_validated(
             &mut self.decoder,
             &mut self.contexts,
             call,
@@ -319,6 +319,47 @@ pub(crate) fn decode_generic_on(
         &contexts.contexts,
     )?;
     validate_probability_states(&contexts.contexts)?;
+    decode_generic_on_validated(decoder, contexts, call, rows, limits, cumulative_work)
+}
+
+/// Reuse a bank whose validity was established at creation or checked restore.
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    requires
+        crate::arithmetic::arithmetic_spec::decoder_valid(old(decoder)),
+        generic_region_spec::generic_contexts_valid(old(contexts)),
+        match call.skip {
+            Some(mask) => crate::spec::bitmap::storage_valid(mask),
+            None => true,
+        },
+    ensures match out {
+        Ok(bitmap) =>
+            crate::spec::bitmap::storage_valid(&bitmap)
+            && crate::arithmetic::arithmetic_spec::decoder_valid(final(decoder))
+            && generic_region_spec::generic_contexts_valid(final(contexts)),
+        Err(_) => true,
+    },
+))]
+#[allow(clippy::collapsible_if, clippy::too_many_lines)]
+pub(crate) fn decode_generic_on_validated(
+    decoder: &mut ArithmeticDecoder<'_>,
+    contexts: &mut GenericContexts,
+    call: GenericArithmeticCall<'_>,
+    rows: u32,
+    limits: &Limits,
+    cumulative_work: &mut u64,
+) -> Result<Bitmap, GenericRegionError> {
+    if rows > call.height {
+        return Err(MalformedError::GenericRegionRowCount {
+            declared: call.height,
+            actual: rows,
+        }
+        .into());
+    }
+    validate_generic_context_layout(
+        contexts.template,
+        contexts.extended_template,
+        &contexts.contexts,
+    )?;
     validate_generic_adaptive_values(
         contexts.template,
         contexts.extended_template,

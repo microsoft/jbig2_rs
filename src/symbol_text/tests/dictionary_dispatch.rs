@@ -5,6 +5,57 @@ use super::*;
 use std::fmt::Write;
 
 #[test]
+fn arithmetic_dictionary_reserves_generic_snapshot_only_when_retention_is_requested() {
+    for (flags, adaptive, context_bytes) in [
+        (
+            0_u16,
+            &[3, 0xff, 0xfd, 0xff, 2, 0xfe, 0xfe, 0xfe][..],
+            131_072_u64,
+        ),
+        (0x0c00, &[0xff, 0xff][..], 2_048),
+    ] {
+        for retain in [false, true] {
+            let mut payload = (flags | if retain { 0x0200 } else { 0 })
+                .to_be_bytes()
+                .to_vec();
+            payload.extend_from_slice(adaptive);
+            payload.extend_from_slice(&0_u32.to_be_bytes());
+            payload.extend_from_slice(&0_u32.to_be_bytes());
+            payload.extend_from_slice(&[0xff, 0xac]);
+            for budget in [context_bytes * 3 / 2, context_bytes * 2] {
+                let limits = Limits {
+                    max_decoder_managed_memory_bytes: budget,
+                    ..Limits::default()
+                };
+                let output = decode_symbol_dictionary(&SymbolDictionaryInput {
+                    payload: &payload,
+                    imported_symbols: SymbolCodebook::Contiguous(&[]),
+                    custom_tables: &[],
+                    used_contexts: None,
+                    limits: &limits,
+                });
+                if retain && budget < context_bytes * 2 {
+                    assert!(
+                        matches!(output, Err(SymbolTextError::Decode(DecodeError::LimitExceeded(
+                        LimitExceeded { kind: LimitKind::Memory, limit, actual }
+                    ))) if limit == budget && actual == context_bytes * 2)
+                    );
+                    continue;
+                }
+                let output = output.unwrap();
+                assert_eq!(output.consumed_bytes, payload.len());
+                assert!(output.exported_symbols.is_empty());
+                assert_eq!(output.retained_contexts.is_some(), retain);
+                if let Some(retained) = output.retained_contexts {
+                    assert!(retained.generic.is_some());
+                    assert!(retained.refinement.is_none());
+                }
+            }
+        }
+    }
+}
+
+#[test]
 fn aggregate_dictionary_limits_each_bitmap_not_an_unallocated_collective() {
     let limits = Limits {
         max_width: 16,
@@ -211,7 +262,7 @@ fn single_instance_refinement_reaches_the_existing_raw_callback() {
             &mut codec,
             SymbolCodebook::Borrowed(&references),
             &[],
-            None,
+            &mut None,
             &mut generic_work,
             Some(1),
             1,
@@ -250,7 +301,7 @@ fn direct_coded_symbol_rejects_an_aggregation_count_before_decoding() {
         &mut codec,
         SymbolCodebook::Contiguous(&[]),
         &[],
-        None,
+        &mut None,
         &mut generic_work,
         Some(1),
         1,
@@ -289,7 +340,7 @@ fn refinement_still_rejects_missing_and_zero_instance_counts() {
             &mut codec,
             SymbolCodebook::Contiguous(&[]),
             &[],
-            None,
+            &mut None,
             &mut generic_work,
             count,
             1,

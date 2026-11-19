@@ -49,6 +49,9 @@ multi-page selection continue to use the core API.
 Root Cargo commands keep their existing scope; test the companion with
 `cargo test --manifest-path adapters/image/Cargo.toml --locked`.
 
+Measured context/dictionary optimizations, their correctness checks and excluded
+experiments are documented in [performance improvements](docs/performance-improvements.md).
+
 ## Decoder scope
 
 - Standalone sequential and random-access JBIG2 files.

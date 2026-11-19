@@ -216,7 +216,7 @@ fn generic_preflight_errors_preserve_stream_statistics_work_and_direct_bytes() {
     let limits = Limits::default();
     let header = generic_header(9, 2, GenericTemplate::Template3, false, false);
     let coded = [0xff, 0xac];
-    for direct in [false, true] {
+    for route in 0..3 {
         for case in 0..4 {
             let rows = if case == 0 { 3 } else { 1 };
             let initial = if case == 1 { u64::MAX } else { 11 };
@@ -243,8 +243,8 @@ fn generic_preflight_errors_preserve_stream_statistics_work_and_direct_bytes() {
                 typical_prediction: false,
                 skip: None,
             };
-            let result = if direct {
-                decode_generic_on_into(
+            let result = match route {
+                0 => decode_generic_on_into(
                     &mut decoder,
                     &mut contexts,
                     call,
@@ -252,10 +252,20 @@ fn generic_preflight_errors_preserve_stream_statistics_work_and_direct_bytes() {
                     &limited,
                     &mut work,
                     &mut target,
+                ),
+                1 => {
+                    decode_generic_on(&mut decoder, &mut contexts, call, rows, &limited, &mut work)
+                        .map(|_| ())
+                }
+                _ => decode_generic_on_validated(
+                    &mut decoder,
+                    &mut contexts,
+                    call,
+                    rows,
+                    &limited,
+                    &mut work,
                 )
-            } else {
-                decode_generic_on(&mut decoder, &mut contexts, call, rows, &limited, &mut work)
-                    .map(|_| ())
+                .map(|_| ()),
             };
             if case == 0 {
                 assert!(matches!(
