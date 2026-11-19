@@ -48,8 +48,8 @@ mod support;
 
 #[allow(unused_imports)]
 pub(crate) use generic::{
-    decode_arithmetic_generic, decode_generic_on, decode_probability_signal,
-    probability_signal_error, RASTER_SIGNAL_CONTEXT,
+    decode_arithmetic_generic, decode_generic_on, decode_generic_on_validated,
+    decode_probability_signal, probability_signal_error, RASTER_SIGNAL_CONTEXT,
 };
 pub(crate) use headers::{parse_generic_region_header, parse_refinement_region_header};
 pub(crate) use refinement::{decode_arithmetic_refinement, decode_refinement_on};

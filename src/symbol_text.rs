@@ -10,10 +10,10 @@ use std::collections::VecDeque;
 use crate::arithmetic::{ArithmeticContext, ArithmeticDecoder, ArithmeticError, ArithmeticInteger};
 use crate::bitmap::{Bitmap, CombinationOperator, RowBlit};
 use crate::generic_region::{
-    decode_generic_on, decode_refinement_on, GenericArithmeticCall, GenericContextSnapshot,
-    GenericContexts, GenericRegionError, GenericTemplate, RefinementArithmeticCall,
-    RefinementContextSnapshot, RefinementContexts, RefinementParameters, RefinementTemplate,
-    TemplateOffset,
+    decode_generic_on_validated, decode_refinement_on, GenericArithmeticCall,
+    GenericContextSnapshot, GenericContexts, GenericRegionError, GenericTemplate,
+    RefinementArithmeticCall, RefinementContextSnapshot, RefinementContexts, RefinementParameters,
+    RefinementTemplate, TemplateOffset,
 };
 use crate::huffman::{HuffmanError, HuffmanLine, HuffmanTable, HuffmanValue, StandardHuffmanTable};
 use crate::mmr::{decode_mmr, EofbPolicy, MmrError};

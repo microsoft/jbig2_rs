@@ -119,6 +119,10 @@ pub(in crate::symbol_text) fn decode_dictionary_single_instance_refinement(
         symbol_text_spec::bitmaps_valid(new_symbols@),
         symbol_text_spec::work_units(old(resources)) <= limits.max_work_units,
         header.adaptive_count <= 4,
+        match *old(generic_contexts) {
+            Some(ref contexts) => crate::generic_region::generic_region_spec::generic_contexts_valid(contexts),
+            None => true,
+        },
     ensures match out {
         Ok(bitmap) =>
             symbol_text_spec::codec_valid(final(codec))
@@ -128,7 +132,11 @@ pub(in crate::symbol_text) fn decode_dictionary_single_instance_refinement(
                 && symbol_text_spec::work_units(final(resources))
                     <= limits.max_work_units
                 && symbol_text_spec::work_units(final(resources))
-                    >= symbol_text_spec::work_units(old(resources)),
+                    >= symbol_text_spec::work_units(old(resources))
+                && match *final(generic_contexts) {
+                    Some(ref contexts) => crate::generic_region::generic_region_spec::generic_contexts_valid(contexts),
+                    None => true,
+                },
         Err(_) => true,
     },
 ))]
@@ -137,7 +145,7 @@ pub(in crate::symbol_text) fn decode_one_new_symbol(
     codec: &mut SymbolCodec<'_>,
     imported: SymbolCodebook<'_>,
     new_symbols: &[Bitmap],
-    generic_contexts: Option<&mut GenericContexts>,
+    generic_contexts: &mut Option<GenericContexts>,
     generic_work: &mut u64,
     aggregation_instances: Option<u32>,
     width: u32,
@@ -252,9 +260,11 @@ pub(in crate::symbol_text) fn decode_one_new_symbol(
             ));
         }
         resources.charge_bitmap(width, height, limits)?;
-        let contexts = generic_contexts.ok_or(SymbolTextError::InvalidState(
-            "missing generic contexts for a direct-coded dictionary",
-        ))?;
+        let contexts = generic_contexts
+            .as_mut()
+            .ok_or(SymbolTextError::InvalidState(
+                "missing generic contexts for a direct-coded dictionary",
+            ))?;
         let mut full_adaptive = [TemplateOffset::new(0, 0); 12];
         full_adaptive[..usize::from(header.adaptive_count)]
             .copy_from_slice(&header.adaptive[..usize::from(header.adaptive_count)]);
@@ -374,6 +384,10 @@ pub(in crate::symbol_text) fn decode_symbol_dictionary_arithmetic(
             symbol_text_spec::dictionary_state_valid(&class_state),
             symbol_text_spec::codebook_valid(imported),
             symbol_text_spec::bitmaps_valid(new_symbols@),
+            match generic_contexts {
+                Some(ref contexts) => crate::generic_region::generic_region_spec::generic_contexts_valid(contexts),
+                None => true,
+            },
             symbol_text_spec::codec_valid(&codec),
             symbol_text_spec::work_units(&resources) <= limits.max_work_units,
         decreases limits.max_work_units - symbol_text_spec::work_units(&resources),
@@ -396,6 +410,10 @@ pub(in crate::symbol_text) fn decode_symbol_dictionary_arithmetic(
                 symbol_text_spec::dictionary_state_valid(&class_state),
                 symbol_text_spec::codebook_valid(imported),
                 symbol_text_spec::bitmaps_valid(new_symbols@),
+                match generic_contexts {
+                    Some(ref contexts) => crate::generic_region::generic_region_spec::generic_contexts_valid(contexts),
+                    None => true,
+                },
                 symbol_text_spec::codec_valid(&codec),
                 symbol_text_spec::work_units(&resources)
                     <= limits.max_work_units,
@@ -423,7 +441,7 @@ pub(in crate::symbol_text) fn decode_symbol_dictionary_arithmetic(
                 &mut codec,
                 imported,
                 &new_symbols,
-                generic_contexts.as_mut(),
+                &mut generic_contexts,
                 &mut generic_work,
                 aggregation_instances,
                 width,

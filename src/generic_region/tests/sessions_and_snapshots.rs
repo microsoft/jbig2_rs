@@ -13,6 +13,94 @@ fn seed_probability_bank(contexts: &mut [ArithmeticContext]) {
     }
 }
 
+#[test]
+fn validated_generic_calls_match_checked_calls_across_reused_probability_banks() {
+    let limits = Limits::default();
+    for template in [
+        GenericTemplate::Template0,
+        GenericTemplate::Template1,
+        GenericTemplate::Template2,
+        GenericTemplate::Template3,
+    ] {
+        let header = generic_header(9, 3, template, false, false);
+        let mut checked = GenericContexts::new(template, false, &limits).unwrap();
+        seed_probability_bank(&mut checked.contexts);
+        let mut validated = GenericContexts::new(template, false, &limits).unwrap();
+        validated.contexts.copy_from_slice(&checked.contexts);
+        let coded = [0xff, 0xac];
+        let mut checked_decoder = ArithmeticDecoder::new(&coded).unwrap();
+        let mut validated_decoder = ArithmeticDecoder::new(&coded).unwrap();
+        let mut checked_work = 11;
+        let mut validated_work = 11;
+        for _ in 0..4 {
+            let call = GenericArithmeticCall {
+                width: 9,
+                height: 3,
+                adaptive: header.adaptive,
+                typical_prediction: false,
+                skip: None,
+            };
+            let expected = decode_generic_on(
+                &mut checked_decoder,
+                &mut checked,
+                call,
+                3,
+                &limits,
+                &mut checked_work,
+            )
+            .unwrap();
+            let actual = decode_generic_on_validated(
+                &mut validated_decoder,
+                &mut validated,
+                call,
+                3,
+                &limits,
+                &mut validated_work,
+            )
+            .unwrap();
+            assert_eq!(actual, expected);
+            assert_eq!(validated.contexts, checked.contexts);
+            assert_eq!(validated_work, checked_work);
+            assert_decoder_state_eq(&validated_decoder, &checked_decoder);
+        }
+    }
+}
+
+#[test]
+fn checked_generic_boundary_still_rejects_an_unused_invalid_probability_state() {
+    let limits = Limits::default();
+    let template = GenericTemplate::Template0;
+    let header = generic_header(1, 1, template, false, false);
+    let mut contexts = GenericContexts::new(template, false, &limits).unwrap();
+    let last = contexts.contexts.len() - 1;
+    contexts.contexts[last] = ArithmeticContext {
+        state_index: 47,
+        mps: 0,
+    };
+    let before = contexts.contexts.clone();
+    let coded = [0xff, 0xac];
+    let mut decoder = ArithmeticDecoder::new(&coded).unwrap();
+    let mut work = 11;
+    let result = decode_generic_on(
+        &mut decoder,
+        &mut contexts,
+        GenericArithmeticCall {
+            width: 1,
+            height: 1,
+            adaptive: header.adaptive,
+            typical_prediction: false,
+            skip: None,
+        },
+        1,
+        &limits,
+        &mut work,
+    );
+    assert_invalid_probability(&result.map(|_| ()));
+    assert_eq!(contexts.contexts, before);
+    assert_eq!(work, 11);
+    assert_decoder_state_eq(&decoder, &ArithmeticDecoder::new(&coded).unwrap());
+}
+
 fn assert_invalid_probability(result: &Result<(), GenericRegionError>) {
     assert!(matches!(
         result,
