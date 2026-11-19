@@ -1,0 +1,23 @@
+[package]
+name = "jbig2-image"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.88.0"
+description = "External image crate adapter for jbig2-decoder"
+license = "MIT"
+repository = "https://github.com/microsoft/jbig2_rs"
+readme = "README.md"
+publish = false
+
+[dependencies]
+image = { version = "0.25.10", default-features = false }
+jbig2-decoder = { path = "../..", version = ">=0.2.1, <=0.3.0-dev" }
+
+[workspace]
+
+[lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+
+[lints.clippy]
+all = "deny"
