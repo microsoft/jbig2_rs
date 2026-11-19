@@ -377,8 +377,8 @@ pub(in crate::symbol_text) fn decode_symbol_dictionary_huffman(
         ));
     };
     let retained_refinement = match huffman.refinement.as_ref() {
-        Some(contexts) if config.bitmap_context_retained => Some(contexts.try_snapshot(limits)?),
-        _ => None,
+        Some(contexts) => Some(contexts.try_snapshot(limits)?),
+        None => None,
     };
     let exported_symbols = assemble_exported_symbols(imported, &new_symbols, &exported, limits)?;
     Ok((exported_symbols, retained_refinement, consumed_within_body))

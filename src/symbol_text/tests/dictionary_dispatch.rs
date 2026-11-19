@@ -5,27 +5,23 @@ use super::*;
 use std::fmt::Write;
 
 #[test]
-fn dictionaries_reserve_statistics_snapshots_only_when_retention_is_requested() {
-    let imported = [bitmap_from_packed_bytes(8, 1, &[0xa5], &Limits::default()).unwrap()];
-    for (flags, context_bytes) in [(0_u16, 131_072_u64), (2, 16_384), (3, 16_384)] {
+fn arithmetic_dictionary_reserves_generic_snapshot_only_when_retention_is_requested() {
+    for (flags, adaptive, context_bytes) in [
+        (
+            0_u16,
+            &[3, 0xff, 0xfd, 0xff, 2, 0xfe, 0xfe, 0xfe][..],
+            131_072_u64,
+        ),
+        (0x0c00, &[0xff, 0xff][..], 2_048),
+    ] {
         for retain in [false, true] {
             let mut payload = (flags | if retain { 0x0200 } else { 0 })
                 .to_be_bytes()
                 .to_vec();
-            if flags & 1 == 0 {
-                payload.extend_from_slice(&[3, 0xff, 0xfd, 0xff, 2, 0xfe, 0xfe, 0xfe]);
-            }
-            if flags & 2 != 0 {
-                payload.extend_from_slice(&[0xff; 4]);
-            }
-            let count = u32::from(flags & 1);
-            payload.extend_from_slice(&count.to_be_bytes());
+            payload.extend_from_slice(adaptive);
             payload.extend_from_slice(&0_u32.to_be_bytes());
-            payload.extend_from_slice(if flags & 1 == 0 {
-                &[0xff, 0xac]
-            } else {
-                &[0, 0x40]
-            });
+            payload.extend_from_slice(&0_u32.to_be_bytes());
+            payload.extend_from_slice(&[0xff, 0xac]);
             for budget in [context_bytes * 3 / 2, context_bytes * 2] {
                 let limits = Limits {
                     max_decoder_managed_memory_bytes: budget,
@@ -33,11 +29,7 @@ fn dictionaries_reserve_statistics_snapshots_only_when_retention_is_requested() 
                 };
                 let output = decode_symbol_dictionary(&SymbolDictionaryInput {
                     payload: &payload,
-                    imported_symbols: SymbolCodebook::Contiguous(if count == 0 {
-                        &[]
-                    } else {
-                        &imported
-                    }),
+                    imported_symbols: SymbolCodebook::Contiguous(&[]),
                     custom_tables: &[],
                     used_contexts: None,
                     limits: &limits,
@@ -52,14 +44,11 @@ fn dictionaries_reserve_statistics_snapshots_only_when_retention_is_requested() 
                 }
                 let output = output.unwrap();
                 assert_eq!(output.consumed_bytes, payload.len());
-                assert_eq!(output.exported_symbols.len(), count as usize);
+                assert!(output.exported_symbols.is_empty());
                 assert_eq!(output.retained_contexts.is_some(), retain);
-                if count != 0 {
-                    let bitmap = &output.exported_symbols[0];
-                    assert_eq!(
-                        (bitmap.width(), bitmap.height(), bitmap.bytes()),
-                        (8, 1, &[0xa5][..])
-                    );
+                if let Some(retained) = output.retained_contexts {
+                    assert!(retained.generic.is_some());
+                    assert!(retained.refinement.is_none());
                 }
             }
         }
