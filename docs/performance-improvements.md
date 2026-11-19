@@ -1,4 +1,4 @@
-# Measured dictionary/context improvements
+# Measured decoder performance improvements
 
 Baseline: main `96684fef6bd22502095858a02c1e5716c49f8c4d`.
 Retained runtime: `69bd3d896b41aea98313126bbc67a29266caf073`.
@@ -111,3 +111,78 @@ All existing semantic/contrast/native-mutation, workflow, distribution, coverage
 fuzz and timing gates remain required on the exact PR head. Component proofs and
 finite bitmap regressions do not establish full JBIG2/PDFium conformance or a
 complete decoded-output proof. No crate publication is part of this work.
+
+## Follow-up: fixed-width refinement windows
+
+Baseline: main `a65907cdcff89af1bf0f0022c0c1e94c62f155db`, including the
+dictionary/context improvements above.
+Retained runtime: `0f3ca201a8102a206b628eee7f7e97999a05b3fa`.
+
+The only additional runtime change is `#[inline(always)]` on the existing
+`packed_row_bits` helper, following the existing row-ring helper pattern.
+Refinement callers supply fixed neighborhood widths and offsets; exposing them
+to the optimizer avoids an out-of-line, general-purpose window extraction.
+The helper's executing body, scalar boundary fallback, checked coordinates,
+storage checks and verifier contracts are byte-for-byte unchanged. No public
+API, recovery policy, bitmap dimensions, allocation or configured limit changes.
+
+The same Rust 1.89.0 release probe, dependency lockfile and shared host were used.
+Baseline and candidate were rebuilt in the **same directory**, explicitly
+cleaning release artifacts between revisions and checking distinct binary
+hashes. Nine randomized, alternating paired rounds cover 43 fixtures / 47 API
+configurations, including two extra Huffman controls. Each normal record uses
+15 adaptive-batch samples targeting 500 ms; the large dictionary remains a
+single-decode record. Exact-output validation stays outside timing.
+
+| Fixture | Baseline median | Retained median | Median paired time ratio | Faster pairs |
+|---|---:|---:|---:|---:|
+| `bitmap-refine` | 3.5216 ms | 2.5455 ms | 0.7260 | 9/9 |
+| `bitmap-refine-page` | 3.4888 ms | 2.6002 ms | 0.7400 | 9/9 |
+| `bitmap-refine-refine` | 6.2567 ms | 4.4282 ms | 0.7043 | 9/9 |
+| `bitmap-refine-template1-tpgron` | 3.4350 ms | 2.6075 ms | 0.7559 | 8/9 |
+| `bitmap-symbol-context-reuse-huffman-refagg` | 0.7826 ms | 0.5520 ms | 0.7069 | 9/9 |
+| `bitmap-symbol-context-reuse-refagg` | 0.7330 ms | 0.5112 ms | 0.7005 | 8/9 |
+
+These refinement targets take about **24-30% less time**. Independent Callgrind
+collection over three `bitmap-refine-page` decodes falls from 184,617,513 to
+121,981,209 instructions, about 34% fewer; this is not a hardware-cycle count.
+Every configuration's median paired time ratio is at most 1.05. Some individual
+pairs regress, and template-3 controls have smaller slowdowns: the shared-host
+matrix does not establish zero regressions or a portable latency guarantee.
+
+### Additional experiments not retained
+
+- An MMR one-pixel terminating-code shortcut made generated dense transitions
+  about seven times faster and passed exact prefix/tail/error tests and whole
+  Verus verification. It nevertheless repeatedly slowed unrelated halftone and
+  refinement controls, including same-directory rebuild comparisons. Neither
+  that shortcut nor its test-only scaffolding is retained.
+- An ordinary `#[inline]` hint did not establish the refinement win. Combining
+  forced specialization with the MMR shortcut still left control regressions;
+  the final matrix above measures specialization **without** the MMR change.
+- A stale-artifact diagnostic produced identical before/after binary hashes and
+  was excluded, not counted as performance evidence. Explicit release cleaning
+  and hash checks were used for all reported same-directory comparisons.
+
+### Follow-up correctness and proofs
+
+The existing release-mode packed-window scalar oracle covers padding,
+boundaries and numeric edges; the randomized refinement oracle covers both
+specialized templates. Both pass without changing the tests. All 520 API
+replays preserve exact packed pixels/dimensions, metadata and recovery reports;
+the original two fatal fixtures still reject in both policies.
+
+Fresh pinned whole Verus passes with the **same 1340 obligations, 666 directly
+verified functions and 20 reviewed limitations**, zero errors and no new trusted
+bodies or assumptions. Expanded inventory reconciliation passes. All 584 native
+tests and one doctest pass, with the same 14 ignored microbenchmarks.
+All ten previously approved original standalone outcomes remain byte-identical.
+Runtime coverage passes unchanged floors: 12,339/13,283 lines and 2,370/2,708
+branches. Source-bound coverage, traceability and conformance identities are
+refreshed without renewing historical normative approvals.
+All 818 audit-tool tests, the isolated Rust 1.88 MSRV distribution/dry-run check
+and the image companion's tests/doctests also pass.
+
+All existing CI checks, including the complete 61-group / 494-contrast Verus
+pipeline and unchanged 1050-second timing guard, remain required before merging.
+The full PDFium integration runners were not available and are not claimed.

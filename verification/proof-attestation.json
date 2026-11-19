@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "status": "verified_exact_project_scope_with_reviewed_limits",
-  "source_revision": "69bd3d896b41aea98313126bbc67a29266caf073",
-  "scope": "Fresh pinned whole verification and compilation of the retained dictionary performance candidates. The original generic kernel still validates arbitrary banks and preserves typed errors. A new directly verified inner kernel requires valid probability states; arithmetic-codec and dictionary-loop contracts establish and preserve that condition from creation/checked restore. Owned sessions discharge the same precondition using their existing session invariant. No validity assumption or trusted algorithm is added. Only generic statistics snapshots with a clear context-retained flag are omitted; requested snapshots retain checked allocation/restore and exact resource errors. Refinement snapshot variants were experimentally discarded for insufficient timing repeatability. Geometry, entropy, references, truncation, arithmetic/context state and every configured limit remain checked. This is bounded component verification, not full decoded-output or normative proof.",
+  "source_revision": "0f3ca201a8102a206b628eee7f7e97999a05b3fa",
+  "scope": "Fresh pinned whole verification and compilation after forcing specialization of packed_row_bits at fixed-width refinement call sites. Its executing body, checked arithmetic, bitmap boundaries and verifier contracts are unchanged. Prior validated-bank and conditional generic-snapshot optimizations remain unchanged. MMR shortcut candidates and the advisory-only inline hint were experimentally rejected, not shipped. No algorithm, public API, typed error, resource limit, proof assumption or trusted boundary is changed. This is bounded component verification, not full decoded-output or normative proof.",
   "toolchain": {
     "manifest": "config/toolchain.json",
     "verus_version": "0.2026.10.04.426d8b0",
     "verus_commit": "426d8b01e7ffb910a36c15e1f870ff985bb61eef",
     "archive_sha256": "624018662868563a7bec0dd07be5e4dd0c3d61124b4b55105765884bf2d4d1a0"
   },
-  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-cargo cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/performance-candidates/verus-expanded\" --output-json",
+  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-cargo cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/next-performance/verus-expanded\" --output-json",
   "result": {
     "verified_obligations": 1340,
     "verified_production_functions": 666,
@@ -24,7 +24,7 @@
     "runtime_proof_divergences": 0,
     "incomplete_functions": 0
   },
-  "production_proof_coverage_sha256": "a4070ad058a862dac7d2d24b8b5e0bfe2d0e614b7c3607229c9c5456a81edaca",
+  "production_proof_coverage_sha256": "1a952dfb85c19a2f491ceb7040ed222e6a9e4a081caace5fba94fabafaf5f017",
   "proof_dispositions_sha256": "23b65a39ed4667850e0e951b651ce31697c426761b94334d85cd46efd6983f8c",
   "standard_library_boundary": {
     "manifest": "verification/stdlib/review.json",
@@ -33,7 +33,7 @@
     "review_kind": "delegated_engineering_review",
     "normative_approval": false
   },
-  "current_evidence_note": "Final runtime implementation is 69bd3d896b41aea98313126bbc67a29266caf073; subsequent additions extend tests/documentation and source-bound evidence. Fresh whole Verus verifies 1340 obligations with zero errors and compiles; exact accounting gives666 direct functions and the same20 reviewed limitations. No assumptions, incomplete functions, new trusted bodies or runtime/proof divergences. Rust1.89 locked all-feature tests pass:584 native plus one doctest, 14 existing ignored benchmarks. All818 audit-tool tests pass. Expanded verifier inventory reconciliation passes, and pinned runtime coverage passes every unchanged aggregate/per-file floor (12339/13283 lines,2370/2708 branches). Corpus replay checks520 API results, comprising 426 exact bitmap results and94 metadata inspections, plus both original fatal cases in strict/best effort. The ten approved standalone outcomes are unchanged. Paired release-mode experiments compare baseline, isolated context candidate, snapshot candidate and final retained scope on the same shared host with randomized order; raw comparisons are retained separately. No production latency SLA, small noisy speedup, new normative approval or unavailable PDFium runner result is claimed. All original semantic, contrast, mutation, timing, coverage and distribution gates remain required on the exact final PR head.",
+  "current_evidence_note": "Runtime source 0f3ca201a8102a206b628eee7f7e97999a05b3fa changes only packed-row inlining attributes and a rationale comment, not its body. Fresh whole Verus:1340 obligations, zero errors; exact coverage:666 direct functions, the same20 reviewed limitations, no assumptions, incomplete functions or runtime/proof divergences. Expanded inventory reconciliation passes. Rust1.89 locked all-feature tests pass:584 native plus one doctest,14 existing ignored benchmarks. Release-mode packed-window scalar and randomized refinement oracles pass. All520 exact API replays preserve426 bitmap results,94 inspections and recovery reports; both original fatal fixtures still reject in both modes. The ten original standalone outcomes are unchanged. Runtime coverage passes unchanged floors (12339/13283 lines,2370/2708 branches). Nine paired rounds across47 configurations show refinement targets taking24-30% less time; all configuration median paired ratios are at most1.05. Callgrind page-refinement instructions fall from184617513 to121981209 for three decodes. Shared-host measurements are not latency guarantees or proof of zero regressions. All original semantic, contrast, mutation, timing, distribution and companion CI gates remain required on the exact final PR head. No new normative approval or unavailable PDFium runner result is claimed.",
   "duplicate_executable_proof_source": false,
   "embedded_recovery_ci_profile_correction": {
     "rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/44359238184",
