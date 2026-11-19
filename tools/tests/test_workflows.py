@@ -330,6 +330,8 @@ class WorkflowPolicyTests(unittest.TestCase):
             ("coverage.yml", "coverage"): toolchains["coverage"]["rust_toolchain"],
             ("fuzz.yml", "controls"): toolchains["fuzz_rust_toolchain"],
             ("fuzz.yml", "fuzz"): toolchains["fuzz_rust_toolchain"],
+            ("image-adapter.yml", "test"): "1.88.0",
+            ("image-adapter.yml", "quality"): toolchains["cargo_rust_toolchain"],
             ("performance.yml", "performance"): toolchains["cargo_rust_toolchain"],
             ("release.yml", "validate"): "1.88.0",
             ("release.yml", "publish"): "1.88.0",
