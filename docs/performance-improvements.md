@@ -186,3 +186,80 @@ and the image companion's tests/doctests also pass.
 All existing CI checks, including the complete 61-group / 494-contrast Verus
 pipeline and unchanged 1050-second timing guard, remain required before merging.
 The full PDFium integration runners were not available and are not claimed.
+
+## Follow-up: borrow adaptive context descriptors
+
+Baseline: main `6eb85ee7fdfbaecf969f14b4f9e216fd29db52af`, including both
+optimizations above.
+Retained runtime: `88ade916215fffc50badf23d3d063f93e2c0c5a2`.
+
+The generic context descriptor contains an extended array of template offsets.
+Its context method previously took `self` by value on the per-pixel adaptive
+path. It now borrows `&self`; three scalar adaptive offsets are dereferenced
+where needed. No context formula, template order, arithmetic operation, storage
+check, resource budget or public API changes. This is not a new decoding kernel.
+The existing optimized refinement and checked probability-bank paths are intact.
+
+### Measurements
+
+The same probe, Rust 1.89.0 release settings, dependency lockfile and shared host
+were used. Both exact revisions were built at the same path, with explicit
+release cleaning and distinct binary-hash checks. Nine randomized, alternating
+paired rounds cover 43 fixtures / 47 API configurations. Normal records use
+15 adaptive-batch samples targeting 500 ms; the large dictionary remains a
+single-decode record. Every output is checked outside timing.
+
+| Fixture | Baseline median | Retained median | Median paired time ratio | Faster pairs |
+|---|---:|---:|---:|---:|
+| `bitmap-customat` | 3.2488 ms | 2.6583 ms | 0.8182 | 9/9 |
+| `bitmap-halftone-10bpp` | 3.8620 ms | 3.2157 ms | 0.8372 | 9/9 |
+| `bitmap-halftone-global` | 0.9079 ms | 0.8122 ms | 0.8942 | 9/9 |
+| `bitmap-halftone-skip-grid` | 1.5012 ms | 1.3434 ms | 0.9080 | 9/9 |
+| `bitmap-halftone` | 0.8882 ms | 0.8255 ms | 0.9287 | 8/9 |
+
+Custom adaptive-template decoding takes about **18% less time** and the
+high-bit-depth halftone about **16% less time**. Every configuration's median
+paired time ratio is below 1.03. A separate 15-pair screen of 14 target/control
+configurations, targeting 650 ms per normal record, confirms the high-bit-depth
+halftone gain: 3.9946 ms to 3.3133 ms, paired ratio 0.8281, faster in 14/15 pairs.
+Every confirmation median ratio is below 1.02.
+
+Independent Callgrind collection for three high-bit-depth halftone decodes
+falls from 188,982,518 to 167,038,274 instructions, about 12% fewer.
+Instruction counts are not hardware-cycle measurements. Individual pairs can
+still regress substantially on this shared host; small control differences are
+inconclusive. These coding-feature fixtures are not representative production
+PDFs, and these results are not latency guarantees or proof of zero regressions.
+
+### Rejected experiment
+
+Length-gating the original MMR run-table scans was also tested. It preserves
+bitwise reads and passes exhaustive prefix/cursor checks and whole Verus.
+Dense transitions took about 57% less time, but several unrelated halftone,
+stripe and arithmetic controls repeatedly regressed by 6-10%. The candidate was
+reverted completely before measuring the retained descriptor change. No MMR
+lookup, table, reader, test scaffolding or proof change is retained.
+
+### Correctness and proofs
+
+The existing release-mode literal-template/history oracle and all 11 raster
+parity tests pass unchanged, including randomized generic/refinement contexts,
+skip masks, retained entropy state, memory boundaries and typed error paths.
+All 520 public/generated API replays preserve exact packed pixels/dimensions,
+metadata and recovery reports; the two original fatal fixtures still reject in
+both policies. The full 584 native tests and one doctest pass with the same
+14 ignored microbenchmarks.
+
+Fresh pinned whole Verus passes with the same **1340 obligations, 666 directly
+verified functions and 20 reviewed limitations**, zero errors and no new trusted
+bodies or assumptions. Expanded inventory reconciliation passes. All ten
+previously approved original standalone outcomes remain byte-identical.
+Runtime coverage passes unchanged floors: 12,339/13,283 lines and 2,370/2,708
+branches. The isolated Rust 1.88 MSRV distribution/no-upload check and image
+companion tests/doctests pass. Source identities are rebound without renewing
+historical normative approval or conformance claims.
+All 818 audit-tool regression tests also pass.
+
+All existing checks, especially the complete 61-group / 494-contrast Verus
+pipeline and unchanged 1050-second timing guard, remain required before merging.
+No crate publication or release-branch backport is included in this follow-up.
