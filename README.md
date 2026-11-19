@@ -37,6 +37,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 Consumers need only ordinary Rust and Cargo, not Verus or the repository's
 proof files. Choose application-appropriate `Limits` before accepting input.
 
+## Use with the image crate
+
+The experimental [`jbig2-image` companion](adapters/image/README.md) implements
+`image::ImageDecoder` and opt-in `ImageReader` hooks for a single standalone
+JBIG2 page, with L8 output and explicit codec limits. It is an unpublished,
+separate crate, not a core feature or part of the decoder's Verus proof claim.
+The core remains dependency-free. Embedded PDF streams, globals, recovery and
+multi-page selection continue to use the core API.
+
+Root Cargo commands keep their existing scope; test the companion with
+`cargo test --manifest-path adapters/image/Cargo.toml --locked`.
+
 ## Decoder scope
 
 - Standalone sequential and random-access JBIG2 files.
