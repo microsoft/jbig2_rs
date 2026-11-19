@@ -693,7 +693,12 @@ pub(super) fn packed_row_byte(bitmap: &Bitmap, row_start: Option<usize>, x: i64)
     value & mask
 }
 
-#[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
+// Specialize fixed-width refinement neighborhoods at their call sites.
+#[allow(
+    clippy::cast_possible_truncation,
+    clippy::cast_sign_loss,
+    clippy::inline_always
+)]
 #[cfg_attr(verus_keep_ghost, verus_verify)]
 #[inline(always)]
 pub(super) fn packed_row_bits(
