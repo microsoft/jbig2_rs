@@ -695,7 +695,7 @@ pub(super) fn packed_row_byte(bitmap: &Bitmap, row_start: Option<usize>, x: i64)
 
 #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
 #[cfg_attr(verus_keep_ghost, verus_verify)]
-#[inline]
+#[inline(always)]
 pub(super) fn packed_row_bits(
     bitmap: &Bitmap,
     center_x: i64,
