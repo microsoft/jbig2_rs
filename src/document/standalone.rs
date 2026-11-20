@@ -392,7 +392,7 @@ pub(crate) fn prepare(input: &[u8], limits: &Limits) -> Result<Prepared, DecodeE
         let payload_start = header_len
             .checked_add(reader.position())
             .ok_or(MalformedError::IntegerOverflow)?;
-        let payload = super::parsing::read_payload(&mut reader, &header)?;
+        let payload = super::parsing::read_payload(&mut reader, &header, limits)?;
         let end = header_len
             .checked_add(reader.position())
             .ok_or(MalformedError::IntegerOverflow)?;
