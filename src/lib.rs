@@ -128,6 +128,7 @@ pub use decode::{DecodedDocument, Page, PageSink};
 pub use document::embedded::{
     EmbeddedPolicy, EmbeddedRecovery, EmbeddedRecoveryKind, EmbeddedResult,
 };
+pub use document::standalone::{DecodePolicy, DecodeResult, Recovery, RecoveryKind};
 pub use document::{Decoder, DecoderContext, DocumentInfo, GlobalSegments, PageInfo};
 pub use error::{
     DecodeError, GenericRegionErrorKind, HalftoneErrorKind, HuffmanErrorKind, IoErrorKind,

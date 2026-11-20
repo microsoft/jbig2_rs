@@ -11,6 +11,50 @@ use super::decode_spec;
 use vstd::prelude::*;
 
 impl Decoder {
+    /// Decodes a standalone file using an explicit validation policy.
+    ///
+    /// Compatibility permits uniquely owned zero-associated end-of-page,
+    /// complete pages missing end-of-page at exact boundaries, observed page
+    /// counts, one CR LF after a validated EOF, reserved region bit 4, and
+    /// unretained, unreferenced fixed-length type 1. Random-access files remain
+    /// strict. Colour, necessary extensions, entropy errors and truncation are
+    /// never waived. Diagnostics accompany only complete successful output.
+    /// Preparation, copies and diagnostics consume the existing budgets.
+    ///
+    /// # Errors
+    ///
+    /// Returns ordinary typed errors without retry or partial output.
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures match out {
+            Ok(output) => crate::document::declared_count_matches_pages(
+                decode_spec::document_info(&output.value)),
+            Err(_) => true,
+        },
+    ))]
+    pub fn decode_with_policy(
+        &self,
+        input: &[u8],
+        policy: crate::DecodePolicy,
+    ) -> Result<crate::DecodeResult<DecodedDocument>, DecodeError> {
+        self.context().decode_with_policy(input, policy)
+    }
+
+    /// Bounded reader equivalent of [`Decoder::decode_with_policy`].
+    ///
+    /// The reader's owned input copy is included in memory, retained-state and
+    /// work budgets in addition to the compatibility preparation.
+    ///
+    /// # Errors
+    ///
+    /// Returns the same typed errors, including input and I/O limits.
+    pub fn decode_reader_with_policy<R: Read>(
+        &self,
+        reader: &mut R,
+        policy: crate::DecodePolicy,
+    ) -> Result<crate::DecodeResult<DecodedDocument>, DecodeError> {
+        self.context().decode_reader_with_policy(reader, policy)
+    }
+
     /// Decodes embedded PDF/JBIG2 data with an explicit recovery policy.
     ///
     /// See [`Decoder::inspect_embedded_with_policy`] for the allowlist and budget
@@ -201,6 +245,112 @@ impl Decoder {
 }
 
 impl DecoderContext<'_> {
+    /// Context equivalent of [`Decoder::decode_with_policy`].
+    ///
+    /// # Errors
+    ///
+    /// Returns typed errors and performs normal cleanup on every result.
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures crate::document::decoder_context_finished(old(self), final(self)),
+            match out {
+                Ok(output) => crate::document::declared_count_matches_pages(
+                    decode_spec::document_info(&output.value)),
+                Err(_) => true,
+            },
+    ))]
+    pub fn decode_with_policy(
+        &mut self,
+        input: &[u8],
+        policy: crate::DecodePolicy,
+    ) -> Result<crate::DecodeResult<DecodedDocument>, DecodeError> {
+        let result = self.decode_policy_internal(input, policy);
+        self.finish_call();
+        result
+    }
+
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures crate::document::decoder_context_state(final(self)).0
+            == crate::document::decoder_context_state(old(self)).0,
+            match out {
+                Ok(output) => crate::document::declared_count_matches_pages(
+                    decode_spec::document_info(&output.value)),
+                Err(_) => true,
+            },
+    ))]
+    fn decode_policy_internal(
+        &mut self,
+        input: &[u8],
+        policy: crate::DecodePolicy,
+    ) -> Result<crate::DecodeResult<DecodedDocument>, DecodeError> {
+        #[cfg(verus_keep_ghost)]
+        proof! { crate::document::decoder_context_fields(); }
+        if policy == crate::DecodePolicy::Strict {
+            return Ok(crate::DecodeResult {
+                value: self.decode_internal(input)?,
+                recoveries: Vec::new(),
+            });
+        }
+        self.release_scratch();
+        let mut prepared = crate::document::standalone::prepare(input, self.limits())?;
+        if prepared.bytes.is_empty() {
+            return Ok(crate::DecodeResult {
+                value: Decoder::new(prepared.limits).decode(input)?,
+                recoveries: Vec::new(),
+            });
+        }
+        let (info, segments) = crate::document::standalone::parse(
+            &prepared.bytes,
+            &mut prepared.recoveries,
+            &mut prepared.limits,
+        )?;
+        let work = structural_work(prepared.bytes.len(), &segments)?;
+        let mut collector = PageCollector::new(&prepared.limits);
+        super::orchestration::decode_segments_compatible_collected(
+            &segments,
+            &info,
+            work,
+            &prepared.limits,
+            &mut self.mmr,
+            &mut collector,
+            &prepared.recoveries,
+        )?;
+        let value = DecodedDocument {
+            info,
+            pages: collector.pages,
+        };
+        #[cfg(verus_keep_ghost)]
+        production_decode_document_fields!(&value);
+        Ok(crate::DecodeResult {
+            value,
+            recoveries: prepared.recoveries,
+        })
+    }
+
+    /// Context reader equivalent of [`Decoder::decode_reader_with_policy`].
+    ///
+    /// # Errors
+    ///
+    /// Returns typed errors and performs normal cleanup on every result.
+    pub fn decode_reader_with_policy<R: Read>(
+        &mut self,
+        reader: &mut R,
+        policy: crate::DecodePolicy,
+    ) -> Result<crate::DecodeResult<DecodedDocument>, DecodeError> {
+        self.release_scratch();
+        let result = self.decode_reader_policy_internal(reader, policy);
+        self.finish_call();
+        result
+    }
+
+    fn decode_reader_policy_internal<R: Read>(
+        &self,
+        reader: &mut R,
+        policy: crate::DecodePolicy,
+    ) -> Result<crate::DecodeResult<DecodedDocument>, DecodeError> {
+        let (bytes, limits) = crate::document::standalone::read_input(reader, self.limits())?;
+        Decoder::new(limits).decode_with_policy(&bytes, policy)
+    }
+
     /// Decodes with the explicit policy of [`Decoder::decode_embedded_with_policy`].
     ///
     /// # Errors

@@ -110,6 +110,7 @@ macro_rules! decode_segments_body {
         $initial_resources:expr,
         $sink:expr,
         $embedded:expr,
+        $recoveries:expr,
         $write_page:path
     ) => {{
         let segments = $segments;
@@ -120,7 +121,8 @@ macro_rules! decode_segments_body {
         let mmr_scratch = $mmr_scratch;
         let initial_resources = $initial_resources;
         let sink = $sink;
-        let mut pages = Vec::new();
+        let implicit_ends = crate::document::standalone::has_missing_end($recoveries);
+        let mut pages: Vec<(u32, RuntimePage)> = Vec::new();
         let page_allocation = allocation_size::<(u32, RuntimePage)>(info.pages().len())?;
         pages
             .try_reserve(info.pages().len())
@@ -241,6 +243,25 @@ macro_rules! decode_segments_body {
             }
             match segment.header.segment_type {
                 SegmentType::PageInformation => {
+                    if implicit_ends && pages.len() > 1 {
+                        return Err(MalformedError::InvalidPageState(
+                            "ambiguous implicit page boundary",
+                        ).into());
+                    }
+                    if !pages.is_empty()
+                        && crate::document::standalone::has_implicit_end(
+                            $recoveries, pages[0].0,
+                        )
+                    {
+                        if pages.len() != 1 {
+                            return Err(MalformedError::InvalidPageState(
+                                "ambiguous implicit page boundary",
+                            ).into());
+                        }
+                        let (number, page) = pages.remove(0);
+                        retained.release(bitmap_byte_len(&page.bitmap)?)?;
+                        $write_page(sink, Page { number, bitmap: page.bitmap })?;
+                    }
                     let ParsedData::Page(page_data) = segment.data else {
                         return Err(MalformedError::InvalidPageState(
                             "page information payload was not parsed",
@@ -445,6 +466,7 @@ pub(super) fn decode_segments_collected(
         initial_resources,
         sink,
         embedded,
+        &[],
         PageCollector::push_page
     )
 }
@@ -470,6 +492,33 @@ pub(super) fn decode_segments<S: PageSink>(
         initial_resources,
         sink,
         false,
+        &[],
         write_page_to_sink::<S>
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+#[cfg_attr(verus_keep_ghost, verus_verify)]
+pub(super) fn decode_segments_compatible_collected(
+    segments: &[ParsedSegment<'_>],
+    info: &DocumentInfo,
+    initial_work: u64,
+    limits: &Limits,
+    mmr_scratch: &mut MmrScratch,
+    sink: &mut PageCollector,
+    recoveries: &[crate::Recovery],
+) -> Result<(), DecodeError> {
+    decode_segments_body!(
+        segments,
+        info,
+        initial_work,
+        0,
+        limits,
+        mmr_scratch,
+        None::<InitialResources>,
+        sink,
+        true,
+        recoveries,
+        PageCollector::push_page
     )
 }

@@ -37,6 +37,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 Consumers need only ordinary Rust and Cargo, not Verus or the repository's
 proof files. Choose application-appropriate `Limits` before accepting input.
 
+The 0.3 development API additionally offers explicit, bounded
+[standalone compatibility](docs/standalone-compatibility.md), with recovery
+diagnostics and no partial-output fallback. Existing APIs remain strict.
+
 ## Use with the image crate
 
 The experimental [`jbig2-image` companion](adapters/image/README.md) implements

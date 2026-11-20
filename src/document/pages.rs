@@ -243,7 +243,7 @@ pub(super) fn finalize_pages(
 }
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
-fn validate_implicit_stripes(
+pub(super) fn validate_implicit_stripes(
     segments: &[ParsedSegment<'_>],
     page: u32,
     width: u32,
