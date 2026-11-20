@@ -1,5 +1,39 @@
 # Release validation
 
+## 0.2.2 scope
+
+The 0.2.2 maintenance release packages the measured performance
+improvements already merged into `release/0.2` and main:
+
+- Reuse proved probability-bank validity across internal symbol decodes and
+  omit unused generic statistics snapshots (#182, backported in #183).
+- Specialize fixed-width refinement windows (#184, backported in #185).
+- Borrow adaptive context descriptors instead of per-pixel copies (#186,
+  backported in #187).
+- Use compact 7 KiB canonical-derived MMR indexes, preserving exact key checks,
+  scalar reader/error behavior and budgets (#188, backported in #189).
+
+The [performance report](performance-improvements.md) records exact measured
+revisions, workload-specific gains, rejected variants and shared-host limits.
+The earlier 32 KiB MMR prototypes and their observed control regressions are
+not shipped. Release preparation changes version/scope metadata only; runtime,
+model, proof and decoder regression sources remain identical to accepted
+`ad2b021de75b80600c0ed6d53b7d2868ec8b4d94`.
+
+Rust 1.88.0 MSRV, dependency-free runtime, strict/recovery policies, resource
+limits and partial-Verus/conformance warnings are unchanged. Whole pinned
+verification remains 1340 obligations, 668 directly verified functions and
+20 reviewed limitations; the complete 61-group / 494-contrast pipeline,
+unchanged timing/coverage gates and exact-source publication checks remain
+mandatory on the final candidate and integrated source.
+
+The unpublished [image companion](../adapters/image/README.md) is not part of
+this crate publication. Main remains unpublished 0.3.0-dev. Versioned checksums,
+source and publication receipts belong to the
+[0.2.2 release](https://github.com/microsoft/jbig2_rs/releases/tag/v0.2.2).
+No new normative approval, full decoded-output proof or full PDFium test-runner
+result is claimed.
+
 ## 0.2.1 scope
 
 The 0.2.1 maintenance release includes the embedded PDF/PDFium completion fix
