@@ -229,7 +229,7 @@ fn extension_length_and_necessary_flag_errors_preserve_all_bits() {
             &MalformedError::InvalidExtensionType(kind),
         );
     }
-    for kind in [0xa000_0000, 0xffff_ffff] {
+    for kind in [0xa000_0000, 0xa000_0001, 0xffff_ffff] {
         let segments = [extension(0, 0, kind, &[]), eof(1)];
         for sequential in [true, false] {
             let decoder = Decoder::default();

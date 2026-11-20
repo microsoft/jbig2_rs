@@ -3,6 +3,41 @@
 use super::*;
 use jbig2_decoder::{EmbeddedPolicy, EmbeddedRecoveryKind};
 
+#[test]
+fn best_effort_does_not_replace_missing_resources_or_ignore_necessary_extensions() {
+    let decoder = Decoder::default();
+    let missing = embedded(&[
+        page(0, 1, 8, 1),
+        extension(3, 1, 0, &[]).retaining_references(&[1]),
+    ]);
+    let necessary = embedded(&[page(0, 1, 8, 1), extension(1, 0, 0xa000_0001, &[])]);
+    for bytes in [&missing, &necessary] {
+        let strict = decoder.decode_embedded(bytes).unwrap_err();
+        let check = |error| match (&strict, error) {
+            (DecodeError::Malformed(expected), DecodeError::Malformed(actual)) => {
+                assert_eq!(&actual, expected);
+            }
+            (DecodeError::Unsupported(expected), DecodeError::Unsupported(actual)) => {
+                assert_eq!(&actual, expected);
+            }
+            (expected, actual) => panic!("changed fatal error: {expected:?}/{actual:?}"),
+        };
+        for policy in [EmbeddedPolicy::Strict, EmbeddedPolicy::BestEffort] {
+            check(
+                decoder
+                    .decode_embedded_with_policy(bytes, None, policy)
+                    .unwrap_err(),
+            );
+            let mut context = decoder.context();
+            check(
+                context
+                    .decode_embedded_with_policy(bytes, None, policy)
+                    .unwrap_err(),
+            );
+        }
+    }
+}
+
 fn arithmetic_generic(marker: u8) -> Vec<Segment> {
     let mut first = page(1, 1, 1, 1);
     first.payload[16] = 0x44;
