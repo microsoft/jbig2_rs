@@ -5,6 +5,65 @@ use super::*;
 #[cfg(not(verus_keep_ghost))]
 use super::{Mode, ModeCode, RunCode};
 
+#[cfg_attr(verus_keep_ghost, verus_verify)]
+pub(super) const RUN_INDEX_SIZE: usize = 14 * 256;
+
+#[cfg_attr(verus_keep_ghost, verus_spec(ensures true))]
+pub(super) const WHITE_RUN_INDEX: [u8; RUN_INDEX_SIZE] = build_run_index(false);
+#[cfg_attr(verus_keep_ghost, verus_spec(ensures true))]
+pub(super) const BLACK_RUN_INDEX: [u8; RUN_INDEX_SIZE] = build_run_index(true);
+
+#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[allow(clippy::cast_lossless, clippy::cast_possible_truncation)]
+const fn index_run_code(
+    mut out: [u8; RUN_INDEX_SIZE],
+    code: RunCode,
+    ordinal: usize,
+) -> [u8; RUN_INDEX_SIZE] {
+    if code.length <= 13 && code.bits <= u8::MAX as u16 && ordinal < u8::MAX as usize {
+        let base = code.length as usize * 256;
+        if let Some(key) = base.checked_add(code.bits as usize) {
+            if key < RUN_INDEX_SIZE && out[key] == 0 {
+                out[key] = (ordinal + 1) as u8;
+            }
+        }
+    }
+    out
+}
+
+// Length and significant bits form the key. Entries are canonical-table
+// ordinals plus one; zero means absent, and dispatch validates the original key.
+// Unroll table ordinals so CTFE never executes ghost loop/decreases markers.
+#[cfg_attr(verus_keep_ghost, verus_verify)]
+pub(super) const fn build_run_index(black: bool) -> [u8; RUN_INDEX_SIZE] {
+    let terminating = if black {
+        &BLACK_TERMINATING
+    } else {
+        &WHITE_TERMINATING
+    };
+    let makeup = if black { &BLACK_MAKEUP } else { &WHITE_MAKEUP };
+    let mut out = [0_u8; RUN_INDEX_SIZE];
+    macro_rules! index_entries {
+        ($table:expr, $base:expr; $($index:expr),+ $(,)?) => {
+            $(out = index_run_code(out, $table[$index], $base + $index);)+
+        };
+    }
+    index_entries!(terminating, 0;
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+        16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+        32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+        48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+    );
+    index_entries!(makeup, terminating.len();
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+        16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
+    );
+    index_entries!(COMMON_MAKEUP, terminating.len() + makeup.len();
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+    );
+    out
+}
+
 macro_rules! mode_code {
     ($bits:expr, $length:expr, $mode:expr) => {
         ModeCode {

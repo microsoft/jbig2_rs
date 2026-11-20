@@ -28,7 +28,7 @@ MODE_SITE = """if code.length == length && code.bits == prefix {
     production_mmr_mode_entry!(code, index, prefix, length);
     return Ok(code.mode);
 }"""
-RUN_SITE = "if let Some(code) = find_run_code(black, prefix, length) {"
+RUN_SITE = "if let Some(code) = find_run_code(black, prefix, length, run_index) {"
 
 
 def mode_case(identity, expression):
