@@ -94,13 +94,14 @@ fn raw_payload_windows_keep_exact_known_and_existing_unknown_extents() {
         input.extend_from_slice(&[0xaa, 0x55]);
         let mut reader = ByteReader::new(&input);
         reader.read_bytes(3).unwrap();
-        let payload = read_payload(&mut reader, &header).unwrap();
+        let payload = read_payload(&mut reader, &header, &Limits::default()).unwrap();
         assert_eq!(payload, &input[3..3 + usize::try_from(length).unwrap()]);
         assert_eq!(reader.position(), 3 + usize::try_from(length).unwrap());
         assert_eq!(reader.remaining_bytes(), &[0xaa, 0x55]);
     }
     let mut existing = vec![0_u8; 18];
     existing[4..8].copy_from_slice(&3_u32.to_be_bytes());
+    existing.extend_from_slice(&[3, 0xff, 0xfd, 0xff, 2, 0xfe, 0xfe, 0xfe]);
     existing.extend_from_slice(&[0x11, 0x22, 0xff, 0xac]);
     existing.extend_from_slice(&3_u32.to_be_bytes());
     existing.extend_from_slice(&[0xaa, 0xbb]);
@@ -111,9 +112,81 @@ fn raw_payload_windows_keep_exact_known_and_existing_unknown_extents() {
     header.data_length = None;
     let mut reader = ByteReader::new(&input);
     reader.read_bytes(3).unwrap();
-    assert_eq!(read_payload(&mut reader, &header).unwrap(), &existing[..26]);
-    assert_eq!(reader.position(), 29);
+    assert_eq!(
+        read_payload(&mut reader, &header, &Limits::default()).unwrap(),
+        &existing[..34]
+    );
+    assert_eq!(reader.position(), 37);
     assert_eq!(reader.remaining_bytes(), &[0xaa, 0xbb]);
+}
+
+#[test]
+fn unknown_generic_framing_starts_after_all_adaptive_coordinates() {
+    let limits = Limits::default();
+    for (flags, adaptive_bytes) in [(0, 8), (2, 2), (4, 2), (6, 2), (16, 24), (1, 0)] {
+        let mut bytes = vec![0_u8; 18];
+        bytes[4..8].copy_from_slice(&3_u32.to_be_bytes());
+        bytes[17] = flags;
+        // Every pair is a valid preceding adaptive pixel and looks like a marker.
+        bytes.extend(std::iter::repeat_n([0xff, 0xac], adaptive_bytes / 2).flatten());
+        let body_start = bytes.len();
+        let marker = if flags & 1 == 0 { [0xff, 0xac] } else { [0, 0] };
+        bytes.extend_from_slice(&[0x13, 0x24, marker[0], marker[1]]);
+        bytes.extend_from_slice(&3_u32.to_be_bytes());
+        let end = bytes.len();
+        bytes.extend_from_slice(&[0xaa, 0x55]);
+        assert_eq!(find_unknown_generic_length(&bytes, &limits).unwrap(), end);
+        for truncated in 0..end {
+            assert!(
+                find_unknown_generic_length(&bytes[..truncated], &limits).is_err(),
+                "flags {flags}, truncation {truncated}, body {body_start}"
+            );
+        }
+        bytes[end - 4..end].copy_from_slice(&4_u32.to_be_bytes());
+        assert!(matches!(
+            find_unknown_generic_length(&bytes, &limits),
+            Err(DecodeError::Malformed(
+                MalformedError::GenericRegionRowCount {
+                    declared: 3,
+                    actual: 4
+                }
+            ))
+        ));
+        bytes.truncate(body_start);
+        assert!(find_unknown_generic_length(&bytes, &limits).is_err());
+    }
+}
+
+#[test]
+fn unknown_generic_framing_validates_the_header_before_scanning() {
+    let mut bytes = vec![0_u8; 18];
+    bytes[0..4].copy_from_slice(&8_u32.to_be_bytes());
+    bytes[4..8].copy_from_slice(&3_u32.to_be_bytes());
+    bytes.extend_from_slice(&[0xff, 0xac, 0, 0, 0xff, 0xac, 0xff, 0xac]);
+    bytes.extend_from_slice(&[0xff, 0xac, 0, 0, 0, 3]);
+    assert!(matches!(
+        find_unknown_generic_length(&bytes, &Limits::default()),
+        Err(DecodeError::Malformed(
+            MalformedError::InvalidGenericRegion(
+                crate::GenericRegionErrorKind::InvalidAdaptivePixel {
+                    number: 2,
+                    x: 0,
+                    y: 0
+                }
+            )
+        ))
+    ));
+    let limits = Limits {
+        max_width: 7,
+        ..Limits::default()
+    };
+    assert!(matches!(
+        find_unknown_generic_length(&bytes, &limits),
+        Err(DecodeError::LimitExceeded(LimitExceeded {
+            kind: LimitKind::Width,
+            ..
+        }))
+    ));
 }
 
 #[test]

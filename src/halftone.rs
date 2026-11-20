@@ -203,6 +203,7 @@ pub(crate) enum ArithmeticPurpose {
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
 pub(crate) enum GenericRegionState<'a> {
+    ZeroPlanes,
     Arithmetic {
         session: GenericArithmeticSession<'a>,
         template: u8,
@@ -222,9 +223,52 @@ pub(crate) enum GenericRegionState<'a> {
     Scripted(&'a mut dyn GenericRegionTestDecoder),
 }
 
+/// A one-pattern grid has no coded planes in either entropy mode.
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
     ensures match out {
-        Ok(state) => halftone_spec::decoder_state_valid(&state),
+        Ok(state) => coded@.len() == 0 && state == GenericRegionState::ZeroPlanes,
+        Err(error) => coded@.len() > 0
+            && error == DecodeError::Malformed(MalformedError::TrailingData(coded@.len() as u64)),
+    },
+))]
+pub(crate) fn new_zero_plane_state(coded: &[u8]) -> Result<GenericRegionState<'_>, DecodeError> {
+    if !coded.is_empty() {
+        let trailing = u64::try_from(coded.len()).map_err(|_| MalformedError::IntegerOverflow)?;
+        return Err(MalformedError::TrailingData(trailing).into());
+    }
+    Ok(GenericRegionState::ZeroPlanes)
+}
+
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match out {
+        Ok(state) =>
+            halftone_spec::decoder_state_valid(&state)
+                && ((state == GenericRegionState::ZeroPlanes) == (pattern_count == 1))
+                && (pattern_count == 1 ==> coded@.len() == 0),
+        Err(_) => true,
+    },
+))]
+pub(crate) fn new_halftone_state<'a>(
+    coded: &'a [u8],
+    mmr: bool,
+    template: GenericTemplate,
+    template_code: u8,
+    pattern_count: usize,
+    limits: &Limits,
+) -> Result<GenericRegionState<'a>, DecodeError> {
+    if pattern_count == 1 {
+        new_zero_plane_state(coded)
+    } else if mmr {
+        Ok(new_gray_mmr_state(coded, limits))
+    } else {
+        new_halftone_arithmetic_state(coded, template, template_code, limits)
+    }
+}
+
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match out {
+        Ok(state) => halftone_spec::decoder_state_valid(&state)
+            && matches!(state, GenericRegionState::Arithmetic { .. }),
         Err(_) => true,
     },
 ))]
@@ -248,7 +292,8 @@ fn new_arithmetic_state<'a>(
 
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
     ensures match out {
-        Ok(state) => halftone_spec::decoder_state_valid(&state),
+        Ok(state) => halftone_spec::decoder_state_valid(&state)
+            && matches!(state, GenericRegionState::Arithmetic { .. }),
         Err(_) => true,
     },
 ))]
@@ -269,7 +314,8 @@ pub(crate) fn new_pattern_arithmetic_state<'a>(
 
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
     ensures match out {
-        Ok(state) => halftone_spec::decoder_state_valid(&state),
+        Ok(state) => halftone_spec::decoder_state_valid(&state)
+            && matches!(state, GenericRegionState::Arithmetic { .. }),
         Err(_) => true,
     },
 ))]
@@ -303,7 +349,9 @@ pub(crate) fn new_pattern_mmr_state<'a>(
 }
 
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
-    ensures halftone_spec::decoder_state_valid(&out),
+    ensures
+        halftone_spec::decoder_state_valid(&out),
+        matches!(out, GenericRegionState::GrayMmr { .. }),
 ))]
 pub(crate) fn new_gray_mmr_state<'a>(coded: &'a [u8], limits: &Limits) -> GenericRegionState<'a> {
     GenericRegionState::GrayMmr {
@@ -340,6 +388,10 @@ impl<'a> GenericRegionState<'a> {
         request: GenericRegionRequest<'_>,
     ) -> Result<Bitmap, DecodeError> {
         match self {
+            Self::ZeroPlanes => Err(MalformedError::InvalidPageState(
+                "zero-plane halftone requested a coded bitmap",
+            )
+            .into()),
             Self::Arithmetic {
                 session,
                 template,
@@ -447,9 +499,12 @@ impl<'a> GenericRegionState<'a> {
         }
     }
 
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures *self == GenericRegionState::ZeroPlanes ==> out == Ok(()),
+    ))]
     pub(crate) fn finish(&self) -> Result<(), DecodeError> {
         match self {
+            Self::ZeroPlanes => {}
             Self::Arithmetic { session, .. } => {
                 if let Err(error) = session.validate_final_marker() {
                     return Err(generic_error_into_decode(error));

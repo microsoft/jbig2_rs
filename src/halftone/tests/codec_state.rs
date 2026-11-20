@@ -4,6 +4,40 @@
 use super::*;
 
 #[test]
+fn zero_plane_state_rejects_coded_requests_and_trailing_payload() {
+    let mut state = new_zero_plane_state(&[]).unwrap();
+    state.finish().unwrap();
+    let error = state
+        .decode_generic_region(GenericRegionRequest {
+            width: 1,
+            height: 1,
+            coding: GenericRegionCoding::Mmr { require_eofb: true },
+            typical_prediction: false,
+            extended_template: false,
+            skip: None,
+        })
+        .unwrap_err();
+    assert!(matches!(
+        error,
+        DecodeError::Malformed(MalformedError::InvalidPageState(
+            "zero-plane halftone requested a coded bitmap"
+        ))
+    ));
+    assert!(matches!(state, GenericRegionState::ZeroPlanes));
+    for coded in [&[0][..], &[0xff, 0xac]] {
+        let Err(error) = new_zero_plane_state(coded) else {
+            panic!("zero-plane trailing bytes accepted")
+        };
+        assert_decode_error_exact(
+            error,
+            DecodeError::Malformed(MalformedError::TrailingData(
+                u64::try_from(coded.len()).unwrap(),
+            )),
+        );
+    }
+}
+
+#[test]
 fn arithmetic_state_constructors_enforce_exact_input_and_context_budgets() {
     let coded = [0, 0, 0xff, 0xac];
     for (code, template, bits) in [

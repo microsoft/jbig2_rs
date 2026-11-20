@@ -458,12 +458,13 @@ fn locates_unknown_length_generic_terminator() {
     let mut data = vec![0_u8; 18];
     data[4..8].copy_from_slice(&3_u32.to_be_bytes());
     data[17] = 0;
+    data.extend_from_slice(&[3, 0xff, 0xfd, 0xff, 2, 0xfe, 0xfe, 0xfe]);
     data.extend_from_slice(&[0x11, 0x22, 0xFF, 0xAC]);
     data.extend_from_slice(&3_u32.to_be_bytes());
     data.extend_from_slice(&[0xAA, 0xBB]);
     assert_eq!(
-        find_unknown_generic_length(&data).expect("terminator is present"),
-        26
+        find_unknown_generic_length(&data, &Limits::default()).expect("terminator is present"),
+        34
     );
 }
 

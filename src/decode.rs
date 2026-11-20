@@ -12,8 +12,8 @@ use crate::generic_region::{
 };
 use crate::halftone::{
     decode_halftone_region, decode_pattern_dictionary, halftone_error_into_decode,
-    new_gray_mmr_state, new_halftone_arithmetic_state, new_pattern_arithmetic_state,
-    new_pattern_mmr_state, parse_halftone_header, parse_pattern_dictionary_header, WorkBudget,
+    new_halftone_state, new_pattern_arithmetic_state, new_pattern_mmr_state, parse_halftone_header,
+    parse_pattern_dictionary_header, WorkBudget,
 };
 use crate::huffman::{HuffmanError, HuffmanTable};
 use crate::mmr::MmrScratch;

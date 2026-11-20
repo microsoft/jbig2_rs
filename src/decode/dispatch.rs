@@ -5,16 +5,16 @@ use super::{
     decode_symbol_dictionary, decode_text_region, generic_error_into_decode, get_huffman_table,
     get_patterns, get_region_buffer, get_runtime_page, get_symbol_resource,
     halftone_error_into_decode, huffman_table_index, insert_buffer, insert_patterns,
-    insert_symbol_resource, new_gray_mmr_state, new_halftone_arithmetic_state,
-    new_pattern_arithmetic_state, new_pattern_mmr_state, note_page_write,
-    parse_generic_region_header, parse_halftone_header, parse_pattern_dictionary_header,
-    parse_refinement_region_header, parse_region_info, parse_symbol_dictionary_header,
-    pattern_index, require_auxiliary_page, require_matching_geometry, runtime_page_index,
-    snapshot_region, symbol_index, symbol_text_error_into_decode, Bitmap, ByteReader,
-    CollectedSymbols, CombinationOperator, DecodeError, DecodeWork, GenericTemplate, HuffmanTable,
-    HuffmanTables, Limits, MalformedError, MmrScratch, ParsedSegment, PatternStore,
-    RefinementParameters, RegionBuffers, RetainedBudget, RuntimePage, RuntimePages, SegmentType,
-    SymbolDictionaryInput, SymbolResource, SymbolStore, TextRegionInput, WorkBudget,
+    insert_symbol_resource, new_halftone_state, new_pattern_arithmetic_state,
+    new_pattern_mmr_state, note_page_write, parse_generic_region_header, parse_halftone_header,
+    parse_pattern_dictionary_header, parse_refinement_region_header, parse_region_info,
+    parse_symbol_dictionary_header, pattern_index, require_auxiliary_page,
+    require_matching_geometry, runtime_page_index, snapshot_region, symbol_index,
+    symbol_text_error_into_decode, Bitmap, ByteReader, CollectedSymbols, CombinationOperator,
+    DecodeError, DecodeWork, GenericTemplate, HuffmanTable, HuffmanTables, Limits, MalformedError,
+    MmrScratch, ParsedSegment, PatternStore, RefinementParameters, RegionBuffers, RetainedBudget,
+    RuntimePage, RuntimePages, SegmentType, SymbolDictionaryInput, SymbolResource, SymbolStore,
+    TextRegionInput, WorkBudget,
 };
 
 #[cfg(verus_keep_ghost)]
@@ -625,12 +625,15 @@ pub(super) fn decode_halftone_segment(
     let coded = reader.remaining_bytes();
     let mut work = WorkBudget::new(limits);
 
-    let mut decoder = if header.mmr {
-        new_gray_mmr_state(coded, limits)
-    } else {
-        let template = generic_template(header.template)?;
-        new_halftone_arithmetic_state(coded, template, header.template, limits)?
-    };
+    let template = generic_template(header.template)?;
+    let mut decoder = new_halftone_state(
+        coded,
+        header.mmr,
+        template,
+        header.template,
+        dictionary.len(),
+        limits,
+    )?;
     let bitmap = decode_halftone_region(
         &header,
         region.width,

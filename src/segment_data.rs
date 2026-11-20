@@ -32,7 +32,9 @@ pub(crate) struct RegionInfo {
 
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires old(reader).position <= old(reader).bytes@.len(),
-    ensures match out {
+    ensures
+        final(reader).bytes@ == old(reader).bytes@,
+        match out {
         Ok(info) =>
             crate::spec::segments::dimensions_within_limits(info.width, info.height, *limits)
                 && final(reader).position == old(reader).position + 17

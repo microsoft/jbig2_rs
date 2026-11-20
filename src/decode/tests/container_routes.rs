@@ -2,6 +2,7 @@
 #![allow(clippy::duplicated_attributes)]
 
 use super::*;
+use crate::{LimitExceeded, LimitKind};
 
 #[test]
 fn pdfium_completion_is_not_enabled_for_the_standalone_dispatcher() {
@@ -224,6 +225,171 @@ fn decodes_unknown_length_mmr_region_and_row_count() {
         .expect("unknown-length region decodes");
     assert_eq!(decoded.pages()[0].bitmap().height(), 2);
     assert_eq!(decoded.pages()[0].bitmap().bytes(), &[0, 0]);
+}
+
+#[test]
+fn unknown_arithmetic_generic_header_markers_do_not_change_exact_pixels_or_extent() {
+    let mut bytes = arithmetic_generic_document(8, 1, 0, &[0xff, 0xac]);
+    // The third adaptive pixel is (-1, -84), not a coded-data terminator.
+    let payload_start = 13 + 11 + 19 + 11;
+    bytes[payload_start + 22..payload_start + 24].copy_from_slice(&[0xff, 0xac]);
+    let known = Decoder::default().decode(&bytes).unwrap();
+    assert_eq!(known.pages()[0].bitmap().bytes(), &[0xff]);
+    let region_header_start = payload_start - 11;
+    bytes[region_header_start + 7..payload_start].copy_from_slice(&u32::MAX.to_be_bytes());
+    let count_start = payload_start + 28;
+    bytes.splice(count_start..count_start, 1_u32.to_be_bytes());
+    let unknown = Decoder::default().decode(&bytes).unwrap();
+    assert_eq!(unknown.pages(), known.pages());
+    assert_eq!(unknown.pages()[0].bitmap().bytes(), &[0xff]);
+    // Reader and embedded routes share the same bounded payload splitter.
+    assert_eq!(
+        Decoder::default().decode_reader(&mut &bytes[..]).unwrap(),
+        unknown
+    );
+    assert_eq!(
+        Decoder::default()
+            .decode_embedded(&bytes[13..])
+            .unwrap()
+            .pages(),
+        unknown.pages()
+    );
+    bytes[count_start..count_start + 4].copy_from_slice(&2_u32.to_be_bytes());
+    assert!(matches!(
+        Decoder::default().decode(&bytes),
+        Err(DecodeError::Malformed(
+            MalformedError::GenericRegionRowCount {
+                declared: 1,
+                actual: 2
+            }
+        ))
+    ));
+}
+
+fn generated_halftone_document(
+    flags: u8,
+    pattern_count: u32,
+    coded: &[u8],
+    intermediate: bool,
+    referenced: bool,
+) -> Vec<u8> {
+    let mut pattern = vec![1, 1, 1];
+    pattern.extend_from_slice(&(pattern_count - 1).to_be_bytes());
+    pattern.extend_from_slice(if pattern_count == 1 {
+        &[0x26, 0xa8]
+    } else {
+        &[0x80]
+    });
+    let mut region = generic_data(&[])[..17].to_vec();
+    region.push(flags);
+    region.extend_from_slice(&3_u32.to_be_bytes());
+    region.extend_from_slice(&1_u32.to_be_bytes());
+    region.extend_from_slice(&256_i32.to_be_bytes());
+    region.extend_from_slice(&0_i32.to_be_bytes());
+    region.extend_from_slice(&512_u16.to_be_bytes());
+    region.extend_from_slice(&0_u16.to_be_bytes());
+    region.extend_from_slice(coded);
+    let mut page = page_data();
+    page[16] |= 0x22;
+    let mut bytes = SIGNATURE.to_vec();
+    bytes.push(1);
+    bytes.extend_from_slice(&1_u32.to_be_bytes());
+    bytes.extend(segment_header(0, 48, 1, 19));
+    bytes.extend_from_slice(&page);
+    let mut pattern_header = segment_header(1, 16, 1, u32::try_from(pattern.len()).unwrap());
+    pattern_header[5] = 1;
+    bytes.extend(pattern_header);
+    bytes.extend(pattern);
+    let mut region_header = referenced_segment_header(
+        2,
+        if intermediate { 20 } else { 22 },
+        1,
+        1,
+        u32::try_from(region.len()).unwrap(),
+    );
+    region_header[5] |= u8::from(referenced);
+    bytes.extend(region_header);
+    bytes.extend(region);
+    if referenced {
+        let mut refinement = generic_data(&[])[..17].to_vec();
+        refinement.extend_from_slice(&[1, 0xff, 0xac]);
+        bytes.extend(referenced_segment_header(3, 42, 1, 2, 20));
+        bytes.extend(refinement);
+    }
+    bytes.extend(segment_header(4, 49, 1, 0));
+    bytes.extend(segment_header(5, 51, 0, 0));
+    bytes
+}
+
+#[test]
+fn single_pattern_halftone_dispatch_renders_without_entropy_in_both_modes() {
+    for flags in [0, 2, 4, 6, 8, 1] {
+        let bytes = generated_halftone_document(flags, 1, &[], false, false);
+        let decoded = Decoder::default().decode(&bytes).unwrap();
+        assert_eq!(
+            decoded.pages()[0].bitmap().bytes(),
+            &[0x54],
+            "flags {flags}"
+        );
+        for extra in [&[0][..], &[0xff, 0xac], &[0, 0x10, 1]] {
+            let bytes = generated_halftone_document(flags, 1, extra, false, false);
+            assert!(matches!(
+                Decoder::default().decode(&bytes),
+                Err(DecodeError::Malformed(MalformedError::TrailingData(count)))
+                    if count == u64::try_from(extra.len()).unwrap()
+            ));
+        }
+    }
+}
+
+#[test]
+fn missing_halftone_planes_are_rejected_even_for_unused_intermediates() {
+    for (intermediate, referenced) in [(false, false), (true, false), (true, true)] {
+        for flags in [0, 1] {
+            let bytes = generated_halftone_document(flags, 2, &[], intermediate, referenced);
+            assert!(Decoder::default().inspect(&bytes).is_ok(), "valid metadata");
+            for memory in [49_152, Limits::default().max_decoder_managed_memory_bytes] {
+                let decoder = Decoder::new(Limits {
+                    max_decoder_managed_memory_bytes: memory,
+                    ..Limits::default()
+                });
+                let error = decoder.decode(&bytes).unwrap_err();
+                if flags == 0 {
+                    assert!(matches!(
+                        error,
+                        DecodeError::Malformed(MalformedError::InvalidGenericRegion(
+                            crate::GenericRegionErrorKind::InvalidArithmeticTerminator
+                        ))
+                    ));
+                } else {
+                    assert!(matches!(
+                        error,
+                        DecodeError::Malformed(MalformedError::UnexpectedEof { .. })
+                    ));
+                }
+            }
+        }
+    }
+}
+
+#[test]
+fn nonzero_halftone_planes_still_require_the_entropy_memory_budget() {
+    for intermediate in [false, true] {
+        let bytes = generated_halftone_document(0, 2, &[0xff, 0xac], intermediate, false);
+        assert!(Decoder::default().decode(&bytes).is_ok());
+        let decoder = Decoder::new(Limits {
+            max_decoder_managed_memory_bytes: 49_152,
+            ..Limits::default()
+        });
+        assert!(matches!(
+            decoder.decode(&bytes),
+            Err(DecodeError::LimitExceeded(LimitExceeded {
+                kind: LimitKind::Memory,
+                limit: 49_152,
+                actual: 131_072,
+            }))
+        ));
+    }
 }
 
 #[test]
