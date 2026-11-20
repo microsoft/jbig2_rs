@@ -79,9 +79,11 @@ class InternalProfileTests(unittest.TestCase):
             ("0.3.0-dev", "false", True),
             ("0.2.0", '["crates-io"]', True),
             ("0.2.1", '["crates-io"]', True),
+            ("0.2.2", '["crates-io"]', True),
             ("0.3.0-dev", '["crates-io"]', False),
             ("0.2.0", "false", False),
             ("0.2.1", "false", False),
+            ("0.2.2", "false", False),
             ("0.4.0-dev", "false", False),
         ):
             manifest.write_text(
