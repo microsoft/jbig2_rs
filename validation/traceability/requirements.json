@@ -24,7 +24,7 @@
   "model_classifications": {
     "review": "author-navigation-only-not-independent-normative-approval",
     "registry_sha256": "6bc9065d1537f3c4193dbbcd7a17113d5bd2eb3c914147465b8db8afd6943c6f",
-    "project_source_sha256": "2c26827e195aa23f1c28c693fe447eb8106e7252097d8e33dcfa054ff8e57744",
+    "project_source_sha256": "570dac9548039a4950ea7a2af5819271247ee99a228d8715894eb320c673d66f",
     "families": [
       {
         "file": "specs/huffman_lookup.rs",
