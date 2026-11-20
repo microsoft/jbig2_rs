@@ -416,28 +416,18 @@ impl HuffmanTable {
                 limits,
             )?;
             let width = 1_i64 << range_len;
-            let remaining = high_i64
-                .checked_sub(current)
-                .ok_or(MalformedError::IntegerOverflow)?;
-            if width > remaining {
-                return Err(HuffmanError::InvalidTable(
-                    HuffmanTableError::InvalidRangePartition,
-                ));
-            }
             let next = current
                 .checked_add(width)
                 .ok_or(MalformedError::IntegerOverflow)?;
-            if next <= current || next > high_i64 {
+            if next <= current {
                 return Err(HuffmanError::InvalidTable(
                     HuffmanTableError::InvalidRangePartition,
                 ));
             }
+            if next >= high_i64 {
+                break;
+            }
             current = next;
-        }
-        if current != high_i64 {
-            return Err(HuffmanError::InvalidTable(
-                HuffmanTableError::InvalidRangePartition,
-            ));
         }
 
         let low_prefix = read_u8_bits(&mut encoded_lines, prefix_bits)?;
