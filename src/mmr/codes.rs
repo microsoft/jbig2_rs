@@ -1,5 +1,7 @@
 //! Codes implementation.
 
+use super::tables::{BLACK_RUN_INDEX, RUN_INDEX_SIZE, WHITE_RUN_INDEX};
+
 #[cfg(verus_keep_ghost)]
 use super::*;
 #[cfg(not(verus_keep_ghost))]
@@ -310,6 +312,11 @@ pub(super) fn decode_run_code(
     reader: &mut BitReader<'_>,
     black: bool,
 ) -> Result<RunCode, MmrError> {
+    let run_index = if black {
+        &BLACK_RUN_INDEX
+    } else {
+        &WHITE_RUN_INDEX
+    };
     let start = reader.bit_position;
     let mut prefix = 0_u16;
     let mut length = 1_u8;
@@ -344,7 +351,7 @@ pub(super) fn decode_run_code(
                 reader.bytes@, start as nat, length as nat,
             ));
         }
-        if let Some(code) = find_run_code(black, prefix, length) {
+        if let Some(code) = find_run_code(black, prefix, length, run_index) {
             #[cfg(verus_keep_ghost)]
             production_mmr_run_code_bounds!(black, code);
             return Ok(code);
@@ -365,16 +372,23 @@ pub(super) fn decode_run_code(
         None => true,
     },
 ))]
-pub(super) fn find_run_code(black: bool, bits: u16, length: u8) -> Option<RunCode> {
-    let mut index = 0_usize;
+pub(super) fn find_run_code(
+    black: bool,
+    bits: u16,
+    length: u8,
+    run_index: &[u8; RUN_INDEX_SIZE],
+) -> Option<RunCode> {
+    if length > MAX_RUN_CODE_BITS || bits > u16::from(u8::MAX) {
+        return None;
+    }
+    let key = usize::from(length) * 256 + usize::from(bits);
+    let ordinal = run_index[key];
+    if ordinal == 0 {
+        return None;
+    }
+    let mut index = usize::from(ordinal) - 1;
     if black {
-        #[cfg_attr(verus_keep_ghost, verus_spec(
-            invariant
-                black,
-                index <= BLACK_TERMINATING@.len(),
-            decreases BLACK_TERMINATING@.len() - index,
-        ))]
-        while index < BLACK_TERMINATING.len() {
+        if index < BLACK_TERMINATING.len() {
             let code = BLACK_TERMINATING[index];
             if code.length == length && code.bits == bits {
                 #[cfg(verus_keep_ghost)]
@@ -389,32 +403,21 @@ pub(super) fn find_run_code(black: bool, bits: u16, length: u8) -> Option<RunCod
                 );
                 return Some(code);
             }
-            index += 1;
+            return None;
         }
-        index = 0;
-        #[cfg_attr(verus_keep_ghost, verus_spec(
-            invariant
-                black,
-                index <= BLACK_MAKEUP@.len(),
-            decreases BLACK_MAKEUP@.len() - index,
-        ))]
-        while index < BLACK_MAKEUP.len() {
+        index -= BLACK_TERMINATING.len();
+        if index < BLACK_MAKEUP.len() {
             let code = BLACK_MAKEUP[index];
             if code.length == length && code.bits == bits {
                 #[cfg(verus_keep_ghost)]
                 production_mmr_run_entry!(BLACK_MAKEUP, code, index, black, true, bits, length);
                 return Some(code);
             }
-            index += 1;
+            return None;
         }
+        index -= BLACK_MAKEUP.len();
     } else {
-        #[cfg_attr(verus_keep_ghost, verus_spec(
-            invariant
-                !black,
-                index <= WHITE_TERMINATING@.len(),
-            decreases WHITE_TERMINATING@.len() - index,
-        ))]
-        while index < WHITE_TERMINATING.len() {
+        if index < WHITE_TERMINATING.len() {
             let code = WHITE_TERMINATING[index];
             if code.length == length && code.bits == bits {
                 #[cfg(verus_keep_ghost)]
@@ -429,38 +432,27 @@ pub(super) fn find_run_code(black: bool, bits: u16, length: u8) -> Option<RunCod
                 );
                 return Some(code);
             }
-            index += 1;
+            return None;
         }
-        index = 0;
-        #[cfg_attr(verus_keep_ghost, verus_spec(
-            invariant
-                !black,
-                index <= WHITE_MAKEUP@.len(),
-            decreases WHITE_MAKEUP@.len() - index,
-        ))]
-        while index < WHITE_MAKEUP.len() {
+        index -= WHITE_TERMINATING.len();
+        if index < WHITE_MAKEUP.len() {
             let code = WHITE_MAKEUP[index];
             if code.length == length && code.bits == bits {
                 #[cfg(verus_keep_ghost)]
                 production_mmr_run_entry!(WHITE_MAKEUP, code, index, black, false, bits, length);
                 return Some(code);
             }
-            index += 1;
+            return None;
         }
+        index -= WHITE_MAKEUP.len();
     }
-    index = 0;
-    #[cfg_attr(verus_keep_ghost, verus_spec(
-        invariant index <= COMMON_MAKEUP@.len(),
-        decreases COMMON_MAKEUP@.len() - index,
-    ))]
-    while index < COMMON_MAKEUP.len() {
+    if index < COMMON_MAKEUP.len() {
         let code = COMMON_MAKEUP[index];
         if code.length == length && code.bits == bits {
             #[cfg(verus_keep_ghost)]
             production_mmr_run_entry!(COMMON_MAKEUP, code, index, black, black, bits, length);
             return Some(code);
         }
-        index += 1;
     }
     None
 }

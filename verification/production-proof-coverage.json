@@ -4,7 +4,7 @@
   "verus_verified_obligations": 1340,
   "native_assumptions": [],
   "counts": {
-    "verified": 666,
+    "verified": 668,
     "reviewed-verifier-limitation": 20,
     "audited-forwarder": 0,
     "runtime-proof-divergence": 0,
@@ -5467,7 +5467,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "46cf39eb4756da06aeb34aa32dbe75e13dcbd911b3a5b9d9afa80065966a7857",
+      "file_sha256": "06ad7fc805a4da335db691d5b1ada86f5f88d293ea2b8e33588326057fea5176",
       "verus_functions": [
         "jbig2_rs_production::mmr::codes::append_code_bit"
       ]
@@ -5478,7 +5478,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "46cf39eb4756da06aeb34aa32dbe75e13dcbd911b3a5b9d9afa80065966a7857",
+      "file_sha256": "06ad7fc805a4da335db691d5b1ada86f5f88d293ea2b8e33588326057fea5176",
       "verus_functions": [
         "jbig2_rs_production::mmr::codes::decode_mode"
       ]
@@ -5489,7 +5489,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "46cf39eb4756da06aeb34aa32dbe75e13dcbd911b3a5b9d9afa80065966a7857",
+      "file_sha256": "06ad7fc805a4da335db691d5b1ada86f5f88d293ea2b8e33588326057fea5176",
       "verus_functions": [
         "jbig2_rs_production::mmr::codes::decode_horizontal_runs"
       ]
@@ -5500,7 +5500,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "46cf39eb4756da06aeb34aa32dbe75e13dcbd911b3a5b9d9afa80065966a7857",
+      "file_sha256": "06ad7fc805a4da335db691d5b1ada86f5f88d293ea2b8e33588326057fea5176",
       "verus_functions": [
         "jbig2_rs_production::mmr::codes::decode_run"
       ]
@@ -5511,7 +5511,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "46cf39eb4756da06aeb34aa32dbe75e13dcbd911b3a5b9d9afa80065966a7857",
+      "file_sha256": "06ad7fc805a4da335db691d5b1ada86f5f88d293ea2b8e33588326057fea5176",
       "verus_functions": [
         "jbig2_rs_production::mmr::codes::decode_run_code"
       ]
@@ -5522,7 +5522,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "46cf39eb4756da06aeb34aa32dbe75e13dcbd911b3a5b9d9afa80065966a7857",
+      "file_sha256": "06ad7fc805a4da335db691d5b1ada86f5f88d293ea2b8e33588326057fea5176",
       "verus_functions": [
         "jbig2_rs_production::mmr::codes::find_run_code"
       ]
@@ -5646,6 +5646,28 @@
       "file_sha256": "75b86fc99088936b2596ba6b5810a414f331caeec38a3c0dbc19518ac38857cc",
       "verus_functions": [
         "jbig2_rs_production::mmr::spans::finish_transition_row"
+      ]
+    },
+    {
+      "id": "mmr::tables::index_run_code",
+      "file": "src/mmr/tables.rs",
+      "visibility": "private",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "f124f55dcdb971c6955b35616392c4c6a6bfd9efeaa5b95b3f3bff2331f2d4ca",
+      "verus_functions": [
+        "jbig2_rs_production::mmr::tables::index_run_code"
+      ]
+    },
+    {
+      "id": "mmr::tables::build_run_index",
+      "file": "src/mmr/tables.rs",
+      "visibility": "pub(super)",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "f124f55dcdb971c6955b35616392c4c6a6bfd9efeaa5b95b3f3bff2331f2d4ca",
+      "verus_functions": [
+        "jbig2_rs_production::mmr::tables::build_run_index"
       ]
     },
     {
