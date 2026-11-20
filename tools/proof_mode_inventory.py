@@ -9,6 +9,7 @@ import re
 from check_traceability import runtime_inventory
 from implementation_identity import function_name
 from compiler_inventory import source_datatypes
+from rust_source import contract_sections, items, parse, source_modules
 
 
 TOKEN = re.compile(r'"(?:\\.|[^"\\])*"|[()]|[^\s()"]+')
@@ -137,6 +138,7 @@ def project_functions(root, text):
             "trait": fields(kind, 2).get(":trait_path") if kind[1] == "TraitMethodImpl" else None,
             "body_present": data[":body"] != "None",
             "external_body": attributes[":is_external_body"] == "true",
+            "item_kind": data.get(":item_kind", ["ItemKind", "Function"]),
             "requires_entries": len(data[":require"]),
             "postcondition_entries": sum(len(value) for value in ensure[1:]),
             "signature": {
@@ -167,6 +169,32 @@ def project_functions(root, text):
     if not records:
         raise ValueError("expanded inventory has no project functions")
     return records
+
+
+def executable_constants(root):
+    constants = {}
+
+    def walk(container, file, module):
+        for node, attributes in items(container):
+            if node.type == "mod_item":
+                body = node.child_by_field_name("body")
+                if body is not None:
+                    name = node.child_by_field_name("name").text.decode()
+                    walk(body, file, "::".join(part for part in (module, name) if part))
+            if node.type != "const_item":
+                continue
+            record = {"attributes": [attribute.text.decode() for attribute in attributes]}
+            if not contract_sections(record, "ensures"):
+                continue
+            name = node.child_by_field_name("name").text.decode()
+            key = (file, node.start_point.row + 1, node.start_point.column + 1, name)
+            if key in constants:
+                raise ValueError("duplicate executable constant source identity")
+            constants[key] = PREFIX + "::".join(part for part in (module, name) if part)
+
+    for file, module in source_modules(root).items():
+        walk(parse((root / file).read_bytes()), file, module)
+    return constants
 
 
 def reconcile(root, text, native, whole, coverage):
@@ -207,13 +235,30 @@ def reconcile(root, text, native, whole, coverage):
                 "id": f"derive:{file}:{line}:{column}:clone", "impl_trait": "Clone",
             })
     records = project_functions(root, text)
-    matched, derived = set(), set()
+    constants = executable_constants(root)
+    matched, derived, matched_constants = set(), set(), set()
     for row in records:
         row["native_id"] = None
         row["qualification"] = "proof_only_source_function; not a native callable claim"
         if row["mode"] != "Exec":
             continue
         name = row["verus_path"].rsplit("::", 1)[-1]
+        if row["item_kind"] == ["ItemKind", "Const"]:
+            key = (row["file"], row["line"], row["column"], name)
+            expected = constants.get(key)
+            if (
+                expected is None or key in matched_constants
+                or row["verus_path"] != expected
+                or row["owning_module"].rstrip(":") != expected.rsplit("::", 1)[0]
+                or row["kind"] != "Static" or row["external_body"] or not row["body_present"]
+                or expected not in whole["func-details"]
+            ):
+                raise ValueError("unqualified expanded executable constant initializer")
+            row["qualification"] = "exact_source_const_initializer_and_whole_name; not a native callable"
+            matched_constants.add(key)
+            continue
+        if row["item_kind"] != ["ItemKind", "Function"]:
+            raise ValueError("unqualified expanded executable item kind")
         choices = source_keys[(row["file"], row["line"], name)]
         if len(choices) > 1:
             raise ValueError("expanded span aliases explicit source declarations")
@@ -258,6 +303,8 @@ def reconcile(root, text, native, whole, coverage):
     expected = {identity for identity, row in accounting.items() if row["status"] == "verified"}
     if matched != expected:
         raise ValueError("expanded inventory omits verified explicit production implementations")
+    if matched_constants != set(constants):
+        raise ValueError("expanded inventory omits verified executable constant initializers")
     expected_derives = {row["id"] for rows in derives.values() for row in rows
                         if row["impl_trait"] == "Clone"}
     if derived != expected_derives:
@@ -276,6 +323,7 @@ def reconcile(root, text, native, whole, coverage):
             "modes": dict(sorted(Counter(row["mode"] for row in records).items())),
             "matched_verified_explicit": len(matched),
             "matched_source_clones": len(derived),
+            "matched_exec_const_initializers": len(matched_constants),
             "native_function_items_not_in_expanded_exec": len(absent) if native is not None else None,
             "whole_project_names_bound": len(whole_names),
         },

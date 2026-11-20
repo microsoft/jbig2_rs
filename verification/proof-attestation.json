@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
   "status": "verified_exact_project_scope_with_reviewed_limits",
-  "source_revision": "88ade916215fffc50badf23d3d063f93e2c0c5a2",
-  "scope": "Fresh pinned whole verification and compilation after borrowing the large adaptive context descriptor rather than passing it by value for each pixel. Context formulas and field values, checked arithmetic, bitmap boundaries and verifier contracts are unchanged. Prior validated-bank, conditional generic-snapshot and fixed-width refinement specialization optimizations remain unchanged. The MMR length-gating experiment was rejected for control regressions, not shipped. No algorithm, public API, typed error, resource limit, proof assumption or trusted boundary is changed. This is bounded component verification, not full decoded-output or normative proof.",
+  "source_revision": "18a6650072e7f813e874dc01821e6a1c92bfff74",
+  "scope": "Fresh pinned whole verification and compilation of compact indexed MMR lookup. Two7KiB-total ordinal indexes are derived from unchanged canonical tables. Length and significant-bit guards prove index arithmetic/storage bounds; every selected entry retains actual canonical membership/key checks. Scalar one-bit reads, shortest-prefix order, physical EOF/cursor errors, geometry and all budgets remain unchanged. Generators and const initializers are checked; exact inventory qualification keeps initializers distinct from native callable claims. Finite exact-key/tail/table regressions supplement component contracts, not complete decoded-output or normative proofs. No assumptions, trusted algorithm bodies, runtime/proof substitution or reduced coverage, semantic/contrast/timing gates.",
   "toolchain": {
     "manifest": "config/toolchain.json",
     "verus_version": "0.2026.10.04.426d8b0",
     "verus_commit": "426d8b01e7ffb910a36c15e1f870ff985bb61eef",
     "archive_sha256": "624018662868563a7bec0dd07be5e4dd0c3d61124b4b55105765884bf2d4d1a0"
   },
-  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-cargo cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/perf-third/verus-expanded\" --output-json",
+  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-cargo cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/regression/verus-expanded\" --output-json",
   "result": {
     "verified_obligations": 1340,
-    "verified_production_functions": 666,
+    "verified_production_functions": 668,
     "errors": 0,
     "proof_build_compiles": true,
     "exact_production_source_compiles": true,
@@ -24,7 +24,7 @@
     "runtime_proof_divergences": 0,
     "incomplete_functions": 0
   },
-  "production_proof_coverage_sha256": "2dccfecf6cd3bc100cfdcdf012fd0e9ba663955c770160ba6eee180bf4bddca4",
+  "production_proof_coverage_sha256": "e01498276c78ddebc49313e8e3bb8628153a35d274ada42eda6b9fa53309333f",
   "proof_dispositions_sha256": "23b65a39ed4667850e0e951b651ce31697c426761b94334d85cd46efd6983f8c",
   "standard_library_boundary": {
     "manifest": "verification/stdlib/review.json",
@@ -33,7 +33,7 @@
     "review_kind": "delegated_engineering_review",
     "normative_approval": false
   },
-  "current_evidence_note": "Runtime source88ade916215fffc50badf23d3d063f93e2c0c5a2 changes one internal context receiver to &self and three field dereferences, preserving all context formulas. Fresh whole Verus:1340 obligations, zero errors; exact coverage:666 direct functions, the same20 reviewed limitations, no assumptions, incomplete functions or runtime/proof divergences. Expanded inventory reconciliation passes. Rust1.89 locked all-feature tests pass:584 native plus one doctest,14 existing ignored benchmarks. Unchanged release context and raster scalar oracles pass. All520 exact API replays preserve426 bitmap results,94 inspections and recovery reports; both original fatal fixtures still reject in both modes. The ten original standalone outcomes are unchanged. Runtime coverage passes unchanged floors (12339/13283 lines,2370/2708 branches). Nine paired rounds across47 configurations show high-bit-depth halftone taking16% less time and custom adaptive templates18% less; every median paired ratio is below1.03. An independent15-pair screen confirms17% less high-bit-depth halftone time (14/15 faster). Three such decodes use188982518->167038274 Callgrind instructions. MSRV distribution/no-upload and image companion checks pass. Shared-host measurements are not latency guarantees or proof of zero regressions. All original semantic, contrast, mutation, timing, distribution and companion CI gates remain required on the exact final PR head. No new normative approval or unavailable PDFium runner result is claimed.",
+  "current_evidence_note": "Runtime18a6650072e7f813e874dc01821e6a1c92bfff74; documentation/source-bound evidence changes preserve runtime semantics. Fresh whole Verus1340/0, exact 668 direct functions, unchanged20 reviewed limitations and two separately qualified checked executable const initializers. No incomplete functions, assumptions or runtime/proof divergences. Full native587+one doctest and 14 existing ignored microbenchmarks; exhaustive exact-key/ordinal/short-tail and13-bit colour/alignment regressions pass. All520 API outputs (426 exact bitmaps,94 inspections) and both original fatal fixtures/policies match. Original ten standalone outcomes remain byte-identical. Two static indexes shrink32KiB->7KiB; checked significant-bit/length fields prove key bounds. Same-directory release rebuilds and exact-output-checked paired benchmarks: nine rounds/47configurations plus independent15rounds/21configurations. Worst control medians+2.22%/+1.41%; publicMMR20-34% less time,dense~6.3x. Original32KiB regressions were consistent with placement sensitivity: identical normalized hot instructions and68961621 halftone instructions in each build, not a definitive hardware diagnosis. Consumer-independent footprint reduction, not padding/alignment chasing or weakened thresholds. Unchanged runtime coverage floors pass. All original native/compiler/audit, coverage,distribution,companion,mutation/fuzz and complete61/494 semantic/contrast gates with1050second timing guard remain required on final integration heads. Shared-host measurements do not prove zero regressions, universal latency or full PDFium compatibility; no new normative approval.",
   "duplicate_executable_proof_source": false,
   "embedded_recovery_ci_profile_correction": {
     "rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/44359238184",
@@ -539,5 +539,24 @@
     },
     "production_proof_coverage_sha256": "a7b9ccbfc9d1718f555d947f4dac1c729e1fe52a0e6a062ce9b26afb66d429a2",
     "scope": "Historical embedded-recovery component receipt, not a fresh execution or approval."
+  },
+  "compact_mmr_previous_baseline": {
+    "source_revision": "88ade916215fffc50badf23d3d063f93e2c0c5a2",
+    "result": {
+      "verified_obligations": 1340,
+      "verified_production_functions": 666,
+      "errors": 0,
+      "proof_build_compiles": true,
+      "exact_production_source_compiles": true,
+      "algorithm_bodies_verified": false,
+      "production_coverage_complete": true,
+      "native_assumptions": [],
+      "reviewed_verifier_limitations": 20,
+      "audited_forwarders": 0,
+      "runtime_proof_divergences": 0,
+      "incomplete_functions": 0
+    },
+    "production_proof_coverage_sha256": "2dccfecf6cd3bc100cfdcdf012fd0e9ba663955c770160ba6eee180bf4bddca4",
+    "scope": "Historical adaptive-descriptor receipt, not a new execution or approval."
   }
 }

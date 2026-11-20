@@ -104,6 +104,7 @@ class ProofModeInventoryTests(unittest.TestCase):
         self.assertEqual(report["counts"], {
             "project_functions": 3, "modes": {"Exec": 2, "Proof": 1},
             "matched_verified_explicit": 1, "matched_source_clones": 1,
+            "matched_exec_const_initializers": 0,
             "native_function_items_not_in_expanded_exec": 1, "whole_project_names_bound": 3,
         })
         self.assertTrue(report["native_profile_reconciled"])
@@ -118,6 +119,34 @@ class ProofModeInventoryTests(unittest.TestCase):
         self.assertFalse(report["native_profile_reconciled"])
         self.assertIsNone(report["counts"]["native_function_items_not_in_expanded_exec"])
         self.assertEqual(report["counts"]["matched_source_clones"], 1)
+
+    def test_executable_const_initializer_requires_exact_source_kind_body_and_whole_name(self):
+        source = self.root / "src/lib.rs"
+        source.write_text(source.read_text()
+                          + "#[cfg_attr(verus_keep_ghost, verus_spec(ensures true))]\n"
+                            "const INDEX: bool = true;\n")
+        self.coverage["functions"][0]["file_sha256"] = runtime_inventory(self.root)[self.identity]["file_sha256"]
+        initializer = function(PREFIX + "INDEX", line=6).replace(
+            ":attrs (", ":item_kind (ItemKind Const) :attrs (",
+        )
+        whole = copy.deepcopy(self.whole)
+        whole["func-details"][PREFIX + "INDEX"] = {}
+        text = self.text + "\n" + initializer + "\n"
+        report = reconcile(self.root, text, None, whole, self.coverage)
+        self.assertEqual(report["counts"]["matched_exec_const_initializers"], 1)
+        self.assertEqual(report["counts"]["matched_verified_explicit"], 1)
+        for forged in (
+            text.replace(":item_kind (ItemKind Const)", ":item_kind (ItemKind Function)"),
+            text.replace("lib.rs:6:1: 6:14", "lib.rs:6:2: 6:14"),
+            text.replace(PREFIX + "INDEX", PREFIX + "WRONG"),
+            text.replace(":body (Body)", ":body None"),
+            text.replace(":is_external_body false", ":is_external_body true"),
+            self.text,
+        ):
+            with self.subTest(text=forged[-100:]), self.assertRaises(ValueError):
+                reconcile(self.root, forged, None, whole, self.coverage)
+        with self.assertRaises(ValueError):
+            reconcile(self.root, text, None, self.whole, self.coverage)
 
     def test_truncated_unbalanced_ambiguous_and_unparsed_streams_fail(self):
         for text in (self.text[:-3], self.keep + ")", '(@ "unterminated', "(X :name 1 :name 2)"):
