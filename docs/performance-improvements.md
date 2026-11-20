@@ -263,3 +263,85 @@ All 818 audit-tool regression tests also pass.
 All existing checks, especially the complete 61-group / 494-contrast Verus
 pipeline and unchanged 1050-second timing guard, remain required before merging.
 No crate publication or release-branch backport is included in this follow-up.
+
+## Follow-up: compact indexed MMR run lookup
+
+Baseline: main `f929feab4ce13139db1d620580f4c83a3b12ac89`.
+Measured runtime: `18a6650072e7f813e874dc01821e6a1c92bfff74`.
+Later documentation/evidence changes preserve that runtime.
+
+Run-table scans are replaced by two compile-time-derived ordinal indexes.
+Each key combines the code length with its significant bits. All current
+canonical codes have at most eight significant bits despite their leading-zero
+lengths; exhaustive exact-key tests check this representation against every
+canonical entry. The two 14-by-256-byte indexes occupy **7 KiB total**, rather
+than the earlier prototype's 32 KiB. There is no per-decoder allocation or
+increase to any resource budget.
+
+The scalar one-bit reader loop is unchanged: no wide peek or changed shortest
+prefix, physical-EOF, cursor or malformed-input behavior. The immutable colour
+index is selected once per run code. The actual lookup body also accepts
+controlled invalid indexes in tests, exercising its defensive checks rather
+than substituting a test-only decoder. Selected ordinals are always checked
+against the actual canonical table entry's length/bits. Checked length and
+eight-bit fields prove the computed index is below 3584 without overflow.
+
+The generator unrolls table ordinals because pinned Verus ghost loop markers
+cannot execute during Rust constant evaluation. No normative bitstrings are
+duplicated. Both generator functions and both constant initializers are checked.
+Expanded inventory qualification requires exact source kind, coordinates,
+module/name, checked body and whole-report identity; initializers are not
+counted as native callables. Tests reject forged/missing identities or bodies.
+
+### Measurements and the earlier regression
+
+The previous 32 KiB coverage-complete prototypes showed repeatable 8-13%
+arithmetic/halftone control slowdowns. For five unchanged halftone decodes,
+baseline, original indexed and held indexed binaries each execute exactly
+68,961,621 Callgrind instructions. The hot context function has identical
+normalized instructions but different placement. This indicates sensitivity
+to compiler placement/cache effects, not extra decoding work; it does not
+establish a specific hardware-cache diagnosis. Merely forcing the MMR routine
+out of line did not resolve the slowdown and is not retained.
+
+The smaller index is a structural footprint reduction, not alignment padding
+or a consumer-specific compiler flag. Both compared revisions use the same
+Rust 1.89.0 release probe, lockfile, build directory and flags. Explicit release
+cleaning and distinct binary hashes guard stale builds. Nine randomized,
+alternating paired rounds cover 43 fixtures / 47 API configurations, with
+15 adaptive-batch samples targeting 500 ms per normal record. The large
+dictionary remains one decode per fresh process; exact-output validation,
+file I/O, output drop and parsed-globals preparation are outside timing.
+
+| Fixture | Baseline median | Compact median | Median paired ratio |
+|---|---:|---:|---:|
+| `bitmap-mmr` | 0.0430 ms | 0.0340 ms | 0.7924 |
+| `bitmap-halftone-10bpp-mmr` | 0.3883 ms | 0.2727 ms | 0.6812 |
+| `generated-transitions-512` | 11.6929 ms | 1.8586 ms | 0.1616 |
+
+An independent 15-pair confirmation over 21 configurations, targeting 650 ms,
+gives basic/MMR-halftone ratios 0.8033/0.6569 and dense-transition ratio 0.1591.
+All MMR targets are faster in 15/15 confirmation pairs. The worst median
+slowdown is **2.22% in the broad matrix and 1.41% in confirmation**, within the
+unchanged 5% acceptance cutoff. Public MMR cases take about 20-34% less time;
+dense transitions are about 6.3 times faster. Individual pairs still regress
+on this shared host; these finite feature vectors do not prove zero regressions
+or portable latency guarantees, nor represent full PDF rendering.
+
+### Correctness and proof validation
+
+All 520 public/generated API replays preserve packed pixels/dimensions,
+metadata and recovery reports; the original two fatal fixtures still reject
+in both policies. Exact-key, invalid-ordinal/key and exhaustive short-tail
+tests supplement every 13-bit window, colour/alignment and horizontal/makeup
+oracle. All 587 native tests and one doctest pass with 14 existing ignored
+microbenchmarks. All ten previously approved standalone outcomes are unchanged.
+
+Fresh whole Verus passes **1340 obligations, zero errors, 668 directly verified
+functions**, the same 20 reviewed limitations and two separately qualified
+checked constant initializers. The original runtime coverage floors pass
+without reduction. Table-source fidelity and complete decoded output are not
+relabeled independent normative proofs. All existing audit, compiler inventory,
+mutation/fuzz, coverage, distribution and companion gates remain required on
+the exact final head, including all 61 groups / 494 contrasts and the unchanged
+1050-second timing guard. No crate publication is part of this work.

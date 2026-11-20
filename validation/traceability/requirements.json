@@ -24,7 +24,7 @@
   "model_classifications": {
     "review": "author-navigation-only-not-independent-normative-approval",
     "registry_sha256": "6bc9065d1537f3c4193dbbcd7a17113d5bd2eb3c914147465b8db8afd6943c6f",
-    "project_source_sha256": "570dac9548039a4950ea7a2af5819271247ee99a228d8715894eb320c673d66f",
+    "project_source_sha256": "0a61e62c4112e4082e6b604b499392e5773648fdcf847e6223a136a9ef38c542",
     "families": [
       {
         "file": "specs/huffman_lookup.rs",
@@ -2017,14 +2017,14 @@
     "src/huffman/wide.rs": "4f37abac40efc66f0c3eaa2637d211eaca5a5ea4fa7a14d7aadb07fbe2a8f0b0",
     "src/lib.rs": "26195f6c9f67525bda135306ba310283c546470aa3e9670da3f859c4e8c05c15",
     "src/mmr.rs": "939bdd232275bf07a8d776bacd891001dacdd49c828cfbb0abcbd40fa4adf5bb",
-    "src/mmr/codes.rs": "46cf39eb4756da06aeb34aa32dbe75e13dcbd911b3a5b9d9afa80065966a7857",
+    "src/mmr/codes.rs": "06ad7fc805a4da335db691d5b1ada86f5f88d293ea2b8e33588326057fea5176",
     "src/mmr/raster.rs": "bd03d34f4154e629fce76707fae6dc06c12d2077a3e56fafd0198b6ae8176e4b",
     "src/mmr/reference.rs": "f188b7e27296b8449df1aa17d5d48678977ac195fe381824626618ce5da7c818",
     "src/mmr/spans.rs": "75b86fc99088936b2596ba6b5810a414f331caeec38a3c0dbc19518ac38857cc",
     "src/mmr/termination.rs": "ff5db8bf291a8c7d5d398f3317463aacd7b6d21cd8f340bceeffe403f046b5fc",
     "src/mmr/tests/horizontal_runs.rs": "41f42cc4973a92ca9ce650d3e976f9d54c278529c628e1c87f587c9adf7df516",
     "src/mmr/tests/normative_decode.rs": "348fff90ffa25826a8b86c4604e7006dfaaf5224201f0928c8d87523e74a2dc8",
-    "src/mmr/tests/prefix_codes.rs": "d9251b5c996b597cee637f8ea706e3d7f2a38267933ff7d96656641fbb06c325",
+    "src/mmr/tests/prefix_codes.rs": "cde4c16a1e7947a1dd7710d3c4a8b308d5d178bef35a6ecb70c2fad2481434e2",
     "src/mmr/tests/transition_cache.rs": "9694dc1674f651d821c3a40de0b2c052fc06d9c67f7a558a7856f6d917be41b2",
     "src/reader.rs": "9c64e44f1def255f1f7f285ada7608146d55dfb8d65bf31fca6464c2998f634f",
     "src/reader/tests.rs": "ff4f56ae43d4aea472a4d3ab04862edc802bf2d4413bb8de7646a1adf9cf9f47",
