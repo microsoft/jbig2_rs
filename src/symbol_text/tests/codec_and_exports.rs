@@ -593,6 +593,14 @@ fn actual_dictionary_setup_preserves_retained_context_error_priority() {
     let limits = Limits::default();
     let custom: [&HuffmanTable; 0] = [];
     let empty = DictionaryContexts {
+        model: SymbolDictionaryHeader {
+            config: parse_symbol_dictionary_flags(0).unwrap(),
+            adaptive: [TemplateOffset::new(0, 0); 4],
+            adaptive_count: 0,
+            refinement_adaptive: [TemplateOffset::new(0, 0); 2],
+            exported_symbols: 0,
+            new_symbols: 0,
+        },
         generic: None,
         refinement: None,
     };

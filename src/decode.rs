@@ -21,8 +21,8 @@ use crate::reader::ByteReader;
 use crate::segment_data::parse_region_info;
 use crate::segment_header::SegmentType;
 use crate::symbol_text::{
-    decode_symbol_dictionary, decode_text_region, DictionaryContexts, SymbolCodebook,
-    SymbolDictionaryInput, SymbolTextError, TextRegionInput,
+    decode_symbol_dictionary, decode_text_region, parse_symbol_dictionary_header,
+    DictionaryContexts, SymbolCodebook, SymbolDictionaryInput, SymbolTextError, TextRegionInput,
 };
 use crate::{
     Bitmap, DecodeError, GenericRegionErrorKind, Limits, MalformedError, UnsupportedFeature,

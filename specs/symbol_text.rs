@@ -30,6 +30,111 @@ pub(super) use symbol_ids::segment_symbol_width_matches;
 
 verus! {
 
+// T.88 (08/2018) 7.4.2.2 step 3: model identity excludes counts,
+// Huffman table choices and the used/retained lifecycle flags.
+pub(super) open spec fn dictionary_context_models_match(
+    current: &super::SymbolDictionaryHeader,
+    retained: &super::SymbolDictionaryHeader,
+) -> bool {
+    current.config.huffman == retained.config.huffman
+        && current.config.refinement_aggregation == retained.config.refinement_aggregation
+        && current.config.template == retained.config.template
+        && current.config.refinement_template == retained.config.refinement_template
+        && current.adaptive_count == retained.adaptive_count
+        && (forall|index: int| 0 <= index < 4 ==>
+            current.adaptive@[index] == retained.adaptive@[index])
+        && (forall|index: int| 0 <= index < 2 ==>
+            current.refinement_adaptive@[index] == retained.refinement_adaptive@[index])
+}
+
+pub(super) open spec fn dictionary_context_validation(
+    header: &super::SymbolDictionaryHeader,
+    used_contexts: Option<&super::DictionaryContexts>,
+) -> Result<(), super::SymbolTextError> {
+    if header.config.bitmap_context_used {
+        match used_contexts {
+            None => Err(super::SymbolTextError::InvalidState("missing retained contexts")),
+            Some(used) =>
+                if !header.config.huffman && !header.config.refinement_aggregation
+                    && used.generic.is_none() {
+                    Err(super::SymbolTextError::InvalidState("missing retained generic contexts"))
+                } else if header.config.refinement_aggregation && used.refinement.is_none() {
+                    Err(super::SymbolTextError::InvalidState("missing retained refinement contexts"))
+                } else if !dictionary_context_models_match(header, &used.model) {
+                    Err(super::SymbolTextError::InvalidState(
+                        "incompatible retained dictionary context model",
+                    ))
+                } else {
+                    Ok(())
+                },
+        }
+    } else if used_contexts.is_some() {
+        Err(super::SymbolTextError::InvalidState(
+            "unexpected retained contexts without the context-used flag",
+        ))
+    } else {
+        Ok(())
+    }
+}
+
+pub(super) open spec fn bounded_arithmetic_terminator_result(
+    data: Seq<u8>,
+) -> Result<(), super::SymbolTextError> {
+    if data.len() < 2 || data[data.len() - 2] != 0xff || data[data.len() - 1] != 0xac {
+        Err(super::SymbolTextError::InvalidState(
+            "embedded arithmetic refinement data is missing its FF AC terminator",
+        ))
+    } else if exists|index: int| 0 <= index < data.len() - 2
+        && #[trigger] data[index] == 0xff && data[index + 1] > 0x8f {
+        Err(super::SymbolTextError::InvalidState(
+            "premature arithmetic marker in embedded refinement data",
+        ))
+    } else {
+        Ok(())
+    }
+}
+
+pub(super) open spec fn normalized_arithmetic_bytes(
+    normalized: &super::NormalizedArithmetic,
+) -> Seq<u8> {
+    match normalized {
+        super::NormalizedArithmetic::Borrowed(bytes) => bytes@,
+        super::NormalizedArithmetic::Owned(bytes) => bytes@,
+    }
+}
+
+// Existing bounded-section policy accepts FF AC or normalizes a terminal FF.
+pub(super) open spec fn bounded_arithmetic_source_tail(data: Seq<u8>) -> bool {
+    (data.len() >= 2 && data[data.len() - 2] == 0xff && data[data.len() - 1] == 0xac)
+        || (data.len() > 0 && data[data.len() - 1] == 0xff)
+}
+
+pub(crate) open spec fn symbol_count_result(
+    imported: u32,
+    new_symbols: u32,
+    exported: u32,
+    limits: &crate::Limits,
+) -> Result<u32, super::SymbolTextError> {
+    let total = imported as nat + new_symbols as nat;
+    if total > u32::MAX {
+        Err(super::SymbolTextError::Decode(crate::DecodeError::Malformed(
+            crate::MalformedError::IntegerOverflow,
+        )))
+    } else if total > limits.max_symbols {
+        Err(super::SymbolTextError::Decode(crate::DecodeError::LimitExceeded(
+            crate::LimitExceeded {
+                kind: crate::LimitKind::Symbols,
+                limit: limits.max_symbols as u64,
+                actual: total as u64,
+            },
+        )))
+    } else if exported > total {
+        Err(super::SymbolTextError::InvalidCount("exported symbols exceed candidates"))
+    } else {
+        Ok(total as u32)
+    }
+}
+
 // Model navigation: spec::work_units [proof-support]
 // Purpose: Private codec/bank projections, signed/clipped vocabulary and export measures.
 // Mapping: no registered requirement/locator mapping.

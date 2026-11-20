@@ -330,6 +330,7 @@ pub(super) fn refinement_choice(encoded: u8) -> Result<TableChoice, SymbolTextEr
             && exported <= total,
         Err(_) => true,
     },
+    out == symbol_text_spec::symbol_count_result(imported, new_symbols, exported, limits),
 ))]
 pub(crate) fn check_symbol_counts(
     imported: u32,
@@ -354,7 +355,7 @@ pub(crate) fn check_symbol_counts(
 }
 
 // ---------------------------------------------------------------------------
-// Wire header parsing (T.88 7.4.3 symbol dictionary, 7.4.3 text region).
+// Wire header parsing (T.88 7.4.2 symbol dictionary, 7.4.3 text region).
 // ---------------------------------------------------------------------------
 
 /// Reads one signed adaptive-pixel pair, as used by generic and refinement

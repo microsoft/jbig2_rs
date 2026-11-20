@@ -8,13 +8,13 @@ use super::{
     insert_symbol_resource, new_gray_mmr_state, new_halftone_arithmetic_state,
     new_pattern_arithmetic_state, new_pattern_mmr_state, note_page_write,
     parse_generic_region_header, parse_halftone_header, parse_pattern_dictionary_header,
-    parse_refinement_region_header, parse_region_info, pattern_index, require_auxiliary_page,
-    require_matching_geometry, runtime_page_index, snapshot_region, symbol_index,
-    symbol_text_error_into_decode, Bitmap, ByteReader, CollectedSymbols, CombinationOperator,
-    DecodeError, DecodeWork, GenericTemplate, HuffmanTable, HuffmanTables, Limits, MalformedError,
-    MmrScratch, ParsedSegment, PatternStore, RefinementParameters, RegionBuffers, RetainedBudget,
-    RuntimePage, RuntimePages, SegmentType, SymbolDictionaryInput, SymbolResource, SymbolStore,
-    TextRegionInput, WorkBudget,
+    parse_refinement_region_header, parse_region_info, parse_symbol_dictionary_header,
+    pattern_index, require_auxiliary_page, require_matching_geometry, runtime_page_index,
+    snapshot_region, symbol_index, symbol_text_error_into_decode, Bitmap, ByteReader,
+    CollectedSymbols, CombinationOperator, DecodeError, DecodeWork, GenericTemplate, HuffmanTable,
+    HuffmanTables, Limits, MalformedError, MmrScratch, ParsedSegment, PatternStore,
+    RefinementParameters, RegionBuffers, RetainedBudget, RuntimePage, RuntimePages, SegmentType,
+    SymbolDictionaryInput, SymbolResource, SymbolStore, TextRegionInput, WorkBudget,
 };
 
 #[cfg(verus_keep_ghost)]
@@ -37,6 +37,54 @@ pub(super) fn first_referred_segment(referred: &[u32], owner: u32) -> Result<u32
     }
 }
 
+/// T.88 7.4.2.2: tables do not replace the last dictionary, but a dictionary
+/// without retained contexts does. Symbol imports are collected independently.
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures decode_spec::dictionary_context_source(symbols@, referred@, context_used, out),
+))]
+pub(super) fn dictionary_context_source(
+    symbols: &SymbolStore,
+    referred: &[u32],
+    context_used: bool,
+) -> Option<usize> {
+    if !context_used {
+        return None;
+    }
+    let mut reference_index = referred.len();
+    #[cfg_attr(verus_keep_ghost, verus_spec(
+        invariant
+            context_used,
+            reference_index <= referred@.len(),
+            forall|later: int, entry: int|
+                reference_index <= later < referred@.len()
+                    && 0 <= entry < symbols@.len() ==>
+                    symbols@[entry].0 != referred@[later],
+        decreases reference_index,
+    ))]
+    while reference_index > 0 {
+        reference_index -= 1;
+        if let Some(index) = symbol_index(symbols, referred[reference_index]) {
+            #[cfg(verus_keep_ghost)]
+            proof! {
+                assert(exists|reference: int| 0 <= reference < referred@.len()
+                    && decode_spec::first_symbol_index(
+                        symbols@, referred@[reference], index as int,
+                    )
+                    && forall|later: int, entry: int|
+                        reference < later < referred@.len()
+                            && 0 <= entry < symbols@.len() ==>
+                            symbols@[entry].0 != referred@[later]) by {
+                    assert(decode_spec::first_symbol_index(
+                        symbols@, referred@[reference_index as int], index as int,
+                    ));
+                }
+            }
+            return Some(index);
+        }
+    }
+    None
+}
+
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires decode_spec::symbol_store_valid(old(symbols)),
     ensures match out {
@@ -57,23 +105,16 @@ pub(super) fn decode_symbol_dictionary_segment(
     }
     let imported = collect_referred_symbols(segment, symbols, retained.bytes, limits)?;
     let custom_tables = collect_referred_tables(segment, tables)?;
-    let mut used_contexts = None;
-    let mut reference_index = 0_usize;
-    #[cfg_attr(verus_keep_ghost, verus_spec(
-        invariant
-            reference_index <= segment.header.referred_segments@.len(),
-            decode_spec::symbol_store_valid(symbols),
-        decreases segment.header.referred_segments@.len() - reference_index,
-    ))]
-    while reference_index < segment.header.referred_segments.len() {
-        let number = segment.header.referred_segments[reference_index];
-        if let Some(resource) = get_symbol_resource(symbols, number) {
-            if resource.contexts.is_some() {
-                used_contexts = resource.contexts.as_ref();
-            }
-        }
-        reference_index += 1;
-    }
+    let (header, _) = parse_symbol_dictionary_header(segment.payload, limits)
+        .map_err(symbol_text_error_into_decode)?;
+    let used_contexts = match dictionary_context_source(
+        symbols,
+        &segment.header.referred_segments,
+        header.config.bitmap_context_used,
+    ) {
+        Some(index) => symbols[index].1.contexts.as_ref(),
+        None => None,
+    };
     let output = decode_symbol_dictionary(&SymbolDictionaryInput {
         payload: segment.payload,
         imported_symbols: imported.codebook(),

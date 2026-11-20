@@ -29,7 +29,91 @@ use super::{
 #[cfg(verus_keep_ghost)]
 use vstd::prelude::*;
 
-/// Decodes one complete symbol-dictionary segment payload (T.88 6.5, 7.4.3).
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out == symbol_text_spec::dictionary_context_models_match(current, retained),
+))]
+pub(super) fn dictionary_context_models_match(
+    current: &SymbolDictionaryHeader,
+    retained: &SymbolDictionaryHeader,
+) -> bool {
+    if current.config.huffman != retained.config.huffman
+        || current.config.refinement_aggregation != retained.config.refinement_aggregation
+        || current.config.template != retained.config.template
+        || current.config.refinement_template != retained.config.refinement_template
+        || current.adaptive_count != retained.adaptive_count
+    {
+        return false;
+    }
+    let mut index = 0_usize;
+    #[cfg_attr(verus_keep_ghost, verus_spec(
+        invariant
+            index <= 4,
+            forall|done: int| 0 <= done < index ==>
+                current.adaptive@[done] == retained.adaptive@[done],
+        decreases 4 - index,
+    ))]
+    while index < 4 {
+        if current.adaptive[index].x != retained.adaptive[index].x
+            || current.adaptive[index].y != retained.adaptive[index].y
+        {
+            return false;
+        }
+        index += 1;
+    }
+    index = 0;
+    #[cfg_attr(verus_keep_ghost, verus_spec(
+        invariant
+            index <= 2,
+            forall|done: int| 0 <= done < index ==>
+                current.refinement_adaptive@[done] == retained.refinement_adaptive@[done],
+        decreases 2 - index,
+    ))]
+    while index < 2 {
+        if current.refinement_adaptive[index].x != retained.refinement_adaptive[index].x
+            || current.refinement_adaptive[index].y != retained.refinement_adaptive[index].y
+        {
+            return false;
+        }
+        index += 1;
+    }
+    true
+}
+
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out == symbol_text_spec::dictionary_context_validation(header, used_contexts),
+))]
+pub(super) fn validate_dictionary_contexts(
+    header: &SymbolDictionaryHeader,
+    used_contexts: Option<&DictionaryContexts>,
+) -> Result<(), SymbolTextError> {
+    let config = header.config;
+    if config.bitmap_context_used {
+        let used =
+            used_contexts.ok_or(SymbolTextError::InvalidState("missing retained contexts"))?;
+        if !config.huffman && !config.refinement_aggregation && used.generic.is_none() {
+            return Err(SymbolTextError::InvalidState(
+                "missing retained generic contexts",
+            ));
+        }
+        if config.refinement_aggregation && used.refinement.is_none() {
+            return Err(SymbolTextError::InvalidState(
+                "missing retained refinement contexts",
+            ));
+        }
+        if !dictionary_context_models_match(header, &used.model) {
+            return Err(SymbolTextError::InvalidState(
+                "incompatible retained dictionary context model",
+            ));
+        }
+    } else if used_contexts.is_some() {
+        return Err(SymbolTextError::InvalidState(
+            "unexpected retained contexts without the context-used flag",
+        ));
+    }
+    Ok(())
+}
+
+/// Decodes one complete symbol-dictionary segment payload (T.88 6.5, 7.4.2).
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires symbol_text_spec::codebook_valid(input.imported_symbols),
     ensures match out {
@@ -58,26 +142,7 @@ pub(crate) fn decode_symbol_dictionary(
     #[cfg(verus_keep_ghost)]
     production_segment_symbol_width!(total_symbols, code_length, input, header);
 
-    let uses_generic_contexts = !config.huffman && !config.refinement_aggregation;
-    if config.bitmap_context_used {
-        let used = input
-            .used_contexts
-            .ok_or(SymbolTextError::InvalidState("missing retained contexts"))?;
-        if uses_generic_contexts && used.generic.is_none() {
-            return Err(SymbolTextError::InvalidState(
-                "missing retained generic contexts",
-            ));
-        }
-        if config.refinement_aggregation && used.refinement.is_none() {
-            return Err(SymbolTextError::InvalidState(
-                "missing retained refinement contexts",
-            ));
-        }
-    } else if input.used_contexts.is_some() {
-        return Err(SymbolTextError::InvalidState(
-            "unexpected retained contexts without the context-used flag",
-        ));
-    }
+    validate_dictionary_contexts(&header, input.used_contexts)?;
 
     let body = input
         .payload
@@ -134,6 +199,7 @@ pub(crate) fn decode_symbol_dictionary(
 
     let retained_contexts = if config.bitmap_context_retained {
         Some(DictionaryContexts {
+            model: header,
             generic: retained_generic,
             refinement: retained_refinement,
         })

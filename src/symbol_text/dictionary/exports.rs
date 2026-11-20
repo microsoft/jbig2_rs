@@ -29,6 +29,11 @@ impl DictionaryClassState {
                 && width <= limits.max_width,
             Err(_) => true,
         },
+        (old(self).class_open
+            && old(self).decoded_symbols >= old(self).declared_new_symbols) ==>
+            out == Err(SymbolTextError::InvalidCount("too many new symbols"))
+                && final(resources).work_units == old(resources).work_units
+                && *final(self) == *old(self),
     ))]
     pub(crate) fn add_individual_symbol(
         &mut self,

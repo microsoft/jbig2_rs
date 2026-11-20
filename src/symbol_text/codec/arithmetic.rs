@@ -286,7 +286,8 @@ impl ArithmeticCodec<'_> {
 /// for the Huffman-declared-size refinement bitmaps embedded in symbol
 /// dictionaries and text regions (T.88 6.5.8.2.2, 6.4.11).
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
-    ensures match out {
+    ensures out == symbol_text_spec::bounded_arithmetic_terminator_result(data@),
+    match out {
         Ok(()) =>
             data@.len() >= 2
             && data@[data@.len() - 2] == 0xff
@@ -316,6 +317,9 @@ pub(in crate::symbol_text) fn validate_bounded_arithmetic_terminator(
     let mut offset = 0_usize;
     #[cfg_attr(verus_keep_ghost, verus_spec(
         invariant
+            data@.len() >= 2,
+            data@[data@.len() - 2] == 0xff,
+            data@[data@.len() - 1] == 0xac,
             final_offset == data@.len() - 2,
             offset <= data@.len() - 1,
             forall|i: int| 0 <= i < offset ==> (
@@ -326,6 +330,13 @@ pub(in crate::symbol_text) fn validate_bounded_arithmetic_terminator(
     ))]
     while offset < data.len() - 1 {
         if data[offset] == 0xff && data[offset + 1] > 0x8f && offset != final_offset {
+            #[cfg(verus_keep_ghost)]
+            proof! {
+                assert(exists|index: int| 0 <= index < data@.len() - 2
+                    && #[trigger] data@[index] == 0xff && data@[index + 1] > 0x8f) by {
+                    assert(offset < final_offset);
+                }
+            }
             return Err(SymbolTextError::InvalidState(
                 "premature arithmetic marker in embedded refinement data",
             ));
@@ -336,7 +347,9 @@ pub(in crate::symbol_text) fn validate_bounded_arithmetic_terminator(
 }
 
 impl NormalizedArithmetic<'_> {
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures out@ == symbol_text_spec::normalized_arithmetic_bytes(self),
+    ))]
     pub(in crate::symbol_text) fn bytes(&self) -> &[u8] {
         match self {
             Self::Borrowed(bytes) => bytes,
@@ -344,13 +357,31 @@ impl NormalizedArithmetic<'_> {
         }
     }
 
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures out == symbol_text_spec::normalized_arithmetic_bytes(self).len(),
+    ))]
     pub(in crate::symbol_text) fn len(&self) -> usize {
         self.bytes().len()
     }
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match out {
+        Ok(normalized) => {
+            let bytes = symbol_text_spec::normalized_arithmetic_bytes(&normalized);
+            &&& (bytes == data@ || (
+                data@.len() > 0 && data@[data@.len() - 1] == 0xff
+                    && bytes == data@.push(0xac)
+            ))
+            &&& symbol_text_spec::bounded_arithmetic_terminator_result(bytes).is_ok()
+        },
+        Err(_) => true,
+    },
+    !symbol_text_spec::bounded_arithmetic_source_tail(data@) ==>
+        out == Err(SymbolTextError::InvalidState(
+            "bounded arithmetic data has no terminal marker",
+        )),
+))]
 pub(in crate::symbol_text) fn normalized_bounded_arithmetic<'a>(
     data: &'a [u8],
     limits: &Limits,

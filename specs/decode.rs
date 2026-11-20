@@ -251,6 +251,33 @@ pub(super) open spec fn first_symbol_index(
             #[trigger] symbols[previous].0 != number
 }
 
+// T.88 (08/2018) 7.4.2.2 steps 3-4: select the last dictionary,
+// not the last dictionary that happens to have retained a bank.
+pub(super) open spec fn dictionary_context_source(
+    symbols: Seq<(u32, crate::decode::SymbolResource)>,
+    referred: Seq<u32>,
+    context_used: bool,
+    source: Option<usize>,
+) -> bool {
+    if !context_used {
+        source.is_none()
+    } else {
+        match source {
+            Some(index) =>
+                0 <= index < symbols.len()
+                && exists|reference: int| 0 <= reference < referred.len()
+                    && first_symbol_index(symbols, referred[reference], index as int)
+                    && forall|later: int, entry: int|
+                        reference < later < referred.len()
+                            && 0 <= entry < symbols.len() ==>
+                            symbols[entry].0 != referred[later],
+            None => forall|reference: int, entry: int|
+                0 <= reference < referred.len() && 0 <= entry < symbols.len() ==>
+                    symbols[entry].0 != referred[reference],
+        }
+    }
+}
+
 // Model navigation: spec::symbol_group_count [project-result-model]
 // Purpose: First matching export group, referred counts and collection length results.
 // Audit: symbol-resource-group-count
