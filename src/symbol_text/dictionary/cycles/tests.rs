@@ -1,4 +1,5 @@
 #![cfg(test)]
+#![allow(clippy::duplicated_attributes)]
 
 use super::*;
 use crate::symbol_text::IntegerContexts;

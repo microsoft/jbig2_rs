@@ -153,11 +153,14 @@ ENUM_ID_TEST = (
 )
 
 
-def case(identity, module, function, site, replacement, control, weaker="", *, native_test=None):
+def case(
+    identity, module, function, site, replacement, control, weaker="",
+    *, native_test=None, additional_controls=(),
+):
     return {
         "id": identity, "file": f"src/{module}.rs", "module": module,
         "function": function, "site": site, "replacement": replacement,
-        "controls": ((control, weaker),),
+        "controls": ((control, weaker), *additional_controls),
         **({"native_test": native_test} if native_test is not None else {}),
     }
 
@@ -371,6 +374,11 @@ CASES = (
         }
         match decoded {"""),
         INTEGER_DECODER,
+        # Replacing the decoder also violates its newly explicit input frames.
+        additional_controls=(
+            ("final(self).decoder.bytes == old(self).decoder.bytes,", ""),
+            ("final(self).decoder.bytes@ == old(self).decoder.bytes@,", ""),
+        ),
     ),
     case(
         "arithmetic_integer_caller_changes_another_bank", "symbol_text", "ArithmeticCodec::decode_integer",
