@@ -6,6 +6,10 @@ use super::*;
 verus! {
 
 // Project framing model for the fields in T.88 (08/2018), 7.4.6.
+// Model navigation: spec::generic_header_length [representation-invariant]
+// Purpose: Complete template-specific header extent before entropy bytes.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn generic_header_length(flags: u8) -> nat {
     if flags & 1 != 0 { 18 }
     else if (flags >> 1) & 3 != 0 { 20 }

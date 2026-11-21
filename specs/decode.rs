@@ -253,6 +253,10 @@ pub(super) open spec fn first_symbol_index(
 
 // T.88 (08/2018) 7.4.2.2 steps 3-4: select the last dictionary,
 // not the last dictionary that happens to have retained a bank.
+// Model navigation: spec::dictionary_context_source [representation-invariant]
+// Purpose: Flag-directed selection of the last referenced dictionary resource.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(super) open spec fn dictionary_context_source(
     symbols: Seq<(u32, crate::decode::SymbolResource)>,
     referred: Seq<u32>,

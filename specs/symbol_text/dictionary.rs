@@ -7,6 +7,10 @@ verus! {
 
 // T.88 (08/2018) 7.4.2.2 step 3: model identity excludes counts,
 // Huffman table choices and the used/retained lifecycle flags.
+// Model navigation: spec::dictionary_context_models_match [representation-invariant]
+// Purpose: Compatible coding model and adaptive coordinates for retained banks.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(in crate::symbol_text) open spec fn dictionary_context_models_match(
     current: &crate::symbol_text::SymbolDictionaryHeader,
     retained: &crate::symbol_text::SymbolDictionaryHeader,
@@ -22,6 +26,10 @@ pub(in crate::symbol_text) open spec fn dictionary_context_models_match(
             current.refinement_adaptive@[index] == retained.refinement_adaptive@[index])
 }
 
+// Model navigation: spec::dictionary_context_validation [representation-invariant]
+// Purpose: Exact used-context flag, bank presence and retained-model validation.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(in crate::symbol_text) open spec fn dictionary_context_validation(
     header: &crate::symbol_text::SymbolDictionaryHeader,
     used_contexts: Option<&crate::symbol_text::DictionaryContexts>,
@@ -52,6 +60,10 @@ pub(in crate::symbol_text) open spec fn dictionary_context_validation(
     }
 }
 
+// Model navigation: spec::bounded_arithmetic_terminator_result [representation-invariant]
+// Purpose: Existing bounded FF AC tail and premature-marker error precedence.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(in crate::symbol_text) open spec fn bounded_arithmetic_terminator_result(
     data: Seq<u8>,
 ) -> Result<(), crate::symbol_text::SymbolTextError> {
@@ -69,6 +81,10 @@ pub(in crate::symbol_text) open spec fn bounded_arithmetic_terminator_result(
     }
 }
 
+// Model navigation: spec::normalized_arithmetic_bytes [representation-invariant]
+// Purpose: Byte sequence of borrowed or explicitly normalized arithmetic data.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(in crate::symbol_text) open spec fn normalized_arithmetic_bytes(
     normalized: &crate::symbol_text::NormalizedArithmetic,
 ) -> Seq<u8> {
@@ -79,11 +95,19 @@ pub(in crate::symbol_text) open spec fn normalized_arithmetic_bytes(
 }
 
 // Existing bounded-section policy accepts FF AC or normalizes a terminal FF.
+// Model navigation: spec::bounded_arithmetic_source_tail [representation-invariant]
+// Purpose: Existing bounded-section source-tail acceptance before normalization.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(in crate::symbol_text) open spec fn bounded_arithmetic_source_tail(data: Seq<u8>) -> bool {
     (data.len() >= 2 && data[data.len() - 2] == 0xff && data[data.len() - 1] == 0xac)
         || (data.len() > 0 && data[data.len() - 1] == 0xff)
 }
 
+// Model navigation: spec::symbol_count_result [representation-invariant]
+// Purpose: Exact combined-count overflow, configured limit and export bounds.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn symbol_count_result(
     imported: u32,
     new_symbols: u32,

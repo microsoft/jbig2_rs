@@ -6,6 +6,10 @@ use vstd::prelude::*;
 verus! {
 
 // Project unknown-length framing: first complete body marker and bounded row count.
+// Model navigation: spec::unknown_generic_marker [representation-invariant]
+// Purpose: Literal marker and row-count byte window inside the coding body.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn unknown_generic_marker(bytes: Seq<u8>, offset: int) -> bool {
     &&& bytes.len() >= 18
     &&& 0 <= offset && offset + 6 <= bytes.len()
@@ -13,6 +17,10 @@ pub(crate) open spec fn unknown_generic_marker(bytes: Seq<u8>, offset: int) -> b
     &&& bytes[offset + 1] == if bytes[17] & 1 != 0 { 0u8 } else { 0xacu8 }
 }
 
+// Model navigation: spec::unknown_generic_window [representation-invariant]
+// Purpose: First complete body marker after the full header and bounded rows.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 #[verifier::opaque]
 pub(crate) open spec fn unknown_generic_window(bytes: Seq<u8>, end: int) -> bool {
     &&& bytes.len() >= 18

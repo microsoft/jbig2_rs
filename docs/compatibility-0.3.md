@@ -33,6 +33,12 @@ resource-test inputs. Matching a permissive output is not grounds to invent
 symbols, clamp pattern indices, fill missing rows, ignore a necessary extension
 or return a partial image as a complete bitmap.
 
+Of the 32 reported files, five now decode strictly and ten decode with explicit
+Compatibility selected. The remaining 22 retain an intentional malformed,
+unsupported or work-limit outcome. The pinned replay checks 160 configurations
+and 224 decoder calls, including reuse of the same context; every successful
+page must match its complete expected pixels.
+
 ## Strict decoding corrections
 
 | Reports | Decision and relevant requirement |

@@ -5,6 +5,10 @@ use vstd::prelude::*;
 
 verus! {
 
+// Model navigation: spec::eop_recovery_allowed [project-policy]
+// Purpose: Unique positive open owner and optional closed-earlier-page witness.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn eop_recovery_allowed(
     associated: u32, open: Seq<u32>, closed: Seq<u32>,
 ) -> bool {
@@ -16,6 +20,10 @@ pub(crate) open spec fn eop_recovery_allowed(
 }
 
 /// Every repair has one observed open owner; nonzero sources require history.
+// Model navigation: spec::eop_ownership [project-policy]
+// Purpose: Exact owner and diagnostic kind for an allowed association repair.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn eop_ownership(
     associated: u32, open: Seq<u32>, closed: Seq<u32>,
     owner: u32, kind: crate::document::standalone::RecoveryKind,
@@ -31,6 +39,10 @@ pub(crate) open spec fn eop_ownership(
 }
 
 /// Prefix state: page encountered, next page boundary encountered, valid.
+// Model navigation: spec::boundary_state [project-policy]
+// Purpose: Prefix witnesses for page occurrence, boundary and no later revisit.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn boundary_state(
     segments: Seq<crate::document::ParsedSegment>,
     page: u32,
@@ -52,6 +64,10 @@ pub(crate) open spec fn boundary_state(
 }
 
 /// No source page segment is skipped across the proposed next-page boundary.
+// Model navigation: spec::no_page_revisit [project-policy]
+// Purpose: No page-associated segment occurs after its proposed boundary.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn no_page_revisit(
     segments: Seq<crate::document::ParsedSegment>, page: u32, count: nat,
 ) -> bool {
@@ -105,6 +121,10 @@ pub(crate) proof fn boundary_witnesses(
 }
 
 /// The colour flag and all composition bits survive a bit-4 waiver unchanged.
+// Model navigation: spec::reserved_mask_result [project-policy]
+// Purpose: Exact bit-4-only change preserving every meaningful region bit.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn reserved_mask_result(flag: u8, normalized: u8) -> bool {
     &&& flag & 0xf0u8 == 0x10u8
     &&& normalized == flag & 0xefu8
@@ -112,6 +132,10 @@ pub(crate) open spec fn reserved_mask_result(flag: u8, normalized: u8) -> bool {
     &&& normalized & 0xf0u8 == 0u8
 }
 
+// Model navigation: spec::page_byte [project-policy]
+// Purpose: Big-endian association-field byte for an existing one/four-byte slot.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn page_byte(page: u32, width: usize, index: int) -> u8 {
     if width == 1 { page as u8 }
     else if index == 0 { (page >> 24u32) as u8 }
@@ -121,6 +145,10 @@ pub(crate) open spec fn page_byte(page: u32, width: usize, index: int) -> u8 {
 }
 
 /// The ownership repair changes no bytes outside its existing association field.
+// Model navigation: spec::page_patch [project-policy]
+// Purpose: Same-length association repair with every other byte unchanged.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn page_patch(
     before: Seq<u8>, after: Seq<u8>, start: int, width: usize, page: u32,
 ) -> bool {
