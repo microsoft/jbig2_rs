@@ -1,3 +1,5 @@
+#![cfg(test)]
+
 use super::*;
 use crate::symbol_text::IntegerContexts;
 
