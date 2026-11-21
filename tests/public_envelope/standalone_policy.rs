@@ -51,6 +51,41 @@ fn assert_pattern(page: &Page, number: u32) {
 }
 
 #[test]
+fn standalone_policy_strict_success_preserves_every_page_and_returns_no_recoveries() {
+    let mut segments = patterned_page(0, 1);
+    segments.push(end(2, 1));
+    segments.extend(patterned_page(3, 2));
+    segments.push(end(5, 2));
+    segments.push(eof(6));
+    let bytes = standalone(true, Some(2), &segments);
+    let source = bytes.clone();
+    let decoder = Decoder::default();
+    let expected = decoder.decode(&bytes).unwrap();
+    assert_eq!(expected.pages().len(), 2);
+    assert_pattern(&expected.pages()[0], 1);
+    assert_pattern(&expected.pages()[1], 2);
+    let mut context = decoder.context();
+    for output in [
+        decoder
+            .decode_with_policy(&bytes, DecodePolicy::Strict)
+            .unwrap(),
+        context
+            .decode_with_policy(&bytes, DecodePolicy::Strict)
+            .unwrap(),
+        decoder
+            .decode_reader_with_policy(&mut Cursor::new(&bytes), DecodePolicy::Strict)
+            .unwrap(),
+        context
+            .decode_reader_with_policy(&mut Cursor::new(&bytes), DecodePolicy::Strict)
+            .unwrap(),
+    ] {
+        assert_eq!(output.value, expected);
+        assert!(output.recoveries.is_empty());
+    }
+    assert_eq!(bytes, source);
+}
+
+#[test]
 fn standalone_policy_closes_complete_pages_at_exact_boundaries_and_counts_all_pixels() {
     let mut segments = patterned_page(0, 1);
     segments.extend(patterned_page(2, 2));
