@@ -20,18 +20,23 @@ hooks or a patched decoder.
 
 Each file is exercised in strict mode through fresh/reusable byte contexts and
 the original `Decoder` reader API, and in explicit compatibility mode through
-the two byte APIs: 160 API configurations. Every successful
+the two byte APIs. The original corpus covers 160 configurations, plus ten
+default-budget nonprogress configurations: 170 total. Every successful
 document must match every expected page number, dimension and packed bitmap
 hash, and report the required recovery. Negative inputs must remain typed
 errors, not crashes, partial documents or blank success.
 Context modes decode twice with the same context and compare complete output
-or errors, giving 224 decoder calls across the 160 configurations.
+or errors, giving 238 decoder calls across the 170 configurations.
 The existing reader APIs remain strict. No new opaque reader interface,
 assumed I/O contract or unverified compatibility-reader wrapper is introduced.
 Compatibility callers acquire bounded bytes before selecting the byte API.
 
-The two nonprogress fixtures use an explicit 100,000-unit work cap; that
-bounded failure is distinct from a default-budget wall-clock timeout.
+The two nonprogress fixtures retain an explicit 100,000-unit-cap replay.
+They also run under the unchanged default budget through every supported
+API shape, with exact typed Work errors required within three seconds.
+Timeout is failure, not accepted or partial output. Exact complete-state
+recurrence now shortcuts unavoidable work exhaustion; it does not impose
+a zero-run/empty-class count limit or lower the configured budget.
 Compatibility preparation debits work before decoding, so its exact remaining
 threshold is checked rather than forced to equal strict mode's budget. The
 original strict reader and byte APIs retain identical outcomes. Pixel output

@@ -16,6 +16,19 @@ SPEC.loader.exec_module(runner)
 
 
 class CompatibilityCorpusTests(unittest.TestCase):
+    def test_default_work_replays_keep_original_caps_and_three_second_deadline(self):
+        manifest = json.loads(runner.MANIFEST.read_text())
+        row = next(row for row in manifest["fixtures"] if row["issues"] == [215])
+        configured, default = runner.work_cases(row)
+        self.assertEqual(configured[0]["max_work_units"], 100000)
+        self.assertEqual(default[0]["max_work_units"], None)
+        self.assertEqual(default[2], 3)
+        self.assertEqual(default[0]["strict_error_debug"], row["default_work"]["strict_error_debug"])
+        self.assertEqual(default[0]["compatibility_error_debug"], row["default_work"]["compatibility_error_debug"])
+        row["default_work"]["timeout_seconds"] = 30
+        with self.assertRaises(ValueError):
+            runner.validated_manifest(manifest)
+
     def test_complete_pinned_manifest_rejects_missing_reports_and_unsafe_sources(self):
         manifest = json.loads(runner.MANIFEST.read_text())
         self.assertEqual(len(runner.validated_manifest(manifest)), 32)

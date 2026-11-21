@@ -37,7 +37,9 @@ Of the 32 reported files, five now decode strictly and ten decode with explicit
 Compatibility selected. The remaining 22 retain an intentional malformed,
 unsupported or work-limit outcome. The pinned replay checks 160 configurations
 and 224 decoder calls, including reuse of the same context; every successful
-page must match its complete expected pixels.
+page must match its complete expected pixels. The cycle-performance follow-up
+adds ten default-budget nonprogress configurations, for 170 configurations
+and 238 actual calls; those exact Work errors must complete within three seconds.
 
 ## Strict decoding corrections
 
@@ -94,7 +96,7 @@ policy in these APIs.
 | #212 | Colour requires actual extension semantics and a colour output contract. It remains typed `Unsupported`, not a lenient bi-level success. The supported bi-level profile is unchanged. |
 | #213 | An unknown necessary extension cannot yield a complete successful decode. Optional and necessary extension cases remain distinct. T.88 7.4 extension rules. |
 | #214 | Preserve the original framing rejection and separately test correctly framed matching/incompatible retained models; the filename does not establish which check was reached. T.88 7.4.2.2 and Annex E. |
-| #215, #216 | Preserve bounded work accounting without excluding legal zero export runs or empty height classes. With a 100,000-unit cap, each original fixture returns `Work` exhaustion at 100,001; default-budget wall-clock timeout is reported separately. A stricter unsupported progress rule is not added. T.88 6.5. |
+| #215, #216 | Preserve legal zero runs/empty classes and the original budgets. A complete decoder/input/bank/cursor recurrence within an actually executed zero-only trace proves that the loop cannot finish, allowing the same eventual `Work` boundary to be reported without billions of repeated iterations. The 100,000-unit-cap errors remain exact; default-budget errors now complete within the three-second regression deadline. No arbitrary repetition limit is introduced. T.88 6.5 and Annex A. |
 | #217 | Missing bounded arithmetic termination remains fatal. No cross-section read or invented marker. T.88 6.5, 7.4.2 and Annex E. |
 | #218, two files | Both violate the declared new-symbol count, rather than merely the default configured resource ceiling. Keep the typed count failure and independent valid-count/limit controls; do not raise limits to match another decoder. T.88 6.5 and 7.4.2. |
 
@@ -106,12 +108,16 @@ versus retained model selection, zero-plane initialization and bounded recovery
 preparation. Exact-pixel regressions, negative controls and work/memory tests
 supplement those component contracts.
 
-Local validation includes 1,388 verified obligations with zero errors, exact
-accounting of 694 directly verified production functions and the unchanged 20
+Local validation including the cycle follow-up has 1,411 verified obligations
+with zero errors, exact accounting of 703 directly verified production functions
+and the unchanged 20
 reviewed verifier limitations. There are no incomplete functions, new native
 assumptions or runtime/proof substitutions. The 623 native/doctest and 822
-audit-tool tests pass, as do the existing coverage floors, Rust 1.88 isolated
-distribution checks and image companion tests. The ten original strict
+audit-tool tests passed for the initial compatibility changes; the cycle
+follow-up adds focused full-state/default-budget/overflow regressions and
+retains all existing validation requirements. Coverage floors, Rust 1.88
+isolated distribution checks and image companion tests remain mandatory.
+The ten original strict
 conformance outcomes retain identical pixels and typed diagnostics.
 
 Existing proof limitations remain explicit. Neither finite fixture parity nor

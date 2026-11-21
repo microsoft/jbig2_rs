@@ -49,6 +49,20 @@ def validated_manifest(document):
             or any(char not in "0123456789abcdef" for char in row["sha256"])
         ):
             raise ValueError("fixture source or size/hash is not pinned")
+        if row["issues"] in ([215], [216]):
+            default = row.get("default_work")
+            if (
+                not isinstance(default, dict)
+                or set(default) != {"timeout_seconds", "strict_error_debug", "compatibility_error_debug"}
+                or default["timeout_seconds"] != 3
+                or not all(
+                    isinstance(default[key], str) and default[key].startswith(
+                        "LimitExceeded(LimitExceeded { kind: Work,"
+                    )
+                    for key in ("strict_error_debug", "compatibility_error_debug")
+                )
+            ):
+                raise ValueError("nonprogress fixtures require exact default-work errors and a3-second deadline")
     return rows
 
 
@@ -135,6 +149,19 @@ def comparison_signature(row, mode, result):
     return result
 
 
+def work_cases(row):
+    cases = [(row, "configured", 10)]
+    if "default_work" in row:
+        default = row["default_work"]
+        cases.append(({
+            **row,
+            "max_work_units": None,
+            "strict_error_debug": default["strict_error_debug"],
+            "compatibility_error_debug": default["compatibility_error_debug"],
+        }, "default", default["timeout_seconds"]))
+    return cases
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--cache", type=Path, default=ROOT / "target/compatibility-fixtures")
@@ -162,31 +189,35 @@ def main():
         binary = consumer / "target/release/jbig2-compatibility-consumer"
         for row in rows:
             input_path = fixture_bytes(row, args.cache, args.offline).resolve()
-            policy_results = {}
-            for mode in MODES:
-                directory = temporary / row["name"] / mode
-                command = [
-                    str(binary), str(input_path), str(directory), mode,
-                    str(row["max_work_units"]) if row["max_work_units"] is not None else "default",
-                ]
-                record = {"fixture": row["name"], "issues": row["issues"], "mode": mode}
-                try:
-                    process = subprocess.run(
-                        command, text=True, capture_output=True, timeout=10,
-                    )
-                    result = validate_output(row, mode, process, directory)
-                    policy = mode.split("-", 1)[0]
-                    signature = comparison_signature(row, mode, result)
-                    if policy in policy_results and policy_results[policy] != signature:
-                        raise ValueError("byte/reader/fresh/context results or recovery reports differ")
-                    policy_results[policy] = signature
-                    record.update(result)
-                    record["exit"] = process.returncode
-                except (ValueError, subprocess.TimeoutExpired) as error:
-                    record["status"] = "failed"
-                    record["diagnostic"] = str(error)
-                    failures.append(record)
-                records.append(record)
+            for case, budget, timeout in work_cases(row):
+                policy_results = {}
+                for mode in MODES:
+                    directory = temporary / row["name"] / budget / mode
+                    command = [
+                        str(binary), str(input_path), str(directory), mode,
+                        str(case["max_work_units"]) if case["max_work_units"] is not None else "default",
+                    ]
+                    record = {
+                        "fixture": row["name"], "issues": row["issues"],
+                        "mode": mode, "budget": budget,
+                    }
+                    try:
+                        process = subprocess.run(
+                            command, text=True, capture_output=True, timeout=timeout,
+                        )
+                        result = validate_output(case, mode, process, directory)
+                        policy = mode.split("-", 1)[0]
+                        signature = comparison_signature(case, mode, result)
+                        if policy in policy_results and policy_results[policy] != signature:
+                            raise ValueError("byte/reader/fresh/context results or recovery reports differ")
+                        policy_results[policy] = signature
+                        record.update(result)
+                        record["exit"] = process.returncode
+                    except (ValueError, subprocess.TimeoutExpired) as error:
+                        record["status"] = "failed"
+                        record["diagnostic"] = str(error)
+                        failures.append(record)
+                    records.append(record)
     report = {
         "schema_version": 1, "status": "failed" if failures else "passed",
         "manifest_sha256": hashlib.sha256(MANIFEST.read_bytes()).hexdigest(),

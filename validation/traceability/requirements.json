@@ -24,7 +24,7 @@
   "model_classifications": {
     "review": "author-navigation-only-not-independent-normative-approval",
     "registry_sha256": "19f29e18950f5e35d011f88b528ba889ff3d4d000d12990d8f9c82d7de0c69cb",
-    "project_source_sha256": "3334f0660ab96143d7e4ca000f08c5c24723524f9fae5f742899531e44550f88",
+    "project_source_sha256": "14013b75654829ed5e550f21bc60c616ced0be02f8aca9d761828865ee46c98a",
     "families": [
       {
         "file": "specs/huffman_lookup.rs",
@@ -1376,6 +1376,46 @@
         "justification": "Checked generic payload windows, dictionary context model/state compatibility and zero-plane/count representation frames used by the corrected production callers.",
         "ambiguity": "",
         "caveats": "Author navigation only; no independent normative approval, exhaustive specification coverage or complete decoded-output proof."
+      },
+      {
+        "file": "specs/symbol_text/cycles.rs",
+        "members": [
+          "spec::chain",
+          "spec::checkpoint_state",
+          "spec::detector_valid",
+          "spec::fields",
+          "spec::prefix_equal",
+          "spec::prefix_keys",
+          "spec::repetition",
+          "spec::source_state",
+          "spec::state",
+          "spec::state_valid"
+        ],
+        "classification": "representation-invariant",
+        "justification": "Complete decoder/input/procedure-bank/cursor snapshots, actual zero-only trace provenance, deterministic recurrence and original work-boundary frames.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; no independent normative approval or complete decoded-output proof."
+      },
+      {
+        "file": "specs/symbol_text/cycles.rs",
+        "members": [
+          "spec::step",
+          "spec::zero_run"
+        ],
+        "classification": "project-result-model",
+        "justification": "Complete decoder/input/procedure-bank/cursor snapshots, actual zero-only trace provenance, deterministic recurrence and original work-boundary frames.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; no independent normative approval or complete decoded-output proof."
+      },
+      {
+        "file": "specs/symbol_text/cycles.rs",
+        "members": [
+          "spec::work_exhaustion_error"
+        ],
+        "classification": "project-policy",
+        "justification": "Complete decoder/input/procedure-bank/cursor snapshots, actual zero-only trace provenance, deterministic recurrence and original work-boundary frames.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; no independent normative approval or complete decoded-output proof."
       }
     ]
   },
@@ -2048,14 +2088,14 @@
     "specs/mod.rs": "34f81994f8b77e618a7d48d4552175d09cf3be633307166227c13ce94a06ba21",
     "specs/readers.rs": "ee10b54a7ee8dce323488bf8ef5229fbbf1d5811888a3364cda8f2cc187ba251",
     "specs/segments.rs": "a4a19a65babe5a29532273f3374434762cf0fd63d3336b0f49e4914e3e390bc0",
-    "specs/symbol_text.rs": "276faeadb51dc1fd886acce229c20b2c98337085936738a7378a30c17264eec1",
-    "specs/symbol_text/arithmetic_codec.rs": "d28755e3fe46f5aeb9772fdee3aa674fa510a0d91761a459c40bd3f673f96a4c",
+    "specs/symbol_text.rs": "b4326bd28b6f6fa1dd3a45d51e3a50dbadfde06c4750be2c511e1a039abc95d7",
+    "specs/symbol_text/arithmetic_codec.rs": "c96145d1428fd0edda0b93437f15e15592e9f7476d8465dbd55feb071d1a866c",
     "specs/symbol_text/dictionary.rs": "f7994737d95cefbca3e6067754190b160ddb8c85900a17edf672b4f8d80882b2",
     "specs/symbol_text/huffman_codec.rs": "3a56e2a0f9c27443b1ee91029c92584a45df3398fc4f433de4ffc1e717246295",
     "specs/symbol_text/symbol_ids.rs": "a08f24685e8ef5f95e98b5bb953ad18a1b6dbbffd754ca48f09931f36a87aacc",
     "src/arithmetic.rs": "3322814a9a7feedbd1d53c2b9aa6b5d9c1559b691a819cfbf5dcb2eb62d98d33",
     "src/arithmetic/decoding.rs": "537afa619108dc6ce7773688683d85eb5b4251dbb75a939c92223746b7a90fd5",
-    "src/arithmetic/integers.rs": "53a11c2a47bed9cbfd683503319f7bd861a0df4cd4566a8a43dcb5b0cbcb0d0e",
+    "src/arithmetic/integers.rs": "ca1828b214769e1192785acc2dd369e0776f38654f74885dbfc32bd0025fc350",
     "src/arithmetic/refill.rs": "737ee41e1e4bfd62104fd48dcc612ff83ba9cc1b6b0ec1ca0e741909ce505769",
     "src/arithmetic/tests.rs": "24fa75f21b569d1518fdf5191d21b38aeb430c04695e9d103f3ff0ee8f495e8f",
     "src/arithmetic/tests/context_state.rs": "cf1908a60d5aa6cf91d8522644169a9eebe2521c0bd114f3950b29df5900566f",
@@ -2133,26 +2173,26 @@
     "src/symbol_text/bitmap.rs": "d872783ab5e9768ba4064ca309700f089e31b3ca799425edc6a5d7471efc40b2",
     "src/symbol_text/codebook.rs": "3ad3dd4131dbb7343a3267f32718d4c5278f029c1b90937f45d06363b8defbcc",
     "src/symbol_text/codec.rs": "4f975eff5bd958e0b201dd9c80e91b40be4681254a56adb02a681cc87e297e78",
-    "src/symbol_text/codec/arithmetic.rs": "0633b9e5c83c0717be4abb246dc2b75895ebb0cb3d1e026ca9cf164eee6943d3",
+    "src/symbol_text/codec/arithmetic.rs": "e21fd9639fc1839c74bc6b5bdb2af53b6dbe6d6bdbfdd43d073481d9e6fa3fda",
     "src/symbol_text/codec/huffman.rs": "a706f6674a164c1398d6fdc199a4a0ef8614a86e0be69e6eb13e3a8c2f6b83a1",
     "src/symbol_text/codec/refinement.rs": "71d5bb90d828932191eba96f52982c1f7adc24433cb5e4d21dc721b3f6997d83",
     "src/symbol_text/codec/symbols.rs": "01f2f2d2739c42ce2ed5fe4ed170451082478dcfc7f405b73ac9f6a819ce3248",
-    "src/symbol_text/dictionary.rs": "a3e2968dbae2fb7525f1a9451d08543731054c4e73aba5d14d3334f3c8080438",
-    "src/symbol_text/dictionary/arithmetic.rs": "2744c7e0efb4589285d0ee85dd4b104be00f540cfda9ec502a871eaa26b870d1",
-    "src/symbol_text/dictionary/exports.rs": "8ec39f2359e991f5bcde27d74c65e5c504b9e367ca64c8d66f2baf5f35dbd6e2",
+    "src/symbol_text/dictionary.rs": "9207e8b74ad82eeb14e3ad13990bfe7ec3580a275848c5daad08cde2dcecb505",
+    "src/symbol_text/dictionary/arithmetic.rs": "fe29e5ed1211a65cd01fa173d2b5dac2023618f35feaff6310353a84cfcb9806",
+    "src/symbol_text/dictionary/exports.rs": "ddc30dd66d914702c9dbfa02e4525ed280021d65b88699a685bf36682382b597",
     "src/symbol_text/dictionary/huffman.rs": "496f382bc0440e1c9825fe4e90f49ae3173912f50e20f8f964a49d81d1c3efb6",
     "src/symbol_text/headers.rs": "69da74f1ff5627d013f327d5c152d49582c7bb82462fc70b48b82159b9e8d987",
     "src/symbol_text/placement.rs": "6fe7228afc13c0735fcfe0d9359e07e03dfdd5a6883ba8d79523dcfde8885e5d",
     "src/symbol_text/tests/arithmetic_composition.rs": "8749f6561c7b3030deafa47358bd499514821726851cb296d4f00b2ff2110120",
     "src/symbol_text/tests/codec_and_exports.rs": "37db93244698f73f2eabd55333937bb1b7ab8ec4af4b7ad7a4ed975105e9f483",
-    "src/symbol_text/tests/dictionary_dispatch.rs": "8c298fcdb940faf03a006219ecc400b8c8444114c846feadf82952bd5459dd2e",
+    "src/symbol_text/tests/dictionary_dispatch.rs": "632ca48342adb2713092cecab915ee9f67eb3610dc92a2764cb429773a103f82",
     "src/symbol_text/tests/dictionary_dispatch/huffman_aggregation.rs": "0349534fe6854219a69f33105ed9fdf5cdfe63d0298002bdc4a6098c43afcc8b",
     "src/symbol_text/tests/flags_and_tables.rs": "ac4e3ee2b5aadda78ebbe2c7804584f49a48a96816c85fa37adb99aa2a0113fe",
     "src/symbol_text/tests/huffman_fields.rs": "222ee8d81f8b0acd926e3cfb85288464919ba835027353024447d9f108ace38d",
     "src/symbol_text/tests/huffman_symbol_ids.rs": "89dce150f0deb0e9eb16bb38cda5238c6546589d8022829680c412ff4f3becd0",
     "src/symbol_text/tests/placement_render.rs": "5d07c12827335abdba47df041992ea76e1b12d1a2ae1fb598ba3d4ecba1350b1",
     "src/symbol_text/tests/placement_state.rs": "4842dd4690593cf25b854787030a1e99f93c5611801899a22fce35f9625c75e3",
-    "src/symbol_text/tests/resource_accounting.rs": "b0b88129bb6eddb2ae10aeba65ff14f21f101cbdabdca8767930f2bb4053b726",
+    "src/symbol_text/tests/resource_accounting.rs": "88581edeabfa81aeb30bee5dd89ad07692931b6754248abe1755ffda3809cc13",
     "src/symbol_text/tests/text_termination.rs": "3b629b51e16bdf7dfcedf2a6c46b99c95a2fe6042b8b0da4e74f069722789eeb",
     "src/symbol_text/text.rs": "0b76547ff330531d3c34d7c253d46109c21ed8e9be25a4a9cbc6ed0e470a87b2",
     "tests/catalog_contracts.rs": "d4eb4fd3d554494fcd99fa58def0eaa542fca7f97ff32c2083cfa0d3e1545da2",

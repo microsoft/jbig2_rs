@@ -126,8 +126,34 @@ fn repeated_empty_arithmetic_dictionary_work_remains_bounded_without_new_syntax_
         &[0xa1, 0x41, 0xdf, 0xff, 0x7f, 0xff, 0xac][..],
     ] {
         let payload = one_symbol_arithmetic_dictionary(body);
+        for cap in [
+            65_536,
+            65_537,
+            100_000,
+            131_072,
+            131_073,
+            1_000_000,
+            Limits::default().max_work_units,
+        ] {
+            let limits = Limits {
+                max_work_units: cap,
+                ..Limits::default()
+            };
+            assert!(matches!(
+                decode_symbol_dictionary(&SymbolDictionaryInput {
+                    payload: &payload,
+                    imported_symbols: SymbolCodebook::Contiguous(&[]),
+                    custom_tables: &[],
+                    used_contexts: None,
+                    limits: &limits,
+                }),
+                Err(SymbolTextError::Decode(DecodeError::LimitExceeded(
+                    LimitExceeded { kind: LimitKind::Work, limit, actual }
+                ))) if limit == cap && actual == cap + 1
+            ));
+        }
         let limits = Limits {
-            max_work_units: 100_000,
+            max_work_units: u64::MAX,
             ..Limits::default()
         };
         assert!(matches!(
@@ -138,12 +164,8 @@ fn repeated_empty_arithmetic_dictionary_work_remains_bounded_without_new_syntax_
                 used_contexts: None,
                 limits: &limits,
             }),
-            Err(SymbolTextError::Decode(DecodeError::LimitExceeded(
-                LimitExceeded {
-                    kind: LimitKind::Work,
-                    limit: 100_000,
-                    actual: 100_001,
-                }
+            Err(SymbolTextError::Decode(DecodeError::Malformed(
+                MalformedError::IntegerOverflow
             )))
         ));
     }

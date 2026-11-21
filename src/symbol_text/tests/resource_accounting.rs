@@ -4,6 +4,35 @@
 use super::*;
 
 #[test]
+fn accelerated_work_exhaustion_matches_the_existing_charge_boundary() {
+    for cap in [0, 1, 65_536, 131_072, u64::MAX - 1, u64::MAX] {
+        let limits = Limits {
+            max_work_units: cap,
+            ..Limits::default()
+        };
+        for initial in [0, cap.saturating_sub(1), cap] {
+            let mut accelerated = ResourceTracker {
+                work_units: initial,
+                decoded_bitmap_bytes: 17,
+            };
+            let mut scalar = ResourceTracker {
+                work_units: initial,
+                decoded_bitmap_bytes: 17,
+            };
+            scalar.charge_work(cap - initial, &limits).unwrap();
+            let expected = scalar.charge_work(1, &limits).unwrap_err();
+            let actual = accelerated.exhaust_work(&limits);
+            assert_eq!(format!("{actual:?}"), format!("{expected:?}"));
+            assert_eq!(accelerated.work_units, scalar.work_units);
+            assert_eq!(
+                accelerated.decoded_bitmap_bytes,
+                scalar.decoded_bitmap_bytes
+            );
+        }
+    }
+}
+
+#[test]
 fn work_charges_match_wide_results_and_attempted_charge_failure_state() {
     let values = [0, 1, 2, u64::MAX / 2, u64::MAX - 1, u64::MAX];
     let mut cases = 0;

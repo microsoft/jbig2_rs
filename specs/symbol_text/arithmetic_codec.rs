@@ -41,6 +41,8 @@ pub(in crate::symbol_text) open spec fn arithmetic_integer_transition<'a>(
                 );
                 &&& result == arithmetic_integer_result(state.0)
                 &&& next.decoder == state.1
+                &&& next.decoder.bytes == prior.decoder.bytes
+                &&& next.decoder.bytes@ == prior.decoder.bytes@
                 &&& next.integers.slots[slot]@ == state.2
                 &&& forall|other: int| 0 <= other < crate::symbol_text::INTEGER_FIELD_COUNT
                     && other != slot ==> next.integers.slots[other]@ == prior.integers.slots[other]@

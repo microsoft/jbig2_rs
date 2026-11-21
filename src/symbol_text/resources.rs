@@ -4,11 +4,37 @@
 use super::*;
 #[cfg(not(verus_keep_ghost))]
 use super::{
-    check_dimensions, enforce_limit, LimitKind, Limits, MalformedError, ResourceTracker,
-    SymbolTextError,
+    check_dimensions, enforce_limit, LimitExceeded, LimitKind, Limits, MalformedError,
+    ResourceTracker, SymbolTextError,
 };
 
 impl ResourceTracker {
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        requires symbol_text_spec::work_units(old(self)) <= limits.max_work_units,
+        ensures out == symbol_text_spec::cycles::work_exhaustion_error(limits),
+            symbol_text_spec::bitmap_bytes(final(self)) == symbol_text_spec::bitmap_bytes(old(self)),
+            symbol_text_spec::work_units(final(self)) == if limits.max_work_units == u64::MAX {
+                u64::MAX
+            } else { (limits.max_work_units + 1) as u64 },
+    ))]
+    #[cold]
+    pub(super) fn exhaust_work(&mut self, limits: &Limits) -> SymbolTextError {
+        // A certified zero-progress orbit reaches this same existing boundary.
+        self.work_units = limits.max_work_units;
+        match self.work_units.checked_add(1) {
+            Some(actual) => {
+                self.work_units = actual;
+                LimitExceeded {
+                    kind: LimitKind::Work,
+                    limit: limits.max_work_units,
+                    actual,
+                }
+                .into()
+            }
+            None => MalformedError::IntegerOverflow.into(),
+        }
+    }
+
     #[cfg_attr(verus_keep_ghost, verus_spec(out =>
         ensures symbol_text_spec::work_charge_effect(
             old(self), final(self), units, limits, out.is_ok(),

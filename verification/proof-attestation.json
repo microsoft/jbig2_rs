@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
   "status": "verified_exact_project_scope_with_reviewed_limits",
-  "source_revision": "22f7a3e8ce3ffdb312a5af71e008d4e53d8a9c8a",
-  "scope": "Fresh pinned whole verification/compilation of main0.3 compatibility changes. Strict corrections cover full generic-header/coded-window framing, flag-directed last-reference context selection with fresh/model invariants, zero-plane halftone rendering and AnnexB.2 stop-at-or-above high semantics. Explicit standalone Compatibility adds individually bounded metadata recoveries and diagnostics without changing strict defaults, partial-image semantics or configured resource limits. Missing resources, unsupported necessary/colour semantics, truncation, invalid IDs/patterns, unrepresentable values and uncertified entropy endings remain fatal. Checked byte preparation/copy/diagnostic work is charged; original strict reader APIs and reviewed I/O limitations are preserved. Same executing sources, no new assumptions, trusted algorithm bodies, runtime/proof substitutions or weakened coverage/contrast/timing gates. These are component contracts and finite regressions, not complete decoded-output/normative proofs or universal comparator parity.",
+  "source_revision": "4984efb2272249d4300a490a1f74f136384f91a3",
+  "scope": "Fresh pinned whole verification of exact non-progressing arithmetic dictionary cycles. Full registers, immutable input, complete procedure banks and logical cursor are matched; genuine zero-only trace provenance and arbitrarily long non-progressing continuations are proved. Only unavoidable Work/overflow failure is accelerated to the original boundary; legal zero runs, empty classes, successful output, default policies and configured budgets are preserved. Same executing sources, unchanged20 reviewed limitations, no new assumptions, trusted algorithm bodies or runtime/proof substitutions. Component contracts and finite regressions, not complete decoded-output or independent normative proofs. Main0.3only;release0.2unchanged.",
   "toolchain": {
     "manifest": "config/toolchain.json",
     "verus_version": "0.2026.10.04.426d8b0",
     "verus_commit": "426d8b01e7ffb910a36c15e1f870ff985bb61eef",
     "archive_sha256": "624018662868563a7bec0dd07be5e4dd0c3d61124b4b55105765884bf2d4d1a0"
   },
-  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-cargo cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/compat28/verus-expanded\" --output-json",
+  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-cargo cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/dictionary-perf/verus-expanded\" --output-json",
   "result": {
-    "verified_obligations": 1388,
-    "verified_production_functions": 694,
+    "verified_obligations": 1411,
+    "verified_production_functions": 703,
     "errors": 0,
     "proof_build_compiles": true,
     "exact_production_source_compiles": true,
@@ -24,7 +24,7 @@
     "runtime_proof_divergences": 0,
     "incomplete_functions": 0
   },
-  "production_proof_coverage_sha256": "851e3092b048331a85edc9c61007dba4d4094c668ab6688a5ea66ba6f0b1ce85",
+  "production_proof_coverage_sha256": "b409150dffc86d98c8fbecdfb46375f3847e45f3ce2e684def56b21d351375c4",
   "proof_dispositions_sha256": "9792f930e13cfa6cef5541457968f932a86a58b2623f16091d9537641a557e44",
   "standard_library_boundary": {
     "manifest": "verification/stdlib/review.json",
@@ -33,7 +33,7 @@
     "review_kind": "delegated_engineering_review",
     "normative_approval": false
   },
-  "current_evidence_note": "Exact implementation22f7a3e8ce3ffdb312a5af71e008d4e53d8a9c8a; fresh whole 1388/0,exact694direct functions and unchanged20 reviewed limitations. All28reports/32pinned public files are independently assessed rather than declared conforming because Hayro accepts them. Hash-pinned all-page pixel/recovery/error replays cover strict/Compatibility fresh/context bytes plus the original strict reader API: 160 configurations and 224 decoder calls. No new compatibility-reader API or assumed I/O specification is introduced. The ten original strict conformance outcomes are byte-identical; historical approvals are not renewed. New model navigation remains provisional author classification; all original floors, proof cases, same-run completeness and timing guard remain mandatory. No release0.2 change, crate publication, full normative/decoded-output proof or unavailable PDFium runner result is claimed.",
+  "current_evidence_note": "Exact implementation4984efb2272249d4300a490a1f74f136384f91a3; fresh whole1411/0, exact703direct functions and unchanged20 reviewed limitations. All32pinnedfiles retain exact output/diagnostics. Original160configuration/224call corpus plus10default-work configurations gives170configurations/238calls; exactdefault errors must complete within3seconds. Original ten strict conformance outcomes are identical. All existing coverage, semantic/contrast and1050-second same-run timing gates remain required. No release backport, publication, renewed normative approval or complete decoded-output proof.",
   "duplicate_executable_proof_source": false,
   "embedded_recovery_ci_profile_correction": {
     "rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/44359238184",
@@ -577,5 +577,24 @@
     },
     "production_proof_coverage_sha256": "e01498276c78ddebc49313e8e3bb8628153a35d274ada42eda6b9fa53309333f",
     "scope": "Historical compact-MMR component receipt, not a fresh execution or approval."
+  },
+  "dictionary_cycle_previous_baseline": {
+    "source_revision": "22f7a3e8ce3ffdb312a5af71e008d4e53d8a9c8a",
+    "result": {
+      "verified_obligations": 1388,
+      "verified_production_functions": 694,
+      "errors": 0,
+      "proof_build_compiles": true,
+      "exact_production_source_compiles": true,
+      "algorithm_bodies_verified": false,
+      "production_coverage_complete": true,
+      "native_assumptions": [],
+      "reviewed_verifier_limitations": 20,
+      "audited_forwarders": 0,
+      "runtime_proof_divergences": 0,
+      "incomplete_functions": 0
+    },
+    "production_proof_coverage_sha256": "851e3092b048331a85edc9c61007dba4d4094c668ab6688a5ea66ba6f0b1ce85",
+    "scope": "Historical main compatibility receipt, not fresh execution or renewed normative approval."
   }
 }

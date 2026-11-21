@@ -1,6 +1,9 @@
 //! Exports implementation.
 
 #[cfg(verus_keep_ghost)]
+use super::super::symbol_text_spec::cycles as cycle_spec;
+use super::cycles::{CycleMode, IntegerCycle, EXPORT_CYCLE_MIN_WORK};
+#[cfg(verus_keep_ghost)]
 use super::*;
 #[cfg(not(verus_keep_ghost))]
 use super::{
@@ -97,6 +100,8 @@ impl DictionaryClassState {
                 && final(self).class_open
                 && final(self).declared_new_symbols == old(self).declared_new_symbols
                 && final(self).height == height
+                && height as int == old(self).height as int + delta as int
+                && height <= limits.max_height
                 && final(self).decoded_symbols == old(self).decoded_symbols
                 && final(self).width == 0
                 && final(self).total_width == 0,
@@ -188,6 +193,9 @@ impl DictionaryClassState {
                 && !final(self).class_open
                 && final(self).declared_new_symbols == old(self).declared_new_symbols
                 && final(self).decoded_symbols == old(self).decoded_symbols
+                && final(self).height == old(self).height
+                && final(self).width == old(self).width
+                && final(self).total_width == old(self).total_width
                 && total_width == final(self).total_width,
             Err(_) => true,
         },
@@ -223,6 +231,7 @@ impl DictionaryClassState {
 }
 
 /// Decodes alternating export-flag runs, beginning with a zero run.
+#[allow(clippy::too_many_lines)]
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires
         symbol_text_spec::codec_valid(old(codec)),
@@ -265,9 +274,19 @@ pub(in crate::symbol_text) fn decode_export_runs(
         .map_err(|_| DecodeError::Allocation { requested_bytes })?;
     let mut index = 0_u32;
     let mut export_flag = false;
+    let mut cycle = IntegerCycle::new(CycleMode::ExportRuns);
+    let mut zero_run = false;
+    let detect_cycles = limits.max_work_units > EXPORT_CYCLE_MIN_WORK;
     #[cfg_attr(verus_keep_ghost, verus_spec(
         invariant
             symbol_text_spec::codec_valid(codec),
+            cycle_spec::detector_valid(&cycle),
+            cycle.mode == CycleMode::ExportRuns,
+            cycle.checkpoint.is_some() ==> (
+                detect_cycles && zero_run
+                    && cycle_spec::source_state(codec, CycleMode::ExportRuns, (index, 0, export_flag))
+                        == Some(cycle.history@.last())
+            ),
             symbol_text_spec::work_units(resources) <= limits.max_work_units,
             symbol_text_spec::work_units(resources)
                 >= symbol_text_spec::work_units(old(resources)),
@@ -284,8 +303,13 @@ pub(in crate::symbol_text) fn decode_export_runs(
         decreases limits.max_work_units - symbol_text_spec::work_units(resources),
     ))]
     while index < total_candidates {
+        #[cfg(verus_keep_ghost)]
+        proof_decl! {
+            let ghost cycle_before = *codec;
+        }
         resources.charge_work(1, limits)?;
-        let run = match codec.decode_integer(IntegerField::ExportRun)? {
+        let decoded_run = codec.decode_integer(IntegerField::ExportRun)?;
+        let run = match decoded_run {
             EntropyInteger::Value(value) => u32::try_from(value)
                 .map_err(|_| SymbolTextError::InvalidEntropyValue("negative export run"))?,
             EntropyInteger::OutOfBand => {
@@ -299,6 +323,48 @@ pub(in crate::symbol_text) fn decode_export_runs(
             return Err(SymbolTextError::InvalidCount(
                 "export run exceeds candidate count",
             ));
+        }
+        if detect_cycles {
+            if run == 0 {
+                if zero_run {
+                    if let SymbolCodec::Arithmetic(arithmetic) = &*codec {
+                        if cycle.active() || arithmetic.decoder.marker.is_some() {
+                            #[cfg(verus_keep_ghost)]
+                            proof! {
+                                assert(decoded_run == EntropyInteger::Value(0));
+                                let before = cycle_spec::source_state(
+                                    &cycle_before, CycleMode::ExportRuns, (index, 0, export_flag),
+                                );
+                                let after = cycle_spec::state(
+                                    arithmetic, CycleMode::ExportRuns, (index, 0, !export_flag),
+                                );
+                                if cycle.checkpoint.is_some() {
+                                    cycle_spec::export_zero_step(
+                                        &cycle_before, &*codec, (index, 0, export_flag),
+                                    );
+                                }
+                                let recorded = cycle_spec::record(&cycle, before, after);
+                                cycle.history = Ghost(recorded.0);
+                                cycle.anchor = Ghost(recorded.1);
+                            }
+                            let repeated = cycle.observe(arithmetic, (index, 0, !export_flag));
+                            if repeated {
+                                #[cfg(verus_keep_ghost)]
+                                proof! {
+                                    cycle_spec::repetition_never_progresses(
+                                        CycleMode::ExportRuns, cycle.history@,
+                                    );
+                                }
+                                return Err(resources.exhaust_work(limits));
+                            }
+                        }
+                    }
+                }
+                zero_run = true;
+            } else {
+                cycle.reset();
+                zero_run = false;
+            }
         }
         if export_flag {
             let mut candidate = index;
