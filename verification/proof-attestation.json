@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "status": "verified_exact_project_scope_with_reviewed_limits",
-  "source_revision": "952d67248cf83f8d2da871ff9bd7d7193add37c4",
+  "source_revision": "4984efb2272249d4300a490a1f74f136384f91a3",
   "scope": "Fresh pinned whole verification of exact non-progressing arithmetic dictionary cycles. Full registers, immutable input, complete procedure banks and logical cursor are matched; genuine zero-only trace provenance and arbitrarily long non-progressing continuations are proved. Only unavoidable Work/overflow failure is accelerated to the original boundary; legal zero runs, empty classes, successful output, default policies and configured budgets are preserved. Same executing sources, unchanged20 reviewed limitations, no new assumptions, trusted algorithm bodies or runtime/proof substitutions. Component contracts and finite regressions, not complete decoded-output or independent normative proofs. Main0.3only;release0.2unchanged.",
   "toolchain": {
     "manifest": "config/toolchain.json",
@@ -33,7 +33,7 @@
     "review_kind": "delegated_engineering_review",
     "normative_approval": false
   },
-  "current_evidence_note": "Exact implementation952d67248cf83f8d2da871ff9bd7d7193add37c4; fresh whole1411/0, exact703direct functions and unchanged20 reviewed limitations. All32pinnedfiles retain exact output/diagnostics. Original160configuration/224call corpus plus10default-work configurations gives170configurations/238calls; exactdefault errors must complete within3seconds. Original ten strict conformance outcomes are identical. All existing coverage, semantic/contrast and1050-second same-run timing gates remain required. No release backport, publication, renewed normative approval or complete decoded-output proof.",
+  "current_evidence_note": "Exact implementation4984efb2272249d4300a490a1f74f136384f91a3; fresh whole1411/0, exact703direct functions and unchanged20 reviewed limitations. All32pinnedfiles retain exact output/diagnostics. Original160configuration/224call corpus plus10default-work configurations gives170configurations/238calls; exactdefault errors must complete within3seconds. Original ten strict conformance outcomes are identical. All existing coverage, semantic/contrast and1050-second same-run timing gates remain required. No release backport, publication, renewed normative approval or complete decoded-output proof.",
   "duplicate_executable_proof_source": false,
   "embedded_recovery_ci_profile_correction": {
     "rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/44359238184",
