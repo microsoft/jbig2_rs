@@ -95,6 +95,8 @@ impl ArithmeticCodec<'_> {
             symbol_text_spec::integer_contexts_valid(&old(self).integers),
         ensures
             crate::arithmetic::arithmetic_spec::decoder_state_valid(&final(self).decoder),
+            final(self).decoder.bytes == old(self).decoder.bytes,
+            final(self).decoder.bytes@ == old(self).decoder.bytes@,
             symbol_text_spec::integer_contexts_valid(&final(self).integers),
             final(self).iaid@ == old(self).iaid@,
             final(self).refinement == old(self).refinement,

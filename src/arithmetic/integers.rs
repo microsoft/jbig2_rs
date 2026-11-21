@@ -17,6 +17,8 @@ impl ArithmeticDecoder<'_> {
                 arithmetic_spec::context_valid(old(contexts)@[index]),
         ensures
             arithmetic_spec::decoder_state_valid(final(self)),
+            final(self).bytes == old(self).bytes,
+            final(self).bytes@ == old(self).bytes@,
             forall|index: int| 0 <= index < final(contexts)@.len() ==>
                 arithmetic_spec::context_valid(final(contexts)@[index]),
             match out {
@@ -328,6 +330,8 @@ impl ArithmeticDecoder<'_> {
                 arithmetic_spec::context_valid(old(contexts)@[index]),
         ensures
             arithmetic_spec::decoder_state_valid(final(self)),
+            final(self).bytes == old(self).bytes,
+            final(self).bytes@ == old(self).bytes@,
             *final(previous) <= 511,
             forall|index: int| 0 <= index < final(contexts)@.len() ==>
                 arithmetic_spec::context_valid(final(contexts)@[index]),
@@ -360,6 +364,8 @@ impl ArithmeticDecoder<'_> {
         #[cfg_attr(verus_keep_ghost, verus_spec(
             invariant
                 arithmetic_spec::decoder_valid(self),
+                self.bytes == old(self).bytes,
+                self.bytes@ == old(self).bytes@,
                 *previous <= 511,
                 forall|index: int| 0 <= index < contexts@.len() ==>
                     arithmetic_spec::context_valid(contexts@[index]),

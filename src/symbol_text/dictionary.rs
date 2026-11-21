@@ -218,6 +218,7 @@ pub(crate) fn decode_symbol_dictionary(
 }
 
 mod arithmetic;
+pub(in crate::symbol_text) mod cycles;
 mod exports;
 mod huffman;
 

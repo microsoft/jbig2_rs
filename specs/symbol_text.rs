@@ -5,6 +5,9 @@
 
 use vstd::prelude::*;
 
+#[path = "symbol_text/cycles.rs"]
+pub(super) mod cycles;
+
 #[path = "symbol_text/arithmetic_codec.rs"]
 mod arithmetic_codec;
 pub(super) use arithmetic_codec::{

@@ -34,7 +34,10 @@ pub(super) fn checked_unsigned_delta(
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires symbol_text_spec::codec_valid(old(codec)),
     ensures match out {
-        Ok(_) => symbol_text_spec::codec_valid(final(codec)),
+        Ok(value) => symbol_text_spec::codec_valid(final(codec))
+            && symbol_text_spec::arithmetic_integer_transition(
+                old(codec), final(codec), field, Ok(EntropyInteger::Value(value)),
+            ),
         Err(_) => true,
     },
 ))]

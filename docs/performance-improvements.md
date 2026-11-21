@@ -345,3 +345,56 @@ relabeled independent normative proofs. All existing audit, compiler inventory,
 mutation/fuzz, coverage, distribution and companion gates remain required on
 the exact final head, including all 61 groups / 494 contrasts and the unchanged
 1050-second timing guard. No crate publication is part of this work.
+
+## Follow-up: exact non-progressing dictionary cycles
+
+Baseline: main `7db4da60177d8c227d39315d265d44ac692f7142`.
+This follow-up targets main/0.3 only.
+
+Reports #215/#216 contain framed arithmetic dictionaries that repeat zero
+export runs or empty height classes. Legal zero runs and empty classes remain
+supported. An observed marker or repeated value alone is not a rejection rule.
+
+The rare path checkpoints every arithmetic register, the immutable input,
+both complete procedure banks and the logical dictionary cursor, including
+export-flag phase. Equality is exact, not a hash or partial-state guess.
+Checkpoint-refresh prefix keys are only an optimization; the final match
+still checks every bank entry and input byte. The proved, actually executed
+zero-only trace establishes a closed deterministic orbit: no finite
+continuation can advance the dictionary cursor. Only then is work accelerated
+to the identical existing failure boundary. Finite budgets still report
+`Work` at limit plus one; a maximum `u64` budget retains integer overflow
+without wrapping. No partial image or success fallback is returned.
+
+Normal single zero runs do not allocate or copy a checkpoint. Fixed-size
+stack checkpoints introduce no heap allocation. Small-budget activation
+thresholds only avoid unprofitable checkpoint work; they neither reject input
+nor modify the configured budget.
+
+On the shared Linux host, the two unchanged-default-budget failures now
+return in roughly four milliseconds; the previous binaries exceed the
+three-second reproduction deadline. Alternating-order paired measurements
+at one million units show about 88-94% less time. The original 100,000-unit
+export case avoids checkpoint overhead; empty-height cases take about
+32-35% less time. These are fixture-specific observations, not universal
+speedups. Exact typed outcomes are checked on every timed repetition.
+
+Unlike the rejected integer-inlining experiments, fixed-work valid controls
+do not show the earlier 15-20% dense-MMR slowdown. The measured control
+medians remain within the unchanged five-percent acceptance cutoff; shared
+host noise and smaller differences do not establish zero regressions.
+
+The executing code has a fresh pinned whole Verus result of 1,411 obligations,
+zero errors, 703 directly verified functions and the same 20 reviewed
+limitations, with no incomplete functions or new assumptions. Its recurrence
+proof binds full native checkpoints to the genuine trace and proves
+arbitrarily long zero continuations; it is not a complete decoded-output
+or independent normative proof. Full-state/cursor/input mismatch controls,
+legal interleaved zero runs, empty classes and exact default/maximum work
+boundaries supplement the contracts.
+
+The pinned corpus now includes default-budget checks through every supported
+API shape: 170 configurations / 238 decoder calls, with a three-second
+deadline and exact Work errors for both nonprogress samples. Every existing
+native, audit, compiler, coverage, distribution, semantic/contrast and timing
+gate remains mandatory. No release backport or publication is included.

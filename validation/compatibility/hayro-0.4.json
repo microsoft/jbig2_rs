@@ -6,7 +6,7 @@
   "issue_revision_note": "GitHub commit and recursive-tree APIs return422 for issue-linked revision; pinned current resolvable public commit instead.",
   "fixture_count": 32,
   "issue_count": 28,
-  "scope": "Comparator acceptance and fixture names are not conformity evidence. All successful candidate outputs must match every declared expected page dimension and packed bitmap hash. Rejection cases do not count as bitmap passes. Configured work-budget tests are distinguished from wall-clock timeouts. The two nonprogress cases use an explicit100000-unit work cap; their default-budget wall-clock timeout observations are separate. Expected successes must report the named recovery or an empty list for strictly conforming input. Strict is replayed through fresh/context bytes and the existing Decoder reader; Compatibility is explicitly byte-based on Decoder/Context. Contexts are reused for a second decode; no assumed I/O proof interface is added.",
+  "scope": "Comparator acceptance and fixture names are not conformity evidence. Every successful page must match its dimensions and packed-pixel hash; rejection cases are not bitmap passes. The two nonprogress cases retain exact100000-unit-cap errors and additionally require identical default-budget Work errors within3seconds in every supported API shape. This is a finite regression deadline, not a portable latency guarantee. Expected successes report the named recovery or an empty list for conforming input. Strict uses fresh/context bytes and the original Decoder reader; Compatibility uses only Decoder/Context bytes. Contexts are reused for a second decode; no assumed I/O proof interface is added.",
   "fixtures": [
     {
       "issues": [
@@ -620,7 +620,12 @@
       "strict_status": "error",
       "compatibility_status": "error",
       "strict_error_debug": "LimitExceeded(LimitExceeded { kind: Work, limit: 100000, actual: 100001 })",
-      "compatibility_error_debug": "LimitExceeded(LimitExceeded { kind: Work, limit: 99140, actual: 99141 })"
+      "compatibility_error_debug": "LimitExceeded(LimitExceeded { kind: Work, limit: 99140, actual: 99141 })",
+      "default_work": {
+        "timeout_seconds": 3,
+        "strict_error_debug": "LimitExceeded(LimitExceeded { kind: Work, limit: 2000000000, actual: 2000000001 })",
+        "compatibility_error_debug": "LimitExceeded(LimitExceeded { kind: Work, limit: 1999999140, actual: 1999999141 })"
+      }
     },
     {
       "issues": [
@@ -635,7 +640,12 @@
       "strict_status": "error",
       "compatibility_status": "error",
       "strict_error_debug": "LimitExceeded(LimitExceeded { kind: Work, limit: 100000, actual: 100001 })",
-      "compatibility_error_debug": "LimitExceeded(LimitExceeded { kind: Work, limit: 99384, actual: 99385 })"
+      "compatibility_error_debug": "LimitExceeded(LimitExceeded { kind: Work, limit: 99384, actual: 99385 })",
+      "default_work": {
+        "timeout_seconds": 3,
+        "strict_error_debug": "LimitExceeded(LimitExceeded { kind: Work, limit: 2000000000, actual: 2000000001 })",
+        "compatibility_error_debug": "LimitExceeded(LimitExceeded { kind: Work, limit: 1999999384, actual: 1999999385 })"
+      }
     },
     {
       "issues": [

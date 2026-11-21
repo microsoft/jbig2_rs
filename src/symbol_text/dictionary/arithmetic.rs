@@ -1,6 +1,9 @@
 //! Arithmetic implementation.
 
 #[cfg(verus_keep_ghost)]
+use super::super::symbol_text_spec::cycles as cycle_spec;
+use super::cycles::{CycleMode, IntegerCycle, HEIGHT_CYCLE_MIN_WORK};
+#[cfg(verus_keep_ghost)]
 use super::*;
 #[cfg(not(verus_keep_ghost))]
 use super::{
@@ -373,6 +376,9 @@ pub(in crate::symbol_text) fn decode_symbol_dictionary_arithmetic(
         })?;
 
     let mut class_state = DictionaryClassState::new(header.new_symbols, limits)?;
+    let mut cycle = IntegerCycle::new(CycleMode::EmptyHeightClasses);
+    let mut empty_class = false;
+    let detect_cycles = limits.max_work_units > HEIGHT_CYCLE_MIN_WORK;
     #[cfg_attr(verus_keep_ghost, verus_spec(
         invariant
             new_symbols@.len() <= header.new_symbols as nat,
@@ -389,17 +395,44 @@ pub(in crate::symbol_text) fn decode_symbol_dictionary_arithmetic(
                 None => true,
             },
             symbol_text_spec::codec_valid(&codec),
+            cycle_spec::detector_valid(&cycle),
+            cycle.mode == CycleMode::EmptyHeightClasses,
+            cycle.checkpoint.is_some() ==> (
+                detect_cycles && empty_class
+                    && cycle_spec::source_state(&codec, CycleMode::EmptyHeightClasses,
+                        (class_state.decoded_symbols, class_state.height, false))
+                        == Some(cycle.history@.last())
+            ),
             symbol_text_spec::work_units(&resources) <= limits.max_work_units,
         decreases limits.max_work_units - symbol_text_spec::work_units(&resources),
     ))]
     while u32::try_from(new_symbols.len()).map_err(|_| MalformedError::IntegerOverflow)?
         < header.new_symbols
     {
+        let class_start_symbols = new_symbols.len();
+        #[cfg(verus_keep_ghost)]
+        proof_decl! {
+            let ghost cycle_before = codec;
+            let ghost cycle_cursor = (class_state.decoded_symbols, class_state.height, false);
+        }
         #[cfg_attr(not(verus_keep_ghost), allow(unused_variables))]
         let class_start_work = resources.work_units;
         let height_delta = required_integer(&mut codec, IntegerField::HeightDelta)?;
+        #[cfg(verus_keep_ghost)]
+        proof_decl! {
+            let ghost cycle_after_height = codec;
+        }
         class_state.begin_height_class(height_delta, limits, &mut resources)?;
-        #[cfg_attr(verus_keep_ghost, verus_spec(
+        let mut width_integer = codec.decode_integer(IntegerField::WidthDelta)?;
+        let empty_width = matches!(width_integer, EntropyInteger::OutOfBand);
+        #[cfg(verus_keep_ghost)]
+        proof_decl! {
+            let ghost cycle_after_first_width = codec;
+            let ghost first_width_integer = width_integer;
+            let ghost class_at_open = class_state;
+        }
+        if !empty_width {
+            #[cfg_attr(verus_keep_ghost, verus_spec(
             invariant
                 new_symbols@.len() <= header.new_symbols as nat,
                 new_symbol_capacity == header.new_symbols as nat,
@@ -410,6 +443,12 @@ pub(in crate::symbol_text) fn decode_symbol_dictionary_arithmetic(
                 symbol_text_spec::dictionary_state_valid(&class_state),
                 symbol_text_spec::codebook_valid(imported),
                 symbol_text_spec::bitmaps_valid(new_symbols@),
+                class_start_symbols <= new_symbols@.len(),
+                new_symbols@.len() == class_start_symbols ==> (
+                    codec == cycle_after_first_width
+                        && width_integer == first_width_integer
+                        && class_state == class_at_open
+                ),
                 match generic_contexts {
                     Some(ref contexts) => crate::generic_region::generic_region_spec::generic_contexts_valid(contexts),
                     None => true,
@@ -421,42 +460,90 @@ pub(in crate::symbol_text) fn decode_symbol_dictionary_arithmetic(
             decreases limits.max_work_units
                 - symbol_text_spec::work_units(&resources),
         ))]
-        while let EntropyInteger::Value(width_delta) =
-            codec.decode_integer(IntegerField::WidthDelta)?
-        {
-            let (width, height) =
-                class_state.add_individual_symbol(width_delta, limits, &mut resources)?;
-            let aggregation_instances = if config.refinement_aggregation {
-                let instances = required_integer(&mut codec, IntegerField::AggregationInstances)?;
-                Some(
-                    u32::try_from(instances).map_err(|_| {
+            while let EntropyInteger::Value(width_delta) = width_integer {
+                let (width, height) =
+                    class_state.add_individual_symbol(width_delta, limits, &mut resources)?;
+                let aggregation_instances = if config.refinement_aggregation {
+                    let instances =
+                        required_integer(&mut codec, IntegerField::AggregationInstances)?;
+                    Some(u32::try_from(instances).map_err(|_| {
                         SymbolTextError::InvalidEntropyValue("aggregation instances")
-                    })?,
-                )
-            } else {
-                None
-            };
-            let bitmap = decode_one_new_symbol(
-                header,
-                &mut codec,
-                imported,
-                &new_symbols,
-                &mut generic_contexts,
-                &mut generic_work,
-                aggregation_instances,
-                width,
-                height,
-                code_length,
-                refinement_adaptive,
-                limits,
-                &mut resources,
-            )?;
-            if new_symbols.len() >= new_symbol_capacity {
-                return Err(SymbolTextError::InvalidCount("too many new symbols"));
+                    })?)
+                } else {
+                    None
+                };
+                let bitmap = decode_one_new_symbol(
+                    header,
+                    &mut codec,
+                    imported,
+                    &new_symbols,
+                    &mut generic_contexts,
+                    &mut generic_work,
+                    aggregation_instances,
+                    width,
+                    height,
+                    code_length,
+                    refinement_adaptive,
+                    limits,
+                    &mut resources,
+                )?;
+                if new_symbols.len() >= new_symbol_capacity {
+                    return Err(SymbolTextError::InvalidCount("too many new symbols"));
+                }
+                new_symbols.push(bitmap);
+                width_integer = codec.decode_integer(IntegerField::WidthDelta)?;
             }
-            new_symbols.push(bitmap);
         }
         class_state.finish_height_class()?;
+        if detect_cycles {
+            if height_delta == 0 && empty_width && new_symbols.len() == class_start_symbols {
+                if empty_class {
+                    if let SymbolCodec::Arithmetic(arithmetic) = &codec {
+                        if cycle.active() || arithmetic.decoder.marker.is_some() {
+                            #[cfg(verus_keep_ghost)]
+                            proof! {
+                                assert(first_width_integer == EntropyInteger::OutOfBand);
+                                assert(codec == cycle_after_first_width);
+                                assert((class_state.decoded_symbols, class_state.height, false)
+                                    == cycle_cursor);
+                                let before = cycle_spec::source_state(
+                                    &cycle_before, CycleMode::EmptyHeightClasses, cycle_cursor,
+                                );
+                                let after = cycle_spec::state(
+                                    arithmetic, CycleMode::EmptyHeightClasses, cycle_cursor,
+                                );
+                                if cycle.checkpoint.is_some() {
+                                    cycle_spec::height_zero_step(
+                                        &cycle_before, &cycle_after_height,
+                                        &cycle_after_first_width, cycle_cursor,
+                                    );
+                                }
+                                let recorded = cycle_spec::record(&cycle, before, after);
+                                cycle.history = Ghost(recorded.0);
+                                cycle.anchor = Ghost(recorded.1);
+                            }
+                            let repeated = cycle.observe(
+                                arithmetic,
+                                (class_state.decoded_symbols, class_state.height, false),
+                            );
+                            if repeated {
+                                #[cfg(verus_keep_ghost)]
+                                proof! {
+                                    cycle_spec::repetition_never_progresses(
+                                        CycleMode::EmptyHeightClasses, cycle.history@,
+                                    );
+                                }
+                                return Err(resources.exhaust_work(limits));
+                            }
+                        }
+                    }
+                }
+                empty_class = true;
+            } else {
+                cycle.reset();
+                empty_class = false;
+            }
+        }
     }
     class_state.finish()?;
 
