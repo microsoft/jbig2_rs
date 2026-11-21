@@ -17,11 +17,11 @@ pub(crate) open spec fn unknown_generic_marker(bytes: Seq<u8>, offset: int) -> b
     &&& bytes[offset + 1] == if bytes[17] & 1 != 0 { 0u8 } else { 0xacu8 }
 }
 
+#[verifier::opaque]
 // Model navigation: spec::unknown_generic_window [representation-invariant]
 // Purpose: First complete body marker after the full header and bounded rows.
 // Mapping: no registered requirement/locator mapping.
 // Fidelity: unresolved; no independent normative approval.
-#[verifier::opaque]
 pub(crate) open spec fn unknown_generic_window(bytes: Seq<u8>, end: int) -> bool {
     &&& bytes.len() >= 18
     &&& crate::generic_region::generic_region_spec::generic_header_length(bytes[17]) <= end - 6

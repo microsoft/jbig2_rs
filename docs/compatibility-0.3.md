@@ -106,6 +106,14 @@ versus retained model selection, zero-plane initialization and bounded recovery
 preparation. Exact-pixel regressions, negative controls and work/memory tests
 supplement those component contracts.
 
+Local validation includes 1,388 verified obligations with zero errors, exact
+accounting of 694 directly verified production functions and the unchanged 20
+reviewed verifier limitations. There are no incomplete functions, new native
+assumptions or runtime/proof substitutions. The 623 native/doctest and 822
+audit-tool tests pass, as do the existing coverage floors, Rust 1.88 isolated
+distribution checks and image companion tests. The ten original strict
+conformance outcomes retain identical pixels and typed diagnostics.
+
 Existing proof limitations remain explicit. Neither finite fixture parity nor
 component verification establishes a complete decoded-output proof, full
 JBIG2 conformance, universal Hayro parity or full PDFium integration results.
