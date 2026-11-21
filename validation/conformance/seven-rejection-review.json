@@ -204,7 +204,7 @@
     "src/symbol_text/codec/symbols.rs": "01f2f2d2739c42ce2ed5fe4ed170451082478dcfc7f405b73ac9f6a819ce3248",
     "src/symbol_text/codec.rs": "4f975eff5bd958e0b201dd9c80e91b40be4681254a56adb02a681cc87e297e78",
     "src/symbol_text/dictionary/arithmetic.rs": "fe29e5ed1211a65cd01fa173d2b5dac2023618f35feaff6310353a84cfcb9806",
-    "src/symbol_text/dictionary/cycles/tests.rs": "41b82fc04942346874d4499dbf185c66e5a4c66c0c67e56f2dbcc2ee52e6bcbf",
+    "src/symbol_text/dictionary/cycles/tests.rs": "b2e90580ffac67458a4cfdf4f3aee3b54ff66602dec70c13b13d5381ff21f5cb",
     "src/symbol_text/dictionary/cycles.rs": "639c412c0146755a07c1169bfd449aa4f8765a54b2afdda3dfb77f9d713f235b",
     "src/symbol_text/dictionary/exports.rs": "ddc30dd66d914702c9dbfa02e4525ed280021d65b88699a685bf36682382b597",
     "src/symbol_text/dictionary/huffman.rs": "496f382bc0440e1c9825fe4e90f49ae3173912f50e20f8f964a49d81d1c3efb6",
@@ -1286,7 +1286,7 @@
     "scope": "Fresh strict public-decoder replay after complete generic-header framing, dictionary context selection/model checks, zero-plane halftone and AnnexB.2 high-boundary fixes plus opt-in standalone compatibility. Complete original bitmap pages and exact typed diagnostics remain identical. Only current source identities are rebound; historical dispositions, reference observations and normative approval are not renewed. Main0.3only;release0.2unchanged."
   },
   "dictionary_cycle_replay": {
-    "source_revision": "a325eca3e4d69e95db9de9d017f0e837c0dce28c",
+    "source_revision": "952d67248cf83f8d2da871ff9bd7d7193add37c4",
     "results_sha256": "b6607a6ce27fe85c06441a8f276a192afe95dceb8e7db462c924d713b533260c",
     "scope": "Fresh exact ten-case strict replay after the cycle shortcut; historical dispositions and normative approval are not renewed."
   }
