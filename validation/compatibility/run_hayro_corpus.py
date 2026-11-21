@@ -17,8 +17,8 @@ from urllib.parse import urlsplit
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = Path(__file__).with_name("hayro-0.4.json")
 MODES = (
-    "strict", "strict-context", "strict-reader", "strict-context-reader",
-    "compat", "compat-context", "compat-reader", "compat-context-reader",
+    "strict", "strict-context", "strict-reader",
+    "compat", "compat-context",
 )
 
 
@@ -97,14 +97,6 @@ def validate_output(row, mode, process, directory):
             raise ValueError("expected a complete typed rejection, not success/crash/partial output")
         error = lines[0].removeprefix("ERROR|")
         expected_error = row["strict_error_debug" if strict else "compatibility_error_debug"]
-        if row["max_work_units"] is not None and "reader" in mode:
-            match = re.search(r"limit: (\d+), actual: (\d+)", expected_error)
-            maximum = int(match[1])
-            remaining = maximum - row["bytes"]
-            expected_error = expected_error.replace(
-                f"limit: {maximum}, actual: {maximum + 1}",
-                f"limit: {remaining}, actual: {remaining + 1}",
-            )
         if error != expected_error:
             raise ValueError(f"typed diagnostic changed: {error}")
         return {"status": "error", "error": error, "pages": []}
@@ -136,10 +128,9 @@ def comparison_signature(row, mode, result):
         limit, actual = map(int, match.groups())
         if actual != limit + 1 or limit > row["max_work_units"]:
             raise ValueError("work-budget failure has incorrect inclusive threshold")
-        # Reader input acquisition is charged before the shared decode work.
         return {
             "status": "error", "kind": "Work",
-            "remaining_before_reader_charge": limit + (row["bytes"] if "reader" in mode else 0),
+            "remaining_decode_budget": limit,
         }
     return result
 

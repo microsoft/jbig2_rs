@@ -41,15 +41,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             assert_replay(&first, &repeated);
             first
         }
-        "strict-reader" | "compat-reader" => {
-            decoder.decode_reader_with_policy(&mut Cursor::new(&input), policy)
-        }
-        "strict-context-reader" | "compat-context-reader" => {
-            let first = context.decode_reader_with_policy(&mut Cursor::new(&input), policy);
-            let repeated = context.decode_reader_with_policy(&mut Cursor::new(&input), policy);
-            assert_replay(&first, &repeated);
-            first
-        }
+        "strict-reader" => decoder
+            .decode_reader(&mut Cursor::new(&input))
+            .map(|value| DecodeResult {
+                value,
+                recoveries: Vec::new(),
+            }),
         _ => return Err("unknown consumer mode".into()),
     };
     let result = match result {

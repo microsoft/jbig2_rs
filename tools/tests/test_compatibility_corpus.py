@@ -61,7 +61,7 @@ class CompatibilityCorpusTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 runner.validate_output(row, "compat", output, directory)
 
-    def test_reader_work_charge_is_checked_not_silently_discarded(self):
+    def test_work_exhaustion_checks_the_effective_budget_and_inclusive_threshold(self):
         row = {"max_work_units": 100000, "bytes": 115}
         before = {
             "status": "error",
@@ -69,13 +69,18 @@ class CompatibilityCorpusTests(unittest.TestCase):
         }
         reader = {
             "status": "error",
-            "error": "LimitExceeded(LimitExceeded { kind: Work, limit: 99885, actual: 99886 })",
+            "error": before["error"],
         }
         self.assertEqual(
             runner.comparison_signature(row, "strict", before),
             runner.comparison_signature(row, "strict-reader", reader),
         )
-        reader["error"] = reader["error"].replace("99886", "99885")
+        reader["error"] = "LimitExceeded(LimitExceeded { kind: Work, limit: 99140, actual: 99141 })"
+        self.assertNotEqual(
+            runner.comparison_signature(row, "strict", before),
+            runner.comparison_signature(row, "compat", reader),
+        )
+        reader["error"] = reader["error"].replace("99141", "99140")
         with self.assertRaises(ValueError):
             runner.comparison_signature(row, "strict-reader", reader)
 

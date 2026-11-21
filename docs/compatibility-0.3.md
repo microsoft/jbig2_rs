@@ -50,9 +50,12 @@ last-reference selection, zero/nonzero planes, range boundaries and overflow.
 ## Explicit standalone compatibility
 
 Existing byte/reader/context APIs remain strict by default, with no implicit
-retry. The caller-selected standalone entry points return the complete
+retry. The caller-selected standalone byte entry points return the complete
 document together with explicit recovery diagnostics; see
 [standalone compatibility](standalone-compatibility.md).
+New compatibility-reader wrappers are deliberately excluded: they would need
+an additional opaque I/O proof interface. Applications use bounded input
+acquisition and then select the byte API; existing reader APIs stay strict.
 
 | Reports | Original-file disposition |
 |---|---|

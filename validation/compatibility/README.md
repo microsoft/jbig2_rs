@@ -18,20 +18,25 @@ default; `--toolchain` can select an installed alternative. The temporary
 dependency-free consumer uses the ordinary crate API, not hidden validation
 hooks or a patched decoder.
 
-Each file is exercised in strict and explicit compatibility mode through
-fresh/reusable contexts and bytes/readers: 256 API runs. Every successful
+Each file is exercised in strict mode through fresh/reusable byte contexts and
+the original `Decoder` reader API, and in explicit compatibility mode through
+the two byte APIs: 160 API configurations. Every successful
 document must match every expected page number, dimension and packed bitmap
 hash, and report the required recovery. Negative inputs must remain typed
 errors, not crashes, partial documents or blank success.
 Context modes decode twice with the same context and compare complete output
-or errors, giving 384 decoder calls across the 256 configurations.
+or errors, giving 224 decoder calls across the 160 configurations.
+The existing reader APIs remain strict. No new opaque reader interface,
+assumed I/O contract or unverified compatibility-reader wrapper is introduced.
+Compatibility callers acquire bounded bytes before selecting the byte API.
 
 The two nonprogress fixtures use an explicit 100,000-unit work cap; that
 bounded failure is distinct from a default-budget wall-clock timeout.
-Reader acquisition debits input bytes before decoding, so the exact remaining
-work threshold is checked with that charge rather than forced to equal the
-byte API's budget. Pixel output and recovery reports must be identical across
-the four API shapes.
+Compatibility preparation debits work before decoding, so its exact remaining
+threshold is checked rather than forced to equal strict mode's budget. The
+original strict reader and byte APIs retain identical outcomes. Pixel output
+and recovery reports must be identical across
+the supported API shapes.
 
 Comparator acceptance is not validity evidence. See the complete
 [0.3 disposition report](../../docs/compatibility-0.3.md) and
