@@ -5,6 +5,31 @@ use vstd::prelude::*;
 
 verus! {
 
+pub(crate) open spec fn eop_recovery_allowed(
+    associated: u32, open: Seq<u32>, closed: Seq<u32>,
+) -> bool {
+    open.len() == 1 && open[0] > 0
+        && (associated == 0 || (
+            0 < associated < open[0]
+            && exists|index: int| 0 <= index < closed.len() && closed[index] == associated
+        ))
+}
+
+/// Every repair has one observed open owner; nonzero sources require history.
+pub(crate) open spec fn eop_ownership(
+    associated: u32, open: Seq<u32>, closed: Seq<u32>,
+    owner: u32, kind: crate::document::standalone::RecoveryKind,
+) -> bool {
+    &&& eop_recovery_allowed(associated, open, closed)
+    &&& owner == open[0]
+    &&& forall|index: int| 0 <= index < open.len() ==> open[index] == owner
+    &&& match kind {
+        crate::document::standalone::RecoveryKind::ZeroAssociatedEndOfPage => associated == 0,
+        crate::document::standalone::RecoveryKind::ClosedPageEndOfPage => associated > 0,
+        _ => false,
+    }
+}
+
 /// Prefix state: page encountered, next page boundary encountered, valid.
 pub(crate) open spec fn boundary_state(
     segments: Seq<crate::document::ParsedSegment>,

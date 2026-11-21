@@ -26,7 +26,7 @@ exceptions**, not interpretations that make malformed syntax normative:
 
 | Issue | Rule and normative context |
 |---|---|
-| #196 | Reassociate an empty, reference-free, zero-associated EOP only when exactly one page is currently open and its number fits the existing association field. Do not repair nonzero misassociations. T.88 7.2.6, 7.4.9, 8. |
+| #196 | Reassociate an empty, reference-free EOP only when exactly one positive page is currently open and its number fits the existing association field. The source association must be zero, or explicitly name an already-closed page with a smaller page number. Live, unseen, future-page and ambiguous associations are never overridden. Closed-earlier-page repairs report `ClosedPageEndOfPage`; zero repairs retain their existing kind. T.88 7.2.6, 7.4.9, 8. |
 | #197 | Close a missing-EOP page at the next complete page-information segment, or at the exact fully framed stream/EOF boundary. Reject overlapping open pages at a next-page boundary when inferring closures, and any later segment associated with the recovered page. Known dimensions are required; unknown heights need a complete validated final stripe. Striped recovery additionally validates the final stripe and rejects regions following it. No segment or bitmap content is synthesized. 7.4.8–10, 8.2, D.1. |
 | #198 | Use the observed page count only after validating framing, references, page ordering, lifecycle, dimensions, limits, and decoding **every** page. D.4.3. |
 | #199 | Ignore exactly one CR LF pair only after an independently parsed empty, unassociated, reference-free EOF. Short headers without EOF remain errors; other suffixes remain errors. 7.2, 7.4.11, D.1. |
@@ -57,13 +57,15 @@ of those things and preserves the original typed errors in both cases.
 The test-only upstream revision is
 `e7ada1354dff4041cdeed3d8ba56fe01b6186132`; the issue-linked revision is not
 resolvable. Generated controls do not depend on upstream implementation behavior.
-An optional ignored regression compares every page of the four accepted pinned
+An optional ignored regression compares every page of the five accepted pinned
 reproductions to packed pixels converted from their reference PNGs.
 
-The pinned #196 reproduction has EOP associations **0, 1, 2** for pages 1, 2, 3,
-not just a single zero association. It remains rejected because the later nonzero
-misassociations are outside this allowlist. The pinned #199 reproduction has
-EOP + CR LF but **no EOF**, so it also remains rejected. The pinned #197, #198,
+The pinned #196 reproduction has EOP associations **0, 1, 2** for pages 1, 2, 3.
+Each marker has exactly one observed open owner; the last two explicitly name
+already-closed earlier pages. It reports one zero repair and two
+`ClosedPageEndOfPage` repairs, and all three pages match the reference PNGs.
+The pinned #199 reproduction has
+EOP + CR LF but **no EOF**, so it remains rejected. The pinned #197, #198,
 #201 and #202 reproductions are eligible; #200 (both modes) and #203 are not.
 
 ## Resource and proof contracts
@@ -81,6 +83,10 @@ file whose strict decode fits a smaller budget.
 Compatibility calls release old context scratch before preparation; the new
 context reader methods do likewise before buffering input, so an earlier
 document's retained allocations cannot escape these budgets.
+The closed-page witness list is included in the existing scanner scratch
+reservation; no limit or work reservation is increased. Each historical lookup
+occurs only when the open list has one entry, preserving the existing quadratic
+preparation bound.
 
 The policy preparation, editing, page validation, byte wrappers and collected
 rendering functions are verified, without new assumptions or trusted bodies.
@@ -92,5 +98,8 @@ later source segment associated with the recovered page. Ordinary validated
 preparation and full decoding still gate successful public results; these are not
 proofs of normative validity for repaired input or of compatibility with arbitrary
 malformed files.
+The EOP ownership contract proves a unique positive open owner, with a closed
+smaller-page witness for every nonzero reassociation; successful closure removes
+exactly that open entry and appends exactly it to the observed closed history.
 Reader I/O uses the existing ordinary Rust `Read` boundary, with runtime checked
 length/capacity accounting; it is not a proof of arbitrary reader implementations.

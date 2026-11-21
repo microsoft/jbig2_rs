@@ -20,6 +20,8 @@ pub enum DecodePolicy {
 pub enum RecoveryKind {
     /// A zero-associated end-of-page had exactly one open owner.
     ZeroAssociatedEndOfPage,
+    /// A nonzero EOP named an already-closed earlier page and had one open owner.
+    ClosedPageEndOfPage,
     /// A complete page ended at the next page-information or exact stream end.
     MissingEndOfPage,
     /// The declared count was replaced by the number of fully validated pages.

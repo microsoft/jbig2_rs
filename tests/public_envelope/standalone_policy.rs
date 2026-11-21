@@ -100,7 +100,7 @@ fn standalone_policy_zero_eop_requires_exactly_one_open_owner_and_preserves_nonz
         vec![end(0, 0)],
         vec![page(0, 1, 9, 3), page(1, 2, 9, 3), end(2, 0)],
         vec![page(0, 1, 9, 3), end(1, 1), end(2, 0)],
-        vec![page(0, 1, 9, 3), end(1, 1), page(2, 2, 9, 3), end(3, 1)],
+        vec![page(0, 1, 9, 3), end(1, 1), page(2, 2, 9, 3), end(3, 3)],
     ] {
         assert!(Decoder::default()
             .decode_with_policy(
@@ -109,6 +109,94 @@ fn standalone_policy_zero_eop_requires_exactly_one_open_owner_and_preserves_nonz
             )
             .is_err());
     }
+}
+
+#[test]
+fn standalone_policy_closed_page_eop_uses_unique_owner_and_records_the_chain() {
+    for first_association in [0, 1] {
+        let mut segments = patterned_page(0, 1);
+        segments.push(end(2, first_association));
+        segments.extend(patterned_page(3, 2));
+        segments.push(end(5, 1));
+        segments.extend(patterned_page(6, 3));
+        segments.push(end(8, 2));
+        let bytes = standalone(true, Some(3), &segments);
+        let output = compatibility(&bytes);
+        assert_eq!(output.value.pages().len(), 3);
+        for (index, page) in output.value.pages().iter().enumerate() {
+            assert_pattern(page, u32::try_from(index + 1).unwrap());
+        }
+        let repairs: Vec<_> = output
+            .recoveries
+            .iter()
+            .filter(|recovery| recovery.kind == RecoveryKind::ClosedPageEndOfPage)
+            .collect();
+        assert_eq!(repairs.len(), 2);
+        for (recovery, (owner, marker_index)) in repairs.iter().zip([(2, 5), (3, 8)]) {
+            assert_eq!(recovery.page, owner);
+            assert_eq!(
+                recovery.byte_offset,
+                Some(13 + embedded(&segments[..marker_index]).len() + 6)
+            );
+        }
+    }
+}
+
+#[test]
+fn standalone_policy_closed_page_eop_rejects_live_unseen_future_and_ambiguous_names() {
+    let earlier_not_closed = vec![
+        page(0, 1, 9, 3),
+        page(1, 2, 9, 3),
+        end(2, 1),
+        extension(3, 1, 0, &[]),
+        end(4, 2),
+    ];
+    let unseen_earlier = vec![page(0, 2, 9, 3), end(1, 1)];
+    let unseen_future = vec![page(0, 1, 9, 3), end(1, 2)];
+    let closed_future = vec![page(0, 2, 9, 3), end(1, 2), page(2, 1, 9, 3), end(3, 2)];
+    let no_owner = vec![page(0, 1, 9, 3), end(1, 1), end(2, 1)];
+    let ambiguous = vec![
+        page(0, 1, 9, 3),
+        end(1, 1),
+        page(2, 2, 9, 3),
+        page(3, 3, 9, 3),
+        end(4, 1),
+    ];
+    let referenced = vec![
+        page(0, 1, 9, 3),
+        end(1, 1),
+        page(2, 2, 9, 3),
+        end(3, 1).references(&[0], 0),
+    ];
+    let mut nonempty = referenced.clone();
+    nonempty[3] = end(3, 1);
+    nonempty[3].payload.push(0);
+    let mut later_necessary = vec![page(0, 1, 9, 3), end(1, 1), page(2, 2, 9, 3), end(3, 1)];
+    later_necessary.push(extension(4, 0, 0xa000_ffff, &[]));
+    for segments in [
+        earlier_not_closed,
+        unseen_earlier,
+        unseen_future,
+        closed_future,
+        no_owner,
+        ambiguous,
+        referenced,
+        nonempty,
+        later_necessary,
+    ] {
+        let bytes = standalone(true, None, &segments);
+        assert!(Decoder::default()
+            .decode_with_policy(&bytes, DecodePolicy::Compatibility)
+            .is_err());
+    }
+    let complete = [page(0, 1, 9, 3), page(1, 2, 9, 3), end(2, 1), end(3, 2)];
+    let bytes = standalone(true, Some(2), &complete);
+    let decoder = Decoder::default();
+    let output = decoder
+        .decode_with_policy(&bytes, DecodePolicy::Compatibility)
+        .unwrap();
+    assert_eq!(output.value, decoder.decode(&bytes).unwrap());
+    assert!(output.recoveries.is_empty());
 }
 
 #[test]
@@ -422,6 +510,10 @@ fn standalone_policy_pinned_family_all_pages_and_both_text_oob_failures() {
     let decoder = Decoder::default();
     for (name, expected) in [
         (
+            "end_of_page_of_previous_page",
+            &["truchet", "honeycomb", "maze"][..],
+        ),
+        (
             "page_without_end_of_page",
             &["truchet", "honeycomb", "maze"][..],
         ),
@@ -437,6 +529,20 @@ fn standalone_policy_pinned_family_all_pages_and_both_text_oob_failures() {
         .unwrap();
         let output = compatibility(&bytes);
         assert_eq!(output.value.pages().len(), expected.len(), "{name}");
+        if name == "end_of_page_of_previous_page" {
+            assert_eq!(
+                output
+                    .recoveries
+                    .iter()
+                    .map(|recovery| (recovery.page, recovery.kind))
+                    .collect::<Vec<_>>(),
+                [
+                    (1, RecoveryKind::ZeroAssociatedEndOfPage),
+                    (2, RecoveryKind::ClosedPageEndOfPage),
+                    (3, RecoveryKind::ClosedPageEndOfPage),
+                ]
+            );
+        }
         for (page, image) in output.value.pages().iter().zip(expected) {
             let packed = std::fs::read(golden.join(format!("{image}.bitmap"))).unwrap();
             let width = u32::from_be_bytes(packed[..4].try_into().unwrap());
@@ -445,7 +551,6 @@ fn standalone_policy_pinned_family_all_pages_and_both_text_oob_failures() {
         }
     }
     for name in [
-        "end_of_page_of_previous_page",
         "trailing_bytes",
         "missing_final_oob",
         "missing_final_oob_huffman",

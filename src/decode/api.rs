@@ -13,7 +13,7 @@ use vstd::prelude::*;
 impl Decoder {
     /// Decodes a standalone file using an explicit validation policy.
     ///
-    /// Compatibility permits uniquely owned zero-associated end-of-page,
+    /// Compatibility permits uniquely owned zero/closed-earlier-page EOP,
     /// complete pages missing end-of-page at exact boundaries, observed page
     /// counts, one CR LF after a validated EOF, reserved region bit 4, and
     /// unretained, unreferenced fixed-length type 1. Random-access files remain

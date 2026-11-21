@@ -12,9 +12,11 @@ use vstd::prelude::*;
 mod policy_spec;
 
 mod diagnostics;
+mod ownership;
 
 pub(crate) use diagnostics::record;
 pub use diagnostics::{DecodePolicy, DecodeResult, Recovery, RecoveryKind};
+use ownership::{close_page, open_index, recovery_owner};
 
 pub(crate) fn read_input<R: std::io::Read>(
     reader: &mut R,
@@ -225,6 +227,7 @@ pub(crate) fn prepare(input: &[u8], limits: &Limits) -> Result<Prepared, DecodeE
     remaining.max_decoder_managed_memory_bytes -= scratch;
     let mut recoveries = Vec::new();
     let mut open = Vec::<u32>::new();
+    let mut closed = Vec::<u32>::new();
     let header_len = file.byte_length();
     if header_len > input.len() {
         return Err(MalformedError::IntegerOverflow.into());
@@ -238,6 +241,7 @@ pub(crate) fn prepare(input: &[u8], limits: &Limits) -> Result<Prepared, DecodeE
     let mut references = 0_u64;
     #[cfg_attr(verus_keep_ghost, verus_spec(
         invariant reader.position <= reader.bytes@.len(),
+            open@.len() + closed@.len() == pages_seen,
             reader.bytes@.len() + header_len == input@.len(),
             bytes@.len() <= header_len + reader.position,
             remaining.max_work_units <= limits.max_work_units,
@@ -290,7 +294,7 @@ pub(crate) fn prepare(input: &[u8], limits: &Limits) -> Result<Prepared, DecodeE
             references,
             limits.max_total_references,
         )?;
-        scanner_storage(&bytes, &open, &header, scratch)?;
+        scanner_storage(&bytes, &open, &closed, &header, scratch)?;
         check_number(previous, header.number)?;
         previous = Some(header.number);
         let payload_start = header_len
@@ -318,17 +322,20 @@ pub(crate) fn prepare(input: &[u8], limits: &Limits) -> Result<Prepared, DecodeE
             open.try_reserve(1)
                 .map_err(|_| DecodeError::Allocation { requested_bytes })?;
             open.push(page);
-            scanner_storage(&bytes, &open, &header, scratch)?;
+            scanner_storage(&bytes, &open, &closed, &header, scratch)?;
         } else if header.segment_type == SegmentType::EndOfPage {
-            if page == 0 {
-                if open.len() != 1 || !payload.is_empty() || !header.referred_segments.is_empty() {
+            let mut owner_index = open_index(&open, page);
+            if page == 0 || owner_index.is_none() {
+                if !payload.is_empty() || !header.referred_segments.is_empty() {
                     return Err(MalformedError::InvalidPageAssociation {
                         segment: header.number,
                         page,
                     }
                     .into());
                 }
-                page = open[0];
+                let (owner, kind) = recovery_owner(header.number, page, &open, &closed)?;
+                page = owner;
+                owner_index = Some(0);
                 let flag_offset = start
                     .checked_add(4)
                     .ok_or(MalformedError::IntegerOverflow)?;
@@ -348,13 +355,14 @@ pub(crate) fn prepare(input: &[u8], limits: &Limits) -> Result<Prepared, DecodeE
                     Recovery {
                         page,
                         byte_offset: Some(offset),
-                        kind: RecoveryKind::ZeroAssociatedEndOfPage,
+                        kind,
                     },
                     &mut remaining,
                 )?;
             }
-            if let Some(index) = open_index(&open, page) {
-                open.remove(index);
+            if let Some(index) = owner_index {
+                close_page(&mut open, &mut closed, index)?;
+                scanner_storage(&bytes, &open, &closed, &header, scratch)?;
             }
         }
         if is_region(header.segment_type) && payload.len() >= 17 && payload[16] & 0xf0 == 0x10 {
@@ -422,6 +430,7 @@ pub(crate) fn prepare(input: &[u8], limits: &Limits) -> Result<Prepared, DecodeE
 fn scanner_storage(
     bytes: &Vec<u8>,
     open: &Vec<u32>,
+    closed: &Vec<u32>,
     header: &super::SegmentHeader,
     limit: u64,
 ) -> Result<u64, DecodeError> {
@@ -431,8 +440,10 @@ fn scanner_storage(
         )?)
         .and_then(|n| n.checked_add(bytes.capacity() as u64))
         .ok_or(MalformedError::IntegerOverflow)?;
+    let closed_bytes = allocation_size::<u32>(closed.capacity())?;
     let used = used
         .checked_add(allocation_size::<u32>(open.capacity())?)
+        .and_then(|n| n.checked_add(closed_bytes))
         .ok_or(MalformedError::IntegerOverflow)?;
     budget(LimitKind::Memory, used, limit)?;
     Ok(used)
@@ -600,28 +611,6 @@ pub(crate) fn parse<'a>(
         super::document_spec::document_fields(&info);
     }
     Ok((info, segments))
-}
-
-#[cfg_attr(verus_keep_ghost, verus_spec(out =>
-    ensures match out {
-        Some(index) => index < pages@.len() && pages@[index as int] == page,
-        None => forall|index: int| 0 <= index < pages@.len() ==> pages@[index] != page,
-    },
-))]
-fn open_index(pages: &[u32], page: u32) -> Option<usize> {
-    let mut index = 0;
-    #[cfg_attr(verus_keep_ghost, verus_spec(
-        invariant index <= pages@.len(),
-            forall|prior: int| 0 <= prior < index ==> pages@[prior] != page,
-        decreases pages@.len() - index,
-    ))]
-    while index < pages.len() {
-        if pages[index] == page {
-            return Some(index);
-        }
-        index += 1;
-    }
-    None
 }
 
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
