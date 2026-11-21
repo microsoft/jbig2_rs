@@ -200,6 +200,50 @@ fn arithmetic_state_rejects_mode_and_template_changes_without_consumption() {
 }
 
 #[test]
+fn arithmetic_finalization_rejects_mismatched_extent_without_changing_the_session() {
+    let coded = [0xff, 0xac];
+    let limits = Limits::default();
+    for pattern in [false, true] {
+        let mut state = if pattern {
+            new_pattern_arithmetic_state(&coded, GenericTemplate::Template3, 3, &limits).unwrap()
+        } else {
+            new_halftone_arithmetic_state(&coded, GenericTemplate::Template3, 3, &limits).unwrap()
+        };
+        for declared_length in [0, 1, 3, usize::MAX, coded.len()] {
+            let GenericRegionState::Arithmetic { session, .. } = &mut state else {
+                panic!("unexpected coding mode")
+            };
+            // The decoder actually observed the marker; only its enclosing extent differs.
+            let marker = session.decoder.marker().expect("initial FF AC marker");
+            assert_eq!((marker.offset, marker.code), (0, 0xac));
+            session.coded_length = declared_length;
+            let before = format!("{session:?}");
+            let result = state.finish();
+            if declared_length == coded.len() {
+                result.unwrap();
+            } else {
+                let expected = if declared_length < 2 {
+                    GenericRegionErrorKind::InvalidArithmeticTerminator
+                } else {
+                    GenericRegionErrorKind::UnexpectedArithmeticMarker {
+                        offset: 0,
+                        code: 0xac,
+                    }
+                };
+                assert_decode_error_exact(
+                    result.unwrap_err(),
+                    DecodeError::Malformed(MalformedError::InvalidGenericRegion(expected)),
+                );
+            }
+            let GenericRegionState::Arithmetic { session, .. } = &state else {
+                panic!("coding mode changed")
+            };
+            assert_eq!(format!("{session:?}"), before);
+        }
+    }
+}
+
+#[test]
 fn pattern_mmr_is_single_use_and_mode_errors_do_not_consume_it() {
     let limits = Limits::default();
     let correct = empty_request(GenericRegionCoding::Mmr {
