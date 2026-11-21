@@ -156,7 +156,7 @@ pub(super) fn parse_sequential<'a>(
         previous_number = Some(header.number);
         #[cfg(verus_keep_ghost)]
         proof_decl! { let ghost payload_start = reader.position as int; }
-        let payload = read_payload(&mut reader, &header)?;
+        let payload = read_payload(&mut reader, &header, limits)?;
         let is_end = matches!(header.segment_type, SegmentType::EndOfFile);
         let data = parse_known_segment_data(&header, payload, limits)?;
         let new_len = segments
@@ -287,7 +287,7 @@ pub(super) fn parse_random_access<'a>(
     for header in headers {
         #[cfg(verus_keep_ghost)]
         proof_decl! { let ghost before = (reader.position as int, segments@); }
-        let payload = read_payload(&mut reader, &header)?;
+        let payload = read_payload(&mut reader, &header, limits)?;
         let data = parse_known_segment_data(&header, payload, limits)?;
         segments.push(ParsedSegment {
             header,
@@ -322,13 +322,17 @@ pub(super) fn parse_random_access<'a>(
             Ok(payload) => document_spec::payload_window(
                 header, old(reader).bytes@, old(reader).position as int,
                 final(reader).position as int, payload@,
-            ),
+            ) && match header.data_length {
+                None => document_spec::unknown_generic_window(payload@, payload@.len() as int),
+                Some(_) => true,
+            },
             Err(_) => true,
         },
 ))]
 pub(super) fn read_payload<'a>(
     reader: &mut ByteReader<'a>,
     header: &SegmentHeader,
+    limits: &Limits,
 ) -> Result<&'a [u8], DecodeError> {
     if let Some(length) = header.data_length {
         let Ok(length) = usize::try_from(length) else {
@@ -336,20 +340,35 @@ pub(super) fn read_payload<'a>(
         };
         return Ok(reader.read_bytes(length)?);
     }
-    let length = find_unknown_generic_length(reader.remaining_bytes())?;
-    Ok(reader.read_bytes(length)?)
+    let remaining = reader.remaining_bytes();
+    let length = find_unknown_generic_length(remaining, limits)?;
+    let payload = reader.read_bytes(length)?;
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        vstd::assert_seqs_equal!(payload@, remaining@.subrange(0, length as int));
+        document_spec::unknown_generic_window_prefix(remaining@, length as int);
+    }
+    Ok(payload)
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
-pub(super) fn find_unknown_generic_length(bytes: &[u8]) -> Result<usize, DecodeError> {
-    const GENERIC_FLAGS_INDEX: usize = 17;
-    const SEARCH_START: usize = 18;
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match out {
+        Ok(length) => document_spec::unknown_generic_window(bytes@, length as int),
+        Err(_) => true,
+    },
+))]
+pub(super) fn find_unknown_generic_length(
+    bytes: &[u8],
+    limits: &Limits,
+) -> Result<usize, DecodeError> {
     const TERMINAL_BYTES: usize = 6;
-    if bytes.len() < SEARCH_START + TERMINAL_BYTES {
+    // Adaptive coordinates belong to the header, not the entropy-coded body.
+    let (header, search_start) = crate::generic_region::parse_generic_region_header(bytes, limits)?;
+    if bytes.len() < search_start + TERMINAL_BYTES {
         return Err(MalformedError::MissingGenericRegionTerminator.into());
     }
     let declared_height = read_be_u32_at(bytes, 4);
-    let marker = if bytes[GENERIC_FLAGS_INDEX] & 0x01 != 0 {
+    let marker = if header.mmr {
         [0x00, 0x00]
     } else {
         [0xFF, 0xAC]
@@ -358,12 +377,18 @@ pub(super) fn find_unknown_generic_length(bytes: &[u8]) -> Result<usize, DecodeE
         .len()
         .checked_sub(TERMINAL_BYTES)
         .ok_or(MalformedError::IntegerOverflow)?;
-    let mut offset = SEARCH_START;
+    let mut offset = search_start;
     #[cfg_attr(verus_keep_ghost, verus_spec(
         invariant
-            bytes@.len() >= SEARCH_START + TERMINAL_BYTES,
+            search_start == crate::generic_region::generic_region_spec::generic_header_length(bytes@[17]),
+            bytes@.len() >= search_start + TERMINAL_BYTES,
+            search_start >= 18,
+            marker == if bytes@[17] & 1 != 0 { [0u8, 0u8] } else { [0xffu8, 0xacu8] },
+            declared_height == crate::spec::segments::be_u32_at(bytes@, 4),
             final_start == bytes@.len() - TERMINAL_BYTES,
-            SEARCH_START <= offset <= final_start + 1,
+            search_start <= offset <= final_start + 1,
+            forall|before: int| search_start <= before < offset ==>
+                !document_spec::unknown_generic_marker(bytes@, before),
         decreases final_start + 1 - offset,
     ))]
     while offset <= final_start {
@@ -378,6 +403,11 @@ pub(super) fn find_unknown_generic_length(bytes: &[u8]) -> Result<usize, DecodeE
                 actual: row_count,
             }
             .into());
+        }
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            reveal(document_spec::unknown_generic_window);
+            assert(document_spec::unknown_generic_marker(bytes@, offset as int));
         }
         return offset
             .checked_add(TERMINAL_BYTES)

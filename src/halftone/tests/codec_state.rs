@@ -4,6 +4,40 @@
 use super::*;
 
 #[test]
+fn zero_plane_state_rejects_coded_requests_and_trailing_payload() {
+    let mut state = new_zero_plane_state(&[]).unwrap();
+    state.finish().unwrap();
+    let error = state
+        .decode_generic_region(GenericRegionRequest {
+            width: 1,
+            height: 1,
+            coding: GenericRegionCoding::Mmr { require_eofb: true },
+            typical_prediction: false,
+            extended_template: false,
+            skip: None,
+        })
+        .unwrap_err();
+    assert!(matches!(
+        error,
+        DecodeError::Malformed(MalformedError::InvalidPageState(
+            "zero-plane halftone requested a coded bitmap"
+        ))
+    ));
+    assert!(matches!(state, GenericRegionState::ZeroPlanes));
+    for coded in [&[0][..], &[0xff, 0xac]] {
+        let Err(error) = new_zero_plane_state(coded) else {
+            panic!("zero-plane trailing bytes accepted")
+        };
+        assert_decode_error_exact(
+            error,
+            DecodeError::Malformed(MalformedError::TrailingData(
+                u64::try_from(coded.len()).unwrap(),
+            )),
+        );
+    }
+}
+
+#[test]
 fn arithmetic_state_constructors_enforce_exact_input_and_context_budgets() {
     let coded = [0, 0, 0xff, 0xac];
     for (code, template, bits) in [
@@ -161,6 +195,50 @@ fn arithmetic_state_rejects_mode_and_template_changes_without_consumption() {
                 )),
             );
             state.finish().expect("no wrong marker was observed");
+        }
+    }
+}
+
+#[test]
+fn arithmetic_finalization_rejects_mismatched_extent_without_changing_the_session() {
+    let coded = [0xff, 0xac];
+    let limits = Limits::default();
+    for pattern in [false, true] {
+        let mut state = if pattern {
+            new_pattern_arithmetic_state(&coded, GenericTemplate::Template3, 3, &limits).unwrap()
+        } else {
+            new_halftone_arithmetic_state(&coded, GenericTemplate::Template3, 3, &limits).unwrap()
+        };
+        for declared_length in [0, 1, 3, usize::MAX, coded.len()] {
+            let GenericRegionState::Arithmetic { session, .. } = &mut state else {
+                panic!("unexpected coding mode")
+            };
+            // The decoder actually observed the marker; only its enclosing extent differs.
+            let marker = session.decoder.marker().expect("initial FF AC marker");
+            assert_eq!((marker.offset, marker.code), (0, 0xac));
+            session.coded_length = declared_length;
+            let before = format!("{session:?}");
+            let result = state.finish();
+            if declared_length == coded.len() {
+                result.unwrap();
+            } else {
+                let expected = if declared_length < 2 {
+                    GenericRegionErrorKind::InvalidArithmeticTerminator
+                } else {
+                    GenericRegionErrorKind::UnexpectedArithmeticMarker {
+                        offset: 0,
+                        code: 0xac,
+                    }
+                };
+                assert_decode_error_exact(
+                    result.unwrap_err(),
+                    DecodeError::Malformed(MalformedError::InvalidGenericRegion(expected)),
+                );
+            }
+            let GenericRegionState::Arithmetic { session, .. } = &state else {
+                panic!("coding mode changed")
+            };
+            assert_eq!(format!("{session:?}"), before);
         }
     }
 }

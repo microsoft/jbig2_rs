@@ -87,7 +87,10 @@ pub(super) fn check_dimensions(
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
     ensures match out {
         Ok(()) => actual <= limit,
-        Err(_) => actual > limit,
+        Err(error) => actual > limit
+            && error == SymbolTextError::Decode(DecodeError::LimitExceeded(
+                LimitExceeded { kind, limit, actual },
+            )),
     },
 ))]
 pub(super) fn enforce_limit(

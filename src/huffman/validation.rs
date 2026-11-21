@@ -212,6 +212,7 @@ pub(super) fn validate_lines(lines: HuffmanLines<'_>) -> Result<(), HuffmanError
     }
 
     let mut previous_normal_end: Option<i64> = None;
+    let mut last_normal_start: Option<i64> = None;
     let mut first_normal_start: Option<i64> = None;
     let mut lower: Option<i64> = None;
     let mut upper: Option<i64> = None;
@@ -281,6 +282,7 @@ pub(super) fn validate_lines(lines: HuffmanLines<'_>) -> Result<(), HuffmanError
                     first_normal_start = Some(line.range_low);
                 }
                 previous_normal_end = Some(end);
+                last_normal_start = Some(line.range_low);
             }
             LineKind::Lower => {
                 special_seen = true;
@@ -353,11 +355,29 @@ pub(super) fn validate_lines(lines: HuffmanLines<'_>) -> Result<(), HuffmanError
         }
     }
     if let Some(base) = upper {
-        if last.checked_add(1) != Some(base) || base < i32::MIN as i64 || base > i32::MAX as i64 {
+        let valid = match last_normal_start {
+            Some(start) => upper_base_within_final_range(start, last, base),
+            None => false,
+        };
+        if !valid {
             return Err(HuffmanError::InvalidTable(
                 HuffmanTableError::InvalidSpecialLine,
             ));
         }
     }
     Ok(())
+}
+
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out == (
+        start < base
+        && base as int <= last as int + 1
+        && i32::MIN <= base <= i32::MAX
+    ),
+))]
+pub(super) fn upper_base_within_final_range(start: i64, last: i64, base: i64) -> bool {
+    start < base
+        && i128::from(base) <= i128::from(last) + 1
+        && i64::from(i32::MIN) <= base
+        && base <= i64::from(i32::MAX)
 }

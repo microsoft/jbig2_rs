@@ -49,6 +49,7 @@ pub(crate) open spec fn decoder_state_valid(
     state: &super::GenericRegionState,
 ) -> bool {
     match state {
+        super::GenericRegionState::ZeroPlanes => true,
         super::GenericRegionState::Arithmetic { session, .. } =>
             crate::arithmetic::arithmetic_spec::decoder_valid(&session.decoder),
         super::GenericRegionState::PatternMmr { .. } => true,

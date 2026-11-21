@@ -12,56 +12,56 @@
     {
       "id": "decode::PageSink::write_page",
       "file": "src/decode.rs",
-      "file_sha256": "25f6a7996ad876f05a9ec1db834ffc113f101a5861913491551ca2b0d18bf6e7",
+      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
       "status": "reviewed-verifier-limitation",
       "reason": "This public or composed path depends on arbitrary caller-provided PageSink/FnMut callbacks and their error, side-effect and resource behavior. Those external implementations and the complete composed orchestration are not directly proved. Individually verified owned collection/allocation helpers do not remove this boundary; no blanket absence of fallible-allocation models is claimed."
     },
     {
       "id": "decode::F::write_page",
       "file": "src/decode.rs",
-      "file_sha256": "25f6a7996ad876f05a9ec1db834ffc113f101a5861913491551ca2b0d18bf6e7",
+      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
       "status": "reviewed-verifier-limitation",
       "reason": "This public or composed path depends on arbitrary caller-provided PageSink/FnMut callbacks and their error, side-effect and resource behavior. Those external implementations and the complete composed orchestration are not directly proved. Individually verified owned collection/allocation helpers do not remove this boundary; no blanket absence of fallible-allocation models is claimed."
     },
     {
       "id": "decode::api::Decoder::decode_reader",
       "file": "src/decode/api.rs",
-      "file_sha256": "685f0639c76cb47b8447ebeff9a758843d6e6a81d4195c6ff6bdc3c12de1e381",
+      "file_sha256": "6edf040f36a614023650c8a7a479454dcdc44bc1b81fd80916619c8c9559dfe2",
       "status": "reviewed-verifier-limitation",
       "reason": "This public or composed path depends on arbitrary caller-provided PageSink/FnMut callbacks and their error, side-effect and resource behavior. Those external implementations and the complete composed orchestration are not directly proved. Individually verified owned collection/allocation helpers do not remove this boundary; no blanket absence of fallible-allocation models is claimed."
     },
     {
       "id": "decode::api::Decoder::decode_with_sink",
       "file": "src/decode/api.rs",
-      "file_sha256": "685f0639c76cb47b8447ebeff9a758843d6e6a81d4195c6ff6bdc3c12de1e381",
+      "file_sha256": "6edf040f36a614023650c8a7a479454dcdc44bc1b81fd80916619c8c9559dfe2",
       "status": "reviewed-verifier-limitation",
       "reason": "This public or composed path depends on arbitrary caller-provided PageSink/FnMut callbacks and their error, side-effect and resource behavior. Those external implementations and the complete composed orchestration are not directly proved. Individually verified owned collection/allocation helpers do not remove this boundary; no blanket absence of fallible-allocation models is claimed."
     },
     {
       "id": "decode::api::Decoder::decode_reader_with_sink",
       "file": "src/decode/api.rs",
-      "file_sha256": "685f0639c76cb47b8447ebeff9a758843d6e6a81d4195c6ff6bdc3c12de1e381",
+      "file_sha256": "6edf040f36a614023650c8a7a479454dcdc44bc1b81fd80916619c8c9559dfe2",
       "status": "reviewed-verifier-limitation",
       "reason": "This public or composed path depends on arbitrary caller-provided PageSink/FnMut callbacks and their error, side-effect and resource behavior. Those external implementations and the complete composed orchestration are not directly proved. Individually verified owned collection/allocation helpers do not remove this boundary; no blanket absence of fallible-allocation models is claimed."
     },
     {
       "id": "decode::write_page_to_sink",
       "file": "src/decode.rs",
-      "file_sha256": "25f6a7996ad876f05a9ec1db834ffc113f101a5861913491551ca2b0d18bf6e7",
+      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
       "status": "reviewed-verifier-limitation",
       "reason": "This public or composed path depends on arbitrary caller-provided PageSink/FnMut callbacks and their error, side-effect and resource behavior. Those external implementations and the complete composed orchestration are not directly proved. Individually verified owned collection/allocation helpers do not remove this boundary; no blanket absence of fallible-allocation models is claimed."
     },
     {
       "id": "decode::orchestration::decode_segments",
       "file": "src/decode/orchestration.rs",
-      "file_sha256": "e43bccb4a9c40c1b17653a233e3fc2f18bd38155329c19670cbf8541e4f34f71",
+      "file_sha256": "0db145dc928631c874680c9d91af6f9601e8fb5694b0678bb9a5efee22e3a696",
       "status": "reviewed-verifier-limitation",
       "reason": "This public or composed path depends on arbitrary caller-provided PageSink/FnMut callbacks and their error, side-effect and resource behavior. Those external implementations and the complete composed orchestration are not directly proved. Individually verified owned collection/allocation helpers do not remove this boundary; no blanket absence of fallible-allocation models is claimed."
     },
     {
       "id": "document::Decoder::inspect_reader",
       "file": "src/document.rs",
-      "file_sha256": "7e68c696256628ce1f0a9b9751329eb96d4c98febead5eb23804d0759c886b6c",
+      "file_sha256": "e9ac0a112e6e6b195c7c7a22af5f3da1e685a5f19380109ea906770dd7aca6a5",
       "status": "reviewed-verifier-limitation",
       "reason": "The remaining path uses the standard Read interface and composed stream/collection behavior, which the pinned project proof does not directly specify. Numeric preflight, owned parsing and individual fallible-allocation helpers are accounted for separately."
     },

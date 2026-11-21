@@ -4,6 +4,91 @@
 use super::*;
 
 #[test]
+fn zero_plane_rendering_preserves_geometry_memory_work_and_configuration_guards() {
+    let header = HalftoneHeader {
+        mmr: false,
+        template: 0,
+        enable_skip: false,
+        operator: CombinationOperator::Or,
+        default_pixel: false,
+        grid_width: 3,
+        grid_height: 1,
+        grid_x: 256,
+        grid_y: 0,
+        grid_vector_x: 512,
+        grid_vector_y: 0,
+    };
+    let patterns = [bitmap(&["1"])];
+    let limits = Limits {
+        max_width: 8,
+        max_decoder_managed_memory_bytes: 14,
+        max_work_units: 6,
+        ..Limits::default()
+    };
+    let mut state = new_zero_plane_state(&[]).unwrap();
+    let mut work = WorkBudget::new(&limits);
+    let output =
+        decode_halftone_region(&header, 8, 1, &patterns, &mut state, &limits, &mut work).unwrap();
+    assert_eq!(output.bytes(), &[0x54]);
+    assert_eq!(work.used(), 6);
+    assert!(matches!(state, GenericRegionState::ZeroPlanes));
+    for (limited, kind, actual) in [
+        (
+            Limits {
+                max_width: 7,
+                ..limits
+            },
+            LimitKind::Width,
+            8,
+        ),
+        (
+            Limits {
+                max_decoder_managed_memory_bytes: 13,
+                ..limits
+            },
+            LimitKind::Memory,
+            14,
+        ),
+        (
+            Limits {
+                max_work_units: 5,
+                ..limits
+            },
+            LimitKind::Work,
+            6,
+        ),
+    ] {
+        let mut work = WorkBudget::new(&limited);
+        assert!(matches!(
+            decode_halftone_region(&header, 8, 1, &patterns, &mut state, &limited, &mut work),
+            Err(HalftoneError::Decode(DecodeError::LimitExceeded(LimitExceeded {
+                kind: observed, actual: observed_actual, ..
+            }))) if observed == kind && observed_actual == actual
+        ));
+        assert!(matches!(state, GenericRegionState::ZeroPlanes));
+        assert_eq!(work.used(), 0);
+    }
+    for invalid in [
+        HalftoneHeader {
+            template: 4,
+            ..header
+        },
+        HalftoneHeader {
+            mmr: true,
+            enable_skip: true,
+            ..header
+        },
+    ] {
+        let mut work = WorkBudget::new(&limits);
+        assert!(matches!(
+            decode_halftone_region(&invalid, 8, 1, &patterns, &mut state, &limits, &mut work),
+            Err(HalftoneError::InvalidHalftoneConfiguration)
+        ));
+        assert_eq!(work.used(), 0);
+    }
+}
+
+#[test]
 fn raw_gray_shape_guards_and_skip_rectangles_use_exact_half_open_geometry() {
     for (width, height) in [(8, 2), (9, 1)] {
         let mut current = bitmap(&["101010101", "010101010"]);

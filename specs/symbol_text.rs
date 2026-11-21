@@ -28,6 +28,14 @@ pub(super) use symbol_ids::{symbol_code_length_expected_bounds, symbol_code_leng
 pub(super) use symbol_ids::{checked_symbol_id_transition, symbol_id_request_matches};
 pub(super) use symbol_ids::segment_symbol_width_matches;
 
+#[path = "symbol_text/dictionary.rs"]
+mod dictionary;
+pub(super) use dictionary::{
+    bounded_arithmetic_source_tail, bounded_arithmetic_terminator_result,
+    dictionary_context_models_match, dictionary_context_validation, normalized_arithmetic_bytes,
+};
+pub(crate) use dictionary::{dictionary_config_safe, dictionary_state_valid, symbol_count_result};
+
 verus! {
 
 // Model navigation: spec::work_units [proof-support]
@@ -473,20 +481,6 @@ pub(crate) open spec fn four_way_choice_result(
     }
 }
 
-// Model navigation: spec::dictionary_config_safe [candidate-standard-facing-model]
-// Purpose: Selected dictionary/text flags, strip/refinement choices and OOB candidates.
-// Audit: dictionary-config-safe
-// REQUIREMENT CONTEXT: T88-AGGREGATION-MODE-FLAG | ITU-T T.88 (08/2018) | 7.4.2.1.1 bit 1; 6.5.8.2
-// Fidelity: unresolved; no independent normative approval.
-pub(crate) open spec fn dictionary_config_safe(
-    flags: u16,
-    config: super::SymbolDictionaryConfig,
-) -> bool {
-    flags & 0xe000 == 0
-        && config.huffman == (flags & 1 != 0)
-        && config.refinement_aggregation == (flags & 2 != 0)
-}
-
 // Model navigation: spec::text_config_safe [candidate-standard-facing-model]
 // Purpose: Selected dictionary/text flags, strip/refinement choices and OOB candidates.
 // Audit: text-config-safe
@@ -563,18 +557,6 @@ pub(crate) open spec fn floor_half(value: int) -> int {
 // Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn signed_byte(value: u8) -> int {
     if value <= 127 { value as int } else { value as int - 256 }
-}
-
-// Model navigation: spec::dictionary_state_valid [representation-invariant]
-// Purpose: Codec banks/bitmaps, table slots, export counters and placement-bound invariants.
-// Audit: dictionary-state-valid
-// REQUIREMENT CONTEXT: T88-DICTIONARY-HEIGHT-CLASS-STATE | ITU-T T.88 (08/2018) | 6.5.5 step 4; 6.5.6-6.5.7
-// Fidelity: unresolved; no independent normative approval.
-pub(crate) open spec fn dictionary_state_valid(
-    state: &super::DictionaryClassState,
-) -> bool {
-    state.decoded_symbols <= state.declared_new_symbols
-        && state.width <= state.total_width
 }
 
 // Model navigation: spec::text_state_valid [representation-invariant]

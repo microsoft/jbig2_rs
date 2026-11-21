@@ -410,6 +410,52 @@ fn bounds_nonprogressing_export_runs_by_work_limit() {
 }
 
 #[test]
+fn legal_empty_classes_and_interleaved_zero_runs_have_exact_work_charges() {
+    let limits = Limits::default();
+    let mut resources = ResourceTracker::default();
+    let mut state = DictionaryClassState::new(1, &limits).unwrap();
+    for _ in 0..257 {
+        state
+            .begin_height_class(0, &limits, &mut resources)
+            .unwrap();
+        assert_eq!(state.finish_height_class().unwrap(), 0);
+        assert_eq!(state.decoded_symbols, 0);
+    }
+    state
+        .begin_height_class(1, &limits, &mut resources)
+        .unwrap();
+    assert_eq!(
+        state
+            .add_individual_symbol(1, &limits, &mut resources)
+            .unwrap(),
+        (1, 1)
+    );
+    state.finish_height_class().unwrap();
+    state.finish().unwrap();
+    assert_eq!(resources.work_units, 259);
+    let mut integers = VecDeque::new();
+    // Each pair leaves the export flag unchanged but consumes two integers.
+    for run in [1, 2, 1] {
+        integers.extend(std::iter::repeat_n(EntropyInteger::Value(0), 258));
+        integers.push_back(EntropyInteger::Value(run));
+    }
+    integers.push_back(EntropyInteger::Value(91)); // Following field.
+    let mut codec = SymbolCodec::Scripted(ScriptedCodec {
+        integers,
+        symbol_id: 0,
+    });
+    assert_eq!(
+        decode_export_runs(&mut codec, 4, 2, &limits, &mut resources).unwrap(),
+        vec![1, 2]
+    );
+    assert_eq!(resources.work_units, 259 + 3 * 259);
+    assert!(matches!(
+        codec.decode_integer(IntegerField::ExportRun),
+        Ok(EntropyInteger::Value(91))
+    ));
+}
+
+#[test]
 fn exported_symbols_match_exact_clone_oracle() {
     type Descriptor<'a> = (u32, u32, usize, &'a [u8]);
     let limits = Limits::default();

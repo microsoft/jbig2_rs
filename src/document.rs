@@ -19,8 +19,8 @@ use vstd::prelude::*;
 mod document_spec;
 #[cfg(verus_keep_ghost)]
 pub(crate) use document_spec::{
-    decoder_context_fields, decoder_context_finished, decoder_context_state, embedded_metadata,
-    standalone_metadata,
+    declared_count_matches_pages, decoder_context_fields, decoder_context_finished,
+    decoder_context_state, embedded_metadata, standalone_metadata,
 };
 
 #[cfg(verus_keep_ghost)]
@@ -38,6 +38,7 @@ mod input;
 mod pages;
 mod parsing;
 mod references;
+pub(crate) mod standalone;
 
 use input::{
     allocation_size, enforce_input_work, enforce_page_limit, enforce_segment_limit,

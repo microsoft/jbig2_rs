@@ -4,6 +4,232 @@
 use super::*;
 
 #[test]
+fn dictionary_context_selection_uses_reference_order_not_retention_or_store_order() {
+    let symbols: SymbolStore = [30, 10, 20]
+        .into_iter()
+        .map(|number| {
+            (
+                number,
+                SymbolResource {
+                    exported: Vec::new(),
+                    contexts: None,
+                },
+            )
+        })
+        .collect();
+    for length in 0..=4 {
+        for mut encoded in 0..4_usize.pow(length) {
+            let mut references = Vec::new();
+            for _ in 0..length {
+                references.push([10, 20, 30, 99][encoded % 4]);
+                encoded /= 4;
+            }
+            let expected = references.iter().rev().find_map(|number| {
+                symbols
+                    .iter()
+                    .position(|(candidate, _)| candidate == number)
+            });
+            for used in [false, true] {
+                assert_eq!(
+                    super::super::dispatch::dictionary_context_source(&symbols, &references, used),
+                    if used { expected } else { None },
+                );
+            }
+        }
+    }
+}
+
+fn retained_refinement_dictionary_resource() -> SymbolResource {
+    use crate::arithmetic::ArithmeticContext;
+    use crate::generic_region::{RefinementContexts, RefinementTemplate};
+    let limits = Limits::default();
+    let mut payload = 0x1203_u16.to_be_bytes().to_vec();
+    payload.extend_from_slice(&1_u32.to_be_bytes());
+    payload.extend_from_slice(&0_u32.to_be_bytes());
+    payload.extend_from_slice(&[0, 0x40]); // Export the imported bitmap.
+    let (model, _) = parse_symbol_dictionary_header(&payload, &limits).unwrap();
+    let mut contexts = RefinementContexts::new(RefinementTemplate::Template1, &limits).unwrap();
+    contexts.contexts[8] = ArithmeticContext::from_state(10, 1).unwrap();
+    let mut bitmap = Bitmap::blank(8, 1, &limits).unwrap();
+    bitmap.data[0] = 0xa5;
+    SymbolResource {
+        exported: vec![bitmap],
+        contexts: Some(DictionaryContexts {
+            model,
+            generic: None,
+            refinement: Some(contexts.try_snapshot(&limits).unwrap()),
+        }),
+    }
+}
+
+#[test]
+fn dictionary_dispatch_imports_pixels_but_only_restores_requested_last_contexts() {
+    use crate::arithmetic::ArithmeticContext;
+    use crate::generic_region::{RefinementContexts, RefinementTemplate};
+    for used in [false, true] {
+        for later_dictionary in [false, true] {
+            let mut symbols = vec![(10, retained_refinement_dictionary_resource())];
+            // The final referred segment is a table, not a dictionary. It must
+            // not erase the prescribed dictionary source.
+            let references = if later_dictionary {
+                symbols.push((
+                    20,
+                    SymbolResource {
+                        exported: Vec::new(),
+                        contexts: None,
+                    },
+                ));
+                vec![10, 20, 99]
+            } else {
+                vec![10, 99]
+            };
+            let mut segment = symbol_reference_segment(&references);
+            let mut payload = (0x1203_u16 | if used { 0x0100 } else { 0 })
+                .to_be_bytes()
+                .to_vec();
+            payload.extend_from_slice(&1_u32.to_be_bytes());
+            payload.extend_from_slice(&0_u32.to_be_bytes());
+            payload.extend_from_slice(&[0, 0x40]);
+            segment.payload = &payload;
+            let result = super::super::dispatch::decode_symbol_dictionary_segment(
+                &segment,
+                &mut symbols,
+                &Vec::new(),
+                &mut RetainedBudget::new(),
+                &mut DecodeWork::new(0, &Limits::default()).unwrap(),
+                &Limits::default(),
+            );
+            if used && later_dictionary {
+                assert!(matches!(
+                    result,
+                    Err(DecodeError::Malformed(MalformedError::InvalidSymbolText(
+                        "missing retained contexts"
+                    )))
+                ));
+                assert_eq!(symbols.len(), 2);
+                continue;
+            }
+            result.unwrap();
+            let output = get_symbol_resource(&symbols, 100).unwrap();
+            assert_eq!(output.exported.len(), 1);
+            assert_eq!(output.exported[0].bytes(), &[0xa5]);
+            let mut restored =
+                RefinementContexts::new(RefinementTemplate::Template1, &Limits::default()).unwrap();
+            restored
+                .restore(
+                    output
+                        .contexts
+                        .as_ref()
+                        .unwrap()
+                        .refinement
+                        .as_ref()
+                        .unwrap(),
+                    &Limits::default(),
+                )
+                .unwrap();
+            for (index, state) in restored.contexts.iter().enumerate() {
+                let expected = if used && index == 8 {
+                    ArithmeticContext::from_state(10, 1).unwrap()
+                } else {
+                    ArithmeticContext::new()
+                };
+                assert_eq!(*state, expected, "used={used}, index={index}");
+            }
+        }
+    }
+}
+
+#[test]
+fn dictionary_dispatch_can_import_arithmetic_symbols_into_fresh_huffman_refinement() {
+    let mut payload = 0x0200_u16.to_be_bytes().to_vec();
+    payload.extend_from_slice(&[3, 0xff, 0xfd, 0xff, 2, 0xfe, 0xfe, 0xfe]);
+    payload.extend_from_slice(&[0; 8]);
+    payload.extend_from_slice(&[0xff, 0xac]);
+    let source = decode_symbol_dictionary(&SymbolDictionaryInput {
+        payload: &payload,
+        imported_symbols: crate::symbol_text::SymbolCodebook::Contiguous(&[]),
+        custom_tables: &[],
+        used_contexts: None,
+        limits: &Limits::default(),
+    })
+    .unwrap();
+    let mut resource = retained_refinement_dictionary_resource();
+    resource.contexts = source.retained_contexts;
+    let mut symbols = vec![(10, resource)];
+    let mut segment = symbol_reference_segment(&[10]);
+    let mut payload = 0x1203_u16.to_be_bytes().to_vec();
+    payload.extend_from_slice(&1_u32.to_be_bytes());
+    payload.extend_from_slice(&0_u32.to_be_bytes());
+    payload.extend_from_slice(&[0, 0x40]);
+    segment.payload = &payload;
+    super::super::dispatch::decode_symbol_dictionary_segment(
+        &segment,
+        &mut symbols,
+        &Vec::new(),
+        &mut RetainedBudget::new(),
+        &mut DecodeWork::new(0, &Limits::default()).unwrap(),
+        &Limits::default(),
+    )
+    .unwrap();
+    let output = get_symbol_resource(&symbols, 100).unwrap();
+    assert_eq!(output.exported[0].bytes(), &[0xa5]);
+    let contexts = output.contexts.as_ref().unwrap();
+    assert!(contexts.generic.is_none());
+    assert!(contexts.refinement.is_some());
+}
+
+#[test]
+fn standalone_dictionary_model_controls_are_framed_independently_of_rejection() {
+    let first = [
+        0x0e, 0x00, 0xff, 0xff, // Retained generic template 3, AT=(-1,-1).
+        0, 0, 0, 0, 0, 0, 0, 0, // No exported or new symbols.
+        0xff, 0xac,
+    ];
+    for (flags, adaptive_x, expected) in [
+        (0x0f00_u16, 0xff, None), // Matching reuse.
+        (
+            0x0b00,
+            0xff,
+            Some("incompatible retained dictionary context model"),
+        ),
+        (
+            0x0f00,
+            0xfe,
+            Some("incompatible retained dictionary context model"),
+        ),
+        (0x0a00, 0xfe, None), // Different model is legal with fresh contexts.
+    ] {
+        let mut second = first;
+        second[..2].copy_from_slice(&flags.to_be_bytes());
+        second[2] = adaptive_x;
+        let mut document = SIGNATURE.to_vec();
+        document.push(1);
+        document.extend_from_slice(&1_u32.to_be_bytes());
+        document.extend_from_slice(&segment_header(0, 48, 1, 19));
+        document.extend_from_slice(&page_data());
+        let mut dictionary_header = segment_header(1, 0, 0, 14);
+        dictionary_header[5] = 1; // Retain segment 1 for the following reference.
+        document.extend_from_slice(&dictionary_header);
+        document.extend_from_slice(&first);
+        document.extend_from_slice(&referenced_segment_header(2, 0, 0, 1, 14));
+        document.extend_from_slice(&second);
+        document.extend_from_slice(&segment_header(3, 49, 1, 0));
+        document.extend_from_slice(&segment_header(4, 51, 0, 0));
+        match (crate::Decoder::default().decode(&document), expected) {
+            (Ok(decoded), None) => {
+                assert_eq!(decoded.pages().len(), 1);
+                assert_eq!(decoded.pages()[0].bitmap().bytes(), &[0]);
+            }
+            (
+                Err(DecodeError::Malformed(MalformedError::InvalidSymbolText(message))),
+                Some(expected),
+            ) => assert_eq!(message, expected),
+            (actual, _) => panic!("unexpected model-control outcome: {actual:?}"),
+        }
+    }
+}
+
+#[test]
 fn borrowed_symbol_memory_counts_only_pointer_capacity() {
     let retained = 4_096_u64;
     let count = 37_usize;

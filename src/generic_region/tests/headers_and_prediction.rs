@@ -355,6 +355,19 @@ fn parses_refinement_headers_and_nominal_adaptive_pixels() {
 }
 
 #[test]
+fn refinement_header_rejects_reserved_flags_before_reading_adaptive_pixels() {
+    let limits = Limits::default();
+    for flags in 4..=u8::MAX {
+        let mut payload = region_prefix(4, 4);
+        payload.push(flags);
+        assert!(matches!(
+            parse_refinement_region_header(&payload, &limits),
+            Err(GenericRegionError::ReservedFlags(reserved)) if reserved == flags & 0xfc
+        ));
+    }
+}
+
+#[test]
 fn refinement_templates_and_sltp_indices_are_exact() {
     assert_eq!(REFINEMENT_TEMPLATE_0.len(), 13);
     assert_eq!(REFINEMENT_TEMPLATE_1.len(), 10);

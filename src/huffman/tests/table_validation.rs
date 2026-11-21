@@ -193,7 +193,7 @@ fn rejects_reserved_flags_and_nonzero_padding() {
 }
 
 #[test]
-fn rejects_invalid_bounds_partition_and_range_length() {
+fn rejects_invalid_bounds_and_range_length() {
     let bounds = [0, 0, 0, 0, 1, 0, 0, 0, 1];
     assert!(matches!(
         HuffmanTable::from_encoded(&bounds, &Limits::default()),
@@ -210,15 +210,33 @@ fn rejects_invalid_bounds_partition_and_range_length() {
             HuffmanTableError::InvalidRangeLength(33)
         ))
     ));
+}
 
-    // A two-value interval cannot be partitioned by a four-value line.
-    let partition = [0x10, 0, 0, 0, 0, 0, 0, 0, 2, 0b1100_0000];
+#[test]
+fn encoded_final_range_crosses_high_without_clamping_or_moving_the_upper_base() {
+    let mut payload = vec![0x12, 0, 0, 0, 0, 0, 0, 0, 2];
+    payload.extend(bits("01100010"));
+    let table = HuffmanTable::from_encoded(&payload, &Limits::default()).unwrap();
+    for (wire, value) in [("000", 0), ("001", 1), ("010", 2), ("011", 3)] {
+        assert_eq!(decode_bits(&table, wire), HuffmanValue::Integer(value));
+    }
+    for offset in 0..=2_u32 {
+        let wire = format!("10{offset:032b}");
+        assert_eq!(
+            decode_bits(&table, &wire),
+            HuffmanValue::Integer(2 + i32::try_from(offset).unwrap()),
+        );
+    }
+    let overflow = format!("10{:032b}", i32::MAX as u32);
+    let encoded = bits(&overflow);
     assert!(matches!(
-        HuffmanTable::from_encoded(&partition, &Limits::default()),
-        Err(HuffmanError::InvalidTable(
-            HuffmanTableError::InvalidRangePartition
-        ))
+        table.decode(&mut bit_reader(&encoded)),
+        Err(HuffmanError::Decode(DecodeError::Malformed(
+            MalformedError::IntegerOverflow
+        )))
     ));
+    payload.pop();
+    assert!(HuffmanTable::from_encoded(&payload, &Limits::default()).is_err());
 }
 
 #[test]

@@ -687,9 +687,11 @@ pub(crate) enum SymbolCodebook<'a> {
 
 /// Caller-retained generic/refinement probability state, carried across
 /// symbol dictionaries that cooperatively share one evolving symbol set
-/// (T.88 6.5.8.2.3's "bitmap coding context used"/"retained" flags).
+/// (T.88 7.4.2.2's "bitmap coding context used"/"retained" flags).
 #[cfg_attr(verus_keep_ghost, verus_verify)]
 pub(crate) struct DictionaryContexts {
+    /// Source model identity; counts and table/lifecycle selections are ignored.
+    pub(crate) model: SymbolDictionaryHeader,
     pub(crate) generic: Option<GenericContextSnapshot>,
     pub(crate) refinement: Option<RefinementContextSnapshot>,
 }
@@ -700,6 +702,7 @@ pub(crate) struct SymbolDictionaryInput<'a> {
     pub(crate) payload: &'a [u8],
     pub(crate) imported_symbols: SymbolCodebook<'a>,
     pub(crate) custom_tables: &'a [&'a HuffmanTable],
+    /// Absent for fresh statistics; otherwise from the last referred dictionary.
     pub(crate) used_contexts: Option<&'a DictionaryContexts>,
     pub(crate) limits: &'a Limits,
 }

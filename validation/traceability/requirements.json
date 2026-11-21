@@ -23,8 +23,8 @@
   },
   "model_classifications": {
     "review": "author-navigation-only-not-independent-normative-approval",
-    "registry_sha256": "6bc9065d1537f3c4193dbbcd7a17113d5bd2eb3c914147465b8db8afd6943c6f",
-    "project_source_sha256": "0a61e62c4112e4082e6b604b499392e5773648fdcf847e6223a136a9ef38c542",
+    "registry_sha256": "19f29e18950f5e35d011f88b528ba889ff3d4d000d12990d8f9c82d7de0c69cb",
+    "project_source_sha256": "3334f0660ab96143d7e4ca000f08c5c24723524f9fae5f742899531e44550f88",
     "families": [
       {
         "file": "specs/huffman_lookup.rs",
@@ -499,12 +499,21 @@
           "spec::declared_count_matches_pages",
           "spec::embedded_metadata",
           "spec::known_segment_data_fields",
-          "spec::payload_window",
           "spec::random_access_container_fields",
           "spec::random_access_segment_fields",
           "spec::segment_metadata",
           "spec::sequential_container_fields",
           "spec::standalone_metadata"
+        ],
+        "classification": "project-result-model",
+        "justification": "Bodies bind accepted metadata to file-header/segments byte models, typed Page/Stripe/Profiles payloads, exact header/payload windows, increasing standalone numbers and complete sequential/random-access extents/EOF. src/document.rs parsing contracts expose these results; model_support/document.rs proves completion from internal windows, not the reverse.",
+        "ambiguity": "",
+        "caveats": "Other ParsedData stays opaque; table/entropy validity, unknown-length termination, complete errors/resources and independent wire/retention/profile interpretation are not established."
+      },
+      {
+        "file": "specs/document/framing.rs",
+        "members": [
+          "spec::payload_window"
         ],
         "classification": "project-result-model",
         "justification": "Bodies bind accepted metadata to file-header/segments byte models, typed Page/Stripe/Profiles payloads, exact header/payload windows, increasing standalone numbers and complete sequential/random-access extents/EOF. src/document.rs parsing contracts expose these results; model_support/document.rs proves completion from internal windows, not the reverse.",
@@ -1051,7 +1060,6 @@
           "spec::bitmaps_valid",
           "spec::codebook_valid",
           "spec::codec_valid",
-          "spec::dictionary_state_valid",
           "spec::export_indices_valid",
           "spec::integer_contexts_valid",
           "spec::placement_batch_valid",
@@ -1060,6 +1068,15 @@
           "spec::table_bindings_valid",
           "spec::text_state_valid",
           "spec::valid_strip_size"
+        ],
+        "classification": "representation-invariant",
+        "justification": "Bodies quantify decoder/bank/bitmap validity, constrain optional table slots, export indices and decoded counters, and bound prepared/batched source/destination rectangles. valid_strip_size and symbol_code_length_valid only restrict admissible sizes; the latter does not equate length to ceil-log2. src/symbol_text.rs uses these safe-state pre/postconditions without thereby promising symbol contents or placement coordinates.",
+        "ambiguity": ""
+      },
+      {
+        "file": "specs/symbol_text/dictionary.rs",
+        "members": [
+          "spec::dictionary_state_valid"
         ],
         "classification": "representation-invariant",
         "justification": "Bodies quantify decoder/bank/bitmap validity, constrain optional table slots, export indices and decoded counters, and bound prepared/batched source/destination rectangles. valid_strip_size and symbol_code_length_valid only restrict admissible sizes; the latter does not equate length to ceil-log2. src/symbol_text.rs uses these safe-state pre/postconditions without thereby promising symbol contents or placement coordinates.",
@@ -1091,9 +1108,18 @@
         "file": "specs/symbol_text.rs",
         "members": [
           "spec::custom_oob_compatible",
-          "spec::dictionary_config_safe",
           "spec::text_config_safe",
           "spec::text_huffman_choices_safe"
+        ],
+        "classification": "candidate-standard-facing-model",
+        "justification": "Bodies bind only selected Huffman/refinement flags, disallow reserved/colour combinations, require appropriate Huffman flag presence/strip size, constrain refinement-size choice and compare required/supplied OOB. src/symbol_text.rs parsing/choice contracts use these proposed config compatibility rules, not complete dictionary/text decoding.",
+        "ambiguity": "",
+        "caveats": "Partial config checks are not complete output fields or independent source/model/table/caller approval. Held encoded refinement/aggregation/custom-Huffman fixtures remain untouched."
+      },
+      {
+        "file": "specs/symbol_text/dictionary.rs",
+        "members": [
+          "spec::dictionary_config_safe"
         ],
         "classification": "candidate-standard-facing-model",
         "justification": "Bodies bind only selected Huffman/refinement flags, disallow reserved/colour combinations, require appropriate Huffman flag presence/strip size, constrain refinement-size choice and compare required/supplied OOB. src/symbol_text.rs parsing/choice contracts use these proposed config compatibility rules, not complete dictionary/text decoding.",
@@ -1288,6 +1314,68 @@
         "justification": "Exact first-local/global resolution, intermediate classification, symbol/table eligibility and owner-specific type acceptance. Unresolved symbol/text references remain accepted by the type stage because preceding link validation owns missing-reference rejection.",
         "ambiguity": "",
         "caveats": "Concrete implementation-stage relation, not exhaustive normative representation or independent fidelity. Existing abstract reference-class models have a distinct domain; no unproved bridge, complete graph validity or new admissible-input restriction is credited."
+      },
+      {
+        "file": "specs/decode.rs",
+        "members": [
+          "spec::dictionary_context_source"
+        ],
+        "classification": "representation-invariant",
+        "justification": "Checked generic payload windows, dictionary context model/state compatibility and zero-plane/count representation frames used by the corrected production callers.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; no independent normative approval, exhaustive specification coverage or complete decoded-output proof."
+      },
+      {
+        "file": "specs/document/framing.rs",
+        "members": [
+          "spec::unknown_generic_marker",
+          "spec::unknown_generic_window"
+        ],
+        "classification": "representation-invariant",
+        "justification": "Checked generic payload windows, dictionary context model/state compatibility and zero-plane/count representation frames used by the corrected production callers.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; no independent normative approval, exhaustive specification coverage or complete decoded-output proof."
+      },
+      {
+        "file": "specs/generic_region/framing.rs",
+        "members": [
+          "spec::generic_header_length"
+        ],
+        "classification": "representation-invariant",
+        "justification": "Checked generic payload windows, dictionary context model/state compatibility and zero-plane/count representation frames used by the corrected production callers.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; no independent normative approval, exhaustive specification coverage or complete decoded-output proof."
+      },
+      {
+        "file": "specs/standalone_policy.rs",
+        "members": [
+          "spec::boundary_state",
+          "spec::eop_ownership",
+          "spec::eop_recovery_allowed",
+          "spec::no_page_revisit",
+          "spec::page_byte",
+          "spec::page_patch",
+          "spec::reserved_mask_result"
+        ],
+        "classification": "project-policy",
+        "justification": "Caller-selected standalone compatibility state, exact metadata repair allowlist and byte/count/budget frames; not a normative waiver or complete rendered-output theorem.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; no independent normative approval, exhaustive specification coverage or complete decoded-output proof."
+      },
+      {
+        "file": "specs/symbol_text/dictionary.rs",
+        "members": [
+          "spec::bounded_arithmetic_source_tail",
+          "spec::bounded_arithmetic_terminator_result",
+          "spec::dictionary_context_models_match",
+          "spec::dictionary_context_validation",
+          "spec::normalized_arithmetic_bytes",
+          "spec::symbol_count_result"
+        ],
+        "classification": "representation-invariant",
+        "justification": "Checked generic payload windows, dictionary context model/state compatibility and zero-plane/count representation frames used by the corrected production callers.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; no independent normative approval, exhaustive specification coverage or complete decoded-output proof."
       }
     ]
   },
@@ -1947,18 +2035,24 @@
     "proofs/spec_properties/readers.rs": "01efdc55fd62e5bc34b97275a23d6b683af934d6739a7e284f08f991af883fd3",
     "specs/arithmetic.rs": "0d576d753574c2b2412ce8442aa3a3e50cd1b7b95be18347a8e62a6832b9b94a",
     "specs/bitmap.rs": "9d4da6608d7ee55fdf0ab7d8d47f6105e75e656c1f31589610d47a67a61218cf",
-    "specs/decode.rs": "acc5afe72a14eb8e48e3a193608a2a89bec966b97757201d6ce3d9bc9a404e24",
-    "specs/document.rs": "0ef9f8a5f365ea1e3d61077d6844a6548044ab1827d81b09ad403e93acb0a739",
+    "specs/decode.rs": "e5adb89969d49d5645634d5e11fee81394f64e684657efb38ef5867d95bef1a0",
+    "specs/document.rs": "0618fbd140a6f6c9a90356a100b167aaa7c55da8f05b1d885794056022a15351",
+    "specs/document/framing.rs": "815fa1d8b2c881edc03a56f514c61c04f4ce56095ed1c44c4edd97e9cf72fe36",
     "specs/file_header.rs": "d7bfe82359473ce879ac27879ccdac8130a401bacb8a9fd69fe1b3571e86d599",
-    "specs/generic_region.rs": "179767792743db1d346a5681af60eef35c383f653a9fe17410b0c0aa8c49ab33",
-    "specs/halftone.rs": "8bf3a8c46f5ff5f85f91e464cac5e3dbfedeff3ffb2568528525c744ee2130f6",
+    "specs/generic_region.rs": "2f618e54b049854b14490b1a1182d298815cd024b3ed10e8272449395149f981",
+    "specs/generic_region/framing.rs": "23db47cf183d7f2c490db16611119d5fe1e485b4800cb6af9904516032c6ccea",
+    "specs/halftone.rs": "14319589988d823798b25f2f3dec0055fa3536f0f9c2dfc27c576659a8c61a0f",
     "specs/huffman.rs": "2d58cd9b77ebfaad2b432f0a2366b409582a4701b9dea067d69881545d446b3e",
     "specs/huffman_lookup.rs": "bd6fe3ee36de79103836d6fc9fc411b03ca0b304ce4915d0f730c2301b483766",
     "specs/mmr.rs": "6333d8553b47d1bd6bcc996c0d0f3d0216d3f4d3eeff9c07e34a4dfeea5bb49c",
     "specs/mod.rs": "34f81994f8b77e618a7d48d4552175d09cf3be633307166227c13ce94a06ba21",
     "specs/readers.rs": "ee10b54a7ee8dce323488bf8ef5229fbbf1d5811888a3364cda8f2cc187ba251",
     "specs/segments.rs": "a4a19a65babe5a29532273f3374434762cf0fd63d3336b0f49e4914e3e390bc0",
-    "specs/symbol_text.rs": "a21adc05d7c18a5c3264563d2d96dea191cddaf00ef3137021ded32775daf025",
+    "specs/symbol_text.rs": "276faeadb51dc1fd886acce229c20b2c98337085936738a7378a30c17264eec1",
+    "specs/symbol_text/arithmetic_codec.rs": "d28755e3fe46f5aeb9772fdee3aa674fa510a0d91761a459c40bd3f673f96a4c",
+    "specs/symbol_text/dictionary.rs": "f7994737d95cefbca3e6067754190b160ddb8c85900a17edf672b4f8d80882b2",
+    "specs/symbol_text/huffman_codec.rs": "3a56e2a0f9c27443b1ee91029c92584a45df3398fc4f433de4ffc1e717246295",
+    "specs/symbol_text/symbol_ids.rs": "a08f24685e8ef5f95e98b5bb953ad18a1b6dbbffd754ca48f09931f36a87aacc",
     "src/arithmetic.rs": "3322814a9a7feedbd1d53c2b9aa6b5d9c1559b691a819cfbf5dcb2eb62d98d33",
     "src/arithmetic/decoding.rs": "537afa619108dc6ce7773688683d85eb5b4251dbb75a939c92223746b7a90fd5",
     "src/arithmetic/integers.rs": "53a11c2a47bed9cbfd683503319f7bd861a0df4cd4566a8a43dcb5b0cbcb0d0e",
@@ -1973,49 +2067,52 @@
     "src/bitmap/storage.rs": "8f6ce10586869f2b0ec85214156dcd6ead236b88f7465f107f54df90698524e4",
     "src/bitmap/tests/composition.rs": "6e1643c277251306450aa427f99a143a82be3e1d32cb81ef037d6b527c92a9ba",
     "src/bitmap/tests/layout_and_access.rs": "794454828d33bf94749c93ec3091be8d216a05375088d42e68aafe44effad84a",
-    "src/decode.rs": "25f6a7996ad876f05a9ec1db834ffc113f101a5861913491551ca2b0d18bf6e7",
+    "src/decode.rs": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+    "src/decode/api.rs": "6edf040f36a614023650c8a7a479454dcdc44bc1b81fd80916619c8c9559dfe2",
     "src/decode/dispatch/references.rs": "52e7500e0cef622729c3b19f535c8d0824644b5a954dd373ffeadeb34e649c67",
     "src/decode/rendering.rs": "fa259425d937b3933ee01ccffdd2ddfe55d11097c5e5881645b1e09cf6ab3bad",
     "src/decode/resources.rs": "55f9ee8e2daa02d57b3778847780e98dd8e2b7cf0b7331d45f76e429011dfd1a",
-    "src/decode/tests/container_routes.rs": "f4afcf2b843893ae272f89c349e5286fd6ff40f7fdf6d2109fdd3ab9340b546d",
+    "src/decode/tests/container_routes.rs": "d84b63cd8fa430c1adec78535df904cf3521f33212cdefe8ee28241bc4c56b39",
     "src/decode/tests/direct_and_reuse.rs": "d46a5cbd0ee0791141d8b6115f090faa7a0315dc51437dcfb643dce6b58e116c",
-    "src/decode/tests/symbol_resources.rs": "f23d5ba103db106eed1cf7d9c8eef395ce060e7eedf2226d7eb38f923dff3431",
-    "src/document.rs": "7e68c696256628ce1f0a9b9751329eb96d4c98febead5eb23804d0759c886b6c",
-    "src/document/pages.rs": "e939c3c80163d6d1fa67206b1b4d9626f0ccb50fa21dfffe549bc6fe46ba8b80",
-    "src/document/parsing.rs": "ca9a0b19dce67e65fff6a85af20693715130d34702794a154c7860f0aeab94bc",
+    "src/decode/tests/symbol_resources.rs": "8b1f5260bcf7b6d300895b700ecbb10748742d0d124a563872710938fba26256",
+    "src/document.rs": "e9ac0a112e6e6b195c7c7a22af5f3da1e685a5f19380109ea906770dd7aca6a5",
+    "src/document/pages.rs": "3a10ba252984750ca7fbf6add8445eaf785c6fdaabb7594b7cb1112c689679b6",
+    "src/document/parsing.rs": "27f627f0a93a08f9927c9515947be0a7fad019525b95ebff3f2cce1e71c750bc",
     "src/document/references.rs": "69acd07c8e2da002936fa8826f054dd254aecaec34c6904514daaf760841b9e4",
     "src/document/tests.rs": "83c40558470af241ab9be812667f186de6b6dbffed8f3c8f03f5d5ab20923063",
-    "src/document/tests/container_inspection.rs": "628cc9ab90a757d151893f851c9593fe51d6a456aeca07131e0d01ae41c06b94",
-    "src/document/tests/payload_windows.rs": "a5ea365a525b36f3ca92894ab3157d8b03382419e3ca434e154b7cdc3000f02e",
+    "src/document/tests/container_inspection.rs": "2ec6cd3bd75bda1c40165a09d767a85fb78359a10dbcb689ce3ea4d0b46a04af",
+    "src/document/tests/payload_windows.rs": "96c85ffdb008808b7c63951c13564ec683bd327f1a4a95ebb27672905da5d0cc",
     "src/file_header.rs": "9011f761698f3772c953980e2d2d56ed5ece4f792c8e318ca89a0e0f8d326e11",
     "src/generic_region.rs": "5aa90d8f1259d05a9b8285076b813ffa4751d07360c3ef000f92149aaba8219d",
     "src/generic_region/contexts.rs": "3e86887633490b1d135db2f9b1f8aa9f92e097e43f22f8b29dd1ed3521ed66cb",
     "src/generic_region/generic.rs": "3ee87782e68a4116568f88e2f31dc53b4acd4ef90ead17b2e73241a9d19c3161",
-    "src/generic_region/headers.rs": "d116c691bcc2c0f94f4a39a0984b7576a492f9b4411159aaf00a901cce2d3ac8",
+    "src/generic_region/headers.rs": "2b4932649f37b1b37f9ebc6fb9915ce2c8cf173e5c105fd1cb43548c506939f7",
     "src/generic_region/refinement.rs": "defb4386d60cf2b85b7de320ce5c8a53e83d4483ee30668e0cc3ab5a54e7b35c",
+    "src/generic_region/segments.rs": "d84e912d208b1dd85160d4e0065a0b682cc48f63fbcf53ada5488ccaf2a8e59a",
     "src/generic_region/support.rs": "f564fa0bda614940d4592b8958b236a1c8978ed56cf1ee9102e745f20ce62f16",
     "src/generic_region/tests/diagnostics.rs": "53850441984da91d10fcff41c144041ddb2102d03742aeadfac62b1fb40b01db",
-    "src/generic_region/tests/headers_and_prediction.rs": "2f4c8e93d30c7c494edf38c81f8eac31efb519210d3ea8765307b7d744b087aa",
+    "src/generic_region/tests/headers_and_prediction.rs": "4dcb5015504f8a05453f8aef00a5e7129ddf84632b1585bb1a2b9faff691f8c0",
     "src/generic_region/tests/raster_parity.rs": "a10224aebcc8c0864ad093f51a6b9eb3a7c7de2af2e7e4865481d8c4e123bbd9",
     "src/generic_region/tests/segment_framing.rs": "4ff6c9ec3a4c8461bb3ce3b8984ff33fa17a519dd2c6ded48a97ab6141cc1208",
-    "src/halftone.rs": "006e5a831d3f09a8b3be41782424261a52bf375544befd7e45c522d0ab00ba36",
+    "src/generic_region/tests/sessions_and_snapshots.rs": "92c96e4fcabdaf1613585544c2914c2c666a84a07a664d8482db79c58bb0b970",
+    "src/halftone.rs": "da52bc2dcbd4f14e66402dd83befe00a168f04f49cc2647d02788f3bf6f335b9",
     "src/halftone/headers.rs": "363497a0fdf003435987f0fa64e793d7d61d7d9de4a65c58c0e66571394cdda0",
-    "src/halftone/planes.rs": "563d5b285cad5af7644babe50c6f5103a1b914af52d0156098438fcd196f73b0",
-    "src/halftone/render.rs": "c45d1d1a4af09551053de75d9c49e4f1bd06de0456f279e7d4f88abdfcb57cd4",
-    "src/halftone/tests/codec_state.rs": "51027604dd118a9109fb60505b855c467332d536dbf5e3d3088e2a365afd6d99",
-    "src/halftone/tests/geometry_and_render.rs": "c2ded87b15b0342969b81b7e98f6a617098302ab6e56f28d6cabba8aafc850cd",
+    "src/halftone/planes.rs": "258a96ced30025a880f5f66efaee7144166c1a8f02f525d6d4458ecfe1bcbad9",
+    "src/halftone/render.rs": "aad38a0dfd5f47404af82e0d129617ca4735f66b6196375feb5b00297d268547",
+    "src/halftone/tests/codec_state.rs": "cb8c1eec4a9d27ca9150285b394a4205cea65a99d0bde851297b016ae63aff60",
+    "src/halftone/tests/geometry_and_render.rs": "50ebcfb2172af2966ded4e3a15c9a8cca701d52611b18b95ec4cb44e372c4bd6",
     "src/halftone/tests/headers_and_patterns.rs": "ef5f90a9b1eaf32619dc22c6f49b5d6d6ccbf32f9bdacfc6507f29c15efa9f70",
     "src/huffman.rs": "a4bde5b0db72e4bdbecadbd9d78211f5a8057c800abc7e37e93904b5b7e69dd0",
-    "src/huffman/construction.rs": "5f92c66f9723f43d068a97ff40cd240a6717a55f3e164d484f8835ed09c6fc41",
+    "src/huffman/construction.rs": "cf4691f446ac0449b15d7e51fc4693b2629125b61d1cae3046f8de79acfc7ebf",
     "src/huffman/decoding.rs": "d270f70dc14a05881bd3b30ee62bb00bd91a5d578f413054221d3a41c84e4229",
     "src/huffman/tests/cache_map.rs": "fe783f19e825db4ed6383318912179f9a58a9026df14480d4ab350b83438239e",
     "src/huffman/tests/canonical_decoding.rs": "1c445c3d01557bf09170fdb0ad9e6b8bd1c9af5de22750a3bc46eea942975868",
     "src/huffman/tests/fallback_state.rs": "f2785678ac694d7c40760693b376d641872f90388b5933b6d8a3e1ac4e5a45e0",
-    "src/huffman/tests/table_validation.rs": "58242f457ee9d3388839a013a87cc5f311f0aebf276dde2c0d2dd75b1945bce1",
+    "src/huffman/tests/table_validation.rs": "28ff5abb2c4122c028272529b559077a6eb9c7c8ce489f489e2fa7b808821966",
     "src/huffman/tests/wide_arithmetic.rs": "251462094b4817ff83394bb62072184b63796988e9606d75f29200eb1a1d8ca9",
-    "src/huffman/validation.rs": "6af0c03adf3bce270657b3cb6975cb7eef9f8dd888220dcf684745714e446d5f",
+    "src/huffman/validation.rs": "4d8612ef0cba9f16a12ae61886d225ab07766d74b21d727660405021a4f807ca",
     "src/huffman/wide.rs": "4f37abac40efc66f0c3eaa2637d211eaca5a5ea4fa7a14d7aadb07fbe2a8f0b0",
-    "src/lib.rs": "26195f6c9f67525bda135306ba310283c546470aa3e9670da3f859c4e8c05c15",
+    "src/lib.rs": "337d3bc10619a7a152cde540c80be72902e6a13b403960b2e94e772b21502b62",
     "src/mmr.rs": "939bdd232275bf07a8d776bacd891001dacdd49c828cfbb0abcbd40fa4adf5bb",
     "src/mmr/codes.rs": "06ad7fc805a4da335db691d5b1ada86f5f88d293ea2b8e33588326057fea5176",
     "src/mmr/raster.rs": "bd03d34f4154e629fce76707fae6dc06c12d2077a3e56fafd0198b6ae8176e4b",
@@ -2028,46 +2125,40 @@
     "src/mmr/tests/transition_cache.rs": "9694dc1674f651d821c3a40de0b2c052fc06d9c67f7a558a7856f6d917be41b2",
     "src/reader.rs": "9c64e44f1def255f1f7f285ada7608146d55dfb8d65bf31fca6464c2998f634f",
     "src/reader/tests.rs": "ff4f56ae43d4aea472a4d3ab04862edc802bf2d4413bb8de7646a1adf9cf9f47",
-    "src/segment_data.rs": "6fb360c3b8cc52b7405e5c3f106aef139f44ef52fef13990c709e4f39fbf992d",
+    "src/segment_data.rs": "0a0a4bbf80d7c17a517d11b9f6943096a58fcdd80216800669efdac0b4e8c1af",
     "src/segment_data/tests.rs": "7b082bcee501bd86382474823db6af59afb56842b7d053c3de8b77d2e5edfc15",
     "src/segment_header.rs": "ec5047080fa67fd0a8dd28e8101b972aeb23e3d10939906e1c059674ebaa528d",
     "src/segment_header/tests.rs": "41f4c9c942b49bc2d4d7c8588ac99ab655475803849836854afd349eee0d463c",
-    "src/symbol_text.rs": "1016840d38548edaf52482bf1a1bbba6d17b82783630223c0bc196dcef5a4d47",
+    "src/symbol_text.rs": "48a825ff91d4cb21065d04ca89a0076f2627b9c608c001bad35f2da77719678e",
     "src/symbol_text/bitmap.rs": "d872783ab5e9768ba4064ca309700f089e31b3ca799425edc6a5d7471efc40b2",
     "src/symbol_text/codebook.rs": "3ad3dd4131dbb7343a3267f32718d4c5278f029c1b90937f45d06363b8defbcc",
     "src/symbol_text/codec.rs": "4f975eff5bd958e0b201dd9c80e91b40be4681254a56adb02a681cc87e297e78",
-    "src/symbol_text/codec/arithmetic.rs": "ab10f25ace9acac4e3b756b4d363d3e0c258d0fb662acd5154b5ef9367bd6434",
+    "src/symbol_text/codec/arithmetic.rs": "0633b9e5c83c0717be4abb246dc2b75895ebb0cb3d1e026ca9cf164eee6943d3",
     "src/symbol_text/codec/huffman.rs": "a706f6674a164c1398d6fdc199a4a0ef8614a86e0be69e6eb13e3a8c2f6b83a1",
     "src/symbol_text/codec/refinement.rs": "71d5bb90d828932191eba96f52982c1f7adc24433cb5e4d21dc721b3f6997d83",
     "src/symbol_text/codec/symbols.rs": "01f2f2d2739c42ce2ed5fe4ed170451082478dcfc7f405b73ac9f6a819ce3248",
+    "src/symbol_text/dictionary.rs": "a3e2968dbae2fb7525f1a9451d08543731054c4e73aba5d14d3334f3c8080438",
     "src/symbol_text/dictionary/arithmetic.rs": "2744c7e0efb4589285d0ee85dd4b104be00f540cfda9ec502a871eaa26b870d1",
-    "src/symbol_text/dictionary/exports.rs": "6b14da56a88282051641a050ca3ad656100cb740263de018e1f3ccb1b49096e8",
-    "src/symbol_text/headers.rs": "25cefaa81ed375250782b118c3410fadd9531ee28c1dac87c5e8688a6f88f288",
+    "src/symbol_text/dictionary/exports.rs": "8ec39f2359e991f5bcde27d74c65e5c504b9e367ca64c8d66f2baf5f35dbd6e2",
+    "src/symbol_text/dictionary/huffman.rs": "496f382bc0440e1c9825fe4e90f49ae3173912f50e20f8f964a49d81d1c3efb6",
+    "src/symbol_text/headers.rs": "69da74f1ff5627d013f327d5c152d49582c7bb82462fc70b48b82159b9e8d987",
     "src/symbol_text/placement.rs": "6fe7228afc13c0735fcfe0d9359e07e03dfdd5a6883ba8d79523dcfde8885e5d",
-    "src/symbol_text/tests/codec_and_exports.rs": "0df482da2750590d9de90111ccac1583cde0c20b3d68c28ffe76b7eecd7a793d",
-    "src/symbol_text/tests/dictionary_dispatch.rs": "40d000f6070b98fca970ca3759a46f4d0b7c66bbff0e3e2778fa8eac849a7aae",
+    "src/symbol_text/tests/arithmetic_composition.rs": "8749f6561c7b3030deafa47358bd499514821726851cb296d4f00b2ff2110120",
+    "src/symbol_text/tests/codec_and_exports.rs": "37db93244698f73f2eabd55333937bb1b7ab8ec4af4b7ad7a4ed975105e9f483",
+    "src/symbol_text/tests/dictionary_dispatch.rs": "8c298fcdb940faf03a006219ecc400b8c8444114c846feadf82952bd5459dd2e",
+    "src/symbol_text/tests/dictionary_dispatch/huffman_aggregation.rs": "0349534fe6854219a69f33105ed9fdf5cdfe63d0298002bdc4a6098c43afcc8b",
     "src/symbol_text/tests/flags_and_tables.rs": "ac4e3ee2b5aadda78ebbe2c7804584f49a48a96816c85fa37adb99aa2a0113fe",
     "src/symbol_text/tests/huffman_fields.rs": "222ee8d81f8b0acd926e3cfb85288464919ba835027353024447d9f108ace38d",
+    "src/symbol_text/tests/huffman_symbol_ids.rs": "89dce150f0deb0e9eb16bb38cda5238c6546589d8022829680c412ff4f3becd0",
     "src/symbol_text/tests/placement_render.rs": "5d07c12827335abdba47df041992ea76e1b12d1a2ae1fb598ba3d4ecba1350b1",
     "src/symbol_text/tests/placement_state.rs": "4842dd4690593cf25b854787030a1e99f93c5611801899a22fce35f9625c75e3",
-    "src/symbol_text/tests/resource_accounting.rs": "b9b747aa6692886d8afe7e0910d9335cc75355477e1cbe77b47fd617e2ca76ee",
+    "src/symbol_text/tests/resource_accounting.rs": "b0b88129bb6eddb2ae10aeba65ff14f21f101cbdabdca8767930f2bb4053b726",
+    "src/symbol_text/tests/text_termination.rs": "3b629b51e16bdf7dfcedf2a6c46b99c95a2fe6042b8b0da4e74f069722789eeb",
     "src/symbol_text/text.rs": "0b76547ff330531d3c34d7c253d46109c21ed8e9be25a4a9cbc6ed0e470a87b2",
     "tests/catalog_contracts.rs": "d4eb4fd3d554494fcd99fa58def0eaa542fca7f97ff32c2083cfa0d3e1545da2",
     "tests/spec_header.rs": "6c8d30477d3be9080827bf0eab191739ab4fe844fe856c60020eb53a50cbcdda",
     "tests/traceability_organization.rs": "967cd92362829cc4258db0ab7300a8f28b53055dbd61489c3c3262ee6d539b5f",
-    "tests/traceability_semantics.rs": "e7189d9cb70fa9b021b221f02942d90e64e9f96f9d38040edf4fa8599dfaa5f9",
-    "specs/symbol_text/arithmetic_codec.rs": "d28755e3fe46f5aeb9772fdee3aa674fa510a0d91761a459c40bd3f673f96a4c",
-    "src/symbol_text/tests/arithmetic_composition.rs": "8749f6561c7b3030deafa47358bd499514821726851cb296d4f00b2ff2110120",
-    "specs/symbol_text/symbol_ids.rs": "a08f24685e8ef5f95e98b5bb953ad18a1b6dbbffd754ca48f09931f36a87aacc",
-    "specs/symbol_text/huffman_codec.rs": "3a56e2a0f9c27443b1ee91029c92584a45df3398fc4f433de4ffc1e717246295",
-    "src/symbol_text/tests/huffman_symbol_ids.rs": "89dce150f0deb0e9eb16bb38cda5238c6546589d8022829680c412ff4f3becd0",
-    "src/symbol_text/tests/text_termination.rs": "3b629b51e16bdf7dfcedf2a6c46b99c95a2fe6042b8b0da4e74f069722789eeb",
-    "src/symbol_text/dictionary.rs": "1c2a51c14779f0adaca42341dd5cd9bd272bc4f9e7f46563f534db6a5d1f0cf1",
-    "src/symbol_text/dictionary/huffman.rs": "496f382bc0440e1c9825fe4e90f49ae3173912f50e20f8f964a49d81d1c3efb6",
-    "src/generic_region/tests/sessions_and_snapshots.rs": "92c96e4fcabdaf1613585544c2914c2c666a84a07a664d8482db79c58bb0b970",
-    "specs/generic_region/framing.rs": "4cd4e9b1c381135ae89acdec59a7f9fda2a610625ed24ce0ffcbcb84fc5a02e7",
-    "src/generic_region/segments.rs": "d84e912d208b1dd85160d4e0065a0b682cc48f63fbcf53ada5488ccaf2a8e59a",
-    "src/decode/api.rs": "685f0639c76cb47b8447ebeff9a758843d6e6a81d4195c6ff6bdc3c12de1e381"
+    "tests/traceability_semantics.rs": "e7189d9cb70fa9b021b221f02942d90e64e9f96f9d38040edf4fa8599dfaa5f9"
   },
   "definitions": {
     "mmr-mode-table-entry": {
@@ -2142,20 +2233,22 @@
     },
     "dictionary-config-safe": {
       "kind": "spec",
-      "file": "specs/symbol_text.rs",
+      "file": "specs/symbol_text/dictionary.rs",
       "module_path": [
         "symbol_text",
-        "symbol_text_spec"
+        "symbol_text_spec",
+        "dictionary"
       ],
       "name": "dictionary_config_safe",
       "role": "Reserved high flags plus Huffman/refinement-aggregation flag correspondence only."
     },
     "dictionary-state-valid": {
       "kind": "spec",
-      "file": "specs/symbol_text.rs",
+      "file": "specs/symbol_text/dictionary.rs",
       "module_path": [
         "symbol_text",
-        "symbol_text_spec"
+        "symbol_text_spec",
+        "dictionary"
       ],
       "name": "dictionary_state_valid",
       "role": "Decoded-symbol count and width bounds, not height-class recurrences."
@@ -3692,10 +3785,11 @@
     },
     "document-payload-window": {
       "kind": "spec",
-      "file": "specs/document.rs",
+      "file": "specs/document/framing.rs",
       "module_path": [
         "document",
-        "document_spec"
+        "document_spec",
+        "framing"
       ],
       "name": "payload_window",
       "role": "exact accepted original byte slice and declared known payload length"
@@ -5820,15 +5914,15 @@
         },
         {
           "target": "lib",
-          "name": "symbol_text::tests::dictionary_dispatch::huffman_dictionary_aggregation_preserves_standard_fixed_symbol_ids"
+          "name": "symbol_text::tests::dictionary_dispatch::huffman_aggregation::huffman_dictionary_aggregation_preserves_standard_fixed_symbol_ids"
         },
         {
           "target": "lib",
-          "name": "symbol_text::tests::dictionary_dispatch::huffman_dictionary_aggregate_rejects_unavailable_fixed_ids"
+          "name": "symbol_text::tests::dictionary_dispatch::huffman_aggregation::huffman_dictionary_aggregate_rejects_unavailable_fixed_ids"
         },
         {
           "target": "lib",
-          "name": "symbol_text::tests::dictionary_dispatch::huffman_dictionary_aggregates_can_reference_previous_new_symbols"
+          "name": "symbol_text::tests::dictionary_dispatch::huffman_aggregation::huffman_dictionary_aggregates_can_reference_previous_new_symbols"
         }
       ],
       "strength": "functional_contract",
@@ -8716,7 +8810,7 @@
         },
         {
           "target": "lib",
-          "name": "huffman::tests::table_validation::rejects_invalid_bounds_partition_and_range_length"
+          "name": "huffman::tests::table_validation::rejects_invalid_bounds_and_range_length"
         }
       ],
       "strength": "functional_contract",
@@ -8786,7 +8880,7 @@
         },
         {
           "target": "lib",
-          "name": "huffman::tests::table_validation::rejects_invalid_bounds_partition_and_range_length"
+          "name": "huffman::tests::table_validation::rejects_invalid_bounds_and_range_length"
         }
       ],
       "strength": "safety_only",
@@ -8819,7 +8913,7 @@
         },
         {
           "target": "lib",
-          "name": "huffman::tests::table_validation::rejects_invalid_bounds_partition_and_range_length"
+          "name": "huffman::tests::table_validation::rejects_invalid_bounds_and_range_length"
         }
       ],
       "strength": "safety_only",

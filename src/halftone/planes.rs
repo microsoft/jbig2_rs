@@ -421,7 +421,14 @@ pub(super) fn accumulate_gray_byte(
     ensures match out {
         Ok(indexes) =>
             halftone_spec::decoder_state_valid(final(decoder))
-                && halftone_spec::work_valid(final(work)),
+                && halftone_spec::work_valid(final(work))
+                && (bit_depth == 0 ==> (
+                    *final(decoder) == *old(decoder)
+                    && *final(work) == *old(work)
+                    && indexes@.len() == width as nat * height as nat
+                    && forall|index: int| 0 <= index < indexes@.len() ==>
+                        indexes@[index] == 0
+                )),
         Err(_) => true,
     },
 ))]

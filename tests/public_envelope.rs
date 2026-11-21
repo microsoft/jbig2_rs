@@ -13,6 +13,8 @@ mod organization_and_limits;
 mod page_lifecycle;
 #[path = "public_envelope/references.rs"]
 mod references;
+#[path = "public_envelope/standalone_policy.rs"]
+mod standalone_policy;
 
 use std::io::Cursor;
 

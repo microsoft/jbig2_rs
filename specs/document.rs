@@ -27,6 +27,12 @@ pub(crate) use catalogs::{reference_total, reference_total_monotone};
 mod reference_types;
 pub(crate) use reference_types::*;
 
+#[path = "document/framing.rs"]
+mod framing;
+pub(crate) use framing::{
+    payload_window, unknown_generic_marker, unknown_generic_window, unknown_generic_window_prefix,
+};
+
 verus! {
 
 // Project metadata transitions; caller sequencing and raster semantics are separate.
@@ -281,26 +287,6 @@ pub open spec fn embedded_metadata(
 ) -> bool {
     &&& document_organization(document) == crate::file_header::Organization::Sequential
     &&& document_declared_page_count(document) == None
-}
-
-// Model navigation: spec::payload_window [project-result-model]
-// Purpose: Accepted metadata and exact sequential/random header/payload window results.
-// Audit: document-payload-window
-// REQUIREMENT CONTEXT: T88-SEQUENTIAL-SEGMENT-LAYOUT | ITU-T T.88 (08/2018) | D.1
-// Fidelity: unresolved; no independent normative approval.
-pub(crate) open spec fn payload_window(
-    header: &crate::segment_header::SegmentHeader,
-    bytes: Seq<u8>,
-    start: int,
-    end: int,
-    payload: Seq<u8>,
-) -> bool {
-    &&& 0 <= start <= end <= bytes.len()
-    &&& payload == bytes.subrange(start, end)
-    &&& match header.data_length {
-        Some(length) => end - start == length,
-        None => true,
-    }
 }
 
 #[verifier::opaque]

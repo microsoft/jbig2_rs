@@ -16,7 +16,10 @@ ROOT = Path(__file__).resolve().parents[1]
 PAYLOAD_FIELDS = """document_spec::payload_window(
     header, old(reader).bytes@, old(reader).position as int,
     final(reader).position as int, payload@,
-)"""
+) && match header.data_length {
+    None => document_spec::unknown_generic_window(payload@, payload@.len() as int),
+    Some(_) => true,
+}"""
 SEQUENTIAL_FIELDS = """document_spec::sequential_container_fields(
     input@, segments@, require_local_references,
 )"""
@@ -153,10 +156,11 @@ CASES = (
     {
         "id": "unknown_payload_returns_wrong_bytes",
         "function": "read_payload",
-        "site": """let length = find_unknown_generic_length(reader.remaining_bytes())?;
-            Ok(reader.read_bytes(length)?)""",
-        "replacement": """let length = find_unknown_generic_length(reader.remaining_bytes())?;
-            reader.read_bytes(length)?;
+        "site": """document_spec::unknown_generic_window_prefix(remaining@, length as int);
+            }
+            Ok(payload)""",
+        "replacement": """document_spec::unknown_generic_window_prefix(remaining@, length as int);
+            }
             Ok(&[])""",
         "control_site": PAYLOAD_FIELDS, "control_replacement": "true",
     },

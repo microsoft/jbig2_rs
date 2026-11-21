@@ -44,7 +44,16 @@ pub(super) fn generic_reserved_flags(flags: u8) -> u8 {
 /// For extended template 0 this deliberately consumes 24 bytes: twelve signed
 /// X/Y pairs.  T.88's isolated phrase "32-byte field" conflicts with both the
 /// enumerated byte range 0..=23 and the twelve defined adaptive pixels.
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match out {
+        Ok((header, length)) =>
+            payload@.len() >= 18
+                && length == generic_region_spec::generic_header_length(payload@[17])
+                && length <= payload@.len()
+                && header.mmr == (payload@[17] & 1 != 0),
+        Err(_) => true,
+    },
+))]
 pub(crate) fn parse_generic_region_header(
     payload: &[u8],
     limits: &Limits,
@@ -68,20 +77,26 @@ pub(crate) fn parse_generic_region_header(
 
     let mut adaptive = [TemplateOffset { x: 0, y: 0 }; 12];
     if !mmr {
-        let count = if template == GenericTemplate::Template0 {
-            if extended_template {
-                12
-            } else {
-                4
+        let count = match template {
+            GenericTemplate::Template0 => {
+                if extended_template {
+                    12
+                } else {
+                    4
+                }
             }
-        } else {
-            1
+            _ => 1,
         };
         let mut index = 0_usize;
         #[cfg_attr(verus_keep_ghost, verus_spec(
             invariant
                 index <= count,
                 count <= 12,
+                reader.bytes@ == payload@,
+                reader.position == 18 + 2 * index,
+                18 + 2 * count == generic_region_spec::generic_header_length(flags),
+                flags == payload@[17],
+                mmr == (flags & 1 != 0),
                 reader.position <= reader.bytes@.len(),
             decreases count - index,
         ))]
@@ -140,11 +155,12 @@ pub(crate) fn parse_refinement_region_header(
     ))
 }
 
-#[cfg_attr(verus_keep_ghost, verus_spec(
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires old(reader).position <= old(reader).bytes@.len(),
     ensures
         final(reader).bytes@ == old(reader).bytes@,
         final(reader).position <= final(reader).bytes@.len(),
+        out.is_ok() ==> final(reader).position == old(reader).position + 2,
 ))]
 pub(super) fn read_offset(
     reader: &mut ByteReader<'_>,

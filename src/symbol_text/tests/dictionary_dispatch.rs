@@ -1,8 +1,288 @@
 #![cfg(test)]
 
+mod huffman_aggregation;
+
+use super::super::codec::validate_bounded_arithmetic_terminator;
 use super::super::dictionary::decode_one_new_symbol;
 use super::*;
-use std::fmt::Write;
+
+fn empty_context_dictionary(flags: u16) -> Vec<u8> {
+    let mut payload = flags.to_be_bytes().to_vec();
+    if flags & 1 == 0 {
+        if flags & 0x0c00 == 0 {
+            payload.extend_from_slice(&[3, 0xff, 0xfd, 0xff, 2, 0xfe, 0xfe, 0xfe]);
+        } else {
+            payload.extend_from_slice(&[0xff, 0xff]);
+        }
+    }
+    if flags & 2 != 0 && flags & 0x1000 == 0 {
+        payload.extend_from_slice(&[0xff; 4]);
+    }
+    payload.extend_from_slice(&[0; 8]);
+    if flags & 1 == 0 {
+        payload.extend_from_slice(&[0xff, 0xac]);
+    }
+    payload
+}
+
+#[test]
+fn framed_dictionary_context_models_check_all_flags_and_adaptive_locations() {
+    let limits = Limits::default();
+    // Both sides are independently framed dictionaries; only their models differ.
+    for (retained_flags, used_flags) in [
+        (0x0202, 0x0303), // SDHUFF, same refinement model.
+        (0x0202, 0x0300), // SDREFAGG.
+        (0x0a00, 0x0f00), // SDTEMPLATE 2 versus 3 (same bank size).
+        (0x0202, 0x1302), // SDRTEMPLATE.
+        (0x0200, 0x0300), // Direct AT locations.
+        (0x0202, 0x0302), // Refinement AT locations.
+    ] {
+        let retained_payload = empty_context_dictionary(retained_flags);
+        let bank = decode_symbol_dictionary(&SymbolDictionaryInput {
+            payload: &retained_payload,
+            imported_symbols: SymbolCodebook::Contiguous(&[]),
+            custom_tables: &[],
+            used_contexts: None,
+            limits: &limits,
+        })
+        .unwrap()
+        .retained_contexts
+        .unwrap();
+        let matching_payload = empty_context_dictionary(retained_flags | 0x0100);
+        let matching = decode_symbol_dictionary(&SymbolDictionaryInput {
+            payload: &matching_payload,
+            imported_symbols: SymbolCodebook::Contiguous(&[]),
+            custom_tables: &[],
+            used_contexts: Some(&bank),
+            limits: &limits,
+        })
+        .unwrap();
+        assert_eq!(matching.consumed_bytes, matching_payload.len());
+
+        let mut payload = empty_context_dictionary(used_flags);
+        if retained_flags == used_flags & !0x0100 {
+            // Change each coordinate independently, not only the first AT.
+            let range = if retained_flags & 2 == 0 {
+                2..10
+            } else {
+                10..14
+            };
+            for offset in range {
+                payload[offset] ^= 1;
+                assert!(matches!(
+                    decode_symbol_dictionary(&SymbolDictionaryInput {
+                        payload: &payload,
+                        imported_symbols: SymbolCodebook::Contiguous(&[]),
+                        custom_tables: &[],
+                        used_contexts: Some(&bank),
+                        limits: &limits,
+                    }),
+                    Err(SymbolTextError::InvalidState(
+                        "incompatible retained dictionary context model"
+                    ))
+                ));
+                payload[offset] ^= 1;
+            }
+        } else {
+            // Missing bank kinds remain a distinct, earlier error.
+            let expected = if used_flags & 2 == 0 && bank.generic.is_none() {
+                "missing retained generic contexts"
+            } else {
+                "incompatible retained dictionary context model"
+            };
+            assert!(matches!(
+                decode_symbol_dictionary(&SymbolDictionaryInput {
+                    payload: &payload,
+                    imported_symbols: SymbolCodebook::Contiguous(&[]),
+                    custom_tables: &[],
+                    used_contexts: Some(&bank),
+                    limits: &limits,
+                }),
+                Err(SymbolTextError::InvalidState(message)) if message == expected
+            ));
+        }
+    }
+}
+
+fn one_symbol_arithmetic_dictionary(body: &[u8]) -> Vec<u8> {
+    let mut payload = empty_context_dictionary(0);
+    payload.truncate(payload.len() - 2);
+    payload[10..14].copy_from_slice(&1_u32.to_be_bytes());
+    payload[14..18].copy_from_slice(&1_u32.to_be_bytes());
+    payload.extend_from_slice(body);
+    payload
+}
+
+#[test]
+fn repeated_empty_arithmetic_dictionary_work_remains_bounded_without_new_syntax_rules() {
+    // Pinned #215 and #216 payloads, including their valid Annex E framing.
+    // 6.5.10 permits zero runs; 6.5.5 step 4 permits an immediate class OOB.
+    for body in [
+        &[
+            0x2a, 0x8a, 0xde, 0x99, 0x96, 0x13, 0xe9, 0x49, 0x32, 0xee, 0xe8, 0x35, 0x51, 0xc8,
+            0x0a, 0xe1, 0x53, 0x99, 0xfd, 0x65, 0x06, 0x24, 0x5d, 0x84, 0x9c, 0x71, 0x41, 0x53,
+            0x43, 0x7f, 0xff, 0xac,
+        ][..],
+        &[0xa1, 0x41, 0xdf, 0xff, 0x7f, 0xff, 0xac][..],
+    ] {
+        let payload = one_symbol_arithmetic_dictionary(body);
+        let limits = Limits {
+            max_work_units: 100_000,
+            ..Limits::default()
+        };
+        assert!(matches!(
+            decode_symbol_dictionary(&SymbolDictionaryInput {
+                payload: &payload,
+                imported_symbols: SymbolCodebook::Contiguous(&[]),
+                custom_tables: &[],
+                used_contexts: None,
+                limits: &limits,
+            }),
+            Err(SymbolTextError::Decode(DecodeError::LimitExceeded(
+                LimitExceeded {
+                    kind: LimitKind::Work,
+                    limit: 100_000,
+                    actual: 100_001,
+                }
+            )))
+        ));
+    }
+}
+
+#[test]
+fn framed_dictionary_accepts_many_empty_classes_and_interleaved_zero_export_runs() {
+    let limits = Limits::default();
+    let imported = [bitmap_from_packed_bytes(8, 1, &[0xa5], &limits).unwrap()];
+    let mut payload = 0x1003_u16.to_be_bytes().to_vec();
+    payload.extend_from_slice(&1_u32.to_be_bytes());
+    payload.extend_from_slice(&1_u32.to_be_bytes());
+    let mut bits = "0111111".repeat(257); // DH=1, immediate DW OOB.
+    bits.push('0'); // Final DH=1.
+    bits.push_str("11110000101"); // DW=16.
+    bits.push_str("00010"); // Two instances.
+    bits.push_str("00"); // Initial DT and strip DT.
+    bits.push_str("000000000"); // FS=0.
+    bits.push_str("00"); // One-bit ID=0, RI=0.
+    bits.push_str("001"); // DS=1.
+    bits.push_str("00"); // ID=0, RI=0.
+    bits.push_str("01"); // Strip OOB.
+    bits.push_str("111111"); // Class OOB.
+    bits.push_str(&dictionary_export_run(1)); // Skip the imported symbol.
+    for _ in 0..257 {
+        bits.push_str(&dictionary_export_run(0));
+        bits.push_str(&dictionary_export_run(0));
+    }
+    bits.push_str(&dictionary_export_run(1)); // Export the aggregate.
+    payload.extend_from_slice(&dictionary_bits(&bits));
+    let output = decode_symbol_dictionary(&SymbolDictionaryInput {
+        payload: &payload,
+        imported_symbols: SymbolCodebook::Contiguous(&imported),
+        custom_tables: &[],
+        used_contexts: None,
+        limits: &limits,
+    })
+    .unwrap();
+    assert_eq!(output.consumed_bytes, payload.len());
+    assert_eq!(output.exported_symbols.len(), 1);
+    let bitmap = &output.exported_symbols[0];
+    assert_eq!((bitmap.width(), bitmap.height()), (16, 258));
+    assert_eq!(&bitmap.bytes()[..2], &[0xa5, 0xa5]);
+    assert!(bitmap.bytes()[2..].iter().all(|byte| *byte == 0));
+}
+
+#[test]
+fn dictionary_declared_symbol_overrun_is_not_a_configured_limit() {
+    // Both #218 fixtures carry this identical dictionary. The entropy requests
+    // another symbol after the declared one; it does not exhaust max_symbols.
+    let payload =
+        one_symbol_arithmetic_dictionary(&[0x09, 0xda, 0x2c, 0xc9, 0xff, 0x7f, 0xff, 0xac]);
+    for max_symbols in [0, 1, Limits::default().max_symbols] {
+        let limits = Limits {
+            max_symbols,
+            ..Limits::default()
+        };
+        let result = decode_symbol_dictionary(&SymbolDictionaryInput {
+            payload: &payload,
+            imported_symbols: SymbolCodebook::Contiguous(&[]),
+            custom_tables: &[],
+            used_contexts: None,
+            limits: &limits,
+        });
+        if max_symbols == 0 {
+            assert!(matches!(
+                result,
+                Err(SymbolTextError::Decode(DecodeError::LimitExceeded(
+                    LimitExceeded {
+                        kind: LimitKind::Symbols,
+                        limit: 0,
+                        actual: 1,
+                    }
+                )))
+            ));
+        } else {
+            assert!(matches!(
+                result,
+                Err(SymbolTextError::InvalidCount("too many new symbols"))
+            ));
+        }
+        let valid = empty_context_dictionary(0);
+        assert!(decode_symbol_dictionary(&SymbolDictionaryInput {
+            payload: &valid,
+            imported_symbols: SymbolCodebook::Contiguous(&[]),
+            custom_tables: &[],
+            used_contexts: None,
+            limits: &limits,
+        })
+        .is_ok());
+    }
+}
+
+#[test]
+fn dictionary_arithmetic_termination_is_independent_of_context_model_validation() {
+    let limits = Limits::default();
+    let valid = empty_context_dictionary(0x0e00);
+    let bank = decode_symbol_dictionary(&SymbolDictionaryInput {
+        payload: &valid,
+        imported_symbols: SymbolCodebook::Contiguous(&[]),
+        custom_tables: &[],
+        used_contexts: None,
+        limits: &limits,
+    })
+    .unwrap()
+    .retained_contexts
+    .unwrap();
+    for body in [&[][..], &[0x08; 4][..], &[0xff, 0xac, 0][..]] {
+        let mut payload = empty_context_dictionary(0x0f00);
+        payload.truncate(payload.len() - 2);
+        payload.extend_from_slice(body);
+        assert!(matches!(
+            decode_symbol_dictionary(&SymbolDictionaryInput {
+                payload: &payload,
+                imported_symbols: SymbolCodebook::Contiguous(&[]),
+                custom_tables: &[],
+                used_contexts: Some(&bank),
+                limits: &limits,
+            }),
+            Err(SymbolTextError::InvalidState(
+                "bounded arithmetic data has no terminal marker"
+            ))
+        ));
+    }
+    // The strict bounded marker validator does not borrow a missing suffix
+    // from an adjacent section. Normalization's existing lone-FF policy is
+    // separate and is not expanded by this change.
+    for invalid in [&[][..], &[0xff][..], &[0xff, 0xac, 0][..]] {
+        assert!(validate_bounded_arithmetic_terminator(invalid).is_err());
+    }
+    assert!(validate_bounded_arithmetic_terminator(&[0xff, 0xac]).is_ok());
+    assert!(validate_bounded_arithmetic_terminator(&[0xff, 0x8f, 0xff, 0xac]).is_ok());
+    assert!(matches!(
+        validate_bounded_arithmetic_terminator(&[0xff, 0x90, 0xff, 0xac]),
+        Err(SymbolTextError::InvalidState(
+            "premature arithmetic marker in embedded refinement data"
+        ))
+    ));
+}
 
 #[test]
 fn arithmetic_dictionary_reserves_generic_snapshot_only_when_retention_is_requested() {
@@ -107,7 +387,10 @@ fn huffman_dictionary_restores_retained_refinement_statistics() {
     ] {
         let mut bank = RefinementContexts::new(template, &limits).unwrap();
         bank.contexts[8] = ArithmeticContext::from_state(10, 1).unwrap();
+        let mut model = header(true, true);
+        model.config = parse_symbol_dictionary_flags(flags).unwrap();
         let used = DictionaryContexts {
+            model,
             generic: None,
             refinement: Some(bank.try_snapshot(&limits).unwrap()),
         };
@@ -149,6 +432,7 @@ fn huffman_dictionary_restores_retained_refinement_statistics() {
             RefinementTemplate::Template0
         };
         let incompatible = DictionaryContexts {
+            model,
             generic: None,
             refinement: Some(
                 RefinementContexts::new(other_template, &limits)
@@ -384,152 +668,4 @@ fn dictionary_export_run(value: usize) -> String {
     } else {
         format!("10{:08b}", value - 16)
     }
-}
-
-fn fixed_id_dictionary_payload(imported_count: usize, ids: [usize; 2]) -> Vec<u8> {
-    assert!(imported_count > 0 && imported_count <= 32);
-    // Include the declared new symbol, not just the available imported symbols.
-    let width = usize::BITS - imported_count.leading_zeros();
-    let width = usize::try_from(width).unwrap();
-    let mut payload = 0x1003_u16.to_be_bytes().to_vec();
-    payload.extend_from_slice(&1_u32.to_be_bytes());
-    payload.extend_from_slice(&1_u32.to_be_bytes());
-
-    // B.4 DH=1; B.2 DW=16; B.1 REFAGGNINST=2.
-    let mut bits = String::from("0");
-    bits.push_str("11110000101");
-    bits.push_str("00010");
-    // Table 17: B.11 initial DT=1 and DT=1, B.6 FS=0.
-    // No transmitted symbol-ID table or byte alignment belongs here.
-    bits.push_str("00");
-    bits.push_str("000000000");
-    write!(bits, "{:0width$b}0", ids[0]).unwrap();
-    // B.8 DS=1 places the second eight-pixel symbol at x=8; both RI=0.
-    bits.push_str("001");
-    write!(bits, "{:0width$b}0", ids[1]).unwrap();
-    bits.push_str("01"); // B.8 strip OOB, also required after the last instance.
-    bits.push_str("111111"); // B.2 height-class OOB.
-    bits.push_str(&dictionary_export_run(imported_count));
-    bits.push_str(&dictionary_export_run(1));
-    payload.extend_from_slice(&dictionary_bits(&bits));
-    payload
-}
-
-#[test]
-fn huffman_dictionary_aggregation_preserves_standard_fixed_symbol_ids() {
-    // Regression for DEV-952C7B7561, retaining its 119 encoded challenges.
-    let limits = Limits::default();
-    let mut seed = 0x88_65_82_03_u32;
-    for count in [1_usize, 2, 3, 4, 7, 8, 15, 16, 31, 32] {
-        let pixels: Vec<u8> = (0..count)
-            .map(|id| u8::try_from(id).unwrap().wrapping_mul(37) ^ 0xa5)
-            .collect();
-        let imported: Vec<Bitmap> = pixels
-            .iter()
-            .map(|pixel| bitmap_from_packed_bytes(8, 1, &[*pixel], &limits).unwrap())
-            .collect();
-        for first in 0..count {
-            seed = seed.wrapping_mul(1_664_525).wrapping_add(1_013_904_223);
-            let second = if first == 0 {
-                count - 1
-            } else {
-                usize::try_from(seed).unwrap() % count
-            };
-            let ids = [first, second];
-            let payload = fixed_id_dictionary_payload(count, ids);
-            let output = decode_symbol_dictionary(&SymbolDictionaryInput {
-                payload: &payload,
-                imported_symbols: SymbolCodebook::Contiguous(&imported),
-                custom_tables: &[],
-                used_contexts: None,
-                limits: &limits,
-            })
-            .unwrap_or_else(|error| panic!("count={count} ids={ids:?}: {error:?}"));
-            assert_eq!(output.exported_symbols.len(), 1);
-            let bitmap = &output.exported_symbols[0];
-            assert_eq!(
-                (bitmap.width(), bitmap.height(), bitmap.stride()),
-                (16, 1, 2)
-            );
-            assert_eq!(
-                bitmap.bytes(),
-                &[pixels[first], pixels[second]],
-                "count={count} ids={ids:?}"
-            );
-            assert_eq!(output.consumed_bytes, payload.len());
-            assert!(output.retained_contexts.is_none());
-            for (bitmap, expected) in imported.iter().zip(&pixels) {
-                assert_eq!(bitmap.bytes(), &[*expected], "imported bitmap mutated");
-            }
-        }
-    }
-}
-
-#[test]
-fn huffman_dictionary_aggregate_rejects_unavailable_fixed_ids() {
-    let limits = Limits::default();
-    let imported = [bitmap_from_packed_bytes(8, 1, &[0xa5], &limits).unwrap()];
-    for ids in [[1, 0], [0, 1]] {
-        let payload = fixed_id_dictionary_payload(1, ids);
-        assert!(matches!(
-            decode_symbol_dictionary(&SymbolDictionaryInput {
-                payload: &payload,
-                imported_symbols: SymbolCodebook::Contiguous(&imported),
-                custom_tables: &[],
-                used_contexts: None,
-                limits: &limits,
-            }),
-            Err(SymbolTextError::SymbolIdOutOfRange {
-                id: 1,
-                available: 1,
-            })
-        ));
-    }
-}
-
-#[test]
-fn huffman_dictionary_aggregates_can_reference_previous_new_symbols() {
-    let limits = Limits::default();
-    let imported = [bitmap_from_packed_bytes(8, 1, &[0xa5], &limits).unwrap()];
-    let mut payload = 0x1003_u16.to_be_bytes().to_vec();
-    payload.extend_from_slice(&2_u32.to_be_bytes());
-    payload.extend_from_slice(&2_u32.to_be_bytes());
-    // DH=1.
-    let mut bits = String::from("0");
-    // Both IDs have two bits from the outset: one import + two declared new.
-    for id in ["00", "01"] {
-        bits.push_str("11110000101"); // DW=16, yielding widths 16 then 32.
-        bits.push_str("00010"); // Two instances.
-        bits.push_str("00"); // Initial DT=1 and DT=1.
-        bits.push_str("000000000"); // FS=0.
-        bits.push_str(id);
-        bits.push('0'); // RI=0.
-        bits.push_str("001"); // DS=1.
-        bits.push_str(id);
-        bits.push('0');
-        bits.push_str("01"); // Strip OOB.
-    }
-    bits.push_str("111111"); // Height-class OOB.
-    bits.push_str(&dictionary_export_run(1));
-    bits.push_str(&dictionary_export_run(2));
-    payload.extend_from_slice(&dictionary_bits(&bits));
-    let output = decode_symbol_dictionary(&SymbolDictionaryInput {
-        payload: &payload,
-        imported_symbols: SymbolCodebook::Contiguous(&imported),
-        custom_tables: &[],
-        used_contexts: None,
-        limits: &limits,
-    })
-    .unwrap();
-    assert_eq!(output.exported_symbols.len(), 2);
-    for (bitmap, width) in output.exported_symbols.iter().zip([16, 32]) {
-        assert_eq!((bitmap.width(), bitmap.height()), (width, 1));
-        assert_eq!(
-            bitmap.bytes(),
-            vec![0xa5; usize::try_from(width / 8).unwrap()]
-        );
-    }
-    assert_eq!(output.consumed_bytes, payload.len());
-    assert!(output.retained_contexts.is_none());
-    assert_eq!(imported[0].bytes(), &[0xa5]);
 }

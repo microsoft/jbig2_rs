@@ -208,7 +208,8 @@ pub(crate) fn validate_pattern_indices(
         Ok(bitmap) =>
             halftone_spec::decoder_state_valid(final(decoder))
                 && halftone_spec::work_valid(final(work))
-                && crate::spec::bitmap::storage_valid(&bitmap),
+                && crate::spec::bitmap::storage_valid(&bitmap)
+                && (patterns@.len() == 1 ==> *final(decoder) == *old(decoder)),
         Err(_) => true,
     },
 ))]
