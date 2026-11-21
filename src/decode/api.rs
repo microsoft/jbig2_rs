@@ -11,7 +11,7 @@ use super::decode_spec;
 use vstd::prelude::*;
 
 impl Decoder {
-    /// Decodes a standalone file using an explicit validation policy.
+    /// Decodes standalone bytes using an explicit validation policy.
     ///
     /// Compatibility permits uniquely owned zero/closed-earlier-page EOP,
     /// complete pages missing end-of-page at exact boundaries, observed page
@@ -37,22 +37,6 @@ impl Decoder {
         policy: crate::DecodePolicy,
     ) -> Result<crate::DecodeResult<DecodedDocument>, DecodeError> {
         self.context().decode_with_policy(input, policy)
-    }
-
-    /// Bounded reader equivalent of [`Decoder::decode_with_policy`].
-    ///
-    /// The reader's owned input copy is included in memory, retained-state and
-    /// work budgets in addition to the compatibility preparation.
-    ///
-    /// # Errors
-    ///
-    /// Returns the same typed errors, including input and I/O limits.
-    pub fn decode_reader_with_policy<R: Read>(
-        &self,
-        reader: &mut R,
-        policy: crate::DecodePolicy,
-    ) -> Result<crate::DecodeResult<DecodedDocument>, DecodeError> {
-        self.context().decode_reader_with_policy(reader, policy)
     }
 
     /// Decodes embedded PDF/JBIG2 data with an explicit recovery policy.
@@ -324,31 +308,6 @@ impl DecoderContext<'_> {
             value,
             recoveries: prepared.recoveries,
         })
-    }
-
-    /// Context reader equivalent of [`Decoder::decode_reader_with_policy`].
-    ///
-    /// # Errors
-    ///
-    /// Returns typed errors and performs normal cleanup on every result.
-    pub fn decode_reader_with_policy<R: Read>(
-        &mut self,
-        reader: &mut R,
-        policy: crate::DecodePolicy,
-    ) -> Result<crate::DecodeResult<DecodedDocument>, DecodeError> {
-        self.release_scratch();
-        let result = self.decode_reader_policy_internal(reader, policy);
-        self.finish_call();
-        result
-    }
-
-    fn decode_reader_policy_internal<R: Read>(
-        &self,
-        reader: &mut R,
-        policy: crate::DecodePolicy,
-    ) -> Result<crate::DecodeResult<DecodedDocument>, DecodeError> {
-        let (bytes, limits) = crate::document::standalone::read_input(reader, self.limits())?;
-        Decoder::new(limits).decode_with_policy(&bytes, policy)
     }
 
     /// Decodes with the explicit policy of [`Decoder::decode_embedded_with_policy`].

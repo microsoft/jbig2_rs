@@ -2,10 +2,16 @@
 
 `Decoder::decode_with_policy(bytes, DecodePolicy::Compatibility)` is an explicit
 policy selection, not a retry after strict failure. The same operation
-is available on `DecoderContext`; both also provide `decode_reader_with_policy`.
+is available on `DecoderContext`. These two policy entry points accept byte
+slices only; there is no standalone compatibility reader API.
 Existing standalone APIs, inspection, and `DecodePolicy::Strict` remain strict.
 `EmbeddedPolicy` is independent and unchanged. Random-access files remain strict.
 No release-0.2 behavior or API is changed.
+
+The existing ordinary strict reader APIs are unchanged. Applications opting into
+compatibility supply already-buffered bytes to `decode_with_policy`; buffering
+and bounding their I/O remain the caller's responsibility. The decoder still
+applies its stream and preparation limits to the supplied slice.
 
 Success returns `DecodeResult { value, recoveries }`. Every page and all entropy
 data must decode successfully before either output or diagnostics is returned.
@@ -75,14 +81,13 @@ Its conservative work reservation covers copying, header/reference scanning,
 ownership searches, page-boundary scans and diagnostic searches. A checked
 `64 * source_bytes` memory reservation includes scanner header/reference and
 ownership scratch; the observed output-copy allocation remains debited while
-rendering. Diagnostics debit their observed vector-capacity growth. The reader's
-owned input allocation is separately debited. Normal segment, page, reference,
+rendering. Diagnostics debit their observed vector-capacity growth. Normal
+segment, page, reference,
 dimension, entropy, bitmap, cumulative-output and decode budgets still apply;
 errors may report the remaining effective budget. This deliberately can reject a
 file whose strict decode fits a smaller budget.
-Compatibility calls release old context scratch before preparation; the new
-context reader methods do likewise before buffering input, so an earlier
-document's retained allocations cannot escape these budgets.
+Compatibility calls release old context scratch before preparation, so an
+earlier document's retained allocations cannot escape these budgets.
 The closed-page witness list is included in the existing scanner scratch
 reservation; no limit or work reservation is increased. Each historical lookup
 occurs only when the open list has one entry, preserving the existing quadratic
@@ -101,5 +106,6 @@ malformed files.
 The EOP ownership contract proves a unique positive open owner, with a closed
 smaller-page witness for every nonzero reassociation; successful closure removes
 exactly that open entry and appends exactly it to the observed closed history.
-Reader I/O uses the existing ordinary Rust `Read` boundary, with runtime checked
-length/capacity accounting; it is not a proof of arbitrary reader implementations.
+The existing strict reader APIs retain their explicitly reviewed I/O limitations;
+they do not implement this compatibility policy. No new I/O assumption or trusted
+boundary is introduced by the byte-only policy.

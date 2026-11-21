@@ -28,20 +28,11 @@ fn compatibility(bytes: &[u8]) -> jbig2_decoder::DecodeResult<jbig2_decoder::Dec
         .decode_with_policy(bytes, DecodePolicy::Compatibility)
         .unwrap();
     let mut context = decoder.context();
-    for repeated in [
-        context
-            .decode_with_policy(bytes, DecodePolicy::Compatibility)
-            .unwrap(),
-        decoder
-            .decode_reader_with_policy(&mut Cursor::new(bytes), DecodePolicy::Compatibility)
-            .unwrap(),
-        context
-            .decode_reader_with_policy(&mut Cursor::new(bytes), DecodePolicy::Compatibility)
-            .unwrap(),
-    ] {
-        assert_eq!(output.value, repeated.value);
-        assert_eq!(output.recoveries, repeated.recoveries);
-    }
+    let repeated = context
+        .decode_with_policy(bytes, DecodePolicy::Compatibility)
+        .unwrap();
+    assert_eq!(output.value, repeated.value);
+    assert_eq!(output.recoveries, repeated.recoveries);
     assert_eq!(bytes, source);
     output
 }
@@ -71,12 +62,6 @@ fn standalone_policy_strict_success_preserves_every_page_and_returns_no_recoveri
             .unwrap(),
         context
             .decode_with_policy(&bytes, DecodePolicy::Strict)
-            .unwrap(),
-        decoder
-            .decode_reader_with_policy(&mut Cursor::new(&bytes), DecodePolicy::Strict)
-            .unwrap(),
-        context
-            .decode_reader_with_policy(&mut Cursor::new(&bytes), DecodePolicy::Strict)
             .unwrap(),
     ] {
         assert_eq!(output.value, expected);
@@ -452,53 +437,11 @@ fn standalone_policy_preserves_necessary_extension_errors() {
 }
 
 #[test]
-fn standalone_policy_readers_preserve_typed_limits_late_io_errors_and_cleanup() {
-    struct LateError;
-    impl std::io::Read for LateError {
-        fn read(&mut self, _: &mut [u8]) -> std::io::Result<usize> {
-            Err(std::io::Error::new(
-                std::io::ErrorKind::TimedOut,
-                "late failure",
-            ))
-        }
-    }
+fn standalone_policy_bytes_release_old_scratch_before_preparation_and_errors() {
     let mut segments = patterned_page(0, 1);
-    segments.push(end(2, 0));
-    let bytes = standalone(true, Some(1), &segments);
-    for kind in [
-        LimitKind::StreamBytes,
-        LimitKind::Work,
-        LimitKind::Memory,
-        LimitKind::RetainedState,
-    ] {
-        let mut limits = Limits::default();
-        match kind {
-            LimitKind::StreamBytes => limits.max_stream_bytes = 1,
-            LimitKind::Work => limits.max_work_units = 1,
-            LimitKind::Memory => limits.max_decoder_managed_memory_bytes = 1,
-            LimitKind::RetainedState => limits.max_retained_state_bytes = 1,
-            _ => unreachable!(),
-        }
-        let decoder = Decoder::new(limits);
-        let mut context = decoder.context();
-        for error in [
-            decoder
-                .decode_reader_with_policy(&mut Cursor::new(&bytes), DecodePolicy::Compatibility)
-                .unwrap_err(),
-            context
-                .decode_reader_with_policy(&mut Cursor::new(&bytes), DecodePolicy::Compatibility)
-                .unwrap_err(),
-        ] {
-            assert!(
-                matches!(error, DecodeError::LimitExceeded(detail) if detail.kind == kind),
-                "{kind:?}: {error:?}"
-            );
-        }
-        assert_eq!(context.retained_scratch_bytes(), 0);
-    }
+    segments.push(end(2, 1));
     let decoder = Decoder::default();
     let mut context = decoder.context();
-    segments[2] = end(2, 1);
     let canonical = standalone(true, Some(1), &segments);
     context.decode(&canonical).unwrap();
     assert!(context.retained_scratch_bytes() > 0);
@@ -506,17 +449,16 @@ fn standalone_policy_readers_preserve_typed_limits_late_io_errors_and_cleanup() 
         .decode_with_policy(b"", DecodePolicy::Compatibility)
         .is_err());
     assert_eq!(context.retained_scratch_bytes(), 0);
-    context.decode(&canonical).unwrap();
-    assert!(context.retained_scratch_bytes() > 0);
-    let mut reader = std::io::Read::chain(Cursor::new(&bytes), LateError);
-    assert!(matches!(
-        context.decode_reader_with_policy(&mut reader, DecodePolicy::Compatibility),
-        Err(DecodeError::Io(jbig2_decoder::IoErrorKind::TimedOut)),
-    ));
-    assert_eq!(context.retained_scratch_bytes(), 0);
-    assert!(context
+    segments[2] = end(2, 0);
+    let bytes = standalone(true, Some(1), &segments);
+    let output = context
         .decode_with_policy(&bytes, DecodePolicy::Compatibility)
-        .is_ok());
+        .unwrap();
+    assert_pattern(&output.value.pages()[0], 1);
+    assert_eq!(
+        output.recoveries[0].kind,
+        RecoveryKind::ZeroAssociatedEndOfPage
+    );
 }
 
 #[test]
