@@ -243,9 +243,10 @@
       ],
       "max_work_units": null,
       "strict_status": "error",
-      "compatibility_status": "error",
+      "compatibility_status": "decoded",
+      "recovery_contains": "TrailingCrLf",
       "strict_error_debug": "Malformed(UnexpectedEof { offset: 215, needed: 4, remaining: 2 })",
-      "compatibility_error_debug": "Malformed(UnexpectedEof { offset: 215, needed: 4, remaining: 2 })"
+      "recovery_exact": "[Recovery { page: 0, byte_offset: Some(228), kind: TrailingCrLf }]"
     },
     {
       "issues": [

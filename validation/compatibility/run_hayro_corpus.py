@@ -127,6 +127,8 @@ def validate_output(row, mode, process, directory):
             raise ValueError("conforming input unexpectedly reports a recovery")
     elif row["recovery_contains"] not in recoveries:
         raise ValueError("required observable compatibility recovery is missing")
+    if not strict and "recovery_exact" in row and recoveries != row["recovery_exact"]:
+        raise ValueError("exact recovery kind, count or original byte offset differs")
     return {"status": "decoded", "pages": pages, "recoveries": recoveries}
 
 

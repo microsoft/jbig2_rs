@@ -220,7 +220,7 @@ fn standalone_policy_closed_page_eop_rejects_live_unseen_future_and_ambiguous_na
 }
 
 #[test]
-fn standalone_policy_suffix_requires_validated_eof_and_exact_crlf() {
+fn standalone_policy_suffix_requires_complete_document_end_and_exact_crlf() {
     let mut segments = patterned_page(0, 1);
     segments.push(end(2, 1));
     let no_eof = standalone(true, Some(1), &segments);
@@ -244,9 +244,48 @@ fn standalone_policy_suffix_requires_validated_eof_and_exact_crlf() {
     }
     let mut without_eof = no_eof;
     without_eof.extend_from_slice(b"\r\n");
+    let output = compatibility(&without_eof);
+    assert_pattern(&output.value.pages()[0], 1);
+    assert_eq!(output.recoveries[0].kind, RecoveryKind::TrailingCrLf);
+    assert_eq!(
+        output.recoveries[0].byte_offset,
+        Some(without_eof.len() - 2)
+    );
+    assert!(Decoder::default().decode(&without_eof).is_err());
+    assert_eq!(
+        Decoder::default()
+            .decode(&without_eof[..without_eof.len() - 2])
+            .unwrap(),
+        output.value
+    );
+
+    for count in [None, Some(0), Some(2)] {
+        let mut bytes = standalone(true, count, &segments[..segments.len() - 1]);
+        bytes.extend_from_slice(b"\r\n");
+        assert!(Decoder::default()
+            .decode_with_policy(&bytes, DecodePolicy::Compatibility)
+            .is_err());
+    }
+    let mut incomplete = standalone(true, Some(1), &segments[..segments.len() - 2]);
+    incomplete.extend_from_slice(b"\r\n");
     assert!(Decoder::default()
-        .decode_with_policy(&without_eof, DecodePolicy::Compatibility)
+        .decode_with_policy(&incomplete, DecodePolicy::Compatibility)
         .is_err());
+
+    let mut nonempty_eop = segments[..segments.len() - 1].to_vec();
+    nonempty_eop.last_mut().unwrap().payload.push(0);
+    let mut referred_eop = segments[..segments.len() - 1].to_vec();
+    let index = referred_eop.len() - 1;
+    referred_eop[index] = referred_eop[index].clone().references(&[0], 0);
+    let mut duplicate_page = segments[..segments.len() - 1].to_vec();
+    duplicate_page.extend([page(3, 1, 8, 1), end(4, 1)]);
+    for (count, segments) in [(1, nonempty_eop), (1, referred_eop), (2, duplicate_page)] {
+        let mut bytes = standalone(true, Some(count), &segments);
+        bytes.extend_from_slice(b"\r\n");
+        assert!(Decoder::default()
+            .decode_with_policy(&bytes, DecodePolicy::Compatibility)
+            .is_err());
+    }
 }
 
 #[test]
@@ -497,6 +536,7 @@ fn standalone_policy_pinned_family_all_pages_and_both_text_oob_failures() {
         ("page_count_mismatch", &["truchet", "honeycomb", "maze"][..]),
         ("reserved_region_flags", &["truchet"][..]),
         ("reserved_segment_type", &["truchet"][..]),
+        ("trailing_bytes", &["honeycomb"][..]),
     ] {
         let bytes = std::fs::read(
             assets
@@ -520,6 +560,12 @@ fn standalone_policy_pinned_family_all_pages_and_both_text_oob_failures() {
                 ]
             );
         }
+        if name == "trailing_bytes" {
+            assert!(decoder.decode(&bytes).is_err());
+            assert_eq!(output.recoveries.len(), 1);
+            assert_eq!(output.recoveries[0].kind, RecoveryKind::TrailingCrLf);
+            assert_eq!(output.recoveries[0].byte_offset, Some(228));
+        }
         for (page, image) in output.value.pages().iter().zip(expected) {
             let packed = std::fs::read(golden.join(format!("{image}.bitmap"))).unwrap();
             let width = u32::from_be_bytes(packed[..4].try_into().unwrap());
@@ -528,7 +574,6 @@ fn standalone_policy_pinned_family_all_pages_and_both_text_oob_failures() {
         }
     }
     for name in [
-        "trailing_bytes",
         "missing_final_oob",
         "missing_final_oob_huffman",
         "unknown_length_intermediate",
@@ -544,6 +589,25 @@ fn standalone_policy_pinned_family_all_pages_and_both_text_oob_failures() {
                 decoder.decode_with_policy(&bytes, policy).is_err(),
                 "{name}: {policy:?}"
             );
+        }
+        let mutation = match name {
+            "missing_final_oob" => Some((155, 211..215, 54_u32)),
+            "missing_final_oob_huffman" => Some((177, 338..339, 158_u32)),
+            _ => None,
+        };
+        if let Some((length_offset, coding_bytes, length)) = mutation {
+            let mut truncated_symbol = bytes.clone();
+            truncated_symbol.drain(coding_bytes);
+            truncated_symbol[length_offset..length_offset + 4]
+                .copy_from_slice(&length.to_be_bytes());
+            for policy in [DecodePolicy::Strict, DecodePolicy::Compatibility] {
+                assert!(
+                    decoder
+                        .decode_with_policy(&truncated_symbol, policy)
+                        .is_err(),
+                    "{name}: truncated symbol with preserved entropy tail, {policy:?}"
+                );
+            }
         }
     }
 }

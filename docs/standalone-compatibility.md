@@ -35,7 +35,7 @@ exceptions**, not interpretations that make malformed syntax normative:
 | #196 | Reassociate an empty, reference-free EOP only when exactly one positive page is currently open and its number fits the existing association field. The source association must be zero, or explicitly name an already-closed page with a smaller page number. Live, unseen, future-page and ambiguous associations are never overridden. Closed-earlier-page repairs report `ClosedPageEndOfPage`; zero repairs retain their existing kind. T.88 7.2.6, 7.4.9, 8. |
 | #197 | Close a missing-EOP page at the next complete page-information segment, or at the exact fully framed stream/EOF boundary. Reject overlapping open pages at a next-page boundary when inferring closures, and any later segment associated with the recovered page. Known dimensions are required; unknown heights need a complete validated final stripe. Striped recovery additionally validates the final stripe and rejects regions following it. No segment or bitmap content is synthesized. 7.4.8–10, 8.2, D.1. |
 | #198 | Use the observed page count only after validating framing, references, page ordering, lifecycle, dimensions, limits, and decoding **every** page. D.4.3. |
-| #199 | Ignore exactly one CR LF pair only after an independently parsed empty, unassociated, reference-free EOF. Short headers without EOF remain errors; other suffixes remain errors. 7.2, 7.4.11, D.1. |
+| #199 | Ignore exactly one CR LF pair after an independently parsed empty, unassociated, reference-free EOF, or a final empty, reference-free EOP on a positive page. The EOP case additionally requires a positive known declared count equal to the observed count, distinct positive closed-page IDs and no open page. Ordinary framing, references, page lifecycle and complete entropy decoding still validate the prefix. Other suffixes remain errors. Sequential organization does not require EOF (D.1); random-access header-table delimitation does (D.2), and an EOF when present must be last (7.4.11). Random-access policy remains strict. |
 | #200 | **Deferred, both arithmetic and Huffman remain rejected.** Exact instance count alone is insufficient to certify entropy termination; see below. 6.4.5 symbol-instance loop, 6.4.8, Annexes A/B. |
 | #201 | Clear bit `0x10` only when bits 4–7 equal exactly `0x10`. The 2018 text 7.4.1.5 explicitly makes bit 3 colour and bits 4–7 reserved. The colour and composition bits are preserved; other reserved bits still reject. |
 | #202 | Skip only type 1 with the short association form, no deferred retention, no references, self-retention clear, and a checked known-length payload wholly inside the source. Its page must already be open, or be zero. All source segment numbers and segment limits are checked even for skipped segments. Normal reference validation then rejects **any** surviving reference to the omitted number, including retention/dependency uses. 7.2, 7.3. Other reserved types remain rejected. |
@@ -58,20 +58,35 @@ contracts, not returning success when `decoded == declared`, catching arbitrary
 EOF, padding data, or altering dictionary/Huffman behavior. This change does none
 of those things and preserves the original typed errors in both cases.
 
+The follow-up experiment checked actual terminal state, not just literal suffix
+bytes. The arithmetic original observes its final `FF AC` after instance 87 of
+90, before the last three complete instance decodes. A discarded prototype
+stopping at the declared count plus that observed marker produced the reference
+bitmap for the original, but also accepted strict-rejected bodies with four or
+more coding bytes
+removed while preserving the marker and adjusting the segment length, producing
+corrupted complete-size bitmaps. Thus marker observation is not the missing
+completion certificate. The Huffman original has one zero bit remaining at the
+complete count (bit 1071 of 1072); this still requires a table-aware proof that
+distinguishes padding, a valid OOB, and a partially decoded field. Neither
+prototype was retained in production.
+
 ### Pinned reproductions
 
 The test-only upstream revision is
 `e7ada1354dff4041cdeed3d8ba56fe01b6186132`; the issue-linked revision is not
 resolvable. Generated controls do not depend on upstream implementation behavior.
-An optional ignored regression compares every page of the five accepted pinned
+An optional ignored regression compares every page of the six accepted pinned
 reproductions to packed pixels converted from their reference PNGs.
 
 The pinned #196 reproduction has EOP associations **0, 1, 2** for pages 1, 2, 3.
 Each marker has exactly one observed open owner; the last two explicitly name
 already-closed earlier pages. It reports one zero repair and two
 `ClosedPageEndOfPage` repairs, and all three pages match the reference PNGs.
-The pinned #199 reproduction has
-EOP + CR LF but **no EOF**, so it remains rejected. The pinned #197, #198,
+The pinned #199 reproduction has EOP + CR LF but **no EOF**. Its complete
+sequential prefix is valid without EOF; Compatibility reports `TrailingCrLf` at
+original byte offset 228 and returns the complete reference honeycomb page.
+Strict continues to reject the suffix. The pinned #197, #198,
 #201 and #202 reproductions are eligible; #200 (both modes) and #203 are not.
 
 ## Resource and proof contracts
@@ -106,6 +121,10 @@ malformed files.
 The EOP ownership contract proves a unique positive open owner, with a closed
 smaller-page witness for every nonzero reassociation; successful closure removes
 exactly that open entry and appends exactly it to the observed closed history.
+The final-EOP suffix predicate is verified equivalent to the exact
+known-count/empty-open/positive-distinct-closed-page model. It runs only for the
+exact CR LF candidate and uses the existing quadratic preparation work
+reservation and scanner scratch; no additional input or synthetic EOF is added.
 The existing strict reader APIs retain their explicitly reviewed I/O limitations;
 they do not implement this compatibility policy. No new I/O assumption or trusted
 boundary is introduced by the byte-only policy.
