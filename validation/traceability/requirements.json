@@ -24,7 +24,7 @@
   "model_classifications": {
     "review": "author-navigation-only-not-independent-normative-approval",
     "registry_sha256": "19f29e18950f5e35d011f88b528ba889ff3d4d000d12990d8f9c82d7de0c69cb",
-    "project_source_sha256": "96c40e966f2a9184aa3dfc32870a64c11f581f00fa39ac1742498f2c9ef7d719",
+    "project_source_sha256": "1e6444eae80167ae30c6e88915eec7735e7900177e13727f1f4d5f3b84122c83",
     "families": [
       {
         "file": "specs/huffman_lookup.rs",
@@ -1426,6 +1426,36 @@
         "justification": "Exact known-count, empty-open and positive distinct closed-page predicate at a sequential final EOP, used only for exact CR LF suffix recovery.",
         "ambiguity": "",
         "caveats": "Author navigation only; no independent normative approval or complete decoded-output proof."
+      },
+      {
+        "file": "specs/huffman.rs",
+        "members": [
+          "spec::zero_padding_before_prefix"
+        ],
+        "classification": "project-policy",
+        "justification": "Exact canonical prefix counts and zero sub-byte padding, plus complete-instance-count provenance at the final standalone Huffman strip boundary.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; no independent normative approval or complete decoded-output proof."
+      },
+      {
+        "file": "specs/huffman.rs",
+        "members": [
+          "spec::prefix_count"
+        ],
+        "classification": "proof-support",
+        "justification": "Exact canonical prefix counts and zero sub-byte padding, plus complete-instance-count provenance at the final standalone Huffman strip boundary.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; no independent normative approval or complete decoded-output proof."
+      },
+      {
+        "file": "specs/symbol_text.rs",
+        "members": [
+          "spec::text_end_matches_count"
+        ],
+        "classification": "project-policy",
+        "justification": "Exact canonical prefix counts and zero sub-byte padding, plus complete-instance-count provenance at the final standalone Huffman strip boundary.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; no independent normative approval or complete decoded-output proof."
       }
     ]
   },
@@ -2092,13 +2122,13 @@
     "specs/generic_region.rs": "2f618e54b049854b14490b1a1182d298815cd024b3ed10e8272449395149f981",
     "specs/generic_region/framing.rs": "23db47cf183d7f2c490db16611119d5fe1e485b4800cb6af9904516032c6ccea",
     "specs/halftone.rs": "14319589988d823798b25f2f3dec0055fa3536f0f9c2dfc27c576659a8c61a0f",
-    "specs/huffman.rs": "2d58cd9b77ebfaad2b432f0a2366b409582a4701b9dea067d69881545d446b3e",
+    "specs/huffman.rs": "bfdd9bdffea52f9aad86712963f9ebdd003d0dd35cac19789093f1c25499cb34",
     "specs/huffman_lookup.rs": "bd6fe3ee36de79103836d6fc9fc411b03ca0b304ce4915d0f730c2301b483766",
     "specs/mmr.rs": "6333d8553b47d1bd6bcc996c0d0f3d0216d3f4d3eeff9c07e34a4dfeea5bb49c",
     "specs/mod.rs": "34f81994f8b77e618a7d48d4552175d09cf3be633307166227c13ce94a06ba21",
     "specs/readers.rs": "ee10b54a7ee8dce323488bf8ef5229fbbf1d5811888a3364cda8f2cc187ba251",
     "specs/segments.rs": "a4a19a65babe5a29532273f3374434762cf0fd63d3336b0f49e4914e3e390bc0",
-    "specs/symbol_text.rs": "b4326bd28b6f6fa1dd3a45d51e3a50dbadfde06c4750be2c511e1a039abc95d7",
+    "specs/symbol_text.rs": "afaae649978ac149c9c387b5b1b4b7b9b018c38c1a84a607fa2fbab5f0dc2818",
     "specs/symbol_text/arithmetic_codec.rs": "c96145d1428fd0edda0b93437f15e15592e9f7476d8465dbd55feb071d1a866c",
     "specs/symbol_text/dictionary.rs": "f7994737d95cefbca3e6067754190b160ddb8c85900a17edf672b4f8d80882b2",
     "specs/symbol_text/huffman_codec.rs": "3a56e2a0f9c27443b1ee91029c92584a45df3398fc4f433de4ffc1e717246295",
@@ -2118,7 +2148,7 @@
     "src/bitmap/tests/composition.rs": "6e1643c277251306450aa427f99a143a82be3e1d32cb81ef037d6b527c92a9ba",
     "src/bitmap/tests/layout_and_access.rs": "794454828d33bf94749c93ec3091be8d216a05375088d42e68aafe44effad84a",
     "src/decode.rs": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
-    "src/decode/api.rs": "6edf040f36a614023650c8a7a479454dcdc44bc1b81fd80916619c8c9559dfe2",
+    "src/decode/api.rs": "49d45b828fd56924b7176ac54283e1fadc70f93bec1d45945095db975ee6082c",
     "src/decode/dispatch/references.rs": "52e7500e0cef622729c3b19f535c8d0824644b5a954dd373ffeadeb34e649c67",
     "src/decode/rendering.rs": "fa259425d937b3933ee01ccffdd2ddfe55d11097c5e5881645b1e09cf6ab3bad",
     "src/decode/resources.rs": "55f9ee8e2daa02d57b3778847780e98dd8e2b7cf0b7331d45f76e429011dfd1a",
@@ -2154,7 +2184,7 @@
     "src/halftone/tests/headers_and_patterns.rs": "ef5f90a9b1eaf32619dc22c6f49b5d6d6ccbf32f9bdacfc6507f29c15efa9f70",
     "src/huffman.rs": "a4bde5b0db72e4bdbecadbd9d78211f5a8057c800abc7e37e93904b5b7e69dd0",
     "src/huffman/construction.rs": "cf4691f446ac0449b15d7e51fc4693b2629125b61d1cae3046f8de79acfc7ebf",
-    "src/huffman/decoding.rs": "d270f70dc14a05881bd3b30ee62bb00bd91a5d578f413054221d3a41c84e4229",
+    "src/huffman/decoding.rs": "dbdbb05884b0820c4d48576835a64e086f39623d2e74a07cb94d6bd309ca85ef",
     "src/huffman/tests/cache_map.rs": "fe783f19e825db4ed6383318912179f9a58a9026df14480d4ab350b83438239e",
     "src/huffman/tests/canonical_decoding.rs": "1c445c3d01557bf09170fdb0ad9e6b8bd1c9af5de22750a3bc46eea942975868",
     "src/huffman/tests/fallback_state.rs": "f2785678ac694d7c40760693b376d641872f90388b5933b6d8a3e1ac4e5a45e0",
@@ -2179,7 +2209,7 @@
     "src/segment_data/tests.rs": "7b082bcee501bd86382474823db6af59afb56842b7d053c3de8b77d2e5edfc15",
     "src/segment_header.rs": "ec5047080fa67fd0a8dd28e8101b972aeb23e3d10939906e1c059674ebaa528d",
     "src/segment_header/tests.rs": "41f4c9c942b49bc2d4d7c8588ac99ab655475803849836854afd349eee0d463c",
-    "src/symbol_text.rs": "48a825ff91d4cb21065d04ca89a0076f2627b9c608c001bad35f2da77719678e",
+    "src/symbol_text.rs": "bac0549e15a2592276bc2a24a448186158dbb8adb0cd99e8dd0247bb8d00ab3d",
     "src/symbol_text/bitmap.rs": "d872783ab5e9768ba4064ca309700f089e31b3ca799425edc6a5d7471efc40b2",
     "src/symbol_text/codebook.rs": "3ad3dd4131dbb7343a3267f32718d4c5278f029c1b90937f45d06363b8defbcc",
     "src/symbol_text/codec.rs": "4f975eff5bd958e0b201dd9c80e91b40be4681254a56adb02a681cc87e297e78",
@@ -2194,21 +2224,22 @@
     "src/symbol_text/headers.rs": "69da74f1ff5627d013f327d5c152d49582c7bb82462fc70b48b82159b9e8d987",
     "src/symbol_text/placement.rs": "6fe7228afc13c0735fcfe0d9359e07e03dfdd5a6883ba8d79523dcfde8885e5d",
     "src/symbol_text/tests/arithmetic_composition.rs": "8749f6561c7b3030deafa47358bd499514821726851cb296d4f00b2ff2110120",
-    "src/symbol_text/tests/codec_and_exports.rs": "37db93244698f73f2eabd55333937bb1b7ab8ec4af4b7ad7a4ed975105e9f483",
+    "src/symbol_text/tests/codec_and_exports.rs": "2fe7e304d5ce85cc18f39cd026f09ea919435d3eeb277577e784e2933f5d2269",
     "src/symbol_text/tests/dictionary_dispatch.rs": "632ca48342adb2713092cecab915ee9f67eb3610dc92a2764cb429773a103f82",
     "src/symbol_text/tests/dictionary_dispatch/huffman_aggregation.rs": "0349534fe6854219a69f33105ed9fdf5cdfe63d0298002bdc4a6098c43afcc8b",
     "src/symbol_text/tests/flags_and_tables.rs": "ac4e3ee2b5aadda78ebbe2c7804584f49a48a96816c85fa37adb99aa2a0113fe",
-    "src/symbol_text/tests/huffman_fields.rs": "222ee8d81f8b0acd926e3cfb85288464919ba835027353024447d9f108ace38d",
+    "src/symbol_text/tests/huffman_fields.rs": "6143db3e01fdba1da997da801b7f3ccc799e36e51ef1935f995bf58482b94b9b",
     "src/symbol_text/tests/huffman_symbol_ids.rs": "89dce150f0deb0e9eb16bb38cda5238c6546589d8022829680c412ff4f3becd0",
     "src/symbol_text/tests/placement_render.rs": "5d07c12827335abdba47df041992ea76e1b12d1a2ae1fb598ba3d4ecba1350b1",
     "src/symbol_text/tests/placement_state.rs": "4842dd4690593cf25b854787030a1e99f93c5611801899a22fce35f9625c75e3",
     "src/symbol_text/tests/resource_accounting.rs": "88581edeabfa81aeb30bee5dd89ad07692931b6754248abe1755ffda3809cc13",
-    "src/symbol_text/tests/text_termination.rs": "3b629b51e16bdf7dfcedf2a6c46b99c95a2fe6042b8b0da4e74f069722789eeb",
-    "src/symbol_text/text.rs": "0b76547ff330531d3c34d7c253d46109c21ed8e9be25a4a9cbc6ed0e470a87b2",
+    "src/symbol_text/tests/text_termination.rs": "878fbd53aa0ef632484aeca3d649933e9a2fb894ffb93eb57a76519fe34a15cb",
+    "src/symbol_text/text.rs": "f6ec2cbd5bd6cc3bda8fcbc80868780b34545b87f9411f350f0fcb9b2422f54c",
     "tests/catalog_contracts.rs": "d4eb4fd3d554494fcd99fa58def0eaa542fca7f97ff32c2083cfa0d3e1545da2",
     "tests/spec_header.rs": "6c8d30477d3be9080827bf0eab191739ab4fe844fe856c60020eb53a50cbcdda",
     "tests/traceability_organization.rs": "967cd92362829cc4258db0ab7300a8f28b53055dbd61489c3c3262ee6d539b5f",
-    "tests/traceability_semantics.rs": "e7189d9cb70fa9b021b221f02942d90e64e9f96f9d38040edf4fa8599dfaa5f9"
+    "tests/traceability_semantics.rs": "e7189d9cb70fa9b021b221f02942d90e64e9f96f9d38040edf4fa8599dfaa5f9",
+    "src/symbol_text/text/segment.rs": "1c395e072a26c37077848d31448c1949dbfe1c0373475c691e38a8caac5ee4c3"
   },
   "definitions": {
     "mmr-mode-table-entry": {
@@ -6295,9 +6326,10 @@
         "symbol_text::codec::huffman::HuffmanCodec::decode_symbol_id",
         "symbol_text::codec::SymbolCodec::decode_symbol_id",
         "symbol_text::text::decode_text_region_body",
+        "symbol_text::text::decode_text_region_body_with_end",
         "symbol_text::dictionary::arithmetic::decode_dictionary_single_instance_refinement",
         "symbol_text::codec::symbols::symbol_id_code_length",
-        "symbol_text::text::decode_text_region",
+        "symbol_text::text::segment::decode_text_region",
         "symbol_text::dictionary::decode_symbol_dictionary",
         "symbol_text::codec::huffman::new_huffman_codec",
         "symbol_text::dictionary::huffman::decode_symbol_dictionary_huffman"
@@ -7628,9 +7660,10 @@
         "symbol_text::codec::huffman::HuffmanCodec::decode_symbol_id",
         "symbol_text::codec::SymbolCodec::decode_symbol_id",
         "symbol_text::text::decode_text_region_body",
+        "symbol_text::text::decode_text_region_body_with_end",
         "symbol_text::dictionary::arithmetic::decode_dictionary_single_instance_refinement",
         "symbol_text::codec::symbols::symbol_id_code_length",
-        "symbol_text::text::decode_text_region",
+        "symbol_text::text::segment::decode_text_region",
         "symbol_text::dictionary::decode_symbol_dictionary",
         "symbol_text::codec::huffman::new_huffman_codec",
         "symbol_text::dictionary::huffman::decode_symbol_dictionary_huffman"
