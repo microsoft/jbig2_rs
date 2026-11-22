@@ -15,10 +15,11 @@ use super::tables::{
 use super::{
     compose_placement, enforce_limit, parse_text_region_header, required_integer,
     symbol_id_code_length, widen_u32_i64, widen_u8_i64, Bitmap, EntropyInteger, HuffmanChoiceSet,
-    HuffmanFieldTables, HuffmanTable, IntegerField, LimitKind, Limits, MalformedError, Placement,
-    PlacementBatch, ReferenceCorner, ResourceTracker, StandardHuffmanTables, StripState,
-    SymbolCodebook, SymbolCodec, SymbolIdRequest, SymbolTextError, TextRegionConfig,
-    TextRegionInput, TextRegionOutput, TextRegionState,
+    HuffmanFieldTables, HuffmanTable, HuffmanValue, IntegerField, LimitKind, Limits,
+    MalformedError, Placement, PlacementBatch, ReferenceCorner, ResourceTracker,
+    StandardHuffmanTables, StripState, SymbolCodebook, SymbolCodec, SymbolIdRequest,
+    SymbolTextError, TextRegionConfig, TextRegionEnd, TextRegionInput, TextRegionOutput,
+    TextRegionState,
 };
 #[cfg(verus_keep_ghost)]
 use vstd::prelude::*;
@@ -417,6 +418,67 @@ pub(super) fn decode_text_region_body(
     limits: &Limits,
     resources: &mut ResourceTracker,
 ) -> Result<Bitmap, SymbolTextError> {
+    decode_text_region_body_with_end(
+        codec,
+        available_symbols,
+        code_length,
+        width,
+        height,
+        number_of_instances,
+        config,
+        refinement_adaptive,
+        limits,
+        resources,
+        &mut TextRegionEnd::Strict,
+    )
+}
+
+#[allow(clippy::too_many_arguments, clippy::too_many_lines)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    requires
+        symbol_text_spec::codec_valid(old(codec)),
+        symbol_text_spec::codebook_valid(available_symbols),
+        symbol_text_spec::work_units(old(resources)) <= limits.max_work_units,
+        *old(end) == TextRegionEnd::Strict || *old(end) == TextRegionEnd::BoundedHuffman,
+    ensures match out {
+        Ok(bitmap) =>
+            symbol_text_spec::codec_valid(final(codec))
+                && crate::spec::bitmap::storage_valid(&bitmap)
+                && crate::views::bitmap_width(&bitmap) == width
+                && crate::views::bitmap_height(&bitmap) == height
+                && symbol_text_spec::work_units(final(resources)) <= limits.max_work_units
+                && match *final(end) {
+                    TextRegionEnd::RecoveredHuffman { instances, padding_start } =>
+                        *old(end) == TextRegionEnd::BoundedHuffman
+                        && instances == number_of_instances && instances > 0
+                        && !config.refinement
+                        && match *final(codec) {
+                            SymbolCodec::Huffman(h) =>
+                                padding_start <= h.reader.bit_position
+                                && h.reader.bit_position - padding_start < 8
+                                && h.reader.bit_position == h.reader.bytes@.len() * 8,
+                            _ => false,
+                        },
+                    _ => *final(end) == *old(end),
+                },
+        Err(_) => true,
+    },
+))]
+pub(super) fn decode_text_region_body_with_end(
+    codec: &mut SymbolCodec<'_>,
+    available_symbols: SymbolCodebook<'_>,
+    code_length: u8,
+    width: u32,
+    height: u32,
+    number_of_instances: u32,
+    config: &TextRegionConfig,
+    refinement_adaptive: [(i8, i8); 2],
+    limits: &Limits,
+    resources: &mut ResourceTracker,
+    end: &mut TextRegionEnd,
+) -> Result<Bitmap, SymbolTextError> {
+    #[cfg(verus_keep_ghost)]
+    proof_decl! { let ghost initial_end = *end; }
     resources.charge_bitmap(width, height, limits)?;
     let mut bitmap = Bitmap::filled(width, height, config.default_pixel, limits)?;
     let mut placement_batch = PlacementBatch::new();
@@ -438,6 +500,7 @@ pub(super) fn decode_text_region_body(
         u32::try_from(available_symbols.len()).map_err(|_| MalformedError::IntegerOverflow)?;
 
     let mut decoded = 0_u32;
+    let mut recovered_padding = None;
     #[cfg_attr(verus_keep_ghost, verus_spec(
         invariant
             decoded <= number_of_instances,
@@ -452,6 +515,16 @@ pub(super) fn decode_text_region_body(
             crate::views::bitmap_height(&bitmap) == height,
             symbol_text_spec::placement_batch_valid(&placement_batch, &bitmap),
             symbol_text_spec::work_units(resources) <= limits.max_work_units,
+            initial_end == *old(end),
+            *end == initial_end,
+            recovered_padding.is_some() ==> (
+                initial_end == TextRegionEnd::BoundedHuffman
+                && decoded == number_of_instances
+                && symbol_text_spec::text_end_matches_count(
+                    TextRegionEnd::RecoveredHuffman { instances: decoded, padding_start: recovered_padding.unwrap() },
+                    codec, decoded, config.refinement,
+                )
+            ),
         decreases number_of_instances - decoded,
     ))]
     while decoded < number_of_instances {
@@ -478,9 +551,57 @@ pub(super) fn decode_text_region_body(
                 crate::views::bitmap_height(&bitmap) == height,
                 symbol_text_spec::placement_batch_valid(&placement_batch, &bitmap),
                 symbol_text_spec::work_units(resources) <= limits.max_work_units,
+                *end == initial_end,
+            invariant_except_break recovered_padding.is_none(),
+            ensures recovered_padding.is_none() || (
+                    initial_end == TextRegionEnd::BoundedHuffman
+                    && decoded == number_of_instances
+                    && symbol_text_spec::text_end_matches_count(
+                        TextRegionEnd::RecoveredHuffman { instances: decoded, padding_start: recovered_padding.unwrap() },
+                        codec, decoded, config.refinement,
+                    )
+                ),
             decreases number_of_instances - decoded,
         ))]
         loop {
+            if decoded == number_of_instances
+                && matches!(end, TextRegionEnd::BoundedHuffman)
+                && !config.refinement
+            {
+                if let SymbolCodec::Huffman(huffman) = codec {
+                    let table = huffman.tables.table_for(IntegerField::SubsequentS).ok_or(
+                        SymbolTextError::InvalidTableAssociation(
+                            "no Huffman table bound for field",
+                        ),
+                    )?;
+                    let padding_start = huffman.reader.bit_position;
+                    match table.decode_final_strip_value(&mut huffman.reader)? {
+                        Some(HuffmanValue::OutOfBand) => break,
+                        Some(HuffmanValue::Integer(_)) => {
+                            return Err(SymbolTextError::InvalidCount("too many text instances"));
+                        }
+                        None => {
+                            #[cfg(verus_keep_ghost)]
+                            proof! {
+                                assert(decoded > 0);
+                                assert(padding_start <= huffman.reader.bit_position);
+                                assert(huffman.reader.bit_position - padding_start < 8);
+                            }
+                            recovered_padding = Some(padding_start);
+                            #[cfg(verus_keep_ghost)]
+                            proof! {
+                                assert(initial_end == TextRegionEnd::BoundedHuffman);
+                                assert(decoded == number_of_instances);
+                                assert(symbol_text_spec::text_end_matches_count(
+                                    TextRegionEnd::RecoveredHuffman { instances: decoded, padding_start },
+                                    codec, decoded, config.refinement,
+                                ));
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
             let delta_s = if first {
                 None
             } else {
@@ -607,6 +728,12 @@ pub(super) fn decode_text_region_body(
         flush_placement_batch(&mut bitmap, &mut placement_batch, config.operator)?;
         state.end_strip()?;
     }
+    if let Some(padding_start) = recovered_padding {
+        *end = TextRegionEnd::RecoveredHuffman {
+            instances: decoded,
+            padding_start,
+        };
+    }
     flush_placement_batch(&mut bitmap, &mut placement_batch, config.operator)?;
     state.finish()?;
     Ok(bitmap)
@@ -619,7 +746,8 @@ pub(super) fn decode_text_region_body(
     ensures match out {
         Ok(output) =>
             crate::spec::bitmap::storage_valid(&output.bitmap)
-                && output.consumed_bytes <= input.payload@.len(),
+                && output.consumed_bytes <= input.payload@.len()
+                && (output.missing_final_huffman_oob ==> input.allow_missing_final_huffman_oob),
         Err(_) => true,
     },
 ))]
@@ -664,6 +792,11 @@ pub(crate) fn decode_text_region(
     };
     let refinement_template = refinement_template_from_u8(config.refinement_template);
 
+    let mut end = if input.allow_missing_final_huffman_oob {
+        TextRegionEnd::BoundedHuffman
+    } else {
+        TextRegionEnd::Strict
+    };
     let (bitmap, consumed_within_body) = if config.huffman {
         let custom_wrapped = wrap_custom_tables(input.custom_tables)?;
         let bindings = associate_text_tables(&config, &custom_wrapped)?;
@@ -700,7 +833,7 @@ pub(crate) fn decode_text_region(
             reveal(symbol_text_spec::codec_valid);
         }
 
-        let bitmap = decode_text_region_body(
+        let bitmap = decode_text_region_body_with_end(
             &mut codec,
             input.symbols,
             code_length,
@@ -711,6 +844,7 @@ pub(crate) fn decode_text_region(
             refinement_adaptive,
             limits,
             &mut resources,
+            &mut end,
         )?;
 
         let consumed_within_body = codec
@@ -773,5 +907,6 @@ pub(crate) fn decode_text_region(
         region: header.region,
         bitmap,
         consumed_bytes,
+        missing_final_huffman_oob: matches!(end, TextRegionEnd::RecoveredHuffman { .. }),
     })
 }

@@ -288,6 +288,11 @@ impl DecoderContext<'_> {
             &mut prepared.limits,
         )?;
         let work = structural_work(prepared.bytes.len(), &segments)?;
+        crate::document::standalone::reserve_text_recoveries(
+            &segments,
+            &mut prepared.recoveries,
+            &mut prepared.limits,
+        )?;
         let mut collector = PageCollector::new(&prepared.limits);
         super::orchestration::decode_segments_compatible_collected(
             &segments,
@@ -296,7 +301,7 @@ impl DecoderContext<'_> {
             &prepared.limits,
             &mut self.mmr,
             &mut collector,
-            &prepared.recoveries,
+            &mut prepared.recoveries,
         )?;
         let value = DecodedDocument {
             info,

@@ -738,6 +738,7 @@ pub(crate) struct TextRegionInput<'a> {
     pub(crate) symbols: SymbolCodebook<'a>,
     pub(crate) custom_tables: &'a [&'a HuffmanTable],
     pub(crate) limits: &'a Limits,
+    pub(crate) allow_missing_final_huffman_oob: bool,
 }
 
 /// Complete output of one text-region segment payload decode.
@@ -746,6 +747,18 @@ pub(crate) struct TextRegionOutput {
     pub(crate) region: RegionInfo,
     pub(crate) bitmap: Bitmap,
     pub(crate) consumed_bytes: usize,
+    pub(crate) missing_final_huffman_oob: bool,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(verus_keep_ghost, verus_verify)]
+enum TextRegionEnd {
+    Strict,
+    BoundedHuffman,
+    RecoveredHuffman {
+        instances: u32,
+        padding_start: usize,
+    },
 }
 
 mod numbers;

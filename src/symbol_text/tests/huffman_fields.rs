@@ -309,6 +309,7 @@ fn actual_huffman_segment_setup_preserves_requested_refinement_allocation() {
     dictionary.extend_from_slice(&[0; 8]);
     dictionary.push(0);
     let text_result = decode_text_region(&TextRegionInput {
+        allow_missing_final_huffman_oob: false,
         payload: &text,
         symbols: SymbolCodebook::Contiguous(&[]),
         custom_tables: &[],

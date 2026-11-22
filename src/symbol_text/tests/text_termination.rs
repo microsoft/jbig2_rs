@@ -1,6 +1,6 @@
 #![cfg(test)]
 
-use super::super::text::decode_text_region_body;
+use super::super::text::{decode_text_region_body, decode_text_region_body_with_end};
 use super::*;
 
 fn config(huffman: bool, log_strips: u16) -> TextRegionConfig {
@@ -244,4 +244,114 @@ fn every_strip_consumes_its_own_terminator_without_eating_the_next_field() {
         required_integer(&mut codec, IntegerField::WidthDelta).unwrap(),
         37
     );
+}
+
+#[test]
+fn final_huffman_padding_is_shorter_than_every_prefix_and_never_hides_a_partial_value() {
+    let limits = Limits::default();
+    for remaining in 0..8 {
+        let table = HuffmanTable::new(
+            &[
+                HuffmanLine::normal(0, remaining + 1, 0),
+                HuffmanLine::out_of_band(remaining + 1),
+            ],
+            &limits,
+        )
+        .unwrap();
+        let mut reader = bit_reader(&[0]);
+        reader.bit_position = 8 - usize::from(remaining);
+        assert_eq!(table.decode_final_strip_value(&mut reader).unwrap(), None);
+        assert_eq!(reader.bit_position, 8);
+    }
+    let table = HuffmanTable::new(
+        &[HuffmanLine::normal(0, 1, 1), HuffmanLine::out_of_band(1)],
+        &limits,
+    )
+    .unwrap();
+    let mut truncated_value = bit_reader(&[0]);
+    truncated_value.bit_position = 7;
+    assert!(table
+        .decode_final_strip_value(&mut truncated_value)
+        .is_err());
+    let mut valid_oob = bit_reader(&[1]);
+    valid_oob.bit_position = 7;
+    assert_eq!(
+        table.decode_final_strip_value(&mut valid_oob).unwrap(),
+        Some(HuffmanValue::OutOfBand)
+    );
+    let table = HuffmanTable::new(
+        &[HuffmanLine::normal(0, 5, 0), HuffmanLine::out_of_band(5)],
+        &limits,
+    )
+    .unwrap();
+    for (bytes, position) in [(&[1][..], 4), (&[0, 0][..], 4)] {
+        let mut reader = bit_reader(bytes);
+        reader.bit_position = position;
+        assert!(!matches!(
+            table.decode_final_strip_value(&mut reader),
+            Ok(None)
+        ));
+    }
+}
+
+#[test]
+fn bounded_huffman_final_end_requires_complete_count_and_flushes_placements() {
+    let limits = Limits::default();
+    let symbols = [
+        Bitmap::filled(1, 1, false, &limits).unwrap(),
+        Bitmap::filled(1, 1, true, &limits).unwrap(),
+    ];
+    let zero = HuffmanTable::new(&[HuffmanLine::normal(0, 1, 0)], &limits).unwrap();
+    let end_table = HuffmanTable::new(
+        &[HuffmanLine::normal(0, 5, 0), HuffmanLine::out_of_band(5)],
+        &limits,
+    )
+    .unwrap();
+    for (bytes, count, policy, expected) in [
+        (&[0x10][..], 1, TextRegionEnd::BoundedHuffman, true),
+        (&[0x10][..], 1, TextRegionEnd::Strict, false),
+        (&[0x10][..], 2, TextRegionEnd::BoundedHuffman, false),
+        (&[0x11][..], 1, TextRegionEnd::BoundedHuffman, false),
+        (&[0x10, 0][..], 1, TextRegionEnd::BoundedHuffman, false),
+        (&[0x10, 0x80][..], 1, TextRegionEnd::BoundedHuffman, true),
+    ] {
+        let mut concrete = super::huffman_fields::codec(bytes, 0, 0);
+        concrete.tables.strip_delta = Some(MaterializedHuffmanTable::Custom(&zero));
+        concrete.tables.first_s = Some(MaterializedHuffmanTable::Custom(&zero));
+        concrete.tables.subsequent_s = Some(MaterializedHuffmanTable::Custom(&end_table));
+        let mut codec = SymbolCodec::Huffman(concrete);
+        let mut resources = ResourceTracker::default();
+        let mut end = policy;
+        let result = decode_text_region_body_with_end(
+            &mut codec,
+            SymbolCodebook::Contiguous(&symbols),
+            1,
+            1,
+            1,
+            count,
+            &config(true, 0),
+            [(0, 0); 2],
+            &limits,
+            &mut resources,
+            &mut end,
+        );
+        assert_eq!(result.is_ok(), expected, "{bytes:?}, count {count}");
+        if let Ok(bitmap) = result {
+            assert_eq!(bitmap.bytes(), &[0x80]);
+            assert_eq!(resources.work_units, 2);
+            if bytes.len() == 1 {
+                assert!(matches!(
+                    end,
+                    TextRegionEnd::RecoveredHuffman {
+                        instances: 1,
+                        padding_start: 4
+                    }
+                ));
+            } else {
+                assert!(end == TextRegionEnd::BoundedHuffman);
+            }
+        } else {
+            assert!(end == policy);
+        }
+    }
 }

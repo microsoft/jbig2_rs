@@ -11,6 +11,105 @@ use super::{
 
 impl HuffmanTable {
     #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        requires huffman_spec::reader_valid(reader),
+        ensures out.is_ok(), match out {
+            Ok(allowed) => allowed == huffman_spec::zero_padding_before_prefix(self, reader),
+            Err(_) => true,
+        },
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    pub(crate) fn zero_padding_before_prefix(
+        &self,
+        reader: &BitReader<'_>,
+    ) -> Result<bool, HuffmanError> {
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            reveal(huffman_spec::zero_padding_before_prefix);
+            huffman_spec::prefix_count_definition(self);
+        }
+        let total = reader
+            .bytes
+            .len()
+            .checked_mul(8)
+            .ok_or(MalformedError::IntegerOverflow)?;
+        let remaining = total
+            .checked_sub(reader.bit_position)
+            .ok_or(MalformedError::IntegerOverflow)?;
+        if remaining >= 8 {
+            return Ok(false);
+        }
+        let mut length = 1_usize;
+        #[cfg_attr(verus_keep_ghost, verus_spec(
+            invariant 1 <= length <= remaining + 1, remaining < 8,
+                huffman_spec::reader_valid(reader),
+                remaining as int == reader.bytes@.len() * 8 - reader.bit_position,
+                forall|done: int| 1 <= done < length ==> self.length_count@[done] == 0,
+            decreases remaining + 1 - length,
+        ))]
+        while length <= remaining {
+            if self.length_count[length] != 0 {
+                #[cfg(verus_keep_ghost)]
+                proof! {
+                    huffman_spec::prefix_count_definition(self);
+                    reveal(huffman_spec::zero_padding_before_prefix);
+                    assert(huffman_spec::prefix_count(self, length as int) != 0);
+                    assert(!huffman_spec::zero_padding_before_prefix(self, reader));
+                }
+                return Ok(false);
+            }
+            length += 1;
+        }
+        let mut padding = *reader;
+        let count = u8::try_from(remaining).map_err(|_| MalformedError::IntegerOverflow)?;
+        Ok(padding.read_bits(count)? == 0)
+    }
+
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        requires huffman_spec::reader_valid(old(reader)),
+        ensures
+            huffman_spec::reader_valid(final(reader)),
+            final(reader).bytes@ == old(reader).bytes@,
+            out == Ok(None) ==> (
+                huffman_spec::zero_padding_before_prefix(self, old(reader))
+                && final(reader).bit_position == old(reader).bytes@.len() * 8
+            ),
+            match out {
+                Ok(Some(value)) => huffman_spec::decode_state(
+                    self, old(reader).bytes@, old(reader).bit_position,
+                ).0 == Ok(value),
+                Err(error) => huffman_spec::decode_state(
+                    self, old(reader).bytes@, old(reader).bit_position,
+                ).0 == Err(error),
+                _ => true,
+            },
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    pub(crate) fn decode_final_strip_value(
+        &self,
+        reader: &mut BitReader<'_>,
+    ) -> Result<Option<HuffmanValue>, HuffmanError> {
+        #[cfg(verus_keep_ghost)]
+        proof! { reveal(huffman_spec::zero_padding_before_prefix); }
+        let padding = self.zero_padding_before_prefix(reader)?;
+        match self.decode(reader) {
+            Ok(value) => Ok(Some(value)),
+            Err(HuffmanError::Decode(DecodeError::Malformed(MalformedError::UnexpectedEof {
+                offset,
+                needed,
+                remaining,
+            }))) if padding
+                && needed == 1
+                && remaining == 0
+                && offset == reader.bytes.len() as u64 * 8
+                && reader.bit_position == reader.bytes.len() * 8 =>
+            {
+                Ok(None)
+            }
+            Err(error) => Err(error),
+        }
+    }
+
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
         ensures out == huffman_spec::table_has_oob(self),
     ))]
     #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]

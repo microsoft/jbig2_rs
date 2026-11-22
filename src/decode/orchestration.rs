@@ -111,6 +111,7 @@ macro_rules! decode_segments_body {
         $sink:expr,
         $embedded:expr,
         $recoveries:expr,
+        $text_recoveries:expr,
         $write_page:path
     ) => {{
         let segments = $segments;
@@ -348,6 +349,7 @@ macro_rules! decode_segments_body {
                         &mut retained,
                         &mut cumulative_work,
                         limits,
+                        $text_recoveries,
                     )?;
                 }
                 SegmentType::IntermediateHalftoneRegion
@@ -467,6 +469,7 @@ pub(super) fn decode_segments_collected(
         sink,
         embedded,
         &[],
+        None::<&mut Vec<crate::Recovery>>,
         PageCollector::push_page
     )
 }
@@ -493,6 +496,7 @@ pub(super) fn decode_segments<S: PageSink>(
         sink,
         false,
         &[],
+        None::<&mut Vec<crate::Recovery>>,
         write_page_to_sink::<S>
     )
 }
@@ -506,7 +510,7 @@ pub(super) fn decode_segments_compatible_collected(
     limits: &Limits,
     mmr_scratch: &mut MmrScratch,
     sink: &mut PageCollector,
-    recoveries: &[crate::Recovery],
+    recoveries: &mut Vec<crate::Recovery>,
 ) -> Result<(), DecodeError> {
     decode_segments_body!(
         segments,
@@ -518,7 +522,8 @@ pub(super) fn decode_segments_compatible_collected(
         None::<InitialResources>,
         sink,
         true,
-        recoveries,
+        &*recoveries,
+        Some(&mut *recoveries),
         PageCollector::push_page
     )
 }

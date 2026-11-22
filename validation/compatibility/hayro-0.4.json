@@ -288,9 +288,10 @@
       ],
       "max_work_units": null,
       "strict_status": "error",
-      "compatibility_status": "error",
+      "compatibility_status": "decoded",
+      "recovery_contains": "MissingFinalHuffmanStripEnd",
       "strict_error_debug": "Malformed(UnexpectedEof { offset: 1072, needed: 1, remaining: 0 })",
-      "compatibility_error_debug": "Malformed(UnexpectedEof { offset: 1072, needed: 1, remaining: 0 })"
+      "recovery_exact": "[Recovery { page: 1, byte_offset: None, kind: MissingFinalHuffmanStripEnd }]"
     },
     {
       "issues": [
