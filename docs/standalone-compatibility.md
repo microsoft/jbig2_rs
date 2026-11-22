@@ -17,8 +17,8 @@ Success returns `DecodeResult { value, recoveries }`. Every page and all entropy
 data must decode successfully before either output or diagnostics is returned.
 An empty diagnostic list means no exception was used. Recovered output is **not**
 a claim that the original file conforms to T.88. Source bytes are immutable.
-Diagnostic byte offsets refer to the original input; inferred page closures have
-`byte_offset: None` and identify their page instead. Page-count recovery makes
+Diagnostic byte offsets refer to the original input; inferred page closures and
+final Huffman entropy boundaries have `byte_offset: None` and identify their page. Page-count recovery makes
 `DocumentInfo::declared_page_count()` report the observed count, with an
 `ObservedPageCount` diagnostic distinguishing it from source metadata. Segment
 counts exclude deliberately skipped type-1 segments; all other metadata is
@@ -36,7 +36,7 @@ exceptions**, not interpretations that make malformed syntax normative:
 | #197 | Close a missing-EOP page at the next complete page-information segment, or at the exact fully framed stream/EOF boundary. Reject overlapping open pages at a next-page boundary when inferring closures, and any later segment associated with the recovered page. Known dimensions are required; unknown heights need a complete validated final stripe. Striped recovery additionally validates the final stripe and rejects regions following it. No segment or bitmap content is synthesized. 7.4.8–10, 8.2, D.1. |
 | #198 | Use the observed page count only after validating framing, references, page ordering, lifecycle, dimensions, limits, and decoding **every** page. D.4.3. |
 | #199 | Ignore exactly one CR LF pair after an independently parsed empty, unassociated, reference-free EOF, or a final empty, reference-free EOP on a positive page. The EOP case additionally requires a positive known declared count equal to the observed count, distinct positive closed-page IDs and no open page. Ordinary framing, references, page lifecycle and complete entropy decoding still validate the prefix. Other suffixes remain errors. Sequential organization does not require EOF (D.1); random-access header-table delimitation does (D.2), and an EOF when present must be last (7.4.11). Random-access policy remains strict. |
-| #200 | **Deferred, both arithmetic and Huffman remain rejected.** Exact instance count alone is insufficient to certify entropy termination; see below. 6.4.5 symbol-instance loop, 6.4.8, Annexes A/B. |
+| #200 | Recover a missing final strip OOB only in a fixed-length, unrefined Huffman text region in standalone Compatibility. Every declared instance must already be fully decoded and placed. The remaining zero padding must be fewer than eight bits and shorter than every possible table prefix; normal OOB decoding is attempted first. Report `MissingFinalHuffmanStripEnd` only for the resulting exact prefix-read EOF at the segment end. No partial code/value/symbol, earlier terminator, refinement, arithmetic or nested/shared dictionary codec is recovered. Strict and random-access decoding remain unchanged. 6.4.5, Annex B. |
 | #201 | Clear bit `0x10` only when bits 4–7 equal exactly `0x10`. The 2018 text 7.4.1.5 explicitly makes bit 3 colour and bits 4–7 reserved. The colour and composition bits are preserved; other reserved bits still reject. |
 | #202 | Skip only type 1 with the short association form, no deferred retention, no references, self-retention clear, and a checked known-length payload wholly inside the source. Its page must already be open, or be zero. All source segment numbers and segment limits are checked even for skipped segments. Normal reference validation then rejects **any** surviving reference to the omitted number, including retention/dependency uses. 7.2, 7.3. Other reserved types remain rejected. |
 | #203 | **Rejected.** No new boundary contract is established for unknown-length intermediate generic regions. A marker scan is not a sufficient replacement. 7.2.7, 7.4.6. |
@@ -50,13 +50,15 @@ raises `InvalidCount("too many text instances")`; a Huffman prefix can instead
 raise `UnexpectedEnd`. Neither error certifies the absence of a partially decoded
 integer, symbol, refinement, earlier strip terminator, or truncated entropy.
 
-The shared entropy-codec interface does not expose a proof that the final complete
-symbol/refinement ended at the independently known segment boundary, excluding
-arithmetic fill/lookahead and Huffman partial-code/padding cases. Implementing
-this requires coding-mode-specific boundary state and stronger codec/strip
-contracts, not returning success when `decoded == declared`, catching arbitrary
-EOF, padding data, or altering dictionary/Huffman behavior. This change does none
-of those things and preserves the original typed errors in both cases.
+Huffman recovery uses a separate table-aware certificate. It runs only after the
+last instance's ID and placement succeeded, before any additional symbol can be
+read. The verified canonical table counts exclude every prefix length that
+could fit the remaining bits. Those bits must also be zero and strictly fewer
+than eight. Therefore an EOF while reading the next prefix cannot hide a
+matched prefix followed by a truncated value. A decoded real OOB remains a
+normal success; any decoded integer remains an overfull-strip error.
+Placement batches are flushed and the ordinary exact-count finish still runs.
+No bits or compressed marker are synthesized.
 
 The follow-up experiment checked actual terminal state, not just literal suffix
 bytes. The arithmetic original observes its final `FF AC` after instance 87 of
@@ -67,16 +69,16 @@ more coding bytes
 removed while preserving the marker and adjusting the segment length, producing
 corrupted complete-size bitmaps. Thus marker observation is not the missing
 completion certificate. The Huffman original has one zero bit remaining at the
-complete count (bit 1071 of 1072); this still requires a table-aware proof that
-distinguishes padding, a valid OOB, and a partially decoded field. Neither
-prototype was retained in production.
+complete count (bit 1071 of 1072). Its table has no prefix that fits that final
+zero bit, satisfying the new stronger certificate. The earlier count/marker or
+padding-length-only prototype was not retained.
 
 ### Pinned reproductions
 
 The test-only upstream revision is
 `e7ada1354dff4041cdeed3d8ba56fe01b6186132`; the issue-linked revision is not
 resolvable. Generated controls do not depend on upstream implementation behavior.
-An optional ignored regression compares every page of the six accepted pinned
+An optional ignored regression compares every page of the seven accepted pinned
 reproductions to packed pixels converted from their reference PNGs.
 
 The pinned #196 reproduction has EOP associations **0, 1, 2** for pages 1, 2, 3.
@@ -87,7 +89,8 @@ The pinned #199 reproduction has EOP + CR LF but **no EOF**. Its complete
 sequential prefix is valid without EOF; Compatibility reports `TrailingCrLf` at
 original byte offset 228 and returns the complete reference honeycomb page.
 Strict continues to reject the suffix. The pinned #197, #198,
-#201 and #202 reproductions are eligible; #200 (both modes) and #203 are not.
+#201, #202 and the Huffman #200 reproduction are eligible. Arithmetic #200 and
+#203 remain rejected.
 
 ## Resource and proof contracts
 
@@ -103,6 +106,10 @@ errors may report the remaining effective budget. This deliberately can reject a
 file whose strict decode fits a smaller budget.
 Compatibility calls release old context scratch before preparation, so an
 earlier document's retained allocations cannot escape these budgets.
+Potential unrefined Huffman text diagnostics reserve checked vector capacity
+before constructing the page collector or decoding any entropy. Observed
+capacity growth is debited from memory and retained-state limits; recording a
+recovery uses only reserved slots. No additional decoder work cap is introduced.
 The closed-page witness list is included in the existing scanner scratch
 reservation; no limit or work reservation is increased. Each historical lookup
 occurs only when the open list has one entry, preserving the existing quadratic

@@ -520,7 +520,8 @@ fn standalone_policy_random_access_remains_strict() {
 
 #[test]
 #[ignore = "requires hash-checked pinned fixtures and PNG-derived packed golden bitmaps"]
-fn standalone_policy_pinned_family_all_pages_and_both_text_oob_failures() {
+#[allow(clippy::too_many_lines)]
+fn standalone_policy_pinned_family_all_pages_and_text_oob_boundaries() {
     let assets = std::path::PathBuf::from(std::env::var("JBIG2_COMPAT28_ASSETS").unwrap());
     let golden = std::path::PathBuf::from(std::env::var("JBIG2_COMPAT28_GOLDEN").unwrap());
     let decoder = Decoder::default();
@@ -537,6 +538,7 @@ fn standalone_policy_pinned_family_all_pages_and_both_text_oob_failures() {
         ("reserved_region_flags", &["truchet"][..]),
         ("reserved_segment_type", &["truchet"][..]),
         ("trailing_bytes", &["honeycomb"][..]),
+        ("missing_final_oob_huffman", &["honeycomb"][..]),
     ] {
         let bytes = std::fs::read(
             assets
@@ -566,6 +568,30 @@ fn standalone_policy_pinned_family_all_pages_and_both_text_oob_failures() {
             assert_eq!(output.recoveries[0].kind, RecoveryKind::TrailingCrLf);
             assert_eq!(output.recoveries[0].byte_offset, Some(228));
         }
+        if name == "missing_final_oob_huffman" {
+            assert!(decoder.decode(&bytes).is_err());
+            assert_eq!(
+                output.recoveries,
+                [jbig2_decoder::Recovery {
+                    page: 1,
+                    byte_offset: None,
+                    kind: RecoveryKind::MissingFinalHuffmanStripEnd,
+                }]
+            );
+            let mut truncated_symbol = bytes.clone();
+            truncated_symbol.drain(338..339);
+            truncated_symbol[177..181].copy_from_slice(&158_u32.to_be_bytes());
+            for policy in [DecodePolicy::Strict, DecodePolicy::Compatibility] {
+                assert!(decoder
+                    .decode_with_policy(&truncated_symbol, policy)
+                    .is_err());
+            }
+            let mut nonzero_padding = bytes.clone();
+            nonzero_padding[339] |= 1;
+            assert!(decoder
+                .decode_with_policy(&nonzero_padding, DecodePolicy::Compatibility)
+                .is_err());
+        }
         for (page, image) in output.value.pages().iter().zip(expected) {
             let packed = std::fs::read(golden.join(format!("{image}.bitmap"))).unwrap();
             let width = u32::from_be_bytes(packed[..4].try_into().unwrap());
@@ -573,11 +599,7 @@ fn standalone_policy_pinned_family_all_pages_and_both_text_oob_failures() {
             assert_pixels(page, page.number(), width, height, &packed[8..]);
         }
     }
-    for name in [
-        "missing_final_oob",
-        "missing_final_oob_huffman",
-        "unknown_length_intermediate",
-    ] {
+    for name in ["missing_final_oob", "unknown_length_intermediate"] {
         let bytes = std::fs::read(
             assets
                 .join("fixtures")
@@ -592,7 +614,6 @@ fn standalone_policy_pinned_family_all_pages_and_both_text_oob_failures() {
         }
         let mutation = match name {
             "missing_final_oob" => Some((155, 211..215, 54_u32)),
-            "missing_final_oob_huffman" => Some((177, 338..339, 158_u32)),
             _ => None,
         };
         if let Some((length_offset, coding_bytes, length)) = mutation {

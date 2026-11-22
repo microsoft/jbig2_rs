@@ -14,9 +14,44 @@ mod policy_spec;
 mod diagnostics;
 mod ownership;
 
-pub(crate) use diagnostics::record;
+pub(crate) use diagnostics::{record, record_reserved};
 pub use diagnostics::{DecodePolicy, DecodeResult, Recovery, RecoveryKind};
 use ownership::{close_page, open_index, recovery_owner};
+
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures final(recoveries)@ == old(recoveries)@,
+        final(limits).max_work_units == old(limits).max_work_units,
+        final(limits).max_retained_state_bytes <= old(limits).max_retained_state_bytes,
+        final(limits).max_decoder_managed_memory_bytes <= old(limits).max_decoder_managed_memory_bytes,
+))]
+pub(crate) fn reserve_text_recoveries(
+    segments: &[super::ParsedSegment<'_>],
+    recoveries: &mut Vec<Recovery>,
+    limits: &mut Limits,
+) -> Result<(), DecodeError> {
+    let mut count = 0_usize;
+    let mut index = 0_usize;
+    #[cfg_attr(verus_keep_ghost, verus_spec(
+        invariant count <= index <= segments@.len(),
+        decreases segments@.len() - index,
+    ))]
+    while index < segments.len() {
+        let segment = &segments[index];
+        if matches!(
+            segment.header.segment_type,
+            SegmentType::IntermediateTextRegion
+                | SegmentType::ImmediateTextRegion
+                | SegmentType::ImmediateLosslessTextRegion
+        ) && segment.header.data_length.is_some()
+            && segment.payload.len() > 18
+            && segment.payload[18] & 3 == 1
+        {
+            count += 1;
+        }
+        index += 1;
+    }
+    diagnostics::reserve(recoveries, count, limits)
+}
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
 pub(crate) struct Prepared {

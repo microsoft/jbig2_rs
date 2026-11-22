@@ -7,6 +7,38 @@ use vstd::prelude::*;
 
 verus! {
 
+// Model navigation: spec::zero_padding_before_prefix [project-policy]
+// Purpose: Sub-byte zero padding too short to contain any Huffman table prefix.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
+pub(crate) open spec fn zero_padding_before_prefix(
+    table: &super::HuffmanTable, reader: &crate::reader::BitReader,
+) -> bool {
+    let total = reader.bytes@.len() * 8;
+    let remaining = total - reader.bit_position;
+    &&& reader_valid(reader)
+    &&& remaining < 8
+    &&& forall|length: int| 1 <= length <= remaining ==> prefix_count(table, length) == 0
+    &&& crate::spec::readers::bits_value(
+        reader.bytes@, reader.bit_position as nat, remaining as nat,
+    ) == 0
+}
+
+// Model navigation: spec::prefix_count [proof-support]
+// Purpose: Exact cached count of canonical prefixes of a given length.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
+pub(crate) closed spec fn prefix_count(table: &super::HuffmanTable, length: int) -> u32 {
+    table.length_count@[length]
+}
+
+pub(super) proof fn prefix_count_definition(table: &super::HuffmanTable)
+    ensures forall|length: int| 0 <= length < 256 ==>
+        prefix_count(table, length) == table.length_count@[length],
+{
+    reveal(prefix_count);
+}
+
 // Model navigation: spec::huffman_error_result [project-result-model]
 // Purpose: Reuse the exact existing wrapped-error or invalid-table conversion policy.
 // Audit: huffman-error-result

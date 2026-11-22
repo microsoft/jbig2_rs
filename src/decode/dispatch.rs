@@ -194,6 +194,7 @@ pub(super) fn decode_text_segment(
     retained: &mut RetainedBudget,
     work: &mut DecodeWork,
     limits: &Limits,
+    recoveries: Option<&mut Vec<crate::Recovery>>,
 ) -> Result<(), DecodeError> {
     let available_symbols = collect_referred_symbols(segment, symbols, retained.bytes, limits)?;
     let custom_tables = collect_referred_tables(segment, tables)?;
@@ -202,6 +203,8 @@ pub(super) fn decode_text_segment(
         symbols: available_symbols.codebook(),
         custom_tables: &custom_tables,
         limits,
+        allow_missing_final_huffman_oob: recoveries.is_some()
+            && segment.header.data_length.is_some(),
     })
     .map_err(symbol_text_error_into_decode)?;
     if output.consumed_bytes != segment.payload.len() {
@@ -212,6 +215,19 @@ pub(super) fn decode_text_segment(
             .and_then(|bytes| u64::try_from(bytes).ok())
             .ok_or(MalformedError::IntegerOverflow)?;
         return Err(MalformedError::TrailingData(trailing).into());
+    }
+    if output.missing_final_huffman_oob {
+        let recoveries = recoveries.ok_or(MalformedError::InvalidPageState(
+            "entropy recovery outside standalone compatibility",
+        ))?;
+        crate::document::standalone::record_reserved(
+            recoveries,
+            crate::Recovery {
+                page: segment.header.page_association,
+                byte_offset: None,
+                kind: crate::RecoveryKind::MissingFinalHuffmanStripEnd,
+            },
+        )?;
     }
     let region_work = u64::from(output.region.width)
         .checked_mul(u64::from(output.region.height))

@@ -2427,7 +2427,8 @@ class TraceabilityTests(unittest.TestCase):
             with self.subTest(requirement=row["id"]):
                 self.assertIn("segment-symbol-width-matches", row["models"])
                 self.assertIn("segment-symbol-width-witness", row["proof_macros"])
-                self.assertIn("symbol_text::text::decode_text_region", row["runtime"])
+                self.assertIn("symbol_text::text::segment::decode_text_region", row["runtime"])
+                self.assertIn("symbol_text::text::decode_text_region_body_with_end", row["runtime"])
                 self.assertIn("symbol_text::dictionary::decode_symbol_dictionary", row["runtime"])
                 self.assertIn("extent", row["gaps"][0])
                 self.assertIn("codec-kind", row["gaps"][0])

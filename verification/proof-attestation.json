@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
   "status": "verified_exact_project_scope_with_reviewed_limits",
-  "source_revision": "2af34b03385d9e39dd0faaff94fa314a61d0c9bb",
-  "scope": "Fresh pinned whole verification including exact final-EOP sequential suffix recovery. The endpoint predicate is equivalent to a positive known matching count, empty open history and distinct positive closed pages. Exactly one CR LF is removed at that framed endpoint; ordinary full framing, reference, page and entropy validation still gates all successful output. Strict defaults, random-access handling, existing dictionary cycles and all budgets are preserved. Same executing sources, unchanged 20 reviewed limitations, no new assumptions, trusted algorithm bodies or runtime/proof substitutions. Component contracts and finite regressions, not complete decoded-output or independent normative proofs. Main/0.3 only; release/0.2 unchanged.",
+  "source_revision": "65a97be20dcc42d6086be386dfbfe515286e3c31",
+  "scope": "Fresh pinned whole verification including standalone unrefined fixed-length Huffman final-strip recovery. Every declared instance is complete before recovery is attempted; zero padding is fewer than eight bits and shorter than every possible table prefix. Normal OOB decoding is attempted first and only exact prefix-read EOF at the framed payload end is recovered. No symbol or compressed bits are synthesized; placement flush, exact-count finish, framing, references, pages and limits remain. Diagnostics reserve and debit observed capacity before rendering. Strict/default/reader/sink/random-access/nested/refinement/arithmetic paths do not gain recovery. Existing dictionary cycles and budgets are preserved. Same executing sources, unchanged 20 reviewed limitations, no new assumptions, trusted algorithm bodies or runtime/proof substitutions. Component contracts and finite regressions, not full decoded-output or independent normative proofs. Main/0.3 only.",
   "toolchain": {
     "manifest": "config/toolchain.json",
     "verus_version": "0.2026.10.04.426d8b0",
     "verus_commit": "426d8b01e7ffb910a36c15e1f870ff985bb61eef",
     "archive_sha256": "624018662868563a7bec0dd07be5e4dd0c3d61124b4b55105765884bf2d4d1a0"
   },
-  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-cargo cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/remaining-compat/verus-expanded\" --output-json",
+  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-cargo cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/final-oob/verus-expanded\" --output-json",
   "result": {
-    "verified_obligations": 1414,
-    "verified_production_functions": 704,
+    "verified_obligations": 1424,
+    "verified_production_functions": 710,
     "errors": 0,
     "proof_build_compiles": true,
     "exact_production_source_compiles": true,
@@ -24,8 +24,8 @@
     "runtime_proof_divergences": 0,
     "incomplete_functions": 0
   },
-  "production_proof_coverage_sha256": "2ea1c30ba5d14fbe467c353740e86923fcd3a1a1eef8db7d30ab6772cf0c46bf",
-  "proof_dispositions_sha256": "9792f930e13cfa6cef5541457968f932a86a58b2623f16091d9537641a557e44",
+  "production_proof_coverage_sha256": "a93a86e7a4f63accacba76e8a0d0864ca68920492c179b4f1b1fd90fd4c73f4f",
+  "proof_dispositions_sha256": "9840edd2e9bea7685df852f4f783a0c4532625a493143a628f873eb345c91d02",
   "standard_library_boundary": {
     "manifest": "verification/stdlib/review.json",
     "manifest_sha256": "5f007f853c6caad16d6d318bde996373c6a6f886e8949cd0df62612e5408a92c",
@@ -33,7 +33,7 @@
     "review_kind": "delegated_engineering_review",
     "normative_approval": false
   },
-  "current_evidence_note": "Exact implementation 2af34b03385d9e39dd0faaff94fa314a61d0c9bb; fresh whole 1414/0, exact 704 direct functions and unchanged 20 reviewed limitations. All 32 pinned files pass 170 configurations/238 calls with original default Work deadlines. #199 Compatibility now yields the complete reference page and exact byte-228 diagnostic; its strict rejection is unchanged. #200 and colour #212 remain rejected/Unsupported. Original ten strict conformance outcomes are identical. All existing coverage, semantic/contrast and 1050-second same-run timing gates remain required. No release backport, publication, renewed normative approval or complete decoded-output proof.",
+  "current_evidence_note": "Exact implementation 65a97be20dcc42d6086be386dfbfe515286e3c31; fresh whole 1424/0, exact 710 direct functions and unchanged 20 reviewed limitations. All 32 pinned files pass 170 configurations/238 calls with original default Work deadlines. Huffman #200 now returns complete reference pixels with an explicit entropy recovery; strict errors remain unchanged. Arithmetic #200 and colour #212 remain rejected/Unsupported. Original ten strict conformance outcomes are identical. All existing coverage, semantic contrasts and 1050-second same-run timing gates remain required. No backport, publication or renewed normative approval.",
   "duplicate_executable_proof_source": false,
   "embedded_recovery_ci_profile_correction": {
     "rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/44359238184",
@@ -615,5 +615,24 @@
     },
     "production_proof_coverage_sha256": "b409150dffc86d98c8fbecdfb46375f3847e45f3ce2e684def56b21d351375c4",
     "scope": "Historical main dictionary-cycle receipt, not fresh execution or renewed normative approval."
+  },
+  "final_huffman_oob_previous_baseline": {
+    "source_revision": "2af34b03385d9e39dd0faaff94fa314a61d0c9bb",
+    "result": {
+      "verified_obligations": 1414,
+      "verified_production_functions": 704,
+      "errors": 0,
+      "proof_build_compiles": true,
+      "exact_production_source_compiles": true,
+      "algorithm_bodies_verified": false,
+      "production_coverage_complete": true,
+      "native_assumptions": [],
+      "reviewed_verifier_limitations": 20,
+      "audited_forwarders": 0,
+      "runtime_proof_divergences": 0,
+      "incomplete_functions": 0
+    },
+    "production_proof_coverage_sha256": "2ea1c30ba5d14fbe467c353740e86923fcd3a1a1eef8db7d30ab6772cf0c46bf",
+    "scope": "Historical main final-page receipt, not fresh execution or renewed normative approval."
   }
 }

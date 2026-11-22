@@ -41,6 +41,28 @@ pub(crate) use dictionary::{dictionary_config_safe, dictionary_state_valid, symb
 
 verus! {
 
+// Model navigation: spec::text_end_matches_count [project-policy]
+// Purpose: Final Huffman recovery is gated by complete count and a sub-byte endpoint.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
+pub(super) open spec fn text_end_matches_count(
+    end: super::TextRegionEnd, codec: &super::SymbolCodec,
+    count: u32, refinement: bool,
+) -> bool {
+    match end {
+        super::TextRegionEnd::RecoveredHuffman { instances, padding_start } =>
+            instances == count && count > 0 && !refinement
+            && match *codec {
+                super::SymbolCodec::Huffman(h) =>
+                    padding_start <= h.reader.bit_position
+                    && h.reader.bit_position - padding_start < 8
+                    && h.reader.bit_position == h.reader.bytes@.len() * 8,
+                _ => false,
+            },
+        _ => false,
+    }
+}
+
 // Model navigation: spec::work_units [proof-support]
 // Purpose: Private codec/bank projections, signed/clipped vocabulary and export measures.
 // Mapping: no registered requirement/locator mapping.
