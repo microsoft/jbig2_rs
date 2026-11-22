@@ -187,7 +187,7 @@ CASES = (
 )
 
 def caller_request_case(function, field, replacement, native_test=None):
-    text = function == "decode_text_region_body"
+    text = function == "decode_text_region_body_with_end"
     count = "available_count" if text else "available"
     mode = "config.huffman" if text else "huffman"
     extent = (
@@ -228,7 +228,7 @@ def caller_request_case(function, field, replacement, native_test=None):
 CASES += tuple(
     caller_request_case(function, field, replacement, native_test)
     for function, test_module, test_name in (
-        ("decode_text_region_body", "text_termination",
+        ("decode_text_region_body_with_end", "text_termination",
          "actual_text_id_request_preserves_book_extent_segment_width_and_continuation"),
         ("decode_dictionary_single_instance_refinement", "dictionary_dispatch",
          "actual_dictionary_id_request_counts_imported_and_new_with_enclosing_width"),

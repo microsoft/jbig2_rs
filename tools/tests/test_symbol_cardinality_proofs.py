@@ -41,7 +41,7 @@ class SymbolCardinalityProofTests(unittest.TestCase):
                 self.assertIn("symbol_text_spec::codec_valid(old(codec))", weaker)
                 self.assertIn("crate::spec::bitmap::storage_valid(&bitmap)", weaker)
                 self.assertIn("symbol_text_spec::work_units", weaker)
-                if case["function"] == "decode_text_region_body":
+                if case["function"] == "decode_text_region_body_with_end":
                     self.assertIn(
                         "available_count as nat == symbol_text_spec::codebook_len(available_symbols)",
                         weaker,
