@@ -63,6 +63,11 @@ class CompatibilityCorpusTests(unittest.TestCase):
             (directory / "page-1.raw").write_bytes(struct.pack(">4I", 1, 8, 1, 1) + b"\xa5")
             output = subprocess.CompletedProcess([], 0, "OK|1\nRECOVERIES|[ObservedPageCount]\n", "")
             self.assertEqual(runner.validate_output(row, "compat", output, directory)["pages"], [page])
+            row["recovery_exact"] = "[ObservedPageCount]"
+            for recovery in ("[ObservedPageCount, ObservedPageCount]", "[ObservedPageCount at byte 99]"):
+                output.stdout = f"OK|1\nRECOVERIES|{recovery}\n"
+                with self.subTest(recovery=recovery), self.assertRaises(ValueError):
+                    runner.validate_output(row, "compat", output, directory)
             output.stdout = "OK|1\nRECOVERIES|[]\n"
             with self.assertRaises(ValueError):
                 runner.validate_output(row, "compat", output, directory)

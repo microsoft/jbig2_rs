@@ -5,6 +5,20 @@ use vstd::prelude::*;
 
 verus! {
 
+// Model navigation: spec::complete_page_end [project-policy]
+// Purpose: Known page count and unique positive closed pages at a sequential endpoint.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
+pub(crate) open spec fn complete_page_end(
+    declared: Option<u32>, observed: usize, open: Seq<u32>, closed: Seq<u32>,
+) -> bool {
+    open.len() == 0 && closed.len() == observed && observed > 0
+        && declared == Some(observed as u32) && observed <= u32::MAX
+        && (forall|index: int| 0 <= index < closed.len() ==> closed[index] > 0)
+        && (forall|left: int, right: int| 0 <= left < right < closed.len() ==>
+            closed[left] != closed[right])
+}
+
 // Model navigation: spec::eop_recovery_allowed [project-policy]
 // Purpose: Unique positive open owner and optional closed-earlier-page witness.
 // Mapping: no registered requirement/locator mapping.

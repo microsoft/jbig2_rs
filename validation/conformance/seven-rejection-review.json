@@ -116,9 +116,9 @@
     "src/document/pages.rs": "3a10ba252984750ca7fbf6add8445eaf785c6fdaabb7594b7cb1112c689679b6",
     "src/document/parsing.rs": "27f627f0a93a08f9927c9515947be0a7fad019525b95ebff3f2cce1e71c750bc",
     "src/document/references.rs": "69acd07c8e2da002936fa8826f054dd254aecaec34c6904514daaf760841b9e4",
-    "src/document/standalone/diagnostics.rs": "78c39f5a0d0cedb48804376ce1a4b10a5ac793eeb25dfd44316790c2cba62177",
+    "src/document/standalone/diagnostics.rs": "93827271124124575264b7a7be7b91b92c9817d85294086b881dc6ff4af726a6",
     "src/document/standalone/ownership.rs": "f0e14d65faa90d102f9c48a8294f9cb3b44ff1db942e4c91fd22caed1874ebdd",
-    "src/document/standalone.rs": "fb9ebb2f9012ad2e3e929330cd2e5b925cce70693e11ae76bae192f881d3cf43",
+    "src/document/standalone.rs": "76e12eff1965818ed7bce7c945899a1d146eecbe15ad5714304ea3fc259c1381",
     "src/document/tests/container_inspection.rs": "2ec6cd3bd75bda1c40165a09d767a85fb78359a10dbcb689ce3ea4d0b46a04af",
     "src/document/tests/payload_windows.rs": "96c85ffdb008808b7c63951c13564ec683bd327f1a4a95ebb27672905da5d0cc",
     "src/document/tests/quotas_and_references.rs": "4135ace54de6b4d1feb55e63d5f8a5535e8386e2941c6451773c18f250ba5b2b",
@@ -1289,5 +1289,10 @@
     "source_revision": "4984efb2272249d4300a490a1f74f136384f91a3",
     "results_sha256": "b6607a6ce27fe85c06441a8f276a192afe95dceb8e7db462c924d713b533260c",
     "scope": "Fresh exact ten-case strict replay after the cycle shortcut; historical dispositions and normative approval are not renewed."
+  },
+  "final_page_recovery_replay": {
+    "source_revision": "2af34b03385d9e39dd0faaff94fa314a61d0c9bb",
+    "results_sha256": "b6607a6ce27fe85c06441a8f276a192afe95dceb8e7db462c924d713b533260c",
+    "scope": "Fresh exact ten-case strict replay after final-EOP suffix recovery; historical dispositions and normative approval are not renewed."
   }
 }

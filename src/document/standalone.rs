@@ -86,6 +86,54 @@ fn is_region(kind: SegmentType) -> bool {
     )
 }
 
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out == policy_spec::complete_page_end(declared, observed, open@, closed@),
+))]
+fn complete_page_end(declared: Option<u32>, observed: usize, open: &[u32], closed: &[u32]) -> bool {
+    let Some(count) = declared else {
+        return false;
+    };
+    if count == 0 || observed != count as usize || !open.is_empty() || closed.len() != observed {
+        return false;
+    }
+    let mut index = 0_usize;
+    #[cfg_attr(verus_keep_ghost, verus_spec(
+        invariant index <= closed@.len(),
+            forall|done: int| 0 <= done < index ==> closed@[done] > 0,
+            forall|left: int, right: int| 0 <= left < right < index ==> closed@[left] != closed@[right],
+        decreases closed@.len() - index,
+    ))]
+    while index < closed.len() {
+        if closed[index] == 0 {
+            return false;
+        }
+        let mut previous = 0_usize;
+        #[cfg_attr(verus_keep_ghost, verus_spec(
+            invariant previous <= index < closed@.len(),
+                forall|done: int| 0 <= done < previous ==> closed@[done] != closed@[index as int],
+            decreases index - previous,
+        ))]
+        while previous < index {
+            if closed[previous] == closed[index] {
+                return false;
+            }
+            previous += 1;
+        }
+        index += 1;
+    }
+    true
+}
+
+#[cfg(test)]
+#[test]
+fn final_page_boundary_rejects_invalid_closed_history() {
+    assert!(complete_page_end(Some(2), 2, &[], &[1, 3]));
+    assert!(!complete_page_end(Some(2), 2, &[], &[1, 1]));
+    assert!(!complete_page_end(Some(2), 2, &[], &[0, 3]));
+    assert!(!complete_page_end(Some(2), 2, &[], &[1]));
+    assert!(!complete_page_end(Some(2), 2, &[4], &[1, 3]));
+}
+
 /// Preparation is itself bounded before allocation or traversal. Its result
 /// still requires complete ordinary framing/reference/entropy validation.
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
@@ -322,14 +370,22 @@ pub(crate) fn prepare(input: &[u8], limits: &Limits) -> Result<Prepared, DecodeE
                 &mut remaining,
             )?;
         }
-        if header.segment_type == SegmentType::EndOfFile {
-            if page != 0 || !payload.is_empty() || !header.referred_segments.is_empty() {
-                return Err(MalformedError::InvalidPageAssociation {
-                    segment: header.number,
-                    page,
-                }
-                .into());
+        let final_page = header.segment_type == SegmentType::EndOfPage
+            && page > 0
+            && payload.is_empty()
+            && header.referred_segments.is_empty()
+            && reader.remaining_bytes() == [13, 10]
+            && complete_page_end(file.page_count(), pages_seen, &open, &closed);
+        if header.segment_type == SegmentType::EndOfFile
+            && (page != 0 || !payload.is_empty() || !header.referred_segments.is_empty())
+        {
+            return Err(MalformedError::InvalidPageAssociation {
+                segment: header.number,
+                page,
             }
+            .into());
+        }
+        if header.segment_type == SegmentType::EndOfFile || final_page {
             if reader.remaining_bytes() == [13, 10] {
                 record(
                     &mut recoveries,
@@ -341,7 +397,7 @@ pub(crate) fn prepare(input: &[u8], limits: &Limits) -> Result<Prepared, DecodeE
                     &mut remaining,
                 )?;
                 reader.read_bytes(2)?;
-            } else if reader.remaining() != 0 {
+            } else if header.segment_type == SegmentType::EndOfFile && reader.remaining() != 0 {
                 return Err(MalformedError::TrailingData(reader.remaining() as u64).into());
             }
         }

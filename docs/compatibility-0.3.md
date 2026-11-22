@@ -33,8 +33,8 @@ resource-test inputs. Matching a permissive output is not grounds to invent
 symbols, clamp pattern indices, fill missing rows, ignore a necessary extension
 or return a partial image as a complete bitmap.
 
-Of the 32 reported files, five now decode strictly and ten decode with explicit
-Compatibility selected. The remaining 22 retain an intentional malformed,
+Of the 32 reported files, five now decode strictly and eleven decode with explicit
+Compatibility selected. The remaining 21 retain an intentional malformed,
 unsupported or work-limit outcome. The pinned replay checks 160 configurations
 and 224 decoder calls, including reuse of the same context; every successful
 page must match its complete expected pixels. The cycle-performance follow-up
@@ -70,8 +70,8 @@ acquisition and then select the byte API; existing reader APIs stay strict.
 | #196 | Strict rejection remains. Compatibility requires exactly one open page and either association zero or an explicit association naming an already-closed, smaller-numbered page. Both ownership witnesses are checked and reported; live, unseen, future and ambiguous targets remain fatal. All three original pages match their reference images. |
 | #197 | Compatibility may close a page only at an independently validated complete boundary, without inventing image data. Strict still requires the marker. |
 | #198 | Compatibility may reconcile the file count with complete validated pages. Every page remains subject to the original limits and is returned in order. Strict count mismatch remains fatal. |
-| #199 | A suffix is recoverable only after an independently validated logical EOF. The original short-header fixture lacks that boundary and remains rejected; short input alone is never evidence of ignorable padding. |
-| #200, two files | Missing final arithmetic/Huffman strip OOB remains rejected. A declared instance count alone is not a certified complete entropy boundary; no count-only stopping or synthesized compressed data is introduced. |
+| #199 | Ignore exactly one CR LF after an independently framed EOF, or after a final empty, reference-free EOP with a positive known page count matching distinct closed pages and no open page. The original sequential fixture now matches the complete honeycomb bitmap, with `TrailingCrLf` at byte 228. D.1 does not require an EOF segment in sequential organization; D.2 requires one for random-access header-table delimitation, and 7.4.11 constrains it when present. Strict still rejects the suffix; arbitrary short headers remain errors. |
+| #200, two files | Missing final arithmetic/Huffman strip OOB remains rejected. A declared instance count plus an observed final arithmetic marker is still unsafe: the original marker is observed after instance 87 of 90, and a discarded prototype also accepted truncated bodies with corrupted pixels. Fewer than eight remaining Huffman bits is not by itself a certificate either. No count-only stopping or synthesized compressed data is introduced. |
 | #201 | The individually documented reserved-bit recovery is explicit compatibility only, not a strict-mode mask or colour-extension waiver. |
 | #202 | The individually documented reserved-type recovery requires complete fixed-length framing and no live reference to the skipped segment. It does not ignore arbitrary unknown necessary semantics. |
 | #203 | Unknown-length intermediate generic segments remain rejected. The immediate-generic sentinel rule is not extended by guessing a delimiter. T.88 7.2.7. |
@@ -108,8 +108,8 @@ versus retained model selection, zero-plane initialization and bounded recovery
 preparation. Exact-pixel regressions, negative controls and work/memory tests
 supplement those component contracts.
 
-Local validation including the cycle follow-up has 1,411 verified obligations
-with zero errors, exact accounting of 703 directly verified production functions
+Local validation including the final-page recovery has 1,414 verified obligations
+with zero errors, exact accounting of 704 directly verified production functions
 and the unchanged 20
 reviewed verifier limitations. There are no incomplete functions, new native
 assumptions or runtime/proof substitutions. The 623 native/doctest and 822

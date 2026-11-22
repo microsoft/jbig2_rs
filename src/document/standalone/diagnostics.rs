@@ -26,7 +26,7 @@ pub enum RecoveryKind {
     MissingEndOfPage,
     /// The declared count was replaced by the number of fully validated pages.
     ObservedPageCount,
-    /// A single CR LF suffix followed an independently framed end-of-file.
+    /// A single CR LF suffix followed an independently validated document end.
     TrailingCrLf,
     /// Only reserved region bit 4 was cleared (bit 3 is colour, not reserved).
     ReservedRegionBit4,
