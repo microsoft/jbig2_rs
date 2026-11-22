@@ -108,8 +108,8 @@ versus retained model selection, zero-plane initialization and bounded recovery
 preparation. Exact-pixel regressions, negative controls and work/memory tests
 supplement those component contracts.
 
-Local validation including the final-page recovery has 1,414 verified obligations
-with zero errors, exact accounting of 704 directly verified production functions
+Local validation including the final-Huffman recovery has 1,424 verified obligations
+with zero errors, exact accounting of 710 directly verified production functions
 and the unchanged 20
 reviewed verifier limitations. There are no incomplete functions, new native
 assumptions or runtime/proof substitutions. The 623 native/doctest and 822
