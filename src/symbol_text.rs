@@ -50,14 +50,6 @@ mod symbol_text_properties;
 #[path = "../proofs/production_impl/symbol_text.rs"]
 mod symbol_text_proofs;
 
-
-
-
-
-
-
-
-
 /// Internal symbol/text decoding failure.
 #[derive(Debug)]
 #[cfg_attr(verus_keep_ghost, verus_verify)]

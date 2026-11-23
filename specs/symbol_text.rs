@@ -39,6 +39,12 @@ pub(super) use dictionary::{
 };
 pub(crate) use dictionary::{dictionary_config_safe, dictionary_state_valid, symbol_count_result};
 
+#[path = "symbol_text/prefix.rs"]
+mod prefix;
+pub(super) use prefix::{
+    arithmetic_codec_valid, arithmetic_end_certificate, prefix_saved_unchanged, prefix_valid,
+};
+
 verus! {
 
 // Model navigation: spec::text_end_matches_count [project-policy]
@@ -273,57 +279,6 @@ pub(super) open spec fn arithmetic_contexts_valid(
         ==> crate::arithmetic::arithmetic_spec::context_valid(contexts[index])
 }
 
-// Model navigation: spec::arithmetic_codec_valid [representation-invariant]
-// Purpose: Codec banks/bitmaps, table slots, export counters and placement-bound invariants.
-// Mapping: no registered requirement/locator mapping.
-// Fidelity: unresolved; no independent normative approval.
-pub(super) open spec fn arithmetic_codec_valid(
-    arithmetic: &super::ArithmeticCodec,
-) -> bool {
-    crate::arithmetic::arithmetic_spec::decoder_valid(&arithmetic.decoder)
-        && integer_contexts_valid(&arithmetic.integers)
-        && arithmetic_contexts_valid(arithmetic.iaid@)
-        && prefix_valid(arithmetic)
-}
-
-// Model navigation: spec::prefix_valid [representation-invariant]
-// Purpose: Bind an optional numeric-certainty observer to the real arithmetic codec.
-// Mapping: no registered requirement/locator mapping.
-// Fidelity: unresolved; no independent normative approval.
-pub(super) open spec fn prefix_valid(a: &super::ArithmeticCodec) -> bool {
-    match a.prefix {
-        Some(p) => crate::arithmetic::certainty_spec::observer_valid(&p, &a.decoder),
-        None => true,
-    }
-}
-
-// Model navigation: spec::arithmetic_end_certificate [project-policy]
-// Purpose: Require a valid codec, a saved complete prefix and the exact terminal marker.
-// Mapping: no registered requirement/locator mapping.
-// Fidelity: unresolved; no independent normative approval.
-pub(super) open spec fn arithmetic_end_certificate(a: &super::ArithmeticCodec, count: u32) -> bool {
-    arithmetic_codec_valid(a)
-    && match a.prefix {
-        Some(p) => crate::arithmetic::certainty_spec::saved_prefix(&p, count)
-            && match a.decoder.marker {
-                Some(m) => m.offset == p.entropy_end && m.code == 0xac,
-                None => false,
-            },
-        None => false,
-    }
-}
-
-// Model navigation: spec::prefix_saved_unchanged [representation-invariant]
-// Purpose: Preserve the pre-final-DS certificate across genuine later decoding.
-// Mapping: no registered requirement/locator mapping.
-// Fidelity: unresolved; no independent normative approval.
-pub(super) open spec fn prefix_saved_unchanged(before: &super::ArithmeticCodec,
-    after: &super::ArithmeticCodec) -> bool {
-    match before.prefix {
-        Some(p) => after.prefix.is_some() && after.prefix.unwrap().saved == p.saved,
-        None => after.prefix.is_none(),
-    }
-}
 // Model navigation: spec::integer_field_slot [proof-support]
 // Purpose: Private codec/bank projections, signed/clipped vocabulary and export measures.
 // Audit: symbol-integer-field-slot
