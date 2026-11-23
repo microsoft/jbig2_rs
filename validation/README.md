@@ -180,9 +180,20 @@ matching function names.
 
 Semantic contrasts require an exact positive baseline, an ordinarily compiling
 mutant, strong proof rejection and success under only the selected weakened
-guarantee. Every configured group is required. Native mutations separately
-require an original passing test and failure of that exact test after a
-compiling change:
+guarantee. Every configured group is required.
+
+The current profile adds the complete two-case `owned-decode` group on shard 0:
+64 groups / 505 contrasts, retaining all prior 63 groups / 503 contrasts and
+their assignments. Historical colour/certainty profiles retain their original
+membership and timing interpretation. Fourteen shards, whole/collector roles,
+two local workers, at most four concurrent CI semantic jobs and the actual
+1,050-second role/shard guard are unchanged. Current-profile collection requires
+the new group's complete measured cost; historical timings are not new acceptance.
+The runner's `--only owned-decode` selector runs both contrasts through
+`check_owned_decode_proofs.py` without case-group or mode flags.
+
+Native mutations separately require an original passing test and failure of
+that exact test after a compiling change:
 
 ```sh
 python3 -B tools/check_contract_mutations.py --toolchain nightly-2026-10-12 \

@@ -24,6 +24,7 @@ CI_SHARDS = 14
 WHOLE_GROUPS = ("arithmetic-codec",)
 COLLECTOR_GROUPS = ("arithmetic-decision", "reset", "clone-results", "context-callers")
 ADDED_SHARD_GROUPS = {
+    "owned-decode": 0,
     "arithmetic-certainty": 1,
     "colour-rgb": 10,
     "reference-type-lookup": 10, "reference-type-classes": 13,
@@ -122,6 +123,10 @@ COLOUR_SHARD_ALLOCATION = {
     "reference-type-classes": 6,
     "colour-rgb": 8,
 }
+OWNED_DECODE_SHARD_ALLOCATION = {
+    **COLOUR_SHARD_ALLOCATION,
+    "owned-decode": 0,
+}
 RECEIPT_SCHEMA = 3
 CHECKS = (
     ("arithmetic-certainty", "check_arithmetic_certainty_proofs.py", 4, "strong_contract", "weaker_control"),
@@ -187,6 +192,7 @@ CHECKS = (
     ("reference-type-lookup", "check_reference_type_proofs.py", 6, "strong_contract", "weaker_control"),
     ("reference-type-classes", "check_reference_type_proofs.py", 6, "strong_contract", "weaker_control"),
     ("colour-rgb", "check_colour_proofs.py", 5, "strong_contract", "weaker_control"),
+    ("owned-decode", "check_owned_decode_proofs.py", 2, "strong_contract", "weaker_control"),
 )
 
 SUMMARY = "semantic-proof-summary.json"
@@ -257,12 +263,17 @@ def configured_shards():
                     shards[min(destination, count - 1)].append(match)
                     break
     if count == CI_SHARDS == 14 and any(check[0] == "colour-rgb" for check in checks):
+        allocation = (
+            OWNED_DECODE_SHARD_ALLOCATION
+            if any(check[0] == "owned-decode" for check in checks)
+            else COLOUR_SHARD_ALLOCATION
+        )
         legacy_slots = {
             check[0]: index for index, shard in enumerate(shards) for check in shard
         }
         shards = [[] for _ in range(count)]
         for check in checks:
-            destination = COLOUR_SHARD_ALLOCATION.get(check[0], legacy_slots[check[0]])
+            destination = allocation.get(check[0], legacy_slots[check[0]])
             shards[destination].append(check)
     return tuple(tuple(shard) for shard in shards)
 

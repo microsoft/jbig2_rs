@@ -33,8 +33,9 @@ collector-sink public-decode-results public-global-results reference-accounting
 reference-catalog reference-type-lookup reference-type-classes
 """.split())
 CURRENT_CHECKS = runner.CHECKS
+PRE_OWNED_CHECKS = tuple(row for row in CURRENT_CHECKS if row[0] != "owned-decode")
 LIVE_CHECKS = tuple(row for row in CURRENT_CHECKS if row[0] in ORIGINAL_CHECK_IDS)
-RGB_CHECKS = tuple(row for row in CURRENT_CHECKS if row[0] != "arithmetic-certainty")
+RGB_CHECKS = tuple(row for row in PRE_OWNED_CHECKS if row[0] != "arithmetic-certainty")
 PRE_REFERENCE_TYPE_CHECKS = tuple(
     row for row in LIVE_CHECKS if row[0] not in {"reference-type-lookup", "reference-type-classes"}
 )
@@ -270,6 +271,109 @@ def evidence():
 
 class SemanticOrchestrationTests(unittest.TestCase):
     @patch.object(runner, "CHECKS", CURRENT_CHECKS)
+    @patch.multiple(runner, **LIVE_TOPOLOGY)
+    def test_owned_decode_is_additive_on_shard_zero_without_moving_any_existing_group(self):
+        from check_owned_decode_proofs import CASES
+
+        checks = runner.configured_checks()
+        owned = next(row for row in checks if row[0] == "owned-decode")
+        self.assertEqual(owned, (
+            "owned-decode", "check_owned_decode_proofs.py", len(CASES),
+            "strong_contract", "weaker_control",
+        ))
+        self.assertEqual(len(CASES), 2)
+        self.assertEqual(len(PRE_OWNED_CHECKS), 63)
+        self.assertEqual(sum(row[2] for row in PRE_OWNED_CHECKS), 503)
+        self.assertEqual(tuple(row for row in checks if row != owned), PRE_OWNED_CHECKS)
+        self.assertEqual(len(checks), 64)
+        self.assertEqual(sum(row[2] for row in checks), 505)
+        with patch.object(runner, "CHECKS", PRE_OWNED_CHECKS):
+            previous = runner.configured_shards()
+            whole = runner.configured_whole_checks()
+            collector = runner.configured_collector_checks()
+        current = runner.configured_shards()
+        self.assertEqual(len(current), 14)
+        self.assertIn(owned, current[0])
+        self.assertNotIn("owned-decode", runner.COLOUR_SHARD_ALLOCATION)
+        self.assertEqual(runner.OWNED_DECODE_SHARD_ALLOCATION, {
+            **runner.COLOUR_SHARD_ALLOCATION, "owned-decode": 0,
+        })
+        self.assertEqual(
+            tuple(tuple(row for row in shard if row != owned) for shard in current),
+            previous,
+        )
+        self.assertEqual(runner.configured_whole_checks(), whole)
+        self.assertEqual(runner.configured_collector_checks(), collector)
+        assigned = [row for role in (whole, collector, *current) for row in role]
+        self.assertEqual(len(assigned), len(checks))
+        self.assertEqual(set(assigned), set(checks))
+        self.assertEqual(runner.WORKERS, 2)
+
+    @patch.object(runner, "CHECKS", CURRENT_CHECKS)
+    @patch.multiple(runner, **LIVE_TOPOLOGY)
+    def test_owned_profile_requires_its_actual_complete_cost_under_the_unchanged_guard(self):
+        # Synthetic boundary controls, not measurements or profile acceptance.
+        rows = [{"id": row[0], "status": "passed", "seconds": 1}
+                for row in runner.configured_checks()]
+        previous_rows = [row for row in rows if row["id"] != "owned-decode"]
+        with self.assertRaisesRegex(ValueError, "every complete current-profile group"):
+            runner.measured_shard_seconds(previous_rows)
+        with patch.object(runner, "CHECKS", PRE_OWNED_CHECKS):
+            previous = runner.measured_shard_seconds(previous_rows)
+        current = runner.measured_shard_seconds(rows)
+        self.assertEqual(current, [previous[0] + 1, *previous[1:]])
+        owned = next(row for row in rows if row["id"] == "owned-decode")
+        owned["seconds"] = 1050 - previous[0]
+        self.assertEqual(runner.measured_shard_seconds(rows)[0], 1050)
+        owned["seconds"] += 1
+        with self.assertRaisesRegex(ValueError, "1050-second guard"):
+            runner.measured_shard_seconds(rows)
+
+    def test_owned_decode_runs_both_cases_without_partition_or_mode_flags(self):
+        identity = "owned-decode"
+        check = next(row for row in CURRENT_CHECKS if row[0] == identity)
+        script = self.root / "tools" / check[1]
+        script.write_text(
+            "CASES = ({'id':'bank','module':'module','function':'first'},"
+            "{'id':'identity','module':'module','function':'second'})\n"
+        )
+        report = evidence()
+        report["counterexamples"] = [
+            {**copy.deepcopy(report["counterexamples"][0]),
+             "id": name, "function": f"module::{function}"}
+            for name, function in (("bank", "first"), ("identity", "second"))
+        ]
+        report["source_bindings"] = {
+            "src/example.rs": runner.digest(self.root / "src/example.rs"),
+        }
+
+        def process(command, **kwargs):
+            self.assertEqual(command[2], str(script))
+            self.assertEqual(command[3:-2], ["--verus-executable", str(self.root / "verus")])
+            self.assertEqual(command[-2], "--output")
+            Path(command[-1]).write_text(json.dumps(report))
+            return SimpleNamespace(returncode=0)
+
+        with patch.object(runner, "CHECKS", (check,)), patch.object(
+            runner.subprocess, "run", side_effect=process,
+        ) as process_call:
+            result = runner.run_checks(self.root, self.root / "verus", self.output, only=identity)
+        self.assertEqual(result["status"], "passed")
+        self.assertEqual(result["selected_groups"], [identity])
+        self.assertEqual(result["checks"][0]["counterexamples"], 2)
+        self.assertEqual(process_call.call_count, 1)
+        for records in (
+            report["counterexamples"][:1],
+            report["counterexamples"][::-1],
+            [report["counterexamples"][0]] * 2,
+        ):
+            with self.subTest(records=records), self.assertRaises(ValueError):
+                runner.check_bound_report(
+                    self.root, check, {**report, "counterexamples": records},
+                    report["source_bindings"],
+                )
+
+    @patch.object(runner, "CHECKS", PRE_OWNED_CHECKS)
     @patch.multiple(runner, **LIVE_TOPOLOGY)
     def test_certainty_addition_preserves_original_floor_and_future_rgb_extension(self):
         from check_arithmetic_certainty_proofs import CASES
