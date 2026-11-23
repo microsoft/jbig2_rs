@@ -65,40 +65,45 @@ impl Bitmap {
             reveal(crate::spec::bitmap::zeroed_storage);
         }
         let mut index = 0_usize;
+        let mut aggregate = 0_u8;
         #[cfg_attr(verus_keep_ghost, verus_spec(
             invariant
                 index <= self.data@.len(),
-                forall|before: int| 0 <= before < index ==>
-                    #[trigger] self.data@[before] == 0,
+                (aggregate == 0) == (forall|before: int| 0 <= before < index ==>
+                    #[trigger] self.data@[before] == 0),
             decreases self.data@.len() - index,
         ))]
         while index < self.data.len() {
-            if self.data[index] != 0 {
-                #[cfg(verus_keep_ghost)]
-                proof! {
-                    crate::views::bitmap_fields(self);
-                    reveal(crate::spec::bitmap::zeroed_storage);
-                    assert(crate::views::bitmap_data(self)[index as int] != 0);
-                    assert(!crate::spec::bitmap::zeroed_storage(self));
-                }
-                return false;
+            let value = self.data[index];
+            let next = aggregate | value;
+            #[cfg(verus_keep_ghost)]
+            proof! {
+                assert((next == 0) == (aggregate == 0 && value == 0)) by(bit_vector)
+                    requires next == aggregate | value;
+                assert((forall|before: int| 0 <= before < index as int + 1 ==>
+                    #[trigger] self.data@[before] == 0) == (aggregate == 0 && value == 0));
             }
+            aggregate = next;
             index += 1;
         }
         #[cfg(verus_keep_ghost)]
         proof! {
-            assert forall|position: int, value: u8|
-                0 <= position < crate::views::bitmap_data(self).len()
-                implies crate::spec::bitmap::operator_byte(
-                    crate::bitmap::CombinationOperator::Xor,
-                    crate::views::bitmap_data(self)[position],
-                    value,
-                ) == value by {
-                assert(crate::views::bitmap_data(self)[position] == 0);
-                assert(0u8 ^ value == value) by(bit_vector);
+            crate::views::bitmap_fields(self);
+            reveal(crate::spec::bitmap::zeroed_storage);
+            if aggregate == 0 {
+                assert forall|position: int, value: u8|
+                    0 <= position < crate::views::bitmap_data(self).len()
+                    implies crate::spec::bitmap::operator_byte(
+                        crate::bitmap::CombinationOperator::Xor,
+                        crate::views::bitmap_data(self)[position],
+                        value,
+                    ) == value by {
+                    assert(crate::views::bitmap_data(self)[position] == 0);
+                    assert(0u8 ^ value == value) by(bit_vector);
+                }
             }
         }
-        true
+        aggregate == 0
     }
 
     /// Returns a pixel, or `None` when the coordinates are outside the bitmap.
