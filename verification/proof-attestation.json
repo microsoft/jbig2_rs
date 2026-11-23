@@ -764,5 +764,48 @@
     },
     "semantic_manifest_sha256": "66f60891d0c4054e83beaf0bc5f92a9463a3c1c53f7a472602b3fc54c6ed58aa",
     "scope": "Plan from every successful same-run group of the actual rejected candidate, with retained historical per-group regression controls. Swap two complete existing groups and relocate only the new RGB group; no cases, checker contracts, compiler, source bodies, role definitions, parallelism or guard changes. Historical exact projections reflect the intentional slot swap, not relabeled past execution. No acceptance credit: a fresh complete same-run profile on the corrected final head must pass."
+  },
+  "generic_colour_robust_ci_profile_correction": {
+    "rejected_runs": [
+      {
+        "url": "https://github.com/microsoft/jbig2_rs/actions/runs/45092228281",
+        "attempt": 1,
+        "checkout": "365982f343c29f0a438860976ca54ec1200763fb",
+        "maximum_shard_seconds": 1130.1346260959997
+      },
+      {
+        "url": "https://github.com/microsoft/jbig2_rs/actions/runs/45102932751",
+        "attempt": 1,
+        "checkout": "115e15020429ee9ce68b1f0541b9f948cecfd62b",
+        "maximum_shard_seconds": 1261.259997126
+      }
+    ],
+    "all_semantic_groups_passed_in_both": true,
+    "group_count": 62,
+    "contrast_count": 499,
+    "per_group_maxima_total_seconds": 14149.248929882,
+    "certainty_reserved_seconds": 320,
+    "maximum_projected_seconds": 1043.547973186,
+    "projected_shard_seconds_with_reservation": [
+      1037.521383123,
+      1040.1084299939998,
+      1040.703310944,
+      1030.325156962,
+      1037.335416414,
+      1039.711085949,
+      1039.446731117,
+      1043.2801041900002,
+      1038.452690862,
+      959.1219069069999,
+      1042.1687695940002,
+      1043.547973186,
+      1036.3476919399998,
+      1041.1782787
+    ],
+    "semantic_shards_unchanged": 14,
+    "matrix_max_parallel_unchanged": 4,
+    "guard_seconds_unchanged": 1050,
+    "timing_fixture_sha256": "ffec54639a14db563bbfb161e7984d72629be98cae2cc5d03a87ee49221ec629",
+    "scope": "Colour-gated allocation against every per-group maximum of both complete actual rejected profiles, reserving320 seconds for the separate four-case arithmetic certainty group. The original pre-RGB allocations and historical thresholds remain exact. No case/checker/role/compiler/parallelism/guard or source contract changes. Predicted measured-envelope bounds only, not hosted acceptance credit; a fresh complete same-run profile is mandatory."
   }
 }

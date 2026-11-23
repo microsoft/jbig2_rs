@@ -26,7 +26,7 @@ ADDED_SHARD_GROUPS = {
     "reference-type-lookup": 10, "reference-type-classes": 13,
     "reference-accounting": 10, "reference-catalog": 12,
     "public-context": 7,
-    "public-decode-results": 4, "public-global-results": 2,
+    "public-decode-results": 4, "public-global-results": 4,
     "error-wrappers-symbol": 4, "error-wrappers-basic": 5,
     "default-limits-2": 0, "default-limits-3": 1,
     "default-limits-4": 1, "default-limits-5": 1,
@@ -41,7 +41,7 @@ REBALANCED_SHARD_GROUPS = {
 DEFAULT_SHARD_REBALANCE = {
     "mmr-reference": 0, "default-limits-1": 0, "mmr-run": 0,
     "document-count": 1, "default-decoder-2": 1, "iaid-state": 1,
-    "default-limits-2": 4, "error-wrappers-symbol": 2, "symbol-cardinality": 2,
+    "default-limits-2": 2, "error-wrappers-symbol": 2, "symbol-cardinality": 2,
     "retention": 5, "arithmetic-refill": 3, "page-state": 3, "huffman-codec": 3,
     "default-decoder-4": 12, "text-batch": 4, "arithmetic-integer": 4,
     "error-wrappers-regions": 5, "document-layout": 5, "default-decoder-3": 8,
@@ -56,6 +56,69 @@ DEFAULT_SHARD_REBALANCE = {
     "arithmetic-normalization": 12,
     "session-framing": 13,
     "mmr-span": 1, "default-limits-4": 13, "page-finish": 13, "default-limits-5": 13,
+}
+# Additive RGB profile: maxima of complete runs 45092228281/1 and
+# 45102932751/1, plus 320 seconds for the measured 264.47-second certainty group.
+# Legacy profiles retain their original allocation and timing interpretation.
+COLOUR_SHARD_ALLOCATION = {
+    "arithmetic-certainty": 7,
+    "huffman-codec": 7,
+    "context-lifecycle": 1,
+    "session-framing": 6,
+    "public-context": 10,
+    "value-bridge": 12,
+    "document-count": 5,
+    "mmr-reference": 3,
+    "document-layout": 11,
+    "page-state": 4,
+    "text-batch": 4,
+    "symbol-cardinality": 3,
+    "segment-data": 1,
+    "reader-error": 6,
+    "page-public": 11,
+    "arithmetic-integer": 2,
+    "halftone-header": 10,
+    "integer-state": 12,
+    "segment-header": 7,
+    "black-span": 10,
+    "page-finish": 13,
+    "mmr-horizontal": 8,
+    "bitmap-compose": 6,
+    "bitmap-copy": 0,
+    "mmr-span": 11,
+    "arithmetic-refill": 13,
+    "arithmetic-normalization": 11,
+    "iaid-state": 5,
+    "arithmetic-initialization": 5,
+    "mmr-run": 2,
+    "huffman-assignment": 9,
+    "region-dispatch": 1,
+    "operator-bit": 10,
+    "retention": 6,
+    "bitmap-chunk": 2,
+    "mmr-prefix": 1,
+    "error-conversion": 8,
+    "error-wrappers-basic": 8,
+    "error-wrappers-regions": 0,
+    "error-wrappers-symbol": 2,
+    "default-limits-1": 8,
+    "default-limits-2": 5,
+    "default-limits-3": 13,
+    "default-limits-4": 8,
+    "default-limits-5": 13,
+    "default-decoder-1": 4,
+    "default-decoder-2": 10,
+    "default-decoder-3": 1,
+    "default-decoder-4": 5,
+    "default-decoder-5": 0,
+    "collector-sink": 6,
+    "public-decode-results": 0,
+    "public-global-results": 0,
+    "reference-accounting": 2,
+    "reference-catalog": 12,
+    "reference-type-lookup": 13,
+    "reference-type-classes": 13,
+    "colour-rgb": 4,
 }
 RECEIPT_SCHEMA = 3
 CHECKS = (
@@ -190,6 +253,14 @@ def configured_shards():
                     shard.remove(match)
                     shards[min(destination, count - 1)].append(match)
                     break
+    if count == CI_SHARDS == 14 and any(check[0] == "colour-rgb" for check in checks):
+        legacy_slots = {
+            check[0]: index for index, shard in enumerate(shards) for check in shard
+        }
+        shards = [[] for _ in range(count)]
+        for check in checks:
+            destination = COLOUR_SHARD_ALLOCATION.get(check[0], legacy_slots[check[0]])
+            shards[destination].append(check)
     return tuple(tuple(shard) for shard in shards)
 
 

@@ -42,6 +42,7 @@ class ReferenceTypeProofTests(unittest.TestCase):
                 relocated, _ = relocate_cases(ROOT, cases, baseline_groups(cases), sources)
                 self.assertEqual(len(relocated), 6)
 
+    @patch.object(runner, "CHECKS", tuple(row for row in runner.CHECKS if row[0] != "colour-rgb"))
     def test_new_groups_do_not_redistribute_any_old_case_or_add_roles(self):
         added = set(CASE_GROUPS)
         with patch.object(runner, "CHECKS", tuple(row for row in runner.CHECKS if row[0] not in added)):
