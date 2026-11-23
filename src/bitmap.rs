@@ -44,6 +44,7 @@ pub struct Bitmap {
 }
 
 mod access;
+mod aligned;
 mod chunks;
 mod compose;
 mod operators;

@@ -64,6 +64,26 @@ impl Bitmap {
         {
             return Err(MalformedError::IntegerOverflow);
         }
+        if source_x % 8 == 0
+            && destination_x % 8 == 0
+            && width % 8 == 0
+            && matches!(
+                operator,
+                CombinationOperator::Or | CombinationOperator::Replace
+            )
+        {
+            return super::aligned::compose_region(
+                self,
+                source,
+                source_x,
+                source_y,
+                destination_x,
+                destination_y,
+                width,
+                height,
+                operator == CombinationOperator::Replace,
+            );
+        }
         let result = self.compose_region_chunked(
             source,
             source_x,
