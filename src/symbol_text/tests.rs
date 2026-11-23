@@ -11,6 +11,7 @@ mod huffman_symbol_ids;
 mod placement_render;
 mod placement_state;
 mod resource_accounting;
+mod standard_a;
 mod text_termination;
 
 use super::bitmap::{bitmap_from_packed_bytes, clone_bitmap};
@@ -24,6 +25,7 @@ use super::tables::{
     wrap_custom_tables,
 };
 use super::*;
+use crate::huffman::CodecHuffmanTable;
 use std::hint::black_box;
 use std::time::{Duration, Instant};
 

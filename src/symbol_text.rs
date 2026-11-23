@@ -539,7 +539,7 @@ enum MaterializedHuffmanTable<'a> {
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
 struct StandardHuffmanTables {
-    a: Option<Box<HuffmanTable>>,
+    a: Option<crate::huffman::StandardADescriptor>,
     b: Option<Box<HuffmanTable>>,
     c: Option<Box<HuffmanTable>>,
     d: Option<Box<HuffmanTable>>,

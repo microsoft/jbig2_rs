@@ -411,9 +411,11 @@ fn raw_standard_table_cache_covers_every_slot_and_failed_materialization() {
         ));
         assert!(cache.table(name).is_none());
         cache.materialize(name, &limits).unwrap();
-        let first = std::ptr::from_ref(cache.table(name).unwrap());
+        let first = cache.table(name).unwrap().general().map(std::ptr::from_ref);
         cache.materialize(name, &restrictive).unwrap();
-        assert_eq!(std::ptr::from_ref(cache.table(name).unwrap()), first);
+        let second = cache.table(name).unwrap().general().map(std::ptr::from_ref);
+        assert_eq!(first, second);
+        assert_eq!(first.is_none(), name == StandardHuffmanTable::A);
         for (other_index, other) in names.into_iter().enumerate() {
             assert_eq!(cache.table(other).is_some(), other_index <= index);
         }
@@ -520,12 +522,16 @@ fn raw_table_associations_reject_missing_fields_and_preserve_borrowed_tables(
     assert!(std::ptr::eq(
         dictionary_tables
             .table_for(IntegerField::HeightDelta)
+            .unwrap()
+            .general()
             .unwrap(),
         std::ptr::from_ref(&plain)
     ));
     assert!(std::ptr::eq(
         dictionary_tables
             .table_for(IntegerField::WidthDelta)
+            .unwrap()
+            .general()
             .unwrap(),
         std::ptr::from_ref(&oob)
     ));
@@ -567,7 +573,7 @@ fn raw_table_associations_reject_missing_fields_and_preserve_borrowed_tables(
     .enumerate()
     {
         assert!(std::ptr::eq(
-            text_tables.table_for(field).unwrap(),
+            text_tables.table_for(field).unwrap().general().unwrap(),
             borrowed[index]
         ));
     }
@@ -716,13 +722,20 @@ fn repeated_standard_table_materialization_is_reused() {
     tables
         .materialize(StandardHuffmanTable::A, &limits)
         .expect("first table A");
-    let first = tables
-        .table(StandardHuffmanTable::A)
-        .expect("materialized table") as *const HuffmanTable;
+    assert!(matches!(
+        tables.table(StandardHuffmanTable::A),
+        Some(CodecHuffmanTable::StandardA(_))
+    ));
+    let restrictive = Limits {
+        max_symbols: 0,
+        max_decoder_managed_memory_bytes: 0,
+        ..limits
+    };
     tables
-        .materialize(StandardHuffmanTable::A, &limits)
+        .materialize(StandardHuffmanTable::A, &restrictive)
         .expect("second table A");
-    let second =
-        tables.table(StandardHuffmanTable::A).expect("reused table") as *const HuffmanTable;
-    assert_eq!(first, second);
+    assert!(matches!(
+        tables.table(StandardHuffmanTable::A),
+        Some(CodecHuffmanTable::StandardA(_))
+    ));
 }

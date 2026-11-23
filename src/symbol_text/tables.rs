@@ -9,6 +9,7 @@ use super::{
     SymbolTextError, TableBinding, TableBindings, TableChoice, TableParameter, TextRegionConfig,
     MAX_TABLE_BINDINGS,
 };
+use crate::huffman::{CodecHuffmanTable, StandardADescriptor};
 #[cfg(verus_keep_ghost)]
 use vstd::prelude::*;
 
@@ -254,10 +255,17 @@ impl StandardHuffmanTables {
         table: StandardHuffmanTable,
         limits: &Limits,
     ) -> Result<(), HuffmanError> {
+        if matches!(table, StandardHuffmanTable::A) {
+            if self.a.is_none() {
+                self.a = Some(StandardADescriptor::new(limits)?);
+            }
+            return Ok(());
+        }
         if self.table(table).is_none() {
             let materialized = Some(Box::new(HuffmanTable::standard(table, limits)?));
             match table {
-                StandardHuffmanTable::A => self.a = materialized,
+                // A was resolved before any owned table was allocated.
+                StandardHuffmanTable::A => {}
                 StandardHuffmanTable::B => self.b = materialized,
                 StandardHuffmanTable::C => self.c = materialized,
                 StandardHuffmanTable::D => self.d = materialized,
@@ -278,17 +286,20 @@ impl StandardHuffmanTables {
     }
 
     #[cfg_attr(verus_keep_ghost, verus_verify)]
-    pub(super) fn table(&self, table: StandardHuffmanTable) -> Option<&HuffmanTable> {
+    pub(super) fn table(&self, table: StandardHuffmanTable) -> Option<CodecHuffmanTable<'_>> {
         macro_rules! get {
             ($field:expr) => {
                 match $field {
-                    Some(table) => Some(table),
+                    Some(table) => Some(CodecHuffmanTable::General(table)),
                     None => None,
                 }
             };
         }
         match table {
-            StandardHuffmanTable::A => get!(&self.a),
+            StandardHuffmanTable::A => self
+                .a
+                .as_ref()
+                .map(|table| CodecHuffmanTable::StandardA(*table)),
             StandardHuffmanTable::B => get!(&self.b),
             StandardHuffmanTable::C => get!(&self.c),
             StandardHuffmanTable::D => get!(&self.d),
@@ -531,7 +542,7 @@ pub(super) fn select_text_tables<'a>(
 
 impl HuffmanFieldTables<'_> {
     #[cfg_attr(verus_keep_ghost, verus_verify)]
-    pub(super) fn table_for(&self, field: IntegerField) -> Option<&HuffmanTable> {
+    pub(super) fn table_for(&self, field: IntegerField) -> Option<CodecHuffmanTable<'_>> {
         let resolved = match field {
             IntegerField::AggregationInstances => self.aggregation_instances.as_ref(),
             IntegerField::HeightDelta => self.height_delta.as_ref(),
@@ -550,7 +561,9 @@ impl HuffmanFieldTables<'_> {
         };
         match resolved {
             Some(MaterializedHuffmanTable::Standard(table)) => self.standard_tables.table(*table),
-            Some(MaterializedHuffmanTable::Custom(table)) => Some(table),
+            Some(MaterializedHuffmanTable::Custom(table)) => {
+                Some(CodecHuffmanTable::General(table))
+            }
             None => None,
         }
     }

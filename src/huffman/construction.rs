@@ -470,7 +470,9 @@ impl HuffmanTable {
     /// Constructs one of the standard tables in T.88 B.5.
     #[cfg_attr(verus_keep_ghost, verus_spec(out =>
         ensures match out {
-            Ok(table) => huffman_lookup_spec::table_lookup_valid(&table),
+            Ok(built) => huffman_lookup_spec::table_lookup_valid(&built)
+                && (table == StandardHuffmanTable::A ==>
+                    huffman_spec::canonical_assignment(huffman_spec::standard_a_lines(), &built)),
             Err(_) => true,
         },
     ))]
@@ -479,6 +481,8 @@ impl HuffmanTable {
         table: StandardHuffmanTable,
         limits: &Limits,
     ) -> Result<Self, HuffmanError> {
+        #[cfg(verus_keep_ghost)]
+        proof! { huffman_spec::standard_a_lines_definition(); }
         Self::from_line_source(HuffmanLines::Standard(standard_lines(table)), limits)
     }
 }

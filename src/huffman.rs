@@ -317,7 +317,9 @@ enum StandardLines {
 }
 
 impl StandardLines {
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures self == StandardLines::A ==> out == 4,
+    ))]
     const fn len(self) -> usize {
         match self {
             Self::A => 4,
@@ -334,7 +336,10 @@ impl StandardLines {
         }
     }
 
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures self == StandardLines::A ==> out ==
+            if index < 4 { Some(TABLE_A@[index as int]) } else { None },
+    ))]
     fn line(self, index: usize) -> Option<HuffmanLine> {
         macro_rules! get {
             ($table:expr) => {
@@ -365,7 +370,9 @@ impl StandardLines {
     }
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures table == StandardHuffmanTable::A ==> out == StandardLines::A,
+))]
 fn standard_lines(table: StandardHuffmanTable) -> StandardLines {
     match table {
         StandardHuffmanTable::A => StandardLines::A,
@@ -385,6 +392,9 @@ fn standard_lines(table: StandardHuffmanTable) -> StandardLines {
         StandardHuffmanTable::O => StandardLines::O,
     }
 }
+
+mod standard_a;
+pub(crate) use standard_a::{CodecHuffmanTable, StandardADescriptor};
 
 mod construction;
 mod decoding;

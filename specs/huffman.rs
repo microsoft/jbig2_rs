@@ -327,22 +327,37 @@ pub(super) open spec fn line_lengths_valid(lines: Seq<super::HuffmanLine>) -> bo
 }
 
 // Model navigation: spec::is_raw [proof-support]
-// Purpose: Borrowed-source projections, powers, bucket indices and assignment accumulators.
+// Purpose: Assignment-source projection for borrowed lines and the four standard-A lines.
 // Mapping: no registered requirement/locator mapping.
 // Fidelity: unresolved; no independent normative approval.
 pub(super) open spec fn is_raw(source: super::HuffmanLines) -> bool {
-    source is Borrowed
+    match source {
+        super::HuffmanLines::Borrowed(_) => true,
+        super::HuffmanLines::Standard(super::StandardLines::A) => true,
+        _ => false,
+    }
 }
 
 // Model navigation: spec::raw_lines [proof-support]
-// Purpose: Borrowed-source projections, powers, bucket indices and assignment accumulators.
+// Purpose: Exact lines projected from borrowed sources or the standard-A source.
 // Mapping: no registered requirement/locator mapping.
 // Fidelity: unresolved; no independent normative approval.
 pub(super) open spec fn raw_lines(source: super::HuffmanLines) -> Seq<super::HuffmanLine> {
     match source {
         super::HuffmanLines::Borrowed(lines) => lines@,
+        super::HuffmanLines::Standard(super::StandardLines::A) => super::TABLE_A@,
         _ => Seq::empty(),
     }
+}
+
+pub(crate) closed spec fn standard_a_lines() -> Seq<super::HuffmanLine> {
+    super::TABLE_A@
+}
+
+pub(super) proof fn standard_a_lines_definition()
+    ensures standard_a_lines() == super::TABLE_A@,
+{
+    reveal(standard_a_lines);
 }
 
 // Select original indices, not the constructor's histogram or sorted storage.

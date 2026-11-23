@@ -262,7 +262,7 @@ fn fresh_huffman_codec_preserves_input_strip_tables_and_requested_refinement() {
                     (IntegerField::HeightDelta, &second),
                 ] {
                     assert!(core::ptr::eq(
-                        fresh.tables.table_for(field).unwrap(),
+                        fresh.tables.table_for(field).unwrap().general().unwrap(),
                         expected
                     ));
                 }
