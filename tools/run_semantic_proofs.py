@@ -27,7 +27,7 @@ ADDED_SHARD_GROUPS = {
     "reference-type-lookup": 10, "reference-type-classes": 13,
     "reference-accounting": 10, "reference-catalog": 12,
     "public-context": 7,
-    "public-decode-results": 4, "public-global-results": 2,
+    "public-decode-results": 4, "public-global-results": 4,
     "error-wrappers-symbol": 4, "error-wrappers-basic": 5,
     "default-limits-2": 0, "default-limits-3": 1,
     "default-limits-4": 1, "default-limits-5": 1,
@@ -42,7 +42,7 @@ REBALANCED_SHARD_GROUPS = {
 DEFAULT_SHARD_REBALANCE = {
     "mmr-reference": 0, "default-limits-1": 0, "mmr-run": 0,
     "document-count": 1, "default-decoder-2": 1, "iaid-state": 1,
-    "default-limits-2": 4, "error-wrappers-symbol": 2, "symbol-cardinality": 2,
+    "default-limits-2": 2, "error-wrappers-symbol": 2, "symbol-cardinality": 2,
     "retention": 5, "arithmetic-refill": 3, "page-state": 3, "huffman-codec": 3,
     "default-decoder-4": 12, "text-batch": 4, "arithmetic-integer": 4,
     "error-wrappers-regions": 5, "document-layout": 5, "default-decoder-3": 8,

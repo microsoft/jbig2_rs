@@ -594,10 +594,10 @@ class SemanticOrchestrationTests(unittest.TestCase):
                 tuple(row for row in current if row[0] not in added | moved),
             )
         self.assertEqual(
-            {row[0] for row in after[6] if row[0] in added}, {"public-decode-results"},
+            {row[0] for row in after[6] if row[0] in added}, added,
         )
         self.assertEqual(
-            {row[0] for row in after[4] if row[0] in added}, {"public-global-results"},
+            {row[0] for row in after[4] if row[0] in added}, set(),
         )
         self.assertIn("session-framing", {row[0] for row in before[14]})
         self.assertIn("session-framing", {row[0] for row in after[15]})
