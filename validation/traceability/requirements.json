@@ -24,7 +24,7 @@
   "model_classifications": {
     "review": "author-navigation-only-not-independent-normative-approval",
     "registry_sha256": "19f29e18950f5e35d011f88b528ba889ff3d4d000d12990d8f9c82d7de0c69cb",
-    "project_source_sha256": "8e0fed2c54e3ba49785698a0c562141ea0a38eadfb5da86fc1d5fe469455e463",
+    "project_source_sha256": "be48cc20ac61d522494cfb080c432239e0a7fa942201b07938f652e46bbcdd29",
     "families": [
       {
         "file": "specs/huffman_lookup.rs",
@@ -1514,6 +1514,79 @@
         "justification": "Exact RGB row/channel/storage and palette wire fields, explicit colour declarations, and the supported generic-region presentation policy.",
         "ambiguity": "",
         "caveats": "Author navigation only; not independent normative approval or a full decoded-output proof."
+      },
+      {
+        "file": "specs/arithmetic_certainty.rs",
+        "members": [
+          "spec::initialized",
+          "spec::observer_valid",
+          "spec::saved_prefix",
+          "spec::saved_valid",
+          "spec::step_valid",
+          "spec::trace_valid"
+        ],
+        "classification": "representation-invariant",
+        "justification": "Initialized immutable real decision traces, numeric terminal-prefix/fill enclosures, context agreement and pre-final-DS saved provenance.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; no independent normative approval or full decoded-output proof."
+      },
+      {
+        "file": "specs/arithmetic_certainty.rs",
+        "members": [
+          "spec::after_decision",
+          "spec::alternative_codes",
+          "spec::alternative_normalization",
+          "spec::alternative_step",
+          "spec::checked_decision",
+          "spec::decision_frame",
+          "spec::decision_spread",
+          "spec::initial_spread",
+          "spec::normalization_spread",
+          "spec::normalized_next",
+          "spec::refill_contribution",
+          "spec::saved_observer",
+          "spec::trace_upper",
+          "spec::trace_width"
+        ],
+        "classification": "project-result-model",
+        "justification": "Initialized immutable real decision traces, numeric terminal-prefix/fill enclosures, context agreement and pre-final-DS saved provenance.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; no independent normative approval or full decoded-output proof."
+      },
+      {
+        "file": "specs/arithmetic_certainty.rs",
+        "members": [
+          "spec::admissible_initial",
+          "spec::admissible_prefix",
+          "spec::admissible_sources",
+          "spec::source_choices_admissible",
+          "spec::source_unknown"
+        ],
+        "classification": "project-policy",
+        "justification": "Initialized immutable real decision traces, numeric terminal-prefix/fill enclosures, context agreement and pre-final-DS saved provenance.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; no independent normative approval or full decoded-output proof."
+      },
+      {
+        "file": "specs/symbol_text.rs",
+        "members": [
+          "spec::prefix_saved_unchanged",
+          "spec::prefix_valid"
+        ],
+        "classification": "representation-invariant",
+        "justification": "Initialized immutable real decision traces, numeric terminal-prefix/fill enclosures, context agreement and pre-final-DS saved provenance.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; no independent normative approval or full decoded-output proof."
+      },
+      {
+        "file": "specs/symbol_text.rs",
+        "members": [
+          "spec::arithmetic_end_certificate"
+        ],
+        "classification": "project-policy",
+        "justification": "Initialized immutable real decision traces, numeric terminal-prefix/fill enclosures, context agreement and pre-final-DS saved provenance.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; no independent normative approval or full decoded-output proof."
       }
     ]
   },
@@ -2186,16 +2259,16 @@
     "specs/mod.rs": "34f81994f8b77e618a7d48d4552175d09cf3be633307166227c13ce94a06ba21",
     "specs/readers.rs": "ee10b54a7ee8dce323488bf8ef5229fbbf1d5811888a3364cda8f2cc187ba251",
     "specs/segments.rs": "dc288038574b7f902a15752e58096ef504d0253a0f308950474278ca2104e451",
-    "specs/symbol_text.rs": "afaae649978ac149c9c387b5b1b4b7b9b018c38c1a84a607fa2fbab5f0dc2818",
+    "specs/symbol_text.rs": "b0e8c31a75c68f45bf9876e6bfdc289ca2da3ce5b6d5d2e2c262e3c2cdb24720",
     "specs/symbol_text/arithmetic_codec.rs": "c96145d1428fd0edda0b93437f15e15592e9f7476d8465dbd55feb071d1a866c",
     "specs/symbol_text/dictionary.rs": "f7994737d95cefbca3e6067754190b160ddb8c85900a17edf672b4f8d80882b2",
     "specs/symbol_text/huffman_codec.rs": "3a56e2a0f9c27443b1ee91029c92584a45df3398fc4f433de4ffc1e717246295",
     "specs/symbol_text/symbol_ids.rs": "a08f24685e8ef5f95e98b5bb953ad18a1b6dbbffd754ca48f09931f36a87aacc",
-    "src/arithmetic.rs": "3322814a9a7feedbd1d53c2b9aa6b5d9c1559b691a819cfbf5dcb2eb62d98d33",
+    "src/arithmetic.rs": "a8e0ad666b2ea1750413da9601f665b197c2be0d012bd77c115539ee7c6ba971",
     "src/arithmetic/decoding.rs": "537afa619108dc6ce7773688683d85eb5b4251dbb75a939c92223746b7a90fd5",
     "src/arithmetic/integers.rs": "ca1828b214769e1192785acc2dd369e0776f38654f74885dbfc32bd0025fc350",
     "src/arithmetic/refill.rs": "737ee41e1e4bfd62104fd48dcc612ff83ba9cc1b6b0ec1ca0e741909ce505769",
-    "src/arithmetic/tests.rs": "24fa75f21b569d1518fdf5191d21b38aeb430c04695e9d103f3ff0ee8f495e8f",
+    "src/arithmetic/tests.rs": "b6aeabc70cd42500a42eb4c319717cbc5cc540f57bc4908138fb021486adc1df",
     "src/arithmetic/tests/context_state.rs": "cf1908a60d5aa6cf91d8522644169a9eebe2521c0bd114f3950b29df5900566f",
     "src/arithmetic/tests/decoder_registers.rs": "eb973972578c2b74f0d2d5a390d2b169807f3ce970d7908d1b5453cf6156121d",
     "src/arithmetic/tests/integer_procedures.rs": "0004c5bc599217400bd463c3c2efd859d8fb5d7689c6e957b096a7e42c062d26",
@@ -2267,11 +2340,11 @@
     "src/segment_data/tests.rs": "7b082bcee501bd86382474823db6af59afb56842b7d053c3de8b77d2e5edfc15",
     "src/segment_header.rs": "ec5047080fa67fd0a8dd28e8101b972aeb23e3d10939906e1c059674ebaa528d",
     "src/segment_header/tests.rs": "41f4c9c942b49bc2d4d7c8588ac99ab655475803849836854afd349eee0d463c",
-    "src/symbol_text.rs": "bac0549e15a2592276bc2a24a448186158dbb8adb0cd99e8dd0247bb8d00ab3d",
+    "src/symbol_text.rs": "214ccd5c58ee49df2e183b84c965c263880a1dc6b0d0f52b6c553a40793e2be4",
     "src/symbol_text/bitmap.rs": "d872783ab5e9768ba4064ca309700f089e31b3ca799425edc6a5d7471efc40b2",
     "src/symbol_text/codebook.rs": "3ad3dd4131dbb7343a3267f32718d4c5278f029c1b90937f45d06363b8defbcc",
     "src/symbol_text/codec.rs": "4f975eff5bd958e0b201dd9c80e91b40be4681254a56adb02a681cc87e297e78",
-    "src/symbol_text/codec/arithmetic.rs": "e21fd9639fc1839c74bc6b5bdb2af53b6dbe6d6bdbfdd43d073481d9e6fa3fda",
+    "src/symbol_text/codec/arithmetic.rs": "041f67c8c84b3387a1b2e5dec0d3ae7d8754abf060e036013d2780e43d37c284",
     "src/symbol_text/codec/huffman.rs": "a706f6674a164c1398d6fdc199a4a0ef8614a86e0be69e6eb13e3a8c2f6b83a1",
     "src/symbol_text/codec/refinement.rs": "71d5bb90d828932191eba96f52982c1f7adc24433cb5e4d21dc721b3f6997d83",
     "src/symbol_text/codec/symbols.rs": "01f2f2d2739c42ce2ed5fe4ed170451082478dcfc7f405b73ac9f6a819ce3248",
@@ -2282,22 +2355,22 @@
     "src/symbol_text/headers.rs": "69da74f1ff5627d013f327d5c152d49582c7bb82462fc70b48b82159b9e8d987",
     "src/symbol_text/placement.rs": "6fe7228afc13c0735fcfe0d9359e07e03dfdd5a6883ba8d79523dcfde8885e5d",
     "src/symbol_text/tests/arithmetic_composition.rs": "8749f6561c7b3030deafa47358bd499514821726851cb296d4f00b2ff2110120",
-    "src/symbol_text/tests/codec_and_exports.rs": "2fe7e304d5ce85cc18f39cd026f09ea919435d3eeb277577e784e2933f5d2269",
+    "src/symbol_text/tests/codec_and_exports.rs": "4215ca5d6af0d628d33fb5b9818d0c0012f8ef09dddf4b5a73f8db467f02540f",
     "src/symbol_text/tests/dictionary_dispatch.rs": "632ca48342adb2713092cecab915ee9f67eb3610dc92a2764cb429773a103f82",
     "src/symbol_text/tests/dictionary_dispatch/huffman_aggregation.rs": "0349534fe6854219a69f33105ed9fdf5cdfe63d0298002bdc4a6098c43afcc8b",
     "src/symbol_text/tests/flags_and_tables.rs": "ac4e3ee2b5aadda78ebbe2c7804584f49a48a96816c85fa37adb99aa2a0113fe",
-    "src/symbol_text/tests/huffman_fields.rs": "6143db3e01fdba1da997da801b7f3ccc799e36e51ef1935f995bf58482b94b9b",
+    "src/symbol_text/tests/huffman_fields.rs": "5c93de28ea3e786db07de325f86e7ea3bc375febf7920925af1ad02b630685ac",
     "src/symbol_text/tests/huffman_symbol_ids.rs": "89dce150f0deb0e9eb16bb38cda5238c6546589d8022829680c412ff4f3becd0",
     "src/symbol_text/tests/placement_render.rs": "5d07c12827335abdba47df041992ea76e1b12d1a2ae1fb598ba3d4ecba1350b1",
     "src/symbol_text/tests/placement_state.rs": "4842dd4690593cf25b854787030a1e99f93c5611801899a22fce35f9625c75e3",
     "src/symbol_text/tests/resource_accounting.rs": "88581edeabfa81aeb30bee5dd89ad07692931b6754248abe1755ffda3809cc13",
-    "src/symbol_text/tests/text_termination.rs": "878fbd53aa0ef632484aeca3d649933e9a2fb894ffb93eb57a76519fe34a15cb",
-    "src/symbol_text/text.rs": "f6ec2cbd5bd6cc3bda8fcbc80868780b34545b87f9411f350f0fcb9b2422f54c",
+    "src/symbol_text/tests/text_termination.rs": "b9f9a7f38eedd3d792acc7838b8ed96c445fea786751fc0e0124222e454211e3",
+    "src/symbol_text/text.rs": "02bb1a60f754d4f426e8054e03d84ba6363cd75ece55705ee8ffda180e619d8a",
     "tests/catalog_contracts.rs": "d4eb4fd3d554494fcd99fa58def0eaa542fca7f97ff32c2083cfa0d3e1545da2",
     "tests/spec_header.rs": "6c8d30477d3be9080827bf0eab191739ab4fe844fe856c60020eb53a50cbcdda",
     "tests/traceability_organization.rs": "967cd92362829cc4258db0ab7300a8f28b53055dbd61489c3c3262ee6d539b5f",
     "tests/traceability_semantics.rs": "e7189d9cb70fa9b021b221f02942d90e64e9f96f9d38040edf4fa8599dfaa5f9",
-    "src/symbol_text/text/segment.rs": "1c395e072a26c37077848d31448c1949dbfe1c0373475c691e38a8caac5ee4c3"
+    "src/symbol_text/text/segment.rs": "a29166557a81d2dcd888c7101973b552c73a6ebd611453f5d81a118689e8651b"
   },
   "definitions": {
     "mmr-mode-table-entry": {

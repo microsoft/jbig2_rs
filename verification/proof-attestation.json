@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
   "status": "verified_exact_project_scope_with_reviewed_limits",
-  "source_revision": "9bddc449f947c1841d76c54cdd7450371bf25921",
-  "scope": "Fresh pinned whole verification including an additive byte-only generic-region RGB8 output profile. Contracts cover exact channel/storage extents, palette wire triples, foreground identifiers, transparent coloured REPLACE/monochrome ink presentation, colour declaration recovery and bounded returned page storage. Input, entropy, palette reference/retention, page lifecycle/count and conservative work/memory budgets are checked. Existing bi-level/reader/context/sink APIs and reviewed boundaries are unchanged. Same executing sources, unchanged 20 reviewed limitations, no new assumed I/O or algorithm bodies, no runtime/proof substitutions. Component contracts and finite independent RGB references, not a full decoded-output, colour-management, T.45 text or independently approved normative proof. Main/0.3 only.",
+  "source_revision": "d8a0a3c64c5c0369c7cebccaa9d568c4b92e4720",
+  "scope": "Fresh pinned whole verification including initialized real arithmetic decision provenance and certainty under arbitrary bounded numeric terminal-prefix/fill contributions. Standalone fixed-length unrefined text may recover only an ordinary final DS Value after every declared instance is fully placed and the immutable payload has literal FFAC; ordinary OOB succeeds without recovery and every DS error propagates unchanged. Prefix certainty is captured before final DS and does not assume alternative decisions agree. No bit or symbol is synthesized. Strict/default/reader/sink/embedded/nested/refinement routes, page framing/references and diagnostic/work/memory budgets are unchanged. The additive generic RGB8 profile is preserved when present in the baseline. Same executing sources, unchanged20 reviewed limitations, no new assumed I/O or algorithm bodies, native assumptions or runtime/proof substitutions. Component contracts and finite full-pixel references, not full decoded-output or independently approved normative proofs. Main/0.3 only.",
   "toolchain": {
     "manifest": "config/toolchain.json",
     "verus_version": "0.2026.10.04.426d8b0",
     "verus_commit": "426d8b01e7ffb910a36c15e1f870ff985bb61eef",
     "archive_sha256": "624018662868563a7bec0dd07be5e4dd0c3d61124b4b55105765884bf2d4d1a0"
   },
-  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-cargo cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/colour-verification/expanded\" --output-json",
+  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-cargo cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/arithmetic-final/expanded\" --output-json",
   "result": {
-    "verified_obligations": 1484,
-    "verified_production_functions": 740,
+    "verified_obligations": 1529,
+    "verified_production_functions": 749,
     "errors": 0,
     "proof_build_compiles": true,
     "exact_production_source_compiles": true,
@@ -24,8 +24,8 @@
     "runtime_proof_divergences": 0,
     "incomplete_functions": 0
   },
-  "production_proof_coverage_sha256": "d7da91f5853068371b7e046b6fffe2733381aa2b24950713cc1ad0f8e0ec5d3e",
-  "proof_dispositions_sha256": "0cfce851b270a66ea5450cac8338a67332ca7dc5994ce9e4d0ef98762a7c5283",
+  "production_proof_coverage_sha256": "0294d72f976295bac3521f24212f4a82d0597e3fccb617a1a485ae3c93e748d1",
+  "proof_dispositions_sha256": "0743e3eba8f677f1d891f669cee2929238ae73613896d4f0f0a3ef7329bb7faa",
   "standard_library_boundary": {
     "manifest": "verification/stdlib/review.json",
     "manifest_sha256": "5f007f853c6caad16d6d318bde996373c6a6f886e8949cd0df62612e5408a92c",
@@ -33,7 +33,7 @@
     "review_kind": "delegated_engineering_review",
     "normative_approval": false
   },
-  "current_evidence_note": "Exact runtime 9bddc449f947c1841d76c54cdd7450371bf25921; whole 1484/0, exact 740 directly verified functions and unchanged 20 reviewed limitations. All original bi-level fixture and strict conformance outputs are unchanged; the separate RGB replay validates every channel of #212 and both declaration-policy shapes. All original 61/494 semantic groups/contrasts are retained, with one added RGB group/five contrasts. Same roles,14shards,maxparallel4, and unchanged1050-second same-run guard. No backport, publication or renewed normative approval.",
+  "current_evidence_note": "Exact runtime d8a0a3c64c5c0369c7cebccaa9d568c4b92e4720; whole1529/0, exact749 verified functions and unchanged20 reviewed limitations. Original arithmetic #200 returns complete independent honeycomb pixels only in Compatibility; preserved-tail cut4 rejects, strict-accepted cuts2/10 remain ordinary no-recovery successes. All original32-file and ten-case strict conformance outputs are preserved except the explicitly classified original arithmetic compatibility success. All existing semantic contrasts and unchanged1050-second same-run guard remain mandatory. No backport, publication or renewed approval.",
   "duplicate_executable_proof_source": false,
   "embedded_recovery_ci_profile_correction": {
     "rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/44359238184",
@@ -764,5 +764,24 @@
     },
     "semantic_manifest_sha256": "66f60891d0c4054e83beaf0bc5f92a9463a3c1c53f7a472602b3fc54c6ed58aa",
     "scope": "Plan from every successful same-run group of the actual rejected candidate, with retained historical per-group regression controls. Swap two complete existing groups and relocate only the new RGB group; no cases, checker contracts, compiler, source bodies, role definitions, parallelism or guard changes. Historical exact projections reflect the intentional slot swap, not relabeled past execution. No acceptance credit: a fresh complete same-run profile on the corrected final head must pass."
+  },
+  "arithmetic_prefix_previous_baseline": {
+    "source_revision": "9bddc449f947c1841d76c54cdd7450371bf25921",
+    "result": {
+      "verified_obligations": 1484,
+      "verified_production_functions": 740,
+      "errors": 0,
+      "proof_build_compiles": true,
+      "exact_production_source_compiles": true,
+      "algorithm_bodies_verified": false,
+      "production_coverage_complete": true,
+      "native_assumptions": [],
+      "reviewed_verifier_limitations": 20,
+      "audited_forwarders": 0,
+      "runtime_proof_divergences": 0,
+      "incomplete_functions": 0
+    },
+    "production_proof_coverage_sha256": "d7da91f5853068371b7e046b6fffe2733381aa2b24950713cc1ad0f8e0ec5d3e",
+    "scope": "Historical pre-arithmetic-prefix receipt; not current execution or renewed normative approval."
   }
 }
