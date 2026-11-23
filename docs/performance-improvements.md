@@ -1,5 +1,25 @@
 # Measured decoder performance improvements
 
+## Unmeasured experiment: all-new identity exports (#226)
+
+The owning arithmetic and Huffman dictionary callers now return the decoded
+vector directly when there are no imports and every new symbol is exported
+exactly once in identity order. The executing contract still checks exact
+exported bitmap contents and order; the former per-payload memory-limit checks
+remain. Neither a replacement owner vector nor replacement payloads are reserved,
+so allocation failures for those removed allocations are no longer possible.
+Decoded-byte/work accounting and later retained-resource accounting are unchanged.
+Sparse, mixed imported/new, reordered and duplicate selections use the unchanged
+general copying helper, including its non-aliasing semantics and errors.
+
+Untimed tests check vector/payload pointer transfer, zero-sized symbols, fallback
+contents/order, invalid IDs and a lowered payload memory limit. This is not a
+measured speedup or adoption claim. Benchmark genuine all-new identity-export
+arithmetic/Huffman dictionaries (including nonempty payloads), with sparse,
+imported, aggregate and retained-context controls; report actual export
+allocations/copy bytes separately from paired document latency. Matched ARM64/N2
+321-image/140-PDF qualification and the full existing gates are still required.
+
 Baseline: main `96684fef6bd22502095858a02c1e5716c49f8c4d`.
 Retained runtime: `69bd3d896b41aea98313126bbc67a29266caf073`.
 Later documentation/evidence changes do not change the measured runtime.

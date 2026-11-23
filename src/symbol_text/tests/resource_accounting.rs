@@ -599,3 +599,73 @@ fn borrowed_symbol_buffer_reuses_pointer_capacity() {
     assert_eq!(borrowed.as_ptr(), pointer);
     assert_eq!(borrowed.capacity(), capacity);
 }
+
+#[test]
+fn owned_identity_exports_transfer_vector_and_nonempty_payload_owners() {
+    use super::super::dictionary::assemble_owned_exported_symbols;
+
+    let limits = Limits::default();
+    for dimensions in [&[][..], &[(0, 3), (9, 2), (8, 1)][..]] {
+        let symbols: Vec<Bitmap> = dimensions
+            .iter()
+            .map(|&(width, height)| Bitmap::blank(width, height, &limits).unwrap())
+            .collect();
+        let owner = symbols.as_ptr();
+        let capacity = symbols.capacity();
+        let payloads: Vec<_> = symbols.iter().map(|bitmap| bitmap.data.as_ptr()).collect();
+        let selected: Vec<u32> = (0..u32::try_from(symbols.len()).unwrap()).collect();
+        let output = assemble_owned_exported_symbols(
+            SymbolCodebook::Contiguous(&[]),
+            symbols,
+            &selected,
+            &limits,
+        )
+        .unwrap();
+        assert_eq!(output.as_ptr(), owner);
+        assert_eq!(output.capacity(), capacity);
+        for (bitmap, payload) in output.iter().zip(payloads) {
+            assert_eq!(bitmap.data.as_ptr(), payload);
+        }
+    }
+}
+
+#[test]
+fn owned_exports_keep_fallback_order_duplicates_errors_and_payload_limit() {
+    use super::super::dictionary::assemble_owned_exported_symbols;
+
+    let limits = Limits::default();
+    let imported = [Bitmap::blank(8, 1, &limits).unwrap()];
+    let refs = [&imported[0]];
+    for book in [
+        SymbolCodebook::Contiguous(&[]),
+        SymbolCodebook::Contiguous(&imported),
+        SymbolCodebook::Borrowed(&refs),
+    ] {
+        for selected in [&[0, 1][..], &[1, 0], &[1, 1], &[1], &[9]] {
+            let symbols = [
+                Bitmap::blank(9, 2, &limits).unwrap(),
+                Bitmap::blank(8, 1, &limits).unwrap(),
+            ];
+            let expected = assemble_exported_symbols(book, &symbols, selected, &limits);
+            let actual = assemble_owned_exported_symbols(book, symbols.into(), selected, &limits);
+            assert_eq!(format!("{actual:?}"), format!("{expected:?}"));
+        }
+    }
+    let tight = Limits {
+        max_decoder_managed_memory_bytes: 1,
+        ..limits
+    };
+    let symbols = vec![
+        Bitmap::blank(0, 2, &limits).unwrap(),
+        Bitmap::blank(9, 2, &limits).unwrap(),
+    ];
+    let expected =
+        assemble_exported_symbols(SymbolCodebook::Contiguous(&[]), &symbols, &[0, 1], &tight);
+    let actual =
+        assemble_owned_exported_symbols(SymbolCodebook::Contiguous(&[]), symbols, &[0, 1], &tight);
+    assert_eq!(format!("{actual:?}"), format!("{expected:?}"));
+    assert!(matches!(
+        actual,
+        Err(SymbolTextError::Decode(DecodeError::LimitExceeded(_)))
+    ));
+}

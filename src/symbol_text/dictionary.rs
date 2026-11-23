@@ -227,6 +227,8 @@ pub(super) use arithmetic::{
     decode_dictionary_single_instance_refinement, decode_one_new_symbol,
     decode_symbol_dictionary_arithmetic,
 };
-pub(super) use exports::{assemble_exported_symbols, decode_export_runs};
+#[cfg(any(test, verus_keep_ghost))]
+pub(super) use exports::assemble_exported_symbols;
+pub(super) use exports::{assemble_owned_exported_symbols, decode_export_runs};
 #[allow(unused_imports)]
 pub(super) use huffman::{decode_collective_bitmap, decode_symbol_dictionary_huffman};

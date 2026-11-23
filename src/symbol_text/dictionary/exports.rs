@@ -458,3 +458,71 @@ pub(in crate::symbol_text) fn assemble_exported_symbols(
     }
     Ok(exported_symbols)
 }
+
+/// Transfers an all-new, identity-order export without allocating another owner.
+/// Other selections retain the general helper's independent-copy semantics.
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    requires
+        symbol_text_spec::codebook_valid(imported),
+        symbol_text_spec::bitmaps_valid(new_symbols@),
+        forall|index: int| 0 <= index < exported_indices@.len()
+            ==> (#[trigger] exported_indices@[index] as nat)
+                < symbol_text_spec::codebook_len(imported) + new_symbols@.len(),
+    ensures match out {
+        Ok(exported) =>
+            exported@.len() == exported_indices@.len()
+                && symbol_text_spec::bitmaps_valid(exported@)
+                && symbol_text_spec::exported_contents_match(
+                    imported, new_symbols@, exported_indices@, exported@,
+                ),
+        Err(_) => true,
+    },
+))]
+pub(in crate::symbol_text) fn assemble_owned_exported_symbols(
+    imported: SymbolCodebook<'_>,
+    new_symbols: Vec<Bitmap>,
+    exported_indices: &[u32],
+    limits: &Limits,
+) -> Result<Vec<Bitmap>, SymbolTextError> {
+    if imported.len() != 0 || exported_indices.len() != new_symbols.len() {
+        return assemble_exported_symbols(imported, &new_symbols, exported_indices, limits);
+    }
+    let mut index = 0_usize;
+    #[cfg_attr(verus_keep_ghost, verus_spec(
+        invariant
+            index <= exported_indices@.len(),
+            exported_indices@.len() == new_symbols@.len(),
+            symbol_text_spec::codebook_len(imported) == 0,
+            symbol_text_spec::codebook_valid(imported),
+            symbol_text_spec::bitmaps_valid(new_symbols@),
+            forall|offset: int| 0 <= offset < exported_indices@.len()
+                ==> (#[trigger] exported_indices@[offset] as nat) < new_symbols@.len(),
+            forall|offset: int| 0 <= offset < index
+                ==> #[trigger] exported_indices@[offset] as int == offset,
+        decreases exported_indices@.len() - index,
+    ))]
+    while index < exported_indices.len() {
+        if u64::from(exported_indices[index]) != index as u64 {
+            return assemble_exported_symbols(imported, &new_symbols, exported_indices, limits);
+        }
+        index += 1;
+    }
+    // Keep the clone path's logical payload limit, but do not reserve storage
+    // that the returned vector and bitmaps already own.
+    let mut checked = 0_usize;
+    #[cfg_attr(verus_keep_ghost, verus_spec(
+        invariant checked <= new_symbols@.len(),
+        decreases new_symbols@.len() - checked,
+    ))]
+    while checked < new_symbols.len() {
+        let requested_bytes = u64::try_from(new_symbols[checked].data.len())
+            .map_err(|_| MalformedError::IntegerOverflow)?;
+        enforce_limit(
+            LimitKind::Memory,
+            limits.max_decoder_managed_memory_bytes,
+            requested_bytes,
+        )?;
+        checked += 1;
+    }
+    Ok(new_symbols)
+}

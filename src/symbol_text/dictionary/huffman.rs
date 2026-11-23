@@ -4,8 +4,8 @@
 use super::*;
 #[cfg(not(verus_keep_ghost))]
 use super::{
-    assemble_exported_symbols, associate_dictionary_tables, bitmap_from_packed_bytes, byte_align,
-    crop_bitmap_columns, decode_export_runs, decode_mmr, decode_one_new_symbol,
+    assemble_owned_exported_symbols, associate_dictionary_tables, bitmap_from_packed_bytes,
+    byte_align, crop_bitmap_columns, decode_export_runs, decode_mmr, decode_one_new_symbol,
     materialize_huffman_table, new_huffman_codec, refinement_template_from_u8, required_integer,
     select_dictionary_tables, symbol_id_code_length, wrap_custom_tables, BitReader, Bitmap,
     DecodeError, DictionaryClassState, DictionaryContexts, EntropyInteger, EofbPolicy,
@@ -380,6 +380,7 @@ pub(in crate::symbol_text) fn decode_symbol_dictionary_huffman(
         Some(contexts) => Some(contexts.try_snapshot(limits)?),
         None => None,
     };
-    let exported_symbols = assemble_exported_symbols(imported, &new_symbols, &exported, limits)?;
+    let exported_symbols =
+        assemble_owned_exported_symbols(imported, new_symbols, &exported, limits)?;
     Ok((exported_symbols, retained_refinement, consumed_within_body))
 }
