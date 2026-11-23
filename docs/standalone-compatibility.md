@@ -13,12 +13,13 @@ compatibility supply already-buffered bytes to `decode_with_policy`; buffering
 and bounding their I/O remain the caller's responsibility. The decoder still
 applies its stream and preparation limits to the supplied slice.
 
-Success returns `DecodeResult { value, recoveries }`. Every page and all entropy
-data must decode successfully before either output or diagnostics is returned.
+Success returns `DecodeResult { value, recoveries }`. Every page's image data
+must decode completely before either output or diagnostics is returned; only
+the explicitly certified final-strip termination exceptions below are allowed.
 An empty diagnostic list means no exception was used. Recovered output is **not**
 a claim that the original file conforms to T.88. Source bytes are immutable.
 Diagnostic byte offsets refer to the original input; inferred page closures and
-final Huffman entropy boundaries have `byte_offset: None` and identify their page. Page-count recovery makes
+final entropy boundaries have `byte_offset: None` and identify their page. Page-count recovery makes
 `DocumentInfo::declared_page_count()` report the observed count, with an
 `ObservedPageCount` diagnostic distinguishing it from source metadata. Segment
 counts exclude deliberately skipped type-1 segments; all other metadata is
@@ -36,7 +37,7 @@ exceptions**, not interpretations that make malformed syntax normative:
 | #197 | Close a missing-EOP page at the next complete page-information segment, or at the exact fully framed stream/EOF boundary. Reject overlapping open pages at a next-page boundary when inferring closures, and any later segment associated with the recovered page. Known dimensions are required; unknown heights need a complete validated final stripe. Striped recovery additionally validates the final stripe and rejects regions following it. No segment or bitmap content is synthesized. 7.4.8–10, 8.2, D.1. |
 | #198 | Use the observed page count only after validating framing, references, page ordering, lifecycle, dimensions, limits, and decoding **every** page. D.4.3. |
 | #199 | Ignore exactly one CR LF pair after an independently parsed empty, unassociated, reference-free EOF, or a final empty, reference-free EOP on a positive page. The EOP case additionally requires a positive known declared count equal to the observed count, distinct positive closed-page IDs and no open page. Ordinary framing, references, page lifecycle and complete entropy decoding still validate the prefix. Other suffixes remain errors. Sequential organization does not require EOF (D.1); random-access header-table delimitation does (D.2), and an EOF when present must be last (7.4.11). Random-access policy remains strict. |
-| #200 | Recover a missing final strip OOB only in a fixed-length, unrefined Huffman text region in standalone Compatibility. Every declared instance must already be fully decoded and placed. The remaining zero padding must be fewer than eight bits and shorter than every possible table prefix; normal OOB decoding is attempted first. Report `MissingFinalHuffmanStripEnd` only for the resulting exact prefix-read EOF at the segment end. No partial code/value/symbol, earlier terminator, refinement, arithmetic or nested/shared dictionary codec is recovered. Strict and random-access decoding remain unchanged. 6.4.5, Annex B. |
+| #200 | Recover a missing final strip OOB only in a fixed-length, unrefined top-level text region in standalone byte Compatibility. All declared instances must already be fully decoded and placed; normal final OOB is tried first. Huffman requires unambiguous sub-byte zero padding and reports `MissingFinalHuffmanStripEnd`. Arithmetic requires an initialized, genuinely executed prefix certificate independent of both numeric marker-prefix and marker-fill contributions, plus an actually observed final bounded `FF AC`, and reports `MissingFinalArithmeticStripEnd`. No partial symbol, earlier failure, refinement, nested/shared dictionary codec, reader, sink or embedded decode is recovered. Strict and other entry points remain unchanged. 6.4.5, Annexes A/B/E. |
 | #201 | Clear bit `0x10` only when bits 4–7 equal exactly `0x10`. The 2018 text 7.4.1.5 explicitly makes bit 3 colour and bits 4–7 reserved. The colour and composition bits are preserved; other reserved bits still reject. |
 | #202 | Skip only type 1 with the short association form, no deferred retention, no references, self-retention clear, and a checked known-length payload wholly inside the source. Its page must already be open, or be zero. All source segment numbers and segment limits are checked even for skipped segments. Normal reference validation then rejects **any** surviving reference to the omitted number, including retention/dependency uses. 7.2, 7.3. Other reserved types remain rejected. |
 | #203 | **Rejected.** No new boundary contract is established for unknown-length intermediate generic regions. A marker scan is not a sufficient replacement. 7.2.7, 7.4.6. |
@@ -73,6 +74,22 @@ complete count (bit 1071 of 1072). Its table has no prefix that fits that final
 zero bit, satisfying the new stronger certificate. The earlier count/marker or
 padding-length-only prototype was not retained.
 
+Arithmetic now uses a separate [prefix-certainty certificate](arithmetic-prefix-certainty.md).
+It observes the real integer/IAID bit decoder only in eligible Compatibility
+text, without changing entropy results or errors. Its interval includes the
+numeric contribution of the first marker `FF`, even before marker recognition,
+and every subsequent fill. A threshold crossing or overflow disables it
+permanently. A ghost-only actual trace proves that every admissible assignment
+of these contributions preserves all prefix bits and probability updates.
+The complete placement prefix is snapshotted before final DS; DS must be tried,
+but need not itself remain certain. All DS errors propagate unchanged; only a
+successfully decoded integer may recover. Every successful body retains a valid
+codec. Recovery additionally requires the original
+body's literal, bounded final `FF AC`. Placement batches are flushed and the
+ordinary exact-count finish runs. The original complete page matches; the
+four-byte deletion remains rejected. Shortened alternative encodings that have
+a real final OOB remain ordinary successes without diagnostics.
+
 ### Pinned reproductions
 
 The test-only upstream revision is
@@ -89,8 +106,7 @@ The pinned #199 reproduction has EOP + CR LF but **no EOF**. Its complete
 sequential prefix is valid without EOF; Compatibility reports `TrailingCrLf` at
 original byte offset 228 and returns the complete reference honeycomb page.
 Strict continues to reject the suffix. The pinned #197, #198,
-#201, #202 and the Huffman #200 reproduction are eligible. Arithmetic #200 and
-#203 remain rejected.
+#201, #202 and both #200 reproductions are eligible. #203 remains rejected.
 
 ## Resource and proof contracts
 
@@ -106,7 +122,7 @@ errors may report the remaining effective budget. This deliberately can reject a
 file whose strict decode fits a smaller budget.
 Compatibility calls release old context scratch before preparation, so an
 earlier document's retained allocations cannot escape these budgets.
-Potential unrefined Huffman text diagnostics reserve checked vector capacity
+Potential unrefined arithmetic and Huffman text diagnostics reserve checked vector capacity
 before constructing the page collector or decoding any entropy. Observed
 capacity growth is debited from memory and retained-state limits; recording a
 recovery uses only reserved slots. No additional decoder work cap is introduced.

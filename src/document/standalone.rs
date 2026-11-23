@@ -44,7 +44,7 @@ pub(crate) fn reserve_text_recoveries(
                 | SegmentType::ImmediateLosslessTextRegion
         ) && segment.header.data_length.is_some()
             && segment.payload.len() > 18
-            && segment.payload[18] & 3 == 1
+            && segment.payload[18] & 2 == 0
         {
             count += 1;
         }

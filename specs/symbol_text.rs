@@ -59,6 +59,12 @@ pub(super) open spec fn text_end_matches_count(
                     && h.reader.bit_position == h.reader.bytes@.len() * 8,
                 _ => false,
             },
+        super::TextRegionEnd::RecoveredArithmetic { instances } =>
+            instances == count && count > 0 && !refinement
+            && match *codec {
+                super::SymbolCodec::Arithmetic(a) => arithmetic_end_certificate(&a, count),
+                _ => false,
+            },
         _ => false,
     }
 }
@@ -277,8 +283,35 @@ pub(super) open spec fn arithmetic_codec_valid(
     crate::arithmetic::arithmetic_spec::decoder_valid(&arithmetic.decoder)
         && integer_contexts_valid(&arithmetic.integers)
         && arithmetic_contexts_valid(arithmetic.iaid@)
+        && prefix_valid(arithmetic)
 }
 
+pub(super) open spec fn prefix_valid(a: &super::ArithmeticCodec) -> bool {
+    match a.prefix {
+        Some(p) => crate::arithmetic::certainty_spec::observer_valid(&p, &a.decoder),
+        None => true,
+    }
+}
+
+pub(super) open spec fn arithmetic_end_certificate(a: &super::ArithmeticCodec, count: u32) -> bool {
+    arithmetic_codec_valid(a)
+    && match a.prefix {
+        Some(p) => crate::arithmetic::certainty_spec::saved_prefix(&p, count)
+            && match a.decoder.marker {
+                Some(m) => m.offset == p.entropy_end && m.code == 0xac,
+                None => false,
+            },
+        None => false,
+    }
+}
+
+pub(super) open spec fn prefix_saved_unchanged(before: &super::ArithmeticCodec,
+    after: &super::ArithmeticCodec) -> bool {
+    match before.prefix {
+        Some(p) => after.prefix.is_some() && after.prefix.unwrap().saved == p.saved,
+        None => after.prefix.is_none(),
+    }
+}
 // Model navigation: spec::integer_field_slot [proof-support]
 // Purpose: Private codec/bank projections, signed/clipped vocabulary and export measures.
 // Audit: symbol-integer-field-slot

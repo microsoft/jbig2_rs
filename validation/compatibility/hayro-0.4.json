@@ -266,9 +266,10 @@
       ],
       "max_work_units": null,
       "strict_status": "error",
-      "compatibility_status": "error",
+      "compatibility_status": "decoded",
       "strict_error_debug": "Malformed(InvalidSymbolText(\"too many text instances\"))",
-      "compatibility_error_debug": "Malformed(InvalidSymbolText(\"too many text instances\"))"
+      "recovery_contains": "MissingFinalArithmeticStripEnd",
+      "recovery_exact": "[Recovery { page: 1, byte_offset: None, kind: MissingFinalArithmeticStripEnd }]"
     },
     {
       "issues": [

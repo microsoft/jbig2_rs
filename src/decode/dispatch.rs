@@ -205,6 +205,8 @@ pub(super) fn decode_text_segment(
         limits,
         allow_missing_final_huffman_oob: recoveries.is_some()
             && segment.header.data_length.is_some(),
+        allow_missing_final_arithmetic_oob: recoveries.is_some()
+            && segment.header.data_length.is_some(),
     })
     .map_err(symbol_text_error_into_decode)?;
     if output.consumed_bytes != segment.payload.len() {
@@ -216,7 +218,7 @@ pub(super) fn decode_text_segment(
             .ok_or(MalformedError::IntegerOverflow)?;
         return Err(MalformedError::TrailingData(trailing).into());
     }
-    if output.missing_final_huffman_oob {
+    if output.missing_final_huffman_oob || output.missing_final_arithmetic_oob {
         let recoveries = recoveries.ok_or(MalformedError::InvalidPageState(
             "entropy recovery outside standalone compatibility",
         ))?;
@@ -225,7 +227,11 @@ pub(super) fn decode_text_segment(
             crate::Recovery {
                 page: segment.header.page_association,
                 byte_offset: None,
-                kind: crate::RecoveryKind::MissingFinalHuffmanStripEnd,
+                kind: if output.missing_final_huffman_oob {
+                    crate::RecoveryKind::MissingFinalHuffmanStripEnd
+                } else {
+                    crate::RecoveryKind::MissingFinalArithmeticStripEnd
+                },
             },
         )?;
     }

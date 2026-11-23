@@ -33,8 +33,8 @@ resource-test inputs. Matching a permissive output is not grounds to invent
 symbols, clamp pattern indices, fill missing rows, ignore a necessary extension
 or return a partial image as a complete bitmap.
 
-Of the 32 reported files, five now decode strictly and twelve decode with explicit
-Compatibility selected. The remaining 20 retain an intentional malformed,
+Of the 32 reported files, five now decode strictly and thirteen decode with explicit
+Compatibility selected. The remaining 19 retain an intentional malformed,
 unsupported or work-limit outcome. The pinned replay checks 160 configurations
 and 224 decoder calls, including reuse of the same context; every successful
 page must match its complete expected pixels. The cycle-performance follow-up
@@ -71,7 +71,7 @@ acquisition and then select the byte API; existing reader APIs stay strict.
 | #197 | Compatibility may close a page only at an independently validated complete boundary, without inventing image data. Strict still requires the marker. |
 | #198 | Compatibility may reconcile the file count with complete validated pages. Every page remains subject to the original limits and is returned in order. Strict count mismatch remains fatal. |
 | #199 | Ignore exactly one CR LF after an independently framed EOF, or after a final empty, reference-free EOP with a positive known page count matching distinct closed pages and no open page. The original sequential fixture now matches the complete honeycomb bitmap, with `TrailingCrLf` at byte 228. D.1 does not require an EOF segment in sequential organization; D.2 requires one for random-access header-table delimitation, and 7.4.11 constrains it when present. Strict still rejects the suffix; arbitrary short headers remain errors. |
-| #200, two files | Both remain strict errors. Standalone Compatibility now recovers the unrefined fixed-length Huffman file only after all declared instances are complete and the final field has only zero padding, fewer than eight bits and shorter than every table prefix. A real OOB is tried first and reported without recovery; partial prefixes with any possible complete prefix length, nonzero padding, extra bytes and earlier failures remain fatal. The complete honeycomb matches. Arithmetic remains rejected: its final marker is already observed after instance 87 of 90, and a discarded count-plus-marker shortcut accepted damaged bodies with corrupted pixels. |
+| #200, two files | Both remain strict errors. Standalone byte Compatibility recovers the fixed-length unrefined Huffman file using table-aware zero-padding certainty, and the arithmetic file using a verified initialized actual-trace interval certificate independent of numeric marker-prefix/fill contributions. Every declared instance must first be fully decoded and placed. Normal OOB wins without recovery. The arithmetic snapshot precedes final DS and additionally requires the real bounded final `FF AC`; the unsafe count-plus-marker shortcut is not used. Both complete honeycombs match. The four-byte deletion, incomplete prefixes, earlier failures, refinement and nested/shared codecs remain rejected. |
 | #201 | The individually documented reserved-bit recovery is explicit compatibility only, not a strict-mode mask or colour-extension waiver. |
 | #202 | The individually documented reserved-type recovery requires complete fixed-length framing and no live reference to the skipped segment. It does not ignore arbitrary unknown necessary semantics. |
 | #203 | Unknown-length intermediate generic segments remain rejected. The immediate-generic sentinel rule is not extended by guessing a delimiter. T.88 7.2.7. |

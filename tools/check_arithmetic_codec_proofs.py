@@ -43,10 +43,14 @@ INTEGER_FRAME = """forall|slot: int| 0 <= slot < INTEGER_FIELD_COUNT
 INTEGER_IAID_SITE = """final(self).iaid@ == old(self).iaid@,
 final(self).refinement == old(self).refinement,
 final(self).refinement_work == old(self).refinement_work,
+symbol_text_spec::prefix_valid(final(self)),
+symbol_text_spec::prefix_saved_unchanged(old(self), final(self)),
 out == symbol_text_spec::arithmetic_integer_result("""
 IAID_FRAME_SITE = """final(self).integers.slots@ == old(self).integers.slots@,
 final(self).refinement == old(self).refinement,
 final(self).refinement_work == old(self).refinement_work,
+symbol_text_spec::prefix_valid(final(self)),
+symbol_text_spec::prefix_saved_unchanged(old(self), final(self)),
 out == symbol_text_spec::arithmetic_symbol_id_result("""
 IAID_RESULT = """out == symbol_text_spec::arithmetic_symbol_id_result(
     crate::arithmetic::arithmetic_spec::iaid_state(
@@ -56,12 +60,16 @@ IAID_RESULT = """out == symbol_text_spec::arithmetic_symbol_id_result(
 DECODED_TAIL = """Err(error) => return Err(SymbolTextError::Decode(error.into_decode())),
 };
 match decoded {"""
-IAID_HEAD = """match self
+IAID_HEAD = """let result = match &mut self.prefix {
+    Some(observer) => {
+        self.decoder
+            .decode_iaid_certified(request.code_length, &mut self.iaid, observer)
+    }
+    None => self
         .decoder
-        .decode_iaid(request.code_length, &mut self.iaid)"""
-IAID_RETURN = """match self
-    .decoder
-    .decode_iaid(request.code_length, &mut self.iaid) {
+        .decode_iaid(request.code_length, &mut self.iaid),
+};"""
+IAID_RETURN = """match result {
     Ok(value) => Ok(value),
     Err(error) => Err(SymbolTextError::Decode(error.into_decode())),
 }"""
@@ -378,6 +386,9 @@ CASES = (
         additional_controls=(
             ("final(self).decoder.bytes == old(self).decoder.bytes,", ""),
             ("final(self).decoder.bytes@ == old(self).decoder.bytes@,", ""),
+            (INTEGER_IAID_SITE, INTEGER_IAID_SITE.replace(
+                "symbol_text_spec::prefix_valid(final(self)),", "",
+            )),
         ),
     ),
     case(
@@ -401,8 +412,8 @@ CASES = (
     case(
         "arithmetic_iaid_caller_changes_integer_bank", "symbol_text", "ArithmeticCodec::decode_symbol_id",
         IAID_HEAD, IAID_HEAD.replace(
-            "match self",
-            "self.integers.slots[0] = [ArithmeticContext::new(); 512];\nmatch self",
+            "let result",
+            "self.integers.slots[0] = [ArithmeticContext::new(); 512];\nlet result",
         ),
         IAID_FRAME_SITE, IAID_FRAME_SITE.replace("final(self).integers.slots@ == old(self).integers.slots@,", ""),
     ),

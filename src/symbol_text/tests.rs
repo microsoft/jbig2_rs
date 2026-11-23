@@ -52,6 +52,7 @@ fn arithmetic_codec_fixture(bytes: &[u8], iaid_count: usize, salt: usize) -> Ari
             .collect(),
         refinement: None,
         refinement_work: 73,
+        prefix: None,
     }
 }
 

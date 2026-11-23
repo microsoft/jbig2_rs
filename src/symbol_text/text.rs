@@ -439,7 +439,8 @@ pub(super) fn decode_text_region_body(
         symbol_text_spec::codec_valid(old(codec)),
         symbol_text_spec::codebook_valid(available_symbols),
         symbol_text_spec::work_units(old(resources)) <= limits.max_work_units,
-        *old(end) == TextRegionEnd::Strict || *old(end) == TextRegionEnd::BoundedHuffman,
+        *old(end) == TextRegionEnd::Strict || *old(end) == TextRegionEnd::BoundedHuffman
+            || *old(end) == TextRegionEnd::BoundedArithmetic,
     ensures match out {
         Ok(bitmap) =>
             symbol_text_spec::codec_valid(final(codec))
@@ -459,6 +460,11 @@ pub(super) fn decode_text_region_body(
                                 && h.reader.bit_position == h.reader.bytes@.len() * 8,
                             _ => false,
                         },
+                    TextRegionEnd::RecoveredArithmetic { instances } =>
+                        *old(end) == TextRegionEnd::BoundedArithmetic
+                        && instances == number_of_instances && instances > 0
+                        && symbol_text_spec::text_end_matches_count(*final(end),
+                            final(codec), number_of_instances, config.refinement),
                     _ => *final(end) == *old(end),
                 },
         Err(_) => true,
@@ -501,6 +507,7 @@ pub(super) fn decode_text_region_body_with_end(
 
     let mut decoded = 0_u32;
     let mut recovered_padding = None;
+    let mut recovered_arithmetic = false;
     #[cfg_attr(verus_keep_ghost, verus_spec(
         invariant
             decoded <= number_of_instances,
@@ -517,6 +524,13 @@ pub(super) fn decode_text_region_body_with_end(
             symbol_text_spec::work_units(resources) <= limits.max_work_units,
             initial_end == *old(end),
             *end == initial_end,
+            recovered_arithmetic ==> (
+                initial_end == TextRegionEnd::BoundedArithmetic
+                && decoded == number_of_instances
+                && symbol_text_spec::text_end_matches_count(
+                    TextRegionEnd::RecoveredArithmetic { instances: decoded },
+                    codec, decoded, config.refinement)
+            ),
             recovered_padding.is_some() ==> (
                 initial_end == TextRegionEnd::BoundedHuffman
                 && decoded == number_of_instances
@@ -552,8 +566,18 @@ pub(super) fn decode_text_region_body_with_end(
                 symbol_text_spec::placement_batch_valid(&placement_batch, &bitmap),
                 symbol_text_spec::work_units(resources) <= limits.max_work_units,
                 *end == initial_end,
-            invariant_except_break recovered_padding.is_none(),
-            ensures recovered_padding.is_none() || (
+            invariant_except_break
+                recovered_padding.is_none(), !recovered_arithmetic,
+            ensures
+                recovered_arithmetic ==> (
+                    initial_end == TextRegionEnd::BoundedArithmetic
+                    && decoded == number_of_instances
+                    && symbol_text_spec::text_end_matches_count(
+                        TextRegionEnd::RecoveredArithmetic { instances: decoded },
+                        codec, decoded, config.refinement)
+                ),
+                symbol_text_spec::codec_valid(codec),
+                recovered_padding.is_none() || (
                     initial_end == TextRegionEnd::BoundedHuffman
                     && decoded == number_of_instances
                     && symbol_text_spec::text_end_matches_count(
@@ -564,6 +588,15 @@ pub(super) fn decode_text_region_body_with_end(
             decreases number_of_instances - decoded,
         ))]
         loop {
+            if decoded == number_of_instances
+                && matches!(end, TextRegionEnd::BoundedArithmetic)
+                && !config.refinement
+            {
+                if let SymbolCodec::Arithmetic(arithmetic) = codec {
+                    recovered_arithmetic = arithmetic.decode_final_strip(decoded)?;
+                    break;
+                }
+            }
             if decoded == number_of_instances
                 && matches!(end, TextRegionEnd::BoundedHuffman)
                 && !config.refinement
@@ -733,6 +766,9 @@ pub(super) fn decode_text_region_body_with_end(
             instances: decoded,
             padding_start,
         };
+    }
+    if recovered_arithmetic {
+        *end = TextRegionEnd::RecoveredArithmetic { instances: decoded };
     }
     flush_placement_batch(&mut bitmap, &mut placement_batch, config.operator)?;
     state.finish()?;

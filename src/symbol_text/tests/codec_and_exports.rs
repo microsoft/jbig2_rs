@@ -572,6 +572,7 @@ fn concrete_empty_dictionary_and_arithmetic_text_segments_decode() {
     arithmetic_text.extend_from_slice(&ANNEX_H_ENCODED);
     let arithmetic_text_output = decode_text_region(&TextRegionInput {
         allow_missing_final_huffman_oob: false,
+        allow_missing_final_arithmetic_oob: false,
         payload: &arithmetic_text,
         symbols: SymbolCodebook::Contiguous(&[]),
         custom_tables: &custom,
@@ -676,6 +677,7 @@ fn actual_text_segment_width_uses_full_contiguous_or_borrowed_extent() {
             assert_segment_iaid_limit(
                 &decode_text_region(&TextRegionInput {
                     allow_missing_final_huffman_oob: false,
+                    allow_missing_final_arithmetic_oob: false,
                     payload: &payload,
                     symbols: book,
                     custom_tables: &custom,

@@ -13,6 +13,188 @@ fn config(huffman: bool, log_strips: u16) -> TextRegionConfig {
 }
 
 #[test]
+#[allow(clippy::too_many_lines)]
+fn bounded_arithmetic_end_requires_certainty_count_scope_and_flushes_placements() {
+    let limits = Limits::default();
+    let symbols = [Bitmap::filled(1, 1, true, &limits).unwrap()];
+    for (bytes, observer, refinement, policy, count, success, recovered) in [
+        (
+            [45, 151, 255, 172],
+            1,
+            false,
+            TextRegionEnd::BoundedArithmetic,
+            1,
+            true,
+            true,
+        ),
+        (
+            [45, 151, 255, 172],
+            0,
+            false,
+            TextRegionEnd::BoundedArithmetic,
+            1,
+            false,
+            false,
+        ),
+        (
+            [45, 151, 255, 172],
+            1,
+            false,
+            TextRegionEnd::Strict,
+            1,
+            false,
+            false,
+        ),
+        (
+            [45, 151, 255, 172],
+            1,
+            true,
+            TextRegionEnd::BoundedArithmetic,
+            1,
+            false,
+            false,
+        ),
+        (
+            [45, 151, 255, 172],
+            1,
+            false,
+            TextRegionEnd::BoundedArithmetic,
+            2,
+            false,
+            false,
+        ),
+        (
+            [59, 8, 255, 172],
+            1,
+            false,
+            TextRegionEnd::BoundedArithmetic,
+            1,
+            true,
+            false,
+        ),
+        (
+            [59, 8, 255, 172],
+            2,
+            false,
+            TextRegionEnd::BoundedArithmetic,
+            1,
+            true,
+            false,
+        ),
+    ] {
+        let mut arithmetic =
+            super::super::codec::new_arithmetic_codec(&bytes, 0, None, &limits).unwrap();
+        if observer != 0 {
+            let mut prefix = PrefixCertainty::new(&arithmetic.decoder);
+            if observer == 2 {
+                prefix.active = false;
+            }
+            arithmetic.prefix = Some(prefix);
+        }
+        let mut codec = SymbolCodec::Arithmetic(arithmetic);
+        let mut end = policy;
+        let mut config = config(false, 0);
+        config.refinement = refinement;
+        let mut resources = ResourceTracker::default();
+        let result = decode_text_region_body_with_end(
+            &mut codec,
+            SymbolCodebook::Contiguous(&symbols),
+            0,
+            1,
+            1,
+            count,
+            &config,
+            [(0, 0); 2],
+            &limits,
+            &mut resources,
+            &mut end,
+        );
+        assert_eq!(
+            result.is_ok(),
+            success,
+            "{bytes:?}, observer {observer}, refinement {refinement}, count {count}"
+        );
+        if let Ok(bitmap) = result {
+            assert_eq!(bitmap.bytes(), [0x80]);
+            assert_eq!(resources.work_units, 2);
+            assert_eq!(resources.decoded_bitmap_bytes, 1);
+        }
+        assert_eq!(
+            matches!(end, TextRegionEnd::RecoveredArithmetic { instances: 1 }),
+            recovered
+        );
+    }
+}
+
+#[test]
+fn arithmetic_prefix_recovery_obeys_ordinary_work_and_bitmap_memory_limits() {
+    let symbols = [Bitmap::filled(1, 1, true, &Limits::default()).unwrap()];
+    for (max_work, max_memory, expected) in [
+        (2, u64::MAX, None),
+        (1, u64::MAX, Some(LimitKind::Work)),
+        (2, 0, Some(LimitKind::Memory)),
+    ] {
+        let bytes = [45, 151, 255, 172];
+        let mut arithmetic =
+            super::super::codec::new_arithmetic_codec(&bytes, 0, None, &Limits::default()).unwrap();
+        arithmetic.prefix = Some(PrefixCertainty::new(&arithmetic.decoder));
+        let mut codec = SymbolCodec::Arithmetic(arithmetic);
+        let limits = Limits {
+            max_work_units: max_work,
+            max_decoder_managed_memory_bytes: max_memory,
+            ..Limits::default()
+        };
+        let mut resources = ResourceTracker::default();
+        let mut end = TextRegionEnd::BoundedArithmetic;
+        let result = decode_text_region_body_with_end(
+            &mut codec,
+            SymbolCodebook::Contiguous(&symbols),
+            0,
+            1,
+            1,
+            1,
+            &config(false, 0),
+            [(0, 0); 2],
+            &limits,
+            &mut resources,
+            &mut end,
+        );
+        match expected {
+            None => assert_eq!(result.unwrap().bytes(), [0x80]),
+            Some(kind) => assert!(
+                matches!(result, Err(SymbolTextError::Decode(DecodeError::LimitExceeded(detail))) if detail.kind == kind)
+            ),
+        }
+    }
+}
+
+#[test]
+fn final_arithmetic_ds_errors_propagate_despite_native_recovery_gates() {
+    let limits = Limits::default();
+    let bytes = [0xff, 0x80, 0xff, 0xac];
+    let mut arithmetic =
+        super::super::codec::new_arithmetic_codec(&bytes, 0, None, &limits).unwrap();
+    let mut ordinary = super::super::codec::new_arithmetic_codec(&bytes, 0, None, &limits).unwrap();
+    arithmetic.prefix = Some(PrefixCertainty::new(&arithmetic.decoder));
+    let expected = ordinary.decode_integer(IntegerField::SubsequentS);
+    assert!(matches!(
+        &expected,
+        Err(SymbolTextError::Decode(DecodeError::Malformed(
+            MalformedError::IntegerOverflow
+        )))
+    ));
+    assert!(!assert_arithmetic_forwarding(
+        arithmetic.decode_final_strip(1),
+        expected.map(|_| false),
+    ));
+    let marker = arithmetic.decoder.marker().unwrap();
+    assert_eq!((marker.offset, marker.code), (bytes.len() - 2, 0xac));
+    assert_eq!(arithmetic.integers.slots, ordinary.integers.slots);
+    assert_eq!(arithmetic.decoder.interval, ordinary.decoder.interval);
+    assert_eq!(arithmetic.decoder.code, ordinary.decoder.code);
+}
+
+#[test]
 fn actual_text_id_request_preserves_book_extent_segment_width_and_continuation() {
     let limits = Limits::default();
     let symbols = [

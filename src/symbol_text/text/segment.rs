@@ -3,7 +3,7 @@
 #[cfg(verus_keep_ghost)]
 use super::symbol_text_spec;
 use super::{
-    associate_text_tables, byte_align, decode_symbol_id_code_lengths, decode_text_region_body,
+    associate_text_tables, byte_align, decode_symbol_id_code_lengths,
     decode_text_region_body_with_end, log2_strip_size, materialize_huffman_table,
     new_arithmetic_codec, new_huffman_codec, normalized_bounded_arithmetic,
     parse_text_region_header, read_symbol_id_runcode_lines, refinement_template_from_u8,
@@ -12,6 +12,7 @@ use super::{
     ResourceTracker, StandardHuffmanTables, SymbolCodec, SymbolTextError, TextRegionEnd,
     TextRegionInput, TextRegionOutput,
 };
+use crate::arithmetic::PrefixCertainty;
 #[cfg(verus_keep_ghost)]
 use vstd::prelude::*;
 
@@ -23,7 +24,8 @@ use vstd::prelude::*;
         Ok(output) =>
             crate::spec::bitmap::storage_valid(&output.bitmap)
                 && output.consumed_bytes <= input.payload@.len()
-                && (output.missing_final_huffman_oob ==> input.allow_missing_final_huffman_oob),
+                && (output.missing_final_huffman_oob ==> input.allow_missing_final_huffman_oob)
+                && (output.missing_final_arithmetic_oob ==> input.allow_missing_final_arithmetic_oob),
         Err(_) => true,
     },
 ))]
@@ -68,8 +70,14 @@ pub(crate) fn decode_text_region(
     };
     let refinement_template = refinement_template_from_u8(config.refinement_template);
 
-    let mut end = if input.allow_missing_final_huffman_oob {
+    let mut end = if config.huffman && input.allow_missing_final_huffman_oob {
         TextRegionEnd::BoundedHuffman
+    } else if !config.huffman
+        && !config.refinement
+        && input.allow_missing_final_arithmetic_oob
+        && body.ends_with(&[0xff, 0xac])
+    {
+        TextRegionEnd::BoundedArithmetic
     } else {
         TextRegionEnd::Strict
     };
@@ -153,8 +161,13 @@ pub(crate) fn decode_text_region(
             },
             limits,
         )?);
+        if matches!(end, TextRegionEnd::BoundedArithmetic) {
+            if let SymbolCodec::Arithmetic(arithmetic) = &mut codec {
+                arithmetic.prefix = Some(PrefixCertainty::new(&arithmetic.decoder));
+            }
+        }
 
-        let bitmap = decode_text_region_body(
+        let bitmap = decode_text_region_body_with_end(
             &mut codec,
             input.symbols,
             code_length,
@@ -165,6 +178,7 @@ pub(crate) fn decode_text_region(
             refinement_adaptive,
             limits,
             &mut resources,
+            &mut end,
         )?;
 
         let SymbolCodec::Arithmetic(arithmetic) = &codec else {
@@ -184,5 +198,6 @@ pub(crate) fn decode_text_region(
         bitmap,
         consumed_bytes,
         missing_final_huffman_oob: matches!(end, TextRegionEnd::RecoveredHuffman { .. }),
+        missing_final_arithmetic_oob: matches!(end, TextRegionEnd::RecoveredArithmetic { .. }),
     })
 }
