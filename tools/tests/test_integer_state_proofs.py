@@ -19,7 +19,7 @@ from proof_sensitivity import replace_once, weakened_contract
 
 class IntegerStateProofTests(unittest.TestCase):
     def test_all_cases_have_unique_production_sites_and_related_controls(self):
-        source = source_text(TOOLS.parent, "src/arithmetic.rs")
+        source = source_text(TOOLS.parent, "src/arithmetic/integers.rs")
         self.assertEqual(len(CASES), 9)
         self.assertEqual(len({case["id"] for case in CASES}), 9)
         for case in CASES:

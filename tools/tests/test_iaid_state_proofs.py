@@ -12,7 +12,7 @@ from proof_sensitivity import replace_once, weakened_contract
 
 class IaidStateProofFixtureTests(unittest.TestCase):
     def setUp(self):
-        self.source = source_text(TOOLS.parent, "src/arithmetic.rs")
+        self.source = source_text(TOOLS.parent, "src/arithmetic/integers.rs")
 
     def test_eight_state_and_range_mutations_have_unique_sites(self):
         self.assertEqual(len({case["id"] for case in CASES}), 8)

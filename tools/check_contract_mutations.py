@@ -12,6 +12,7 @@ from pathlib import Path
 
 from check_distribution import isolated_environment, run
 from check_arithmetic_codec_proofs import CASES as ENTROPY_CODEC_CASES
+from check_arithmetic_certainty_proofs import CASES as ARITHMETIC_CERTAINTY_CASES
 from check_context_lifecycle_proofs import CASES as CONTEXT_LIFECYCLE_CASES
 from check_session_framing_proofs import CASES as SESSION_FRAMING_CASES
 from check_clone_result_proofs import CASES as CLONE_RESULT_CASES
@@ -68,6 +69,13 @@ DOCUMENT_WINDOW_TESTS = {
     "embedded_discards_first_input_byte": "raw_sequential_and_embedded_layouts_match_literal_windows_and_order_policy",
 }
 MUTATIONS = tuple(
+    {
+        "id": "arithmetic-certainty-" + case["id"],
+        "file": case["file"], "before": case["site"], "after": case["replacement"],
+        "target": "lib", "test": case["native_test"], "whitespace_flexible": True,
+    }
+    for case in ARITHMETIC_CERTAINTY_CASES
+) + tuple(
     {
         "id": "reference-type-" + case["id"],
         "file": case["file"], "before": case["site"], "after": case["replacement"],

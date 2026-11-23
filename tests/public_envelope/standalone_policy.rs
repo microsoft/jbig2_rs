@@ -608,7 +608,7 @@ fn standalone_policy_pinned_family_all_pages_and_text_oob_boundaries() {
                         kind: RecoveryKind::MissingFinalArithmeticStripEnd,
                     }]
                 );
-                for cut in [1, 4] {
+                for cut in (1..=16).filter(|cut| ![2, 10].contains(cut)) {
                     let mut damaged = bytes.clone();
                     damaged.drain(215 - cut..215);
                     damaged[155..159]

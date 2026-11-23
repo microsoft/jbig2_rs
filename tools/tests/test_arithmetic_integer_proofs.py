@@ -18,7 +18,7 @@ from proof_sensitivity import replace_once, weakened_contract
 
 class ArithmeticIntegerProofFixtureTests(unittest.TestCase):
     def setUp(self):
-        self.source = source_text(TOOLS.parent, "src/arithmetic.rs")
+        self.source = source_text(TOOLS.parent, "src/arithmetic/integers.rs")
 
     def test_nine_integer_mutations_have_unique_sites(self):
         self.assertEqual(len({case["id"] for case in CASES}), 9)

@@ -37,7 +37,7 @@ CALL = "let decision = self.decode(&mut contexts[previous])?;"
 
 def case(identity, site, replacement, control, *overlapping, native_test=None):
     return {
-        "id": identity, "file": "src/arithmetic.rs", "module": "arithmetic",
+        "id": identity, "file": "src/arithmetic/integers.rs", "module": "arithmetic",
         "function": "ArithmeticDecoder::decode_iaid",
         "site": site, "replacement": replacement,
         "controls": tuple((clause, "") for clause in (control, *overlapping)),
@@ -111,7 +111,7 @@ def main():
     try:
         report = check_semantic_cases(
             ROOT, arguments.verus_executable.resolve(), CASES,
-            ("src/arithmetic.rs", "specs/arithmetic.rs", "proofs/model_support/arithmetic.rs",
+            ("src/arithmetic/integers.rs", "specs/arithmetic.rs", "proofs/model_support/arithmetic.rs",
              "proofs/production_impl/arithmetic.rs"),
             "jbig2-iaid-state-",
             "Exact project IAID result/state plus mathematical prefix/output range, zero-length identity and root/outside-tree frames; normative caller selection and standard interpretation remain separate",

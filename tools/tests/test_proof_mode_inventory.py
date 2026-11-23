@@ -302,13 +302,17 @@ class ProofModeInventoryTests(unittest.TestCase):
             "session-framing": 291.233, "default-limits-4": 93.455,
             "page-finish": 181.860, "default-limits-5": 92.766,
         }
-        self.assertEqual(set(costs), {row[0] for row in runner.CHECKS})
+        historical_checks = tuple(row for row in runner.CHECKS if row[0] in costs)
+        self.assertEqual(len(historical_checks), 61)
+        self.assertEqual(sum(row[2] for row in historical_checks), 494)
+        self.assertEqual(set(costs), {row[0] for row in historical_checks})
         rows = [{"id": name, "status": "passed", "seconds": seconds}
                 for name, seconds in costs.items()]
-        with patch.dict(runner.ADDED_SHARD_GROUPS, {"reference-type-lookup": 3}):
-            with self.assertRaisesRegex(ValueError, "1050-second"):
-                runner.measured_shard_seconds(rows)
-        measured = runner.measured_shard_seconds(rows)
+        with patch.object(runner, "CHECKS", historical_checks):
+            with patch.dict(runner.ADDED_SHARD_GROUPS, {"reference-type-lookup": 3}):
+                with self.assertRaisesRegex(ValueError, "1050-second"):
+                    runner.measured_shard_seconds(rows)
+            measured = runner.measured_shard_seconds(rows)
         self.assertEqual(len(measured), 14)
         self.assertLess(max(measured), 1050)
 

@@ -24,6 +24,10 @@ pub(crate) struct Snapshot<'a> {
     pub(crate) instances: u32,
 }
 
+// Model navigation: spec::saved_valid [representation-invariant]
+// Purpose: A saved certificate belongs to the actual initialized immutable trace.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) closed spec fn saved_valid(o: &PrefixCertainty) -> bool {
     match o.saved@ {
         Some(s) => trace_valid(o.initial@, s.history, &s.decoder, s.spread, o.entropy_end)
@@ -32,10 +36,18 @@ pub(crate) closed spec fn saved_valid(o: &PrefixCertainty) -> bool {
     }
 }
 
+// Model navigation: spec::saved_prefix [representation-invariant]
+// Purpose: Bind saved decision provenance to the completed instance count.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn saved_prefix(o: &PrefixCertainty, instances: u32) -> bool {
     o.saved@.is_some() && o.saved@.unwrap().instances == instances && saved_valid(o)
 }
 
+// Model navigation: spec::after_decision [project-result-model]
+// Purpose: Project the real arithmetic decision register transition.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn after_decision<'a>(d: &ArithmeticDecoder<'a>, c: ArithmeticContext)
     -> ArithmeticDecoder<'a> {
     let r = arithmetic_spec::decision_state(d, c);
@@ -45,6 +57,10 @@ pub(crate) open spec fn after_decision<'a>(d: &ArithmeticDecoder<'a>, c: Arithme
     }
 }
 
+// Model navigation: spec::checked_decision [project-result-model]
+// Purpose: Preserve the real decision value or its ordinary arithmetic error.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn checked_decision(d: &ArithmeticDecoder, c: ArithmeticContext)
     -> Result<u8, super::super::ArithmeticError> {
     let r = arithmetic_spec::decision_state(d, c);
@@ -52,6 +68,10 @@ pub(crate) open spec fn checked_decision(d: &ArithmeticDecoder, c: ArithmeticCon
     else { Err(arithmetic_spec::error_for_signal(&after_decision(d, c), r.0)) }
 }
 
+// Model navigation: spec::initialized [representation-invariant]
+// Purpose: Require genuine initialization from the immutable coding bytes.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn initialized(d: &ArithmeticDecoder) -> bool {
     arithmetic_spec::decoder_valid(d) && d.bytes@.len() >= 2
     && d.interval == MIN_INTERVAL
@@ -62,6 +82,10 @@ pub(crate) open spec fn initialized(d: &ArithmeticDecoder) -> bool {
     && d.marker == arithmetic_spec::initialized_state(d.bytes).unwrap().4
 }
 
+// Model navigation: spec::step_valid [representation-invariant]
+// Purpose: Bind output, context and uncertainty to one actually executed decision.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) closed spec fn step_valid(s: Step, end: usize) -> bool {
     arithmetic_spec::decoder_valid(&s.before)
     && arithmetic_spec::decoder_valid(&s.after)
@@ -93,6 +117,10 @@ pub(in crate::arithmetic) proof fn certify_step(s: Step, end: usize)
     reveal(step_valid);
 }
 
+// Model navigation: spec::trace_valid [representation-invariant]
+// Purpose: Chain genuine initialized steps and their numeric enclosure widths.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) closed spec fn trace_valid(initial: ArithmeticDecoder, history: Seq<Step>,
     current: &ArithmeticDecoder, w: u32, end: usize) -> bool {
     initialized(&initial) && initial.bytes@.len() <= usize::MAX
@@ -108,6 +136,10 @@ pub(crate) closed spec fn trace_valid(initial: ArithmeticDecoder, history: Seq<S
     && w == if history.len() == 0 { initial_spread(&initial) } else { history.last().width_after }
 }
 
+// Model navigation: spec::observer_valid [representation-invariant]
+// Purpose: Relate observer storage and history to the unchanged actual decoder.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn observer_valid(o: &PrefixCertainty, d: &ArithmeticDecoder) -> bool {
     o.bytes == d.bytes && o.bytes@ == d.bytes@
     && o.entropy_end + 2 == o.bytes@.len()
@@ -190,6 +222,10 @@ pub(in crate::arithmetic) proof fn observer_append(prior: &PrefixCertainty, o: &
     }
 }
 
+// Model navigation: spec::initial_spread [project-result-model]
+// Purpose: Include terminal-prefix and BYTEIN uncertainty during initialization.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn initial_spread(d: &ArithmeticDecoder) -> u32
     recommends d.bytes@.len() >= 2,
 {
@@ -206,6 +242,10 @@ pub(crate) open spec fn initial_spread(d: &ArithmeticDecoder) -> u32
     } else { 0 }
 }
 
+// Model navigation: spec::normalization_spread [project-result-model]
+// Purpose: Bound variable numeric source contributions before each doubling.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn normalization_spread(d: &ArithmeticDecoder, w: u32, end: usize)
     -> Option<u32>
     recommends arithmetic_spec::decoder_state_valid(d),
@@ -232,6 +272,10 @@ pub(crate) open spec fn normalization_spread(d: &ArithmeticDecoder, w: u32, end:
     }
 }
 
+// Model navigation: spec::decision_frame [project-result-model]
+// Purpose: Project the fixed-control register frame before renormalization.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(in crate::arithmetic) open spec fn decision_frame<'a>(d: &ArithmeticDecoder<'a>, context: ArithmeticContext)
     -> ArithmeticDecoder<'a>
     recommends arithmetic_spec::decoder_valid(d), arithmetic_spec::context_valid(context),
@@ -246,6 +290,10 @@ pub(in crate::arithmetic) open spec fn decision_frame<'a>(d: &ArithmeticDecoder<
     }
 }
 
+// Model navigation: spec::decision_spread [project-result-model]
+// Purpose: Reject any enclosure crossing the arithmetic decision threshold.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(in crate::arithmetic) open spec fn decision_spread(d: &ArithmeticDecoder, context: ArithmeticContext,
     w: u32, end: usize) -> Option<u32>
     recommends arithmetic_spec::decoder_valid(d), arithmetic_spec::context_valid(context),
@@ -286,15 +334,27 @@ pub(in crate::arithmetic) proof fn initial_spread_bound(d: &ArithmeticDecoder)
 }
 
 /// BYTEIN's control frame is immutable. Only the numeric contribution varies.
+// Model navigation: spec::refill_contribution [project-result-model]
+// Purpose: Project the actual BYTEIN numeric contribution without producing bits.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(in crate::arithmetic) open spec fn refill_contribution(d: &ArithmeticDecoder) -> nat {
     (arithmetic_spec::refill_step(d).3 as int - d.code as int) as nat
 }
 
+// Model navigation: spec::source_unknown [project-policy]
+// Purpose: Vary both first terminal-prefix and repeated marker-fill contributions.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(in crate::arithmetic) open spec fn source_unknown(d: &ArithmeticDecoder, end: usize) -> bool {
     let refill = arithmetic_spec::refill_step(d);
     refill.5.is_some() || refill.1 >= end
 }
 
+// Model navigation: spec::normalized_next [project-result-model]
+// Purpose: Preserve immutable bytes and the real normalization control schedule.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(in crate::arithmetic) open spec fn normalized_next<'a>(d: &ArithmeticDecoder<'a>)
     -> ArithmeticDecoder<'a>
 {
@@ -307,6 +367,10 @@ pub(in crate::arithmetic) open spec fn normalized_next<'a>(d: &ArithmeticDecoder
     }
 }
 
+// Model navigation: spec::admissible_sources [project-policy]
+// Purpose: Keep genuine coded contributions fixed and vary uncertain ones downward.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(in crate::arithmetic) open spec fn admissible_sources(
     d: &ArithmeticDecoder, sources: Seq<nat>, end: usize) -> bool
     decreases if 0 < d.interval < MIN_INTERVAL { MIN_INTERVAL as int - d.interval as int } else { 0 },
@@ -326,6 +390,10 @@ pub(in crate::arithmetic) open spec fn admissible_sources(
 
 /// Exact numeric execution with arbitrary admissible fills and the original
 /// source/control frames. The interval and CT schedule do not depend on code.
+// Model navigation: spec::alternative_normalization [project-result-model]
+// Purpose: Construct alternative numeric codes on the immutable control schedule.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(in crate::arithmetic) open spec fn alternative_normalization(
     d: &ArithmeticDecoder, code: nat, sources: Seq<nat>, end: usize) -> nat
     recommends admissible_sources(d, sources, end),
@@ -416,6 +484,10 @@ pub(in crate::arithmetic) proof fn decision_independent(
     arithmetic_spec::entry_model_equations(d.interval, d.code, context.state_index, context.mps);
 }
 
+// Model navigation: spec::admissible_initial [project-policy]
+// Purpose: Bound initialization sources without assuming decision agreement.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(in crate::arithmetic) open spec fn admissible_initial(d: &ArithmeticDecoder,
     first: nat, refill: nat, end: usize) -> bool {
     let seed = ArithmeticDecoder {
@@ -453,6 +525,10 @@ pub(in crate::arithmetic) proof fn initial_enclosure(d: &ArithmeticDecoder,
     }
 }
 
+// Model navigation: spec::alternative_step [project-result-model]
+// Purpose: Propagate an alternative numeric code through one fixed-control step.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(in crate::arithmetic) open spec fn alternative_step(s: Step, code: nat,
     sources: Seq<nat>, end: usize) -> nat {
     let qe = QE_STATES@[s.context.state_index as int].qe as u32;
@@ -497,6 +573,10 @@ pub(in crate::arithmetic) proof fn step_enclosure(s: Step, end: usize,
 /// An alternative execution chooses *every* permitted numeric fill, including
 /// initialization. Its context selections are the recorded, actually executed
 /// accesses; equal decisions preserve the integer/IAID selection histories.
+// Model navigation: spec::admissible_prefix [project-policy]
+// Purpose: Describe all source-bounded alternatives without an agreement premise.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) closed spec fn admissible_prefix(o: &PrefixCertainty, codes: Seq<nat>,
     sources: Seq<Seq<nat>>, first: nat, refill: nat) -> bool {
     codes.len() == o.history@.len() + 1 && sources.len() == o.history@.len()
@@ -509,10 +589,18 @@ pub(crate) closed spec fn admissible_prefix(o: &PrefixCertainty, codes: Seq<nat>
     )
 }
 
+// Model navigation: spec::trace_upper [project-result-model]
+// Purpose: Project the actual upper code endpoint at a trace boundary.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn trace_upper(o: &PrefixCertainty, k: nat) -> u32 {
     if k == 0 { o.initial@.code } else { o.history@[(k-1) as int].after.code }
 }
 
+// Model navigation: spec::trace_width [project-result-model]
+// Purpose: Project the enclosure width at a trace boundary.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn trace_width(o: &PrefixCertainty, k: nat) -> u32 {
     if k == 0 { initial_spread(&o.initial@) } else { o.history@[(k-1) as int].width_after }
 }
@@ -575,6 +663,10 @@ pub(crate) proof fn active_trace_sound(o: &PrefixCertainty, d: &ArithmeticDecode
     }
 }
 
+// Model navigation: spec::source_choices_admissible [project-policy]
+// Purpose: Quantify bounded source choices, not assumed matching decoder outputs.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) closed spec fn source_choices_admissible(o: &PrefixCertainty,
     sources: Seq<Seq<nat>>, first: nat, refill: nat) -> bool {
     sources.len() == o.history@.len()
@@ -584,6 +676,10 @@ pub(crate) closed spec fn source_choices_admissible(o: &PrefixCertainty,
             o.history@[i].context), sources[i], o.entropy_end)
 }
 
+// Model navigation: spec::alternative_codes [project-result-model]
+// Purpose: Construct the alternative code history recursively from source choices.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) closed spec fn alternative_codes(o: &PrefixCertainty,
     sources: Seq<Seq<nat>>, first: nat, refill: nat, k: nat) -> Seq<nat>
     decreases k,
@@ -647,6 +743,10 @@ pub(crate) proof fn arbitrary_fill_sound(o: &PrefixCertainty, d: &ArithmeticDeco
     active_trace_sound(o, d, codes, sources, first, refill);
 }
 
+// Model navigation: spec::saved_observer [project-result-model]
+// Purpose: Recover the saved pre-final-DS trace independently of later decoding.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn saved_observer<'a>(o: &PrefixCertainty<'a>) -> PrefixCertainty<'a> {
     let s = o.saved@.unwrap();
     PrefixCertainty {

@@ -17,7 +17,23 @@ sys.path.insert(0, str(TOOLS))
 import run_semantic_proofs as runner
 
 
-LIVE_CHECKS = runner.CHECKS
+ORIGINAL_CHECK_IDS = frozenset("""
+arithmetic-codec huffman-codec context-lifecycle session-framing clone-results
+public-context context-callers value-bridge arithmetic-decision document-count
+reset mmr-reference document-layout page-state text-batch symbol-cardinality
+segment-data reader-error page-public arithmetic-integer halftone-header
+integer-state segment-header black-span page-finish mmr-horizontal bitmap-compose
+bitmap-copy mmr-span arithmetic-refill arithmetic-normalization iaid-state
+arithmetic-initialization mmr-run huffman-assignment region-dispatch operator-bit
+retention bitmap-chunk mmr-prefix error-conversion error-wrappers-basic
+error-wrappers-regions error-wrappers-symbol default-limits-1 default-limits-2
+default-limits-3 default-limits-4 default-limits-5 default-decoder-1
+default-decoder-2 default-decoder-3 default-decoder-4 default-decoder-5
+collector-sink public-decode-results public-global-results reference-accounting
+reference-catalog reference-type-lookup reference-type-classes
+""".split())
+CURRENT_CHECKS = runner.CHECKS
+LIVE_CHECKS = tuple(row for row in CURRENT_CHECKS if row[0] in ORIGINAL_CHECK_IDS)
 PRE_REFERENCE_TYPE_CHECKS = tuple(
     row for row in LIVE_CHECKS if row[0] not in {"reference-type-lookup", "reference-type-classes"}
 )
@@ -248,6 +264,44 @@ def evidence():
 
 
 class SemanticOrchestrationTests(unittest.TestCase):
+    @patch.object(runner, "CHECKS", CURRENT_CHECKS)
+    @patch.multiple(runner, **LIVE_TOPOLOGY)
+    def test_certainty_addition_preserves_original_floor_and_future_rgb_extension(self):
+        from check_arithmetic_certainty_proofs import CASES
+
+        self.assertEqual(len(ORIGINAL_CHECK_IDS), 61)
+        self.assertEqual({row[0] for row in LIVE_CHECKS}, ORIGINAL_CHECK_IDS)
+        self.assertEqual(sum(row[2] for row in LIVE_CHECKS), 494)
+        checks = runner.configured_checks()
+        certainty = next(row for row in checks if row[0] == "arithmetic-certainty")
+        self.assertEqual(certainty[2], len(CASES))
+        self.assertEqual(certainty[2], 4)
+        self.assertEqual(runner.CI_SHARDS, 14)
+        self.assertEqual(runner.ADDED_SHARD_GROUPS["arithmetic-certainty"], 13)
+        roles = (
+            runner.configured_whole_checks(), runner.configured_collector_checks(),
+            *runner.configured_shards(),
+        )
+        assigned = [row for role in roles for row in role]
+        self.assertEqual(set(assigned), set(checks))
+        self.assertEqual(len(assigned), len(checks))
+        self.assertIn(certainty, runner.configured_shards()[13])
+        self.assertGreaterEqual(sum(row[2] for row in checks), 498)
+        future = ("future-rgb", "check_future_rgb_proofs.py", 3, "strong_contract", "weaker_control")
+        with patch.object(runner, "CHECKS", (*checks, future)), patch.dict(
+            runner.ADDED_SHARD_GROUPS, {"future-rgb": 13},
+        ):
+            shards = runner.configured_shards()
+            self.assertEqual(len(shards), 14)
+            self.assertIn(certainty, shards[13])
+            self.assertIn(future, shards[13])
+            all_roles = (
+                runner.configured_whole_checks(), runner.configured_collector_checks(), *shards,
+            )
+            combined = [row for role in all_roles for row in role]
+            self.assertEqual(set(combined), set(checks) | {future})
+            self.assertEqual(len(combined), len(checks) + 1)
+
     @patch.object(runner, "CHECKS", LIVE_CHECKS)
     @patch.multiple(runner, **LIVE_TOPOLOGY)
     def test_embedded_recovery_profile_preserves_the_original_timing_guard(self):
@@ -1160,7 +1214,7 @@ class SemanticOrchestrationTests(unittest.TestCase):
                 self.assertEqual(result["status"], "passed")
 
     def test_manifest_covers_every_semantic_checker_without_fixed_group_or_case_totals(self):
-        with patch.object(runner, "CHECKS", LIVE_CHECKS):
+        with patch.object(runner, "CHECKS", CURRENT_CHECKS):
             checks = runner.configured_checks()
         self.assertEqual(len({row[0] for row in checks}), len(checks))
         self.assertEqual(

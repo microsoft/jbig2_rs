@@ -22,6 +22,7 @@ CI_SHARDS = 14
 WHOLE_GROUPS = ("arithmetic-codec",)
 COLLECTOR_GROUPS = ("arithmetic-decision", "reset", "clone-results", "context-callers")
 ADDED_SHARD_GROUPS = {
+    "arithmetic-certainty": 13,
     "reference-type-lookup": 10, "reference-type-classes": 13,
     "reference-accounting": 10, "reference-catalog": 12,
     "public-context": 7,
@@ -58,6 +59,7 @@ DEFAULT_SHARD_REBALANCE = {
 }
 RECEIPT_SCHEMA = 3
 CHECKS = (
+    ("arithmetic-certainty", "check_arithmetic_certainty_proofs.py", 4, "strong_contract", "weaker_control"),
     ("arithmetic-codec", "check_arithmetic_codec_proofs.py", 27, "strong_contract", "weaker_control"),
     ("huffman-codec", "check_arithmetic_codec_proofs.py", 13, "strong_contract", "weaker_control"),
     ("context-lifecycle", "check_context_lifecycle_proofs.py", 12, "strong_contract", "weaker_control"),

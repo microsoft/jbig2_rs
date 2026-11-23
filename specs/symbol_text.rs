@@ -286,6 +286,10 @@ pub(super) open spec fn arithmetic_codec_valid(
         && prefix_valid(arithmetic)
 }
 
+// Model navigation: spec::prefix_valid [representation-invariant]
+// Purpose: Bind an optional numeric-certainty observer to the real arithmetic codec.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(super) open spec fn prefix_valid(a: &super::ArithmeticCodec) -> bool {
     match a.prefix {
         Some(p) => crate::arithmetic::certainty_spec::observer_valid(&p, &a.decoder),
@@ -293,6 +297,10 @@ pub(super) open spec fn prefix_valid(a: &super::ArithmeticCodec) -> bool {
     }
 }
 
+// Model navigation: spec::arithmetic_end_certificate [project-policy]
+// Purpose: Require a valid codec, a saved complete prefix and the exact terminal marker.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(super) open spec fn arithmetic_end_certificate(a: &super::ArithmeticCodec, count: u32) -> bool {
     arithmetic_codec_valid(a)
     && match a.prefix {
@@ -305,6 +313,10 @@ pub(super) open spec fn arithmetic_end_certificate(a: &super::ArithmeticCodec, c
     }
 }
 
+// Model navigation: spec::prefix_saved_unchanged [representation-invariant]
+// Purpose: Preserve the pre-final-DS certificate across genuine later decoding.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
 pub(super) open spec fn prefix_saved_unchanged(before: &super::ArithmeticCodec,
     after: &super::ArithmeticCodec) -> bool {
     match before.prefix {
