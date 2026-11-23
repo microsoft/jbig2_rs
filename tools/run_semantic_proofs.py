@@ -13,6 +13,8 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
+import threading
 import time
 
 
@@ -58,68 +60,67 @@ DEFAULT_SHARD_REBALANCE = {
     "session-framing": 13,
     "mmr-span": 1, "default-limits-4": 13, "page-finish": 13, "default-limits-5": 13,
 }
-# Additive RGB profile: maxima of complete runs 45092228281/1 and
-# 45102932751/1, plus 320 seconds for the measured 264.47-second certainty group.
+# Additive profile: five complete shard profiles and measured dependency reuse.
 # Legacy profiles retain their original allocation and timing interpretation.
 COLOUR_SHARD_ALLOCATION = {
-    "arithmetic-certainty": 7,
-    "huffman-codec": 7,
-    "context-lifecycle": 1,
-    "session-framing": 6,
-    "public-context": 10,
-    "value-bridge": 12,
-    "document-count": 5,
-    "mmr-reference": 3,
-    "document-layout": 11,
-    "page-state": 4,
+    "arithmetic-certainty": 2,
+    "huffman-codec": 6,
+    "context-lifecycle": 9,
+    "session-framing": 10,
+    "public-context": 13,
+    "value-bridge": 2,
+    "document-count": 7,
+    "mmr-reference": 5,
+    "document-layout": 8,
+    "page-state": 3,
     "text-batch": 4,
-    "symbol-cardinality": 3,
-    "segment-data": 1,
-    "reader-error": 6,
-    "page-public": 11,
-    "arithmetic-integer": 2,
-    "halftone-header": 10,
+    "symbol-cardinality": 1,
+    "segment-data": 9,
+    "reader-error": 5,
+    "page-public": 7,
+    "arithmetic-integer": 10,
+    "halftone-header": 11,
     "integer-state": 12,
-    "segment-header": 7,
-    "black-span": 10,
-    "page-finish": 13,
-    "mmr-horizontal": 8,
-    "bitmap-compose": 6,
-    "bitmap-copy": 0,
-    "mmr-span": 11,
-    "arithmetic-refill": 13,
+    "segment-header": 11,
+    "black-span": 9,
+    "page-finish": 12,
+    "mmr-horizontal": 13,
+    "bitmap-compose": 10,
+    "bitmap-copy": 4,
+    "mmr-span": 3,
+    "arithmetic-refill": 1,
     "arithmetic-normalization": 11,
-    "iaid-state": 5,
-    "arithmetic-initialization": 5,
-    "mmr-run": 2,
-    "huffman-assignment": 9,
-    "region-dispatch": 1,
-    "operator-bit": 10,
-    "retention": 6,
-    "bitmap-chunk": 2,
-    "mmr-prefix": 1,
-    "error-conversion": 8,
-    "error-wrappers-basic": 8,
-    "error-wrappers-regions": 0,
-    "error-wrappers-symbol": 2,
-    "default-limits-1": 8,
-    "default-limits-2": 5,
-    "default-limits-3": 13,
+    "iaid-state": 7,
+    "arithmetic-initialization": 10,
+    "mmr-run": 5,
+    "huffman-assignment": 0,
+    "region-dispatch": 11,
+    "operator-bit": 11,
+    "retention": 12,
+    "bitmap-chunk": 7,
+    "mmr-prefix": 13,
+    "error-conversion": 12,
+    "error-wrappers-basic": 13,
+    "error-wrappers-regions": 8,
+    "error-wrappers-symbol": 3,
+    "default-limits-1": 4,
+    "default-limits-2": 2,
+    "default-limits-3": 12,
     "default-limits-4": 8,
-    "default-limits-5": 13,
-    "default-decoder-1": 4,
-    "default-decoder-2": 10,
-    "default-decoder-3": 1,
-    "default-decoder-4": 5,
-    "default-decoder-5": 0,
-    "collector-sink": 6,
-    "public-decode-results": 0,
-    "public-global-results": 0,
-    "reference-accounting": 2,
-    "reference-catalog": 12,
-    "reference-type-lookup": 13,
-    "reference-type-classes": 13,
-    "colour-rgb": 4,
+    "default-limits-5": 8,
+    "default-decoder-1": 9,
+    "default-decoder-2": 1,
+    "default-decoder-3": 3,
+    "default-decoder-4": 4,
+    "default-decoder-5": 5,
+    "collector-sink": 13,
+    "public-decode-results": 6,
+    "public-global-results": 5,
+    "reference-accounting": 4,
+    "reference-catalog": 2,
+    "reference-type-lookup": 6,
+    "reference-type-classes": 6,
+    "colour-rgb": 8,
 }
 RECEIPT_SCHEMA = 3
 CHECKS = (
@@ -557,6 +558,7 @@ def run_checks(
     whole = load_whole_baseline(root, whole_baseline) if whole_baseline is not None else None
     environment = os.environ.copy()
     environment.pop("JBIG2_WHOLE_BASELINE", None)
+    environment.pop("JBIG2_SELECTED_DEPENDENCIES", None)
     if whole_baseline is not None:
         environment["JBIG2_WHOLE_BASELINE"] = str(whole_baseline.resolve())
     identity_binding = run_identity()
@@ -584,10 +586,14 @@ def run_checks(
                 "check_reference_type_proofs.py",
             } else []
             with log.open("w", encoding="utf-8") as stream:
+                checker_environment = {
+                    **environment,
+                    "JBIG2_SELECTED_DEPENDENCIES": str(cache_root / str(threading.get_ident())),
+                }
                 process = subprocess.run(
                     [sys.executable, "-B", str(source), "--verus-executable",
                      str(executable), *selection, "--output", str(report)],
-                    cwd=root, stdout=stream, stderr=subprocess.STDOUT, check=False, env=environment,
+                    cwd=root, stdout=stream, stderr=subprocess.STDOUT, check=False, env=checker_environment,
                 )
             result["exit_code"] = process.returncode
             if process.returncode != 0:
@@ -602,8 +608,10 @@ def run_checks(
         result["seconds"] = time.monotonic() - started
         return result
 
-    with ThreadPoolExecutor(max_workers=workers) as executor:
-        results = list(executor.map(execute, checks))
+    with tempfile.TemporaryDirectory(prefix="jbig2-semantic-dependencies-") as temporary:
+        cache_root = Path(temporary).resolve()
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            results = list(executor.map(execute, checks))
     if manifest(root) != current:
         raise ValueError("source changed during semantic checks")
     summary = {

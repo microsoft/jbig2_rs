@@ -826,5 +826,43 @@
     "guard_seconds_unchanged": 1050,
     "timing_fixture_sha256": "ffec54639a14db563bbfb161e7984d72629be98cae2cc5d03a87ee49221ec629",
     "scope": "Colour-gated allocation against every per-group maximum of both complete actual rejected profiles, reserving320 seconds for the separate four-case arithmetic certainty group. The original pre-RGB allocations and historical thresholds remain exact. No case/checker/role/compiler/parallelism/guard or source contract changes. Predicted measured-envelope bounds only, not hosted acceptance credit; a fresh complete same-run profile is mandatory."
+  },
+  "selected_dependency_build_reuse": {
+    "scope": "Fresh temporary per-worker dependency builds only; no proof-result or production-root reuse. Every selected query still cargo-cleans the root and runs the same pinned verifier/flags on its current isolated source. Lock/toolchain/local-interface changes select a different cache. Native mutants, exact whole positives, all63 groups/503 contrasts, roles, 14shards,maxparallel4 and actual1050-second guard are unchanged. Pre-RGB scheduling and historical rejected predictions retain exact scope. Measured performance and planning only, not current hosted acceptance.",
+    "cold_two_groups_seconds": 184.12514568306506,
+    "cached_two_groups_seconds": 147.13926224596798,
+    "selected_queries_per_run": 6,
+    "equal_real_query_exit_codes": [
+      0,
+      101,
+      0,
+      0,
+      101,
+      0
+    ],
+    "conservative_warm_setup_saving_seconds": 25,
+    "measured_warm_setup_saving_seconds": 34.18078164290637,
+    "certainty_planning_seconds": 200,
+    "actual_hosted_certainty_seconds": 123.90088438499998,
+    "predicted_shard_seconds": [
+      1023.0215451109999,
+      998.8411939850002,
+      995.7450074730001,
+      1011.31417231,
+      1010.1127198600001,
+      1002.2001978700002,
+      1018.5231934269999,
+      1014.627790312,
+      1011.4072841439998,
+      996.955392302,
+      990.320105172,
+      1020.6774807590003,
+      1006.5755874099996,
+      999.6849709259999
+    ],
+    "maximum_predicted_shard_seconds": 1023.0215451109999,
+    "unchanged_actual_guard_seconds": 1050,
+    "audit_tests_passed": 840,
+    "timing_fixture_sha256": "292a859302ef45cebdf29668129a99ae24ac09a0e4998ad3dd9768cb1990dba9"
   }
 }

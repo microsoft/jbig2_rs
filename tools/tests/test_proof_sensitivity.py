@@ -12,11 +12,73 @@ from unittest.mock import patch
 TOOLS = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(TOOLS))
 
-from proof_sensitivity import compile_native_mutant, check_semantic_cases, positive_baseline, proof_workspace, selected_proof, weakened_contract
+from proof_sensitivity import compile_native_mutant, check_semantic_cases, dependency_build_root, positive_baseline, proof_workspace, selected_proof, weakened_contract
 from source_group import whole_binds_unique_implementation
 
 
 class SelectedProofEvidenceTests(unittest.TestCase):
+    def test_dependency_cache_binds_the_pinned_graph_not_mutated_production_sources(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root, cache = Path(temporary).resolve() / "source", Path(temporary).resolve() / "cache"
+            for name in ("config", "verification/stdlib/interface", "src"):
+                (root / name).mkdir(parents=True)
+            for name in (
+                "config/toolchain.json", "verification/Cargo.toml",
+                "verification/Cargo.lock", "verification/stdlib/interface/lib.rs",
+                "src/lib.rs",
+            ):
+                (root / name).write_text(name)
+            first = dependency_build_root(root, cache)
+            (root / "src/lib.rs").write_text("a different production mutant")
+            self.assertEqual(dependency_build_root(root, cache), first)
+            for name in (
+                "config/toolchain.json", "verification/Cargo.lock",
+                "verification/stdlib/interface/lib.rs",
+            ):
+                path = root / name
+                original = path.read_bytes()
+                path.write_bytes(original + b"\nchanged")
+                self.assertNotEqual(dependency_build_root(root, cache), first)
+                path.write_bytes(original)
+            for invalid in (Path("relative-cache"), root / "cache", cache / ".." / "other"):
+                with self.subTest(path=invalid), self.assertRaisesRegex(ValueError, "outside the checkout"):
+                    dependency_build_root(root, invalid)
+
+    def test_cached_dependencies_never_skip_either_root_invalidation_or_selected_proof(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            build_root = Path(temporary).resolve()
+            directory = build_root / "source"
+            environment = {
+                "JBIG2_SELECTED_CARGO_MANIFEST": str(directory / "verification/Cargo.toml"),
+                "JBIG2_SELECTED_BUILD_ROOT": str(build_root),
+                "CARGO_HOME": str(build_root / "cargo-home"),
+            }
+            process = CompletedProcess([], 0, json.dumps(self.report()), "")
+            with patch("proof_sensitivity.subprocess.run", return_value=process) as run:
+                for _ in range(2):
+                    selected_proof(
+                        Path("/tools/verus"), directory, environment, False,
+                        "document", "finalize_pages",
+                    )
+            self.assertEqual(run.call_count, 4)
+            for clean, verify in zip(run.call_args_list[::2], run.call_args_list[1::2]):
+                command = clean.args[0]
+                self.assertEqual(command[:4], ["cargo", "clean", "--package", "jbig2_rs_verification"])
+                self.assertEqual(command[command.index("--target-dir") + 1],
+                                 str(build_root / "proof-target/verus-partial"))
+                command = verify.args[0]
+                self.assertIn("focus", command)
+                self.assertEqual(command[command.index("--target-dir") + 1],
+                                 str(build_root / "proof-target"))
+            with patch("proof_sensitivity.subprocess.run") as run:
+                with self.assertRaisesRegex(ValueError, "isolated Cargo home"):
+                    selected_proof(
+                        Path("/tools/verus"), directory,
+                        {**environment, "CARGO_HOME": str(build_root / "foreign")},
+                        False, "document", "finalize_pages",
+                    )
+                run.assert_not_called()
+
     def test_workspace_copies_the_actual_verification_dependency_graph(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

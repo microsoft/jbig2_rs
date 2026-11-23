@@ -58,7 +58,8 @@ class ColourShardSchedulingTests(unittest.TestCase):
             1261.259997126, places=8,
         )
 
-    def test_maxima_and_certainty_headroom_fit_the_unchanged_actual_data_guard(self):
+    @patch.object(runner, "COLOUR_SHARD_ALLOCATION", TIMINGS["pre_dependency_cache_allocation"])
+    def test_previous_maxima_prediction_preserves_its_original_scope_and_guard(self):
         measured = TIMINGS["certainty"]["measured_seconds"]
         budget = TIMINGS["certainty"]["budget_seconds"]
         self.assertEqual(measured, 264.47)
@@ -124,9 +125,43 @@ class ColourShardSchedulingTests(unittest.TestCase):
             self.assertEqual(len(before), 14)
 
     def test_insufficient_headroom_still_fails_the_original_guard(self):
+        with patch.object(
+            runner, "COLOUR_SHARD_ALLOCATION", TIMINGS["pre_dependency_cache_allocation"],
+        ):
+            self.check_previous_insufficient_headroom()
+        with self.assertRaisesRegex(ValueError, "1050-second guard"):
+            runner.measured_shard_seconds(timing_rows({
+                **maximum_seconds(), "huffman-assignment": 1050.001,
+            }))
+
+    def check_previous_insufficient_headroom(self):
         for name, value in (("arithmetic-certainty", 330), ("huffman-assignment", 1050.001)):
             with self.subTest(group=name), self.assertRaisesRegex(ValueError, "1050-second guard"):
                 runner.measured_shard_seconds(timing_rows({**maximum_seconds(), name: value}))
+
+    def test_dependency_reuse_prediction_uses_all_five_real_profiles_and_keeps_cold_setup(self):
+        cache = TIMINGS["dependency_reuse"]
+        profiles = list(cache["shard_profiles"].values())
+        sharded = {
+            row[0] for shard in runner.configured_shards() for row in shard
+        }
+        self.assertEqual(len(profiles), 5)
+        for profile in profiles:
+            self.assertIn(set(profile), (sharded, sharded - {"arithmetic-certainty"}))
+        seconds = {name: max(profile.get(name, 0) for profile in profiles) for name in sharded}
+        self.assertGreater(
+            cache["measured_warm_setup_saving_seconds"], cache["planned_warm_setup_saving_seconds"],
+        )
+        self.assertLess(cache["cached_two_groups_seconds"], 0.9 * cache["cold_two_groups_seconds"])
+        self.assertGreater(cache["certainty_budget_seconds"], 1.5 * seconds["arithmetic-certainty"])
+        seconds["arithmetic-certainty"] = cache["certainty_budget_seconds"]
+        saving = cache["planned_warm_setup_saving_seconds"]
+        predicted = [
+            sum(seconds[row[0]] for row in shard) - saving * (len(shard) - 1)
+            for shard in runner.configured_shards()
+        ]
+        self.assertEqual(len(predicted), 14)
+        self.assertLess(max(predicted), 1024)
 
 
 if __name__ == "__main__":

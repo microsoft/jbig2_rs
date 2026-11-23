@@ -1576,6 +1576,31 @@ class SemanticOrchestrationTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "1050"):
                 runner.measured_shard_seconds(rows)
 
+    def test_serial_groups_share_only_a_fresh_job_local_dependency_cache(self):
+        caches = []
+
+        def process(command, **kwargs):
+            cache = Path(kwargs["env"]["JBIG2_SELECTED_DEPENDENCIES"])
+            self.assertFalse(cache.is_relative_to(self.root))
+            self.assertTrue(cache.parent.is_dir())
+            caches.append(cache)
+            return self.passing_process(command, **kwargs)
+
+        with patch.object(runner, "CHECKS", self.checks), patch.object(
+            runner, "WHOLE_GROUPS", ("0", "1"),
+        ), patch.dict(os.environ, {"JBIG2_SELECTED_DEPENDENCIES": "/stale-cache"}), patch.object(
+            runner.subprocess, "run", side_effect=process,
+        ):
+            for _ in range(2):
+                result = runner.run_checks(
+                    self.root, self.root / "verus", self.output, whole_groups=True,
+                )
+                self.assertEqual(result["status"], "passed")
+                self.assertFalse(caches[-1].parent.exists())
+        self.assertEqual(caches[0], caches[1])
+        self.assertEqual(caches[2], caches[3])
+        self.assertNotEqual(caches[0], caches[2])
+
     @patch.object(runner, "CHECKS", PRE_CONVERSION_CHECKS)
     @patch.object(runner, "WHOLE_GROUPS", ("arithmetic-codec", "value-bridge"))
     @patch.object(runner, "COLLECTOR_GROUPS", PRE_WRAPPER_COLLECTOR_GROUPS)

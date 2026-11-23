@@ -36,6 +36,15 @@ Focused success is not whole-crate verification. Keep normal Cargo tests,
 source accounting, semantic contrasts and native mutation checks in the
 change's validation. See [validation](../validation/README.md).
 
+The semantic runner shares locked verification dependency builds between
+checkers in one job. Each worker has a separate temporary cache, keyed by the
+pinned toolchain and the complete verification dependency graph, and the runner
+deletes it on completion. This is not a cache of proof results or production
+builds: every selected query still cleans the production package and invokes
+the pinned verifier on its current isolated source. Native mutant checks,
+strong rejection, weaker acceptance, whole-positive source binding and the
+1,050-second actual timing guard are unchanged.
+
 ## Review checklist
 
 - The native body, proof-selected body and recorded source identities agree.
