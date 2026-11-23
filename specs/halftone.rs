@@ -51,7 +51,7 @@ pub(crate) open spec fn decoder_state_valid(
     match state {
         super::GenericRegionState::ZeroPlanes => true,
         super::GenericRegionState::Arithmetic { session, .. } =>
-            crate::arithmetic::arithmetic_spec::decoder_valid(&session.decoder),
+            crate::generic_region::generic_region_spec::generic_session_valid(session),
         super::GenericRegionState::PatternMmr { .. } => true,
         super::GenericRegionState::GrayMmr { coded, offset, .. } =>
             *offset <= coded@.len(),

@@ -4,6 +4,86 @@
 use super::*;
 
 #[test]
+fn owned_arithmetic_planes_match_checked_banks_and_complete_state_across_reuse() {
+    let mut coded = [0; 130];
+    coded[128..].copy_from_slice(&[0xff, 0xac]);
+    let skip = Bitmap::blank(9, 3, &Limits::default()).unwrap();
+    for (code, template) in [
+        (0, GenericTemplate::Template0),
+        (1, GenericTemplate::Template1),
+        (2, GenericTemplate::Template2),
+        (3, GenericTemplate::Template3),
+    ] {
+        for max_work_units in [32, Limits::default().max_work_units] {
+            let limits = Limits {
+                max_work_units,
+                ..Limits::default()
+            };
+            let mut state = new_halftone_arithmetic_state(&coded, template, code, &limits).unwrap();
+            let mut checked =
+                GenericArithmeticSession::new(&coded, template, false, &limits).unwrap();
+            for (width, prediction, skip) in [
+                (1, false, None),
+                (9, false, Some(&skip)),
+                (17, true, None),
+                (7, false, None),
+            ] {
+                let pixels = gray_adaptive_pixels(code);
+                let mut adaptive = [TemplateOffset::new(0, 0); 12];
+                for (offset, (x, y)) in adaptive.iter_mut().zip(pixels) {
+                    *offset = TemplateOffset::new(x, y);
+                }
+                let expected = crate::generic_region::decode_generic_on(
+                    &mut checked.decoder,
+                    &mut checked.contexts,
+                    GenericArithmeticCall {
+                        width,
+                        height: 3,
+                        adaptive,
+                        typical_prediction: prediction,
+                        skip,
+                    },
+                    3,
+                    &limits,
+                    &mut checked.work_used,
+                )
+                .map_err(generic_error_into_decode);
+                let actual = state.decode_generic_region(GenericRegionRequest {
+                    width,
+                    height: 3,
+                    coding: GenericRegionCoding::Arithmetic {
+                        template: code,
+                        adaptive_pixels: pixels,
+                    },
+                    typical_prediction: prediction,
+                    extended_template: false,
+                    skip,
+                });
+                match (actual, expected) {
+                    (Ok(actual), Ok(expected)) => {
+                        assert_eq!((actual.width(), actual.height()), (width, 3));
+                        assert_eq!(actual.bytes(), expected.bytes());
+                    }
+                    (Err(actual), Err(expected)) => assert_decode_error_exact(actual, expected),
+                    (actual, expected) => {
+                        panic!("owned/checked result differs: {actual:?}/{expected:?}")
+                    }
+                }
+                let GenericRegionState::Arithmetic { session, .. } = &state else {
+                    panic!("arithmetic owner changed kind");
+                };
+                assert_eq!(session.contexts.contexts, checked.contexts.contexts);
+                assert_eq!(session.work_used, checked.work_used);
+                assert_eq!(
+                    format!("{:?}", session.decoder),
+                    format!("{:?}", checked.decoder)
+                );
+            }
+        }
+    }
+}
+
+#[test]
 fn zero_plane_state_rejects_coded_requests_and_trailing_payload() {
     let mut state = new_zero_plane_state(&[]).unwrap();
     state.finish().unwrap();
