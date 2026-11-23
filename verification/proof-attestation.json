@@ -34,6 +34,30 @@
     "normative_approval": false
   },
   "current_evidence_note": "Exact runtime f2ded09787e983edf76ed05a7487fabcbedfe728; fresh whole1532/0, exact750 direct verified functions and unchanged20 reviewed limitations. Native and expanded compiler inventories reconcile. All ten original strict conformance outcomes are byte-identical. Performance candidates remain subject to complete target/control qualification and protected CI, including all prior 503 contrasts plus the two owned-decode contrasts and unchanged1050-second guard. Matched ARM/LLVM24/PDFium and321-image/140-PDF qualification is absent and is not claimed. No backport, publication or renewed normative approval.",
+  "owned_decode_ci_profile_correction": {
+    "rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/45280486638",
+    "attempt": 1,
+    "source_revision": "12cc1f5ea3cde75a0ae93bcfe5b5fd1d1b0cfc1e",
+    "actual_checkout": "030ec395517a6e9a9ca8091a6c0a02aa4776165f",
+    "evidence_status": "partial_profile_not_acceptance",
+    "all_groups_completed": false,
+    "timing_lower_bound_failed": true,
+    "observed_completed_shard_seconds": {
+      "0": 1075.4300956399998,
+      "1": 811.748944268,
+      "2": 896.7386690170001,
+      "3": 951.9489426900002
+    },
+    "moved_group": "owned-decode",
+    "source_shard": 0,
+    "destination_shard": 1,
+    "measured_group_seconds": 68.5848878249999,
+    "projected_source_shard_seconds": 1006.8452078149999,
+    "projected_destination_shard_seconds": 880.3338320929998,
+    "guard_seconds_unchanged": 1050,
+    "semantic_shards_unchanged": 14,
+    "scope": "The two completed shard0 groups already exceed the unchanged guard, so this partial run cannot be acceptance evidence even though those components pass. Move only the complete new two-contrast group to completed shard1. Projections are planning, not a fresh result. Preserve every prior group, contrast, checker, compiler/resource cap, whole/collector role and parallelism setting; require a fresh complete same-run profile before integration."
+  },
   "duplicate_executable_proof_source": false,
   "embedded_recovery_ci_profile_correction": {
     "rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/44359238184",
