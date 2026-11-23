@@ -47,6 +47,11 @@ jobs:
         run: >-
           python -B validation/compatibility/run_hayro_corpus.py
           --output target/traceability/compatibility-corpus.json
+      - name: Replay pinned RGB colour output and declaration policies
+        if: runner.os == 'Linux'
+        run: >-
+          python -B validation/compatibility/run_colour_corpus.py
+          --output target/traceability/colour-corpus.json
       - name: Check executable negative and metamorphic catalogs
         run: >-
           python -B tools/check_test_catalogs.py --discover-tests

@@ -102,6 +102,7 @@ mod decode_proofs;
 #[allow(dead_code)]
 mod arithmetic;
 mod bitmap;
+mod colour;
 mod decode;
 mod document;
 mod error;
@@ -124,6 +125,7 @@ mod segment_header;
 mod symbol_text;
 
 pub use bitmap::Bitmap;
+pub use colour::{ColourPage, DecodedColourDocument, RgbBitmap};
 pub use decode::{DecodedDocument, Page, PageSink};
 pub use document::embedded::{
     EmbeddedPolicy, EmbeddedRecovery, EmbeddedRecoveryKind, EmbeddedResult,

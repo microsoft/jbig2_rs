@@ -28,6 +28,7 @@ from check_page_state_proofs import CASES as PAGE_STATE_CASES
 from check_segment_data_proofs import CASES as SEGMENT_DATA_CASES
 from check_segment_header_proofs import CASES as HEADER_CASES
 from check_symbol_cardinality_proofs import CASES as SYMBOL_CARDINALITY_CASES
+from check_colour_proofs import CASES as COLOUR_CASES
 from check_text_batch_proofs import CASES as TEXT_CASES
 from proof_sensitivity import replace_once
 
@@ -189,6 +190,13 @@ MUTATIONS = tuple(
         "whitespace_flexible": True,
     }
     for case in SEGMENT_DATA_CASES
+ ) + tuple(
+    {
+        "id": "colour-" + case["id"],
+        "file": case["file"], "before": case["site"], "after": case["replacement"],
+        "target": "colour", "test": case["native_test"], "whitespace_flexible": True,
+    }
+    for case in COLOUR_CASES
 ) + tuple(
     {
         "id": "text-" + case["id"],

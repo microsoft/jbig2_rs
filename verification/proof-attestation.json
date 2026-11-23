@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
   "status": "verified_exact_project_scope_with_reviewed_limits",
-  "source_revision": "65a97be20dcc42d6086be386dfbfe515286e3c31",
-  "scope": "Fresh pinned whole verification including standalone unrefined fixed-length Huffman final-strip recovery. Every declared instance is complete before recovery is attempted; zero padding is fewer than eight bits and shorter than every possible table prefix. Normal OOB decoding is attempted first and only exact prefix-read EOF at the framed payload end is recovered. No symbol or compressed bits are synthesized; placement flush, exact-count finish, framing, references, pages and limits remain. Diagnostics reserve and debit observed capacity before rendering. Strict/default/reader/sink/random-access/nested/refinement/arithmetic paths do not gain recovery. Existing dictionary cycles and budgets are preserved. Same executing sources, unchanged 20 reviewed limitations, no new assumptions, trusted algorithm bodies or runtime/proof substitutions. Component contracts and finite regressions, not full decoded-output or independent normative proofs. Main/0.3 only.",
+  "source_revision": "9bddc449f947c1841d76c54cdd7450371bf25921",
+  "scope": "Fresh pinned whole verification including an additive byte-only generic-region RGB8 output profile. Contracts cover exact channel/storage extents, palette wire triples, foreground identifiers, transparent coloured REPLACE/monochrome ink presentation, colour declaration recovery and bounded returned page storage. Input, entropy, palette reference/retention, page lifecycle/count and conservative work/memory budgets are checked. Existing bi-level/reader/context/sink APIs and reviewed boundaries are unchanged. Same executing sources, unchanged 20 reviewed limitations, no new assumed I/O or algorithm bodies, no runtime/proof substitutions. Component contracts and finite independent RGB references, not a full decoded-output, colour-management, T.45 text or independently approved normative proof. Main/0.3 only.",
   "toolchain": {
     "manifest": "config/toolchain.json",
     "verus_version": "0.2026.10.04.426d8b0",
     "verus_commit": "426d8b01e7ffb910a36c15e1f870ff985bb61eef",
     "archive_sha256": "624018662868563a7bec0dd07be5e4dd0c3d61124b4b55105765884bf2d4d1a0"
   },
-  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-cargo cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/final-oob/verus-expanded\" --output-json",
+  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-cargo cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/colour-verification/expanded\" --output-json",
   "result": {
-    "verified_obligations": 1424,
-    "verified_production_functions": 710,
+    "verified_obligations": 1484,
+    "verified_production_functions": 740,
     "errors": 0,
     "proof_build_compiles": true,
     "exact_production_source_compiles": true,
@@ -24,8 +24,8 @@
     "runtime_proof_divergences": 0,
     "incomplete_functions": 0
   },
-  "production_proof_coverage_sha256": "a93a86e7a4f63accacba76e8a0d0864ca68920492c179b4f1b1fd90fd4c73f4f",
-  "proof_dispositions_sha256": "9840edd2e9bea7685df852f4f783a0c4532625a493143a628f873eb345c91d02",
+  "production_proof_coverage_sha256": "d7da91f5853068371b7e046b6fffe2733381aa2b24950713cc1ad0f8e0ec5d3e",
+  "proof_dispositions_sha256": "0cfce851b270a66ea5450cac8338a67332ca7dc5994ce9e4d0ef98762a7c5283",
   "standard_library_boundary": {
     "manifest": "verification/stdlib/review.json",
     "manifest_sha256": "5f007f853c6caad16d6d318bde996373c6a6f886e8949cd0df62612e5408a92c",
@@ -33,7 +33,7 @@
     "review_kind": "delegated_engineering_review",
     "normative_approval": false
   },
-  "current_evidence_note": "Exact implementation 65a97be20dcc42d6086be386dfbfe515286e3c31; fresh whole 1424/0, exact 710 direct functions and unchanged 20 reviewed limitations. All 32 pinned files pass 170 configurations/238 calls with original default Work deadlines. Huffman #200 now returns complete reference pixels with an explicit entropy recovery; strict errors remain unchanged. Arithmetic #200 and colour #212 remain rejected/Unsupported. Original ten strict conformance outcomes are identical. All existing coverage, semantic contrasts and 1050-second same-run timing gates remain required. No backport, publication or renewed normative approval.",
+  "current_evidence_note": "Exact runtime 9bddc449f947c1841d76c54cdd7450371bf25921; whole 1484/0, exact 740 directly verified functions and unchanged 20 reviewed limitations. All original bi-level fixture and strict conformance outputs are unchanged; the separate RGB replay validates every channel of #212 and both declaration-policy shapes. All original 61/494 semantic groups/contrasts are retained, with one added RGB group/five contrasts. Same roles,14shards,maxparallel4, and unchanged1050-second same-run guard. No backport, publication or renewed normative approval.",
   "duplicate_executable_proof_source": false,
   "embedded_recovery_ci_profile_correction": {
     "rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/44359238184",
@@ -634,5 +634,24 @@
     },
     "production_proof_coverage_sha256": "2ea1c30ba5d14fbe467c353740e86923fcd3a1a1eef8db7d30ab6772cf0c46bf",
     "scope": "Historical main final-page receipt, not fresh execution or renewed normative approval."
+  },
+  "generic_colour_previous_baseline": {
+    "source_revision": "65a97be20dcc42d6086be386dfbfe515286e3c31",
+    "result": {
+      "verified_obligations": 1424,
+      "verified_production_functions": 710,
+      "errors": 0,
+      "proof_build_compiles": true,
+      "exact_production_source_compiles": true,
+      "algorithm_bodies_verified": false,
+      "production_coverage_complete": true,
+      "native_assumptions": [],
+      "reviewed_verifier_limitations": 20,
+      "audited_forwarders": 0,
+      "runtime_proof_divergences": 0,
+      "incomplete_functions": 0
+    },
+    "production_proof_coverage_sha256": "a93a86e7a4f63accacba76e8a0d0864ca68920492c179b4f1b1fd90fd4c73f4f",
+    "scope": "Historical main Huffman endpoint receipt, not current execution or renewed normative approval."
   }
 }

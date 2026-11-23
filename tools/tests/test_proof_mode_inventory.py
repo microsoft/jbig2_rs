@@ -274,6 +274,7 @@ class ProofModeInventoryTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 check_workflows.check_verus_sharding(check_workflows.load_workflow(changed))
 
+    @patch.object(runner, "CHECKS", tuple(row for row in runner.CHECKS if row[0] != "colour-rgb"))
     def test_original_complete_expanded_profile_requires_lookup_redistribution(self):
         # Original42415916073/attempt1: all61groups passed; seconds rounded up.
         costs = {

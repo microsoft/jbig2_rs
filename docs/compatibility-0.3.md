@@ -40,6 +40,9 @@ and 224 decoder calls, including reuse of the same context; every successful
 page must match its complete expected pixels. The cycle-performance follow-up
 adds ten default-budget nonprogress configurations, for 170 configurations
 and 238 actual calls; those exact Work errors must complete within three seconds.
+The separate [generic RGB8 API](generic-colour-0.3.md) additionally decodes the
+colour reproduction with complete reference channels. It is not counted as a
+bi-level success and does not change the existing 170-configuration replay.
 
 ## Strict decoding corrections
 
@@ -93,7 +96,7 @@ policy in these APIs.
 | #209 | Missing MMR rows remain fatal; no blank padding or cross-segment reads. T.88 6.2 and MMR framing. |
 | #210 | Declared segment payloads must be fully present. Compatibility does not convert 430 available bytes into the declared 479. T.88 7.2.7. |
 | #211 | Unrepresentable Huffman values remain rejected by checked arithmetic/conversion, not wrapped or clamped. T.88 B.2 limits the integer domain. |
-| #212 | Colour requires actual extension semantics and a colour output contract. It remains typed `Unsupported`, not a lenient bi-level success. The original additionally clears file-header colour bit 3 while setting a region's colour bit, contrary to D.4.2; fixing that flag alone cannot implement channel/palette semantics. The supported bi-level profile is unchanged. |
+| #212 | The additive generic-region RGB8 API now preserves actual palette channels and transparent coloured foreground, rather than returning a bi-level approximation. The original requires explicit Compatibility repairs for missing file/page colour declarations (D.4.2, 7.4.8.5); setting both declarations gives a strict RGB regression. Complete RGB reference pixels are checked independently. Existing bi-level APIs and other unsupported colour profiles retain `Unsupported`; see the [profile contract](generic-colour-0.3.md). |
 | #213 | An unknown necessary extension cannot yield a complete successful decode. Optional and necessary extension cases remain distinct. T.88 7.4 extension rules. |
 | #214 | Preserve the original framing rejection and separately test correctly framed matching/incompatible retained models; the filename does not establish which check was reached. T.88 7.4.2.2 and Annex E. |
 | #215, #216 | Preserve legal zero runs/empty classes and the original budgets. A complete decoder/input/bank/cursor recurrence within an actually executed zero-only trace proves that the loop cannot finish, allowing the same eventual `Work` boundary to be reported without billions of repeated iterations. The 100,000-unit-cap errors remain exact; default-budget errors now complete within the three-second regression deadline. No arbitrary repetition limit is introduced. T.88 6.5 and Annex A. |
@@ -108,8 +111,8 @@ versus retained model selection, zero-plane initialization and bounded recovery
 preparation. Exact-pixel regressions, negative controls and work/memory tests
 supplement those component contracts.
 
-Local validation including the final-Huffman recovery has 1,424 verified obligations
-with zero errors, exact accounting of 710 directly verified production functions
+Local validation including the generic RGB8 profile has 1,484 verified obligations
+with zero errors, exact accounting of 740 directly verified production functions
 and the unchanged 20
 reviewed verifier limitations. There are no incomplete functions, new native
 assumptions or runtime/proof substitutions. The 623 native/doctest and 822

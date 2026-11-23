@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "source": "src/**/*.rs",
-  "verus_verified_obligations": 1424,
+  "verus_verified_obligations": 1484,
   "native_assumptions": [],
   "counts": {
-    "verified": 710,
+    "verified": 740,
     "reviewed-verifier-limitation": 20,
     "audited-forwarder": 0,
     "runtime-proof-divergence": 0,
@@ -660,12 +660,287 @@
       ]
     },
     {
-      "id": "decode::generic_error_into_decode",
-      "file": "src/decode.rs",
+      "id": "colour::ColourPage::number",
+      "file": "src/colour.rs",
+      "visibility": "pub",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "0042eb39f39cb0c110751b46e88ce6aa25f0d2aa8293b47f465ef4314ef293d0",
+      "verus_functions": [
+        "jbig2_rs_production::colour::ColourPage::number"
+      ]
+    },
+    {
+      "id": "colour::ColourPage::bitmap",
+      "file": "src/colour.rs",
+      "visibility": "pub",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "0042eb39f39cb0c110751b46e88ce6aa25f0d2aa8293b47f465ef4314ef293d0",
+      "verus_functions": [
+        "jbig2_rs_production::colour::ColourPage::bitmap"
+      ]
+    },
+    {
+      "id": "colour::DecodedColourDocument::pages",
+      "file": "src/colour.rs",
+      "visibility": "pub",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "0042eb39f39cb0c110751b46e88ce6aa25f0d2aa8293b47f465ef4314ef293d0",
+      "verus_functions": [
+        "jbig2_rs_production::colour::DecodedColourDocument::pages"
+      ]
+    },
+    {
+      "id": "colour::Decoder::decode_rgb",
+      "file": "src/colour.rs",
+      "visibility": "pub",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "0042eb39f39cb0c110751b46e88ce6aa25f0d2aa8293b47f465ef4314ef293d0",
+      "verus_functions": [
+        "jbig2_rs_production::document::Decoder::decode_rgb"
+      ]
+    },
+    {
+      "id": "colour::Decoder::decode_rgb_with_policy",
+      "file": "src/colour.rs",
+      "visibility": "pub",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "0042eb39f39cb0c110751b46e88ce6aa25f0d2aa8293b47f465ef4314ef293d0",
+      "verus_functions": [
+        "jbig2_rs_production::document::Decoder::decode_rgb_with_policy"
+      ]
+    },
+    {
+      "id": "colour::bitmap::RgbBitmap::width",
+      "file": "src/colour/bitmap.rs",
+      "visibility": "pub",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "1b1cd8464d298683e42779aba6199c5ae3f0dc7076dc2db6ad400d3b9d88f8c3",
+      "verus_functions": [
+        "jbig2_rs_production::colour::bitmap::RgbBitmap::width"
+      ]
+    },
+    {
+      "id": "colour::bitmap::RgbBitmap::height",
+      "file": "src/colour/bitmap.rs",
+      "visibility": "pub",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "1b1cd8464d298683e42779aba6199c5ae3f0dc7076dc2db6ad400d3b9d88f8c3",
+      "verus_functions": [
+        "jbig2_rs_production::colour::bitmap::RgbBitmap::height"
+      ]
+    },
+    {
+      "id": "colour::bitmap::RgbBitmap::stride",
+      "file": "src/colour/bitmap.rs",
+      "visibility": "pub",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "1b1cd8464d298683e42779aba6199c5ae3f0dc7076dc2db6ad400d3b9d88f8c3",
+      "verus_functions": [
+        "jbig2_rs_production::colour::bitmap::RgbBitmap::stride"
+      ]
+    },
+    {
+      "id": "colour::bitmap::RgbBitmap::bytes",
+      "file": "src/colour/bitmap.rs",
+      "visibility": "pub",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "1b1cd8464d298683e42779aba6199c5ae3f0dc7076dc2db6ad400d3b9d88f8c3",
+      "verus_functions": [
+        "jbig2_rs_production::colour::bitmap::RgbBitmap::bytes"
+      ]
+    },
+    {
+      "id": "colour::bitmap::RgbBitmap::pixel",
+      "file": "src/colour/bitmap.rs",
+      "visibility": "pub",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "1b1cd8464d298683e42779aba6199c5ae3f0dc7076dc2db6ad400d3b9d88f8c3",
+      "verus_functions": [
+        "jbig2_rs_production::colour::bitmap::RgbBitmap::pixel"
+      ]
+    },
+    {
+      "id": "colour::bitmap::RgbBitmap::filled",
+      "file": "src/colour/bitmap.rs",
+      "visibility": "pub(super)",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "1b1cd8464d298683e42779aba6199c5ae3f0dc7076dc2db6ad400d3b9d88f8c3",
+      "verus_functions": [
+        "jbig2_rs_production::colour::bitmap::RgbBitmap::filled"
+      ]
+    },
+    {
+      "id": "colour::bitmap::RgbBitmap::set",
+      "file": "src/colour/bitmap.rs",
+      "visibility": "pub(super)",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "1b1cd8464d298683e42779aba6199c5ae3f0dc7076dc2db6ad400d3b9d88f8c3",
+      "verus_functions": [
+        "jbig2_rs_production::colour::bitmap::RgbBitmap::set"
+      ]
+    },
+    {
+      "id": "colour::bitmap::RgbBitmap::compose",
+      "file": "src/colour/bitmap.rs",
+      "visibility": "pub(super)",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "1b1cd8464d298683e42779aba6199c5ae3f0dc7076dc2db6ad400d3b9d88f8c3",
+      "verus_functions": [
+        "jbig2_rs_production::colour::bitmap::RgbBitmap::compose"
+      ]
+    },
+    {
+      "id": "colour::bitmap::RgbBitmap::paint",
+      "file": "src/colour/bitmap.rs",
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+      "file_sha256": "1b1cd8464d298683e42779aba6199c5ae3f0dc7076dc2db6ad400d3b9d88f8c3",
+      "verus_functions": [
+        "jbig2_rs_production::colour::bitmap::RgbBitmap::paint"
+      ]
+    },
+    {
+      "id": "colour::document::limit",
+      "file": "src/colour/document.rs",
+      "visibility": "pub(super)",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "691920213808d33db2e89b25d36fd8b3c68e2151865ceb7bf9b05e0252c84d06",
+      "verus_functions": [
+        "jbig2_rs_production::colour::document::limit"
+      ]
+    },
+    {
+      "id": "colour::document::contains_page",
+      "file": "src/colour/document.rs",
+      "visibility": "private",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "691920213808d33db2e89b25d36fd8b3c68e2151865ceb7bf9b05e0252c84d06",
+      "verus_functions": [
+        "jbig2_rs_production::colour::document::contains_page"
+      ]
+    },
+    {
+      "id": "colour::document::scratch_used",
+      "file": "src/colour/document.rs",
+      "visibility": "private",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "691920213808d33db2e89b25d36fd8b3c68e2151865ceb7bf9b05e0252c84d06",
+      "verus_functions": [
+        "jbig2_rs_production::colour::document::scratch_used"
+      ]
+    },
+    {
+      "id": "colour::document::pool_limits",
+      "file": "src/colour/document.rs",
+      "visibility": "private",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "691920213808d33db2e89b25d36fd8b3c68e2151865ceb7bf9b05e0252c84d06",
+      "verus_functions": [
+        "jbig2_rs_production::colour::document::pool_limits"
+      ]
+    },
+    {
+      "id": "colour::document::ensure_declaration",
+      "file": "src/colour/document.rs",
+      "visibility": "private",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "691920213808d33db2e89b25d36fd8b3c68e2151865ceb7bf9b05e0252c84d06",
+      "verus_functions": [
+        "jbig2_rs_production::colour::document::ensure_declaration"
+      ]
+    },
+    {
+      "id": "colour::document::decode",
+      "file": "src/colour/document.rs",
+      "visibility": "pub(super)",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "691920213808d33db2e89b25d36fd8b3c68e2151865ceb7bf9b05e0252c84d06",
+      "verus_functions": [
+        "jbig2_rs_production::colour::document::decode"
+      ]
+    },
+    {
+      "id": "colour::palette::parse",
+      "file": "src/colour/palette.rs",
+      "visibility": "pub(super)",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "6e425e546e8414a77d72585c017cbd15ea8b6488369202e3168c90fec1636de2",
+      "verus_functions": [
+        "jbig2_rs_production::colour::palette::parse"
+      ]
+    },
+    {
+      "id": "colour::palette::find",
+      "file": "src/colour/palette.rs",
+      "visibility": "pub(super)",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "6e425e546e8414a77d72585c017cbd15ea8b6488369202e3168c90fec1636de2",
+      "verus_functions": [
+        "jbig2_rs_production::colour::palette::find"
+      ]
+    },
+    {
+      "id": "colour::palette::validate_references",
+      "file": "src/colour/palette.rs",
+      "visibility": "pub(super)",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "6e425e546e8414a77d72585c017cbd15ea8b6488369202e3168c90fec1636de2",
+      "verus_functions": [
+        "jbig2_rs_production::colour::palette::validate_references"
+      ]
+    },
+    {
+      "id": "colour::palette::resolve",
+      "file": "src/colour/palette.rs",
+      "visibility": "pub(super)",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "6e425e546e8414a77d72585c017cbd15ea8b6488369202e3168c90fec1636de2",
+      "verus_functions": [
+        "jbig2_rs_production::colour::palette::resolve"
+      ]
+    },
+    {
+      "id": "colour::palette::release",
+      "file": "src/colour/palette.rs",
+      "visibility": "pub(super)",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "6e425e546e8414a77d72585c017cbd15ea8b6488369202e3168c90fec1636de2",
+      "verus_functions": [
+        "jbig2_rs_production::colour::palette::release"
+      ]
+    },
+    {
+      "id": "decode::generic_error_into_decode",
+      "file": "src/decode.rs",
+      "visibility": "pub(crate)",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
       "verus_functions": [
         "jbig2_rs_production::decode::generic_error_into_decode"
       ]
@@ -676,7 +951,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+      "file_sha256": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
       "verus_functions": [
         "jbig2_rs_production::decode::symbol_text_error_into_decode"
       ]
@@ -687,7 +962,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+      "file_sha256": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
       "verus_functions": [
         "jbig2_rs_production::decode::huffman_error_into_decode"
       ]
@@ -698,7 +973,7 @@
       "visibility": "pub",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+      "file_sha256": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
       "verus_functions": [
         "jbig2_rs_production::decode::Page::number"
       ]
@@ -709,7 +984,7 @@
       "visibility": "pub",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+      "file_sha256": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
       "verus_functions": [
         "jbig2_rs_production::decode::Page::bitmap"
       ]
@@ -720,7 +995,7 @@
       "visibility": "pub",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+      "file_sha256": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
       "verus_functions": [
         "jbig2_rs_production::decode::Page::into_bitmap"
       ]
@@ -731,7 +1006,7 @@
       "visibility": "pub",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+      "file_sha256": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
       "verus_functions": [
         "jbig2_rs_production::decode::DecodedDocument::info"
       ]
@@ -742,7 +1017,7 @@
       "visibility": "pub",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+      "file_sha256": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
       "verus_functions": [
         "jbig2_rs_production::decode::DecodedDocument::pages"
       ]
@@ -753,7 +1028,7 @@
       "visibility": "private",
       "status": "reviewed-verifier-limitation",
       "disposition_reason": "This public or composed path depends on arbitrary caller-provided PageSink/FnMut callbacks and their error, side-effect and resource behavior. Those external implementations and the complete composed orchestration are not directly proved. Individually verified owned collection/allocation helpers do not remove this boundary; no blanket absence of fallible-allocation models is claimed.",
-      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+      "file_sha256": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
       "verus_functions": []
     },
     {
@@ -762,7 +1037,7 @@
       "visibility": "private",
       "status": "reviewed-verifier-limitation",
       "disposition_reason": "This public or composed path depends on arbitrary caller-provided PageSink/FnMut callbacks and their error, side-effect and resource behavior. Those external implementations and the complete composed orchestration are not directly proved. Individually verified owned collection/allocation helpers do not remove this boundary; no blanket absence of fallible-allocation models is claimed.",
-      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+      "file_sha256": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
       "verus_functions": []
     },
     {
@@ -771,7 +1046,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+      "file_sha256": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
       "verus_functions": [
         "jbig2_rs_production::decode::PageCollector::new"
       ]
@@ -782,7 +1057,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+      "file_sha256": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
       "verus_functions": [
         "jbig2_rs_production::decode::PageCollector::collect_page"
       ]
@@ -793,7 +1068,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+      "file_sha256": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
       "verus_functions": [
         "jbig2_rs_production::decode::PageCollector::push_page"
       ]
@@ -804,7 +1079,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+      "file_sha256": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
       "verus_functions": [
         "jbig2_rs_production::decode::PageCollector::write_page"
       ]
@@ -815,7 +1090,7 @@
       "visibility": "private",
       "status": "reviewed-verifier-limitation",
       "disposition_reason": "This public or composed path depends on arbitrary caller-provided PageSink/FnMut callbacks and their error, side-effect and resource behavior. Those external implementations and the complete composed orchestration are not directly proved. Individually verified owned collection/allocation helpers do not remove this boundary; no blanket absence of fallible-allocation models is claimed.",
-      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+      "file_sha256": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
       "verus_functions": []
     },
     {
@@ -824,7 +1099,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+      "file_sha256": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
       "verus_functions": [
         "jbig2_rs_production::decode::CollectedSymbols::codebook"
       ]
@@ -1234,7 +1509,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "fa259425d937b3933ee01ccffdd2ddfe55d11097c5e5881645b1e09cf6ab3bad",
+      "file_sha256": "5e53e7f0f966dde5c300ea4c1402bdfe7f3e875e12a675a20e3bfbeef8bd64e3",
       "verus_functions": [
         "jbig2_rs_production::decode::rendering::same_combination_operator"
       ]
@@ -1242,10 +1517,10 @@
     {
       "id": "decode::rendering::check_combination_operator",
       "file": "src/decode/rendering.rs",
-      "visibility": "pub(super)",
+      "visibility": "pub(crate)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "fa259425d937b3933ee01ccffdd2ddfe55d11097c5e5881645b1e09cf6ab3bad",
+      "file_sha256": "5e53e7f0f966dde5c300ea4c1402bdfe7f3e875e12a675a20e3bfbeef8bd64e3",
       "verus_functions": [
         "jbig2_rs_production::decode::rendering::check_combination_operator"
       ]
@@ -1256,7 +1531,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "fa259425d937b3933ee01ccffdd2ddfe55d11097c5e5881645b1e09cf6ab3bad",
+      "file_sha256": "5e53e7f0f966dde5c300ea4c1402bdfe7f3e875e12a675a20e3bfbeef8bd64e3",
       "verus_functions": [
         "jbig2_rs_production::decode::rendering::require_matching_geometry"
       ]
@@ -1267,7 +1542,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "fa259425d937b3933ee01ccffdd2ddfe55d11097c5e5881645b1e09cf6ab3bad",
+      "file_sha256": "5e53e7f0f966dde5c300ea4c1402bdfe7f3e875e12a675a20e3bfbeef8bd64e3",
       "verus_functions": [
         "jbig2_rs_production::decode::rendering::compose_immediate"
       ]
@@ -1278,7 +1553,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "fa259425d937b3933ee01ccffdd2ddfe55d11097c5e5881645b1e09cf6ab3bad",
+      "file_sha256": "5e53e7f0f966dde5c300ea4c1402bdfe7f3e875e12a675a20e3bfbeef8bd64e3",
       "verus_functions": [
         "jbig2_rs_production::decode::rendering::compose_immediate_on_page"
       ]
@@ -1289,7 +1564,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "fa259425d937b3933ee01ccffdd2ddfe55d11097c5e5881645b1e09cf6ab3bad",
+      "file_sha256": "5e53e7f0f966dde5c300ea4c1402bdfe7f3e875e12a675a20e3bfbeef8bd64e3",
       "verus_functions": [
         "jbig2_rs_production::decode::rendering::checked_page_write_state"
       ]
@@ -1300,7 +1575,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "fa259425d937b3933ee01ccffdd2ddfe55d11097c5e5881645b1e09cf6ab3bad",
+      "file_sha256": "5e53e7f0f966dde5c300ea4c1402bdfe7f3e875e12a675a20e3bfbeef8bd64e3",
       "verus_functions": [
         "jbig2_rs_production::decode::rendering::note_page_write"
       ]
@@ -1311,7 +1586,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "fa259425d937b3933ee01ccffdd2ddfe55d11097c5e5881645b1e09cf6ab3bad",
+      "file_sha256": "5e53e7f0f966dde5c300ea4c1402bdfe7f3e875e12a675a20e3bfbeef8bd64e3",
       "verus_functions": [
         "jbig2_rs_production::decode::rendering::checked_seal_stripe_state"
       ]
@@ -1322,7 +1597,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "fa259425d937b3933ee01ccffdd2ddfe55d11097c5e5881645b1e09cf6ab3bad",
+      "file_sha256": "5e53e7f0f966dde5c300ea4c1402bdfe7f3e875e12a675a20e3bfbeef8bd64e3",
       "verus_functions": [
         "jbig2_rs_production::decode::rendering::seal_stripe"
       ]
@@ -1333,7 +1608,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "fa259425d937b3933ee01ccffdd2ddfe55d11097c5e5881645b1e09cf6ab3bad",
+      "file_sha256": "5e53e7f0f966dde5c300ea4c1402bdfe7f3e875e12a675a20e3bfbeef8bd64e3",
       "verus_functions": [
         "jbig2_rs_production::decode::rendering::seal_stripe_on_page"
       ]
@@ -1344,7 +1619,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "fa259425d937b3933ee01ccffdd2ddfe55d11097c5e5881645b1e09cf6ab3bad",
+      "file_sha256": "5e53e7f0f966dde5c300ea4c1402bdfe7f3e875e12a675a20e3bfbeef8bd64e3",
       "verus_functions": [
         "jbig2_rs_production::decode::rendering::require_auxiliary_page"
       ]
@@ -1355,7 +1630,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "fa259425d937b3933ee01ccffdd2ddfe55d11097c5e5881645b1e09cf6ab3bad",
+      "file_sha256": "5e53e7f0f966dde5c300ea4c1402bdfe7f3e875e12a675a20e3bfbeef8bd64e3",
       "verus_functions": [
         "jbig2_rs_production::decode::rendering::require_auxiliary_page_state"
       ]
@@ -1366,7 +1641,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "fa259425d937b3933ee01ccffdd2ddfe55d11097c5e5881645b1e09cf6ab3bad",
+      "file_sha256": "5e53e7f0f966dde5c300ea4c1402bdfe7f3e875e12a675a20e3bfbeef8bd64e3",
       "verus_functions": [
         "jbig2_rs_production::decode::rendering::snapshot_region"
       ]
@@ -1377,7 +1652,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "fa259425d937b3933ee01ccffdd2ddfe55d11097c5e5881645b1e09cf6ab3bad",
+      "file_sha256": "5e53e7f0f966dde5c300ea4c1402bdfe7f3e875e12a675a20e3bfbeef8bd64e3",
       "verus_functions": [
         "jbig2_rs_production::decode::rendering::find_page_info"
       ]
@@ -2880,7 +3155,7 @@
       "visibility": "pub(crate)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "ce7bea28f88ac00446bf66b3a4a4bc9c7f5196609a5d9553e8e898f205f718f3",
+      "file_sha256": "ed9a97ae517a562d9c3edec4904e4a90dce8c783920319454c80f34bdea3a0f6",
       "verus_functions": [
         "jbig2_rs_production::document::standalone::diagnostics::record"
       ]
@@ -2891,7 +3166,7 @@
       "visibility": "pub(crate)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "ce7bea28f88ac00446bf66b3a4a4bc9c7f5196609a5d9553e8e898f205f718f3",
+      "file_sha256": "ed9a97ae517a562d9c3edec4904e4a90dce8c783920319454c80f34bdea3a0f6",
       "verus_functions": [
         "jbig2_rs_production::document::standalone::diagnostics::reserve"
       ]
@@ -2902,7 +3177,7 @@
       "visibility": "pub(crate)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "ce7bea28f88ac00446bf66b3a4a4bc9c7f5196609a5d9553e8e898f205f718f3",
+      "file_sha256": "ed9a97ae517a562d9c3edec4904e4a90dce8c783920319454c80f34bdea3a0f6",
       "verus_functions": [
         "jbig2_rs_production::document::standalone::diagnostics::record_reserved"
       ]
@@ -3128,7 +3403,7 @@
       "visibility": "private",
       "status": "reviewed-verifier-limitation",
       "disposition_reason": "The remaining standard Formatter operations used by this Display body are unsupported by the pin. Formatting trait precondition models exist; this is not a claim that every formatting model is absent. No standard formatting behavior or complete diagnostic text is inferred from codec proofs.",
-      "file_sha256": "5aa90d8f1259d05a9b8285076b813ffa4751d07360c3ef000f92149aaba8219d",
+      "file_sha256": "4a5a3c10fe65a03ff47874993cf8b2359be5c60acfc2e9e04ba43692c0567501",
       "verus_functions": []
     },
     {
@@ -3137,7 +3412,7 @@
       "visibility": "private",
       "status": "reviewed-verifier-limitation",
       "disposition_reason": "The pinned verifier does not declare the remaining core::error::Error source interface used here. This is a standard diagnostic trait boundary, not a raster or allocation-kernel limitation.",
-      "file_sha256": "5aa90d8f1259d05a9b8285076b813ffa4751d07360c3ef000f92149aaba8219d",
+      "file_sha256": "4a5a3c10fe65a03ff47874993cf8b2359be5c60acfc2e9e04ba43692c0567501",
       "verus_functions": []
     },
     {
@@ -3146,7 +3421,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "5aa90d8f1259d05a9b8285076b813ffa4751d07360c3ef000f92149aaba8219d",
+      "file_sha256": "4a5a3c10fe65a03ff47874993cf8b2359be5c60acfc2e9e04ba43692c0567501",
       "verus_functions": [
         "jbig2_rs_production::generic_region::GenericRegionError::from"
       ]
@@ -3157,7 +3432,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "5aa90d8f1259d05a9b8285076b813ffa4751d07360c3ef000f92149aaba8219d",
+      "file_sha256": "4a5a3c10fe65a03ff47874993cf8b2359be5c60acfc2e9e04ba43692c0567501",
       "verus_functions": [
         "jbig2_rs_production::generic_region::GenericRegionError::from"
       ]
@@ -3168,7 +3443,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "5aa90d8f1259d05a9b8285076b813ffa4751d07360c3ef000f92149aaba8219d",
+      "file_sha256": "4a5a3c10fe65a03ff47874993cf8b2359be5c60acfc2e9e04ba43692c0567501",
       "verus_functions": [
         "jbig2_rs_production::generic_region::GenericRegionError::from"
       ]
@@ -3179,7 +3454,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "5aa90d8f1259d05a9b8285076b813ffa4751d07360c3ef000f92149aaba8219d",
+      "file_sha256": "4a5a3c10fe65a03ff47874993cf8b2359be5c60acfc2e9e04ba43692c0567501",
       "verus_functions": [
         "jbig2_rs_production::error::DecodeError::from"
       ]
@@ -3190,7 +3465,7 @@
       "visibility": "pub(crate)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "5aa90d8f1259d05a9b8285076b813ffa4751d07360c3ef000f92149aaba8219d",
+      "file_sha256": "4a5a3c10fe65a03ff47874993cf8b2359be5c60acfc2e9e04ba43692c0567501",
       "verus_functions": [
         "jbig2_rs_production::generic_region::TemplateOffset::new"
       ]
@@ -3201,7 +3476,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "5aa90d8f1259d05a9b8285076b813ffa4751d07360c3ef000f92149aaba8219d",
+      "file_sha256": "4a5a3c10fe65a03ff47874993cf8b2359be5c60acfc2e9e04ba43692c0567501",
       "verus_functions": [
         "jbig2_rs_production::generic_region::GenericRegionHeader::clone"
       ]
@@ -3212,9 +3487,20 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "5aa90d8f1259d05a9b8285076b813ffa4751d07360c3ef000f92149aaba8219d",
+      "file_sha256": "4a5a3c10fe65a03ff47874993cf8b2359be5c60acfc2e9e04ba43692c0567501",
       "verus_functions": [
         "jbig2_rs_production::generic_region::RefinementRegionHeader::clone"
+      ]
+    },
+    {
+      "id": "generic_region::colour::decode_generic_with_colour",
+      "file": "src/generic_region/colour.rs",
+      "visibility": "pub(crate)",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "e9eff18910edd8b19327d7afa0b68be9c2f2777ef2295385c6b85dbb081f272a",
+      "verus_functions": [
+        "jbig2_rs_production::generic_region::colour::decode_generic_with_colour"
       ]
     },
     {
@@ -3839,7 +4125,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "2b4932649f37b1b37f9ebc6fb9915ce2c8cf173e5c105fd1cb43548c506939f7",
+      "file_sha256": "10a0bc319a6b79e0172b018433327edd5635cb44338e9e5c4fa061c65e7d0c7e",
       "verus_functions": [
         "jbig2_rs_production::generic_region::headers::generic_mmr_flag"
       ]
@@ -3850,7 +4136,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "2b4932649f37b1b37f9ebc6fb9915ce2c8cf173e5c105fd1cb43548c506939f7",
+      "file_sha256": "10a0bc319a6b79e0172b018433327edd5635cb44338e9e5c4fa061c65e7d0c7e",
       "verus_functions": [
         "jbig2_rs_production::generic_region::headers::generic_typical_prediction_flag"
       ]
@@ -3861,7 +4147,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "2b4932649f37b1b37f9ebc6fb9915ce2c8cf173e5c105fd1cb43548c506939f7",
+      "file_sha256": "10a0bc319a6b79e0172b018433327edd5635cb44338e9e5c4fa061c65e7d0c7e",
       "verus_functions": [
         "jbig2_rs_production::generic_region::headers::generic_extended_template_flag"
       ]
@@ -3872,7 +4158,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "2b4932649f37b1b37f9ebc6fb9915ce2c8cf173e5c105fd1cb43548c506939f7",
+      "file_sha256": "10a0bc319a6b79e0172b018433327edd5635cb44338e9e5c4fa061c65e7d0c7e",
       "verus_functions": [
         "jbig2_rs_production::generic_region::headers::generic_reserved_flags"
       ]
@@ -3883,9 +4169,20 @@
       "visibility": "pub(crate)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "2b4932649f37b1b37f9ebc6fb9915ce2c8cf173e5c105fd1cb43548c506939f7",
+      "file_sha256": "10a0bc319a6b79e0172b018433327edd5635cb44338e9e5c4fa061c65e7d0c7e",
       "verus_functions": [
         "jbig2_rs_production::generic_region::headers::parse_generic_region_header"
+      ]
+    },
+    {
+      "id": "generic_region::headers::parse_generic_region_header_with_colour",
+      "file": "src/generic_region/headers.rs",
+      "visibility": "pub(super)",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "10a0bc319a6b79e0172b018433327edd5635cb44338e9e5c4fa061c65e7d0c7e",
+      "verus_functions": [
+        "jbig2_rs_production::generic_region::headers::parse_generic_region_header_with_colour"
       ]
     },
     {
@@ -3894,7 +4191,7 @@
       "visibility": "pub(crate)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "2b4932649f37b1b37f9ebc6fb9915ce2c8cf173e5c105fd1cb43548c506939f7",
+      "file_sha256": "10a0bc319a6b79e0172b018433327edd5635cb44338e9e5c4fa061c65e7d0c7e",
       "verus_functions": [
         "jbig2_rs_production::generic_region::headers::parse_refinement_region_header"
       ]
@@ -3905,7 +4202,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "2b4932649f37b1b37f9ebc6fb9915ce2c8cf173e5c105fd1cb43548c506939f7",
+      "file_sha256": "10a0bc319a6b79e0172b018433327edd5635cb44338e9e5c4fa061c65e7d0c7e",
       "verus_functions": [
         "jbig2_rs_production::generic_region::headers::read_offset"
       ]
@@ -3916,7 +4213,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "2b4932649f37b1b37f9ebc6fb9915ce2c8cf173e5c105fd1cb43548c506939f7",
+      "file_sha256": "10a0bc319a6b79e0172b018433327edd5635cb44338e9e5c4fa061c65e7d0c7e",
       "verus_functions": [
         "jbig2_rs_production::generic_region::headers::signed_offset_byte"
       ]
@@ -3927,7 +4224,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "2b4932649f37b1b37f9ebc6fb9915ce2c8cf173e5c105fd1cb43548c506939f7",
+      "file_sha256": "10a0bc319a6b79e0172b018433327edd5635cb44338e9e5c4fa061c65e7d0c7e",
       "verus_functions": [
         "jbig2_rs_production::generic_region::headers::validate_target_adaptive"
       ]
@@ -3938,7 +4235,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "2b4932649f37b1b37f9ebc6fb9915ce2c8cf173e5c105fd1cb43548c506939f7",
+      "file_sha256": "10a0bc319a6b79e0172b018433327edd5635cb44338e9e5c4fa061c65e7d0c7e",
       "verus_functions": [
         "jbig2_rs_production::generic_region::headers::validate_generic_adaptive_values"
       ]
@@ -4103,7 +4400,7 @@
       "visibility": "pub(crate)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "d84e912d208b1dd85160d4e0065a0b682cc48f63fbcf53ada5488ccaf2a8e59a",
+      "file_sha256": "3e7bbcb7bb7074ff16ce6024f94814a22ab4d010b0bb43dbb4ac250b66506837",
       "verus_functions": [
         "jbig2_rs_production::generic_region::segments::decode_generic_region_segment"
       ]
@@ -4114,9 +4411,20 @@
       "visibility": "pub(crate)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "d84e912d208b1dd85160d4e0065a0b682cc48f63fbcf53ada5488ccaf2a8e59a",
+      "file_sha256": "3e7bbcb7bb7074ff16ce6024f94814a22ab4d010b0bb43dbb4ac250b66506837",
       "verus_functions": [
         "jbig2_rs_production::generic_region::segments::decode_generic_region_segment_reused"
+      ]
+    },
+    {
+      "id": "generic_region::segments::decode_known_bitmap",
+      "file": "src/generic_region/segments.rs",
+      "visibility": "pub(super)",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "3e7bbcb7bb7074ff16ce6024f94814a22ab4d010b0bb43dbb4ac250b66506837",
+      "verus_functions": [
+        "jbig2_rs_production::generic_region::segments::decode_known_bitmap"
       ]
     },
     {
@@ -4125,7 +4433,7 @@
       "visibility": "pub(crate)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "d84e912d208b1dd85160d4e0065a0b682cc48f63fbcf53ada5488ccaf2a8e59a",
+      "file_sha256": "3e7bbcb7bb7074ff16ce6024f94814a22ab4d010b0bb43dbb4ac250b66506837",
       "verus_functions": [
         "jbig2_rs_production::generic_region::segments::decode_generic_region_segment_into"
       ]
@@ -4136,7 +4444,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "d84e912d208b1dd85160d4e0065a0b682cc48f63fbcf53ada5488ccaf2a8e59a",
+      "file_sha256": "3e7bbcb7bb7074ff16ce6024f94814a22ab4d010b0bb43dbb4ac250b66506837",
       "verus_functions": [
         "jbig2_rs_production::generic_region::segments::decode_known_length_arithmetic_generic"
       ]
@@ -4147,7 +4455,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "d84e912d208b1dd85160d4e0065a0b682cc48f63fbcf53ada5488ccaf2a8e59a",
+      "file_sha256": "3e7bbcb7bb7074ff16ce6024f94814a22ab4d010b0bb43dbb4ac250b66506837",
       "verus_functions": [
         "jbig2_rs_production::generic_region::segments::decode_known_length_arithmetic_generic_into"
       ]
@@ -4158,7 +4466,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "d84e912d208b1dd85160d4e0065a0b682cc48f63fbcf53ada5488ccaf2a8e59a",
+      "file_sha256": "3e7bbcb7bb7074ff16ce6024f94814a22ab4d010b0bb43dbb4ac250b66506837",
       "verus_functions": [
         "jbig2_rs_production::generic_region::segments::split_unknown_length_data"
       ]
@@ -4169,7 +4477,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "d84e912d208b1dd85160d4e0065a0b682cc48f63fbcf53ada5488ccaf2a8e59a",
+      "file_sha256": "3e7bbcb7bb7074ff16ce6024f94814a22ab4d010b0bb43dbb4ac250b66506837",
       "verus_functions": [
         "jbig2_rs_production::generic_region::segments::validate_arithmetic_terminator"
       ]
@@ -4180,7 +4488,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "d84e912d208b1dd85160d4e0065a0b682cc48f63fbcf53ada5488ccaf2a8e59a",
+      "file_sha256": "3e7bbcb7bb7074ff16ce6024f94814a22ab4d010b0bb43dbb4ac250b66506837",
       "verus_functions": [
         "jbig2_rs_production::generic_region::segments::validate_observed_marker"
       ]
@@ -4191,7 +4499,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "d84e912d208b1dd85160d4e0065a0b682cc48f63fbcf53ada5488ccaf2a8e59a",
+      "file_sha256": "3e7bbcb7bb7074ff16ce6024f94814a22ab4d010b0bb43dbb4ac250b66506837",
       "verus_functions": [
         "jbig2_rs_production::generic_region::segments::pad_bitmap_height"
       ]
@@ -6160,9 +6468,20 @@
       "visibility": "pub(crate)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "0a0a4bbf80d7c17a517d11b9f6943096a58fcdd80216800669efdac0b4e8c1af",
+      "file_sha256": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
       "verus_functions": [
         "jbig2_rs_production::segment_data::parse_region_info"
+      ]
+    },
+    {
+      "id": "segment_data::parse_region_info_with_colour",
+      "file": "src/segment_data.rs",
+      "visibility": "pub(crate)",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
+      "verus_functions": [
+        "jbig2_rs_production::segment_data::parse_region_info_with_colour"
       ]
     },
     {
@@ -6171,9 +6490,20 @@
       "visibility": "pub(crate)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "0a0a4bbf80d7c17a517d11b9f6943096a58fcdd80216800669efdac0b4e8c1af",
+      "file_sha256": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
       "verus_functions": [
         "jbig2_rs_production::segment_data::parse_page_information"
+      ]
+    },
+    {
+      "id": "segment_data::parse_page_information_with_colour",
+      "file": "src/segment_data.rs",
+      "visibility": "pub(crate)",
+      "status": "verified",
+      "disposition_reason": null,
+      "file_sha256": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
+      "verus_functions": [
+        "jbig2_rs_production::segment_data::parse_page_information_with_colour"
       ]
     },
     {
@@ -6182,7 +6512,7 @@
       "visibility": "pub(crate)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "0a0a4bbf80d7c17a517d11b9f6943096a58fcdd80216800669efdac0b4e8c1af",
+      "file_sha256": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
       "verus_functions": [
         "jbig2_rs_production::segment_data::parse_end_of_stripe"
       ]
@@ -6193,7 +6523,7 @@
       "visibility": "pub(crate)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "0a0a4bbf80d7c17a517d11b9f6943096a58fcdd80216800669efdac0b4e8c1af",
+      "file_sha256": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
       "verus_functions": [
         "jbig2_rs_production::segment_data::require_empty"
       ]
@@ -6204,7 +6534,7 @@
       "visibility": "pub(crate)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "0a0a4bbf80d7c17a517d11b9f6943096a58fcdd80216800669efdac0b4e8c1af",
+      "file_sha256": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
       "verus_functions": [
         "jbig2_rs_production::segment_data::parse_profiles"
       ]
@@ -6215,7 +6545,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "0a0a4bbf80d7c17a517d11b9f6943096a58fcdd80216800669efdac0b4e8c1af",
+      "file_sha256": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
       "verus_functions": [
         "jbig2_rs_production::segment_data::read_profiles_into"
       ]
@@ -6226,7 +6556,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "0a0a4bbf80d7c17a517d11b9f6943096a58fcdd80216800669efdac0b4e8c1af",
+      "file_sha256": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
       "verus_functions": [
         "jbig2_rs_production::segment_data::validate_profiles_length"
       ]
@@ -6237,7 +6567,7 @@
       "visibility": "pub(crate)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "0a0a4bbf80d7c17a517d11b9f6943096a58fcdd80216800669efdac0b4e8c1af",
+      "file_sha256": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
       "verus_functions": [
         "jbig2_rs_production::segment_data::parse_extension"
       ]
@@ -6248,7 +6578,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "0a0a4bbf80d7c17a517d11b9f6943096a58fcdd80216800669efdac0b4e8c1af",
+      "file_sha256": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
       "verus_functions": [
         "jbig2_rs_production::segment_data::classify_extension"
       ]
@@ -6259,7 +6589,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "0a0a4bbf80d7c17a517d11b9f6943096a58fcdd80216800669efdac0b4e8c1af",
+      "file_sha256": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
       "verus_functions": [
         "jbig2_rs_production::segment_data::validate_extension_flags"
       ]
@@ -6270,7 +6600,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "0a0a4bbf80d7c17a517d11b9f6943096a58fcdd80216800669efdac0b4e8c1af",
+      "file_sha256": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
       "verus_functions": [
         "jbig2_rs_production::segment_data::validate_comment"
       ]
@@ -6281,7 +6611,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "0a0a4bbf80d7c17a517d11b9f6943096a58fcdd80216800669efdac0b4e8c1af",
+      "file_sha256": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
       "verus_functions": [
         "jbig2_rs_production::segment_data::code_unit_is_zero"
       ]
@@ -6292,7 +6622,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "0a0a4bbf80d7c17a517d11b9f6943096a58fcdd80216800669efdac0b4e8c1af",
+      "file_sha256": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
       "verus_functions": [
         "jbig2_rs_production::segment_data::comment_terminates_at_end"
       ]
@@ -6303,7 +6633,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "0a0a4bbf80d7c17a517d11b9f6943096a58fcdd80216800669efdac0b4e8c1af",
+      "file_sha256": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
       "verus_functions": [
         "jbig2_rs_production::segment_data::advance_code_unit"
       ]
@@ -6314,7 +6644,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "0a0a4bbf80d7c17a517d11b9f6943096a58fcdd80216800669efdac0b4e8c1af",
+      "file_sha256": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
       "verus_functions": [
         "jbig2_rs_production::segment_data::parse_combination_operator"
       ]
@@ -6322,10 +6652,10 @@
     {
       "id": "segment_data::enforce_dimension_limits",
       "file": "src/segment_data.rs",
-      "visibility": "private",
+      "visibility": "pub(crate)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "0a0a4bbf80d7c17a517d11b9f6943096a58fcdd80216800669efdac0b4e8c1af",
+      "file_sha256": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
       "verus_functions": [
         "jbig2_rs_production::segment_data::enforce_dimension_limits"
       ]
@@ -6336,7 +6666,7 @@
       "visibility": "private",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "0a0a4bbf80d7c17a517d11b9f6943096a58fcdd80216800669efdac0b4e8c1af",
+      "file_sha256": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
       "verus_functions": [
         "jbig2_rs_production::segment_data::require_length"
       ]

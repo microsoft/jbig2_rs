@@ -23,6 +23,7 @@ WHOLE_GROUPS = ("arithmetic-codec",)
 COLLECTOR_GROUPS = ("arithmetic-decision", "reset", "clone-results", "context-callers")
 ADDED_SHARD_GROUPS = {
     "arithmetic-certainty": 13,
+    "colour-rgb": 13,
     "reference-type-lookup": 10, "reference-type-classes": 13,
     "reference-accounting": 10, "reference-catalog": 12,
     "public-context": 7,
@@ -121,6 +122,7 @@ CHECKS = (
     ("reference-catalog", "check_reference_catalog_proofs.py", 6, "strong_contract", "weaker_control"),
     ("reference-type-lookup", "check_reference_type_proofs.py", 6, "strong_contract", "weaker_control"),
     ("reference-type-classes", "check_reference_type_proofs.py", 6, "strong_contract", "weaker_control"),
+    ("colour-rgb", "check_colour_proofs.py", 5, "strong_contract", "weaker_control"),
 )
 
 SUMMARY = "semantic-proof-summary.json"

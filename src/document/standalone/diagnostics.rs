@@ -36,6 +36,10 @@ pub enum RecoveryKind {
     MissingFinalHuffmanStripEnd,
     /// Complete arithmetic text instances were independent of numeric marker fill.
     MissingFinalArithmeticStripEnd,
+    /// A decoded coloured region required a missing file-header declaration.
+    MissingFileColourFlag,
+    /// A decoded coloured region required a missing page-information declaration.
+    MissingPageColourFlag,
 }
 
 /// A recovery location in the original input, or page closure at its boundary.

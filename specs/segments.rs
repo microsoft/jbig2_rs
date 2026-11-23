@@ -449,6 +449,22 @@ pub(crate) open spec fn page_information_fields(
     &&& page_flags_match(info, bytes[16], ((bytes[17] as u16) << 8) | bytes[18] as u16)
 }
 
+// Model navigation: spec::colour_page_information_fields [project-result-model]
+// Purpose: Exact page fields with the colour declaration handled separately.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
+pub(crate) open spec fn colour_page_information_fields(
+    bytes: Seq<u8>, info: crate::segment_data::PageInformation,
+) -> bool {
+    &&& bytes.len() == 19
+    &&& info.width == be_u32_at(bytes, 0)
+    &&& info.height == if be_u32_at(bytes, 4) == 0xffff_ffff { None }
+        else { Some(be_u32_at(bytes, 4)) }
+    &&& info.x_resolution == be_u32_at(bytes, 8)
+    &&& info.y_resolution == be_u32_at(bytes, 12)
+    &&& page_flags_match(info, bytes[16] & 0x7f, ((bytes[17] as u16) << 8) | bytes[18] as u16)
+}
+
 // Model navigation: spec::profiles_payload_fields [project-result-model]
 // Purpose: Encoded enums, ordered retention/references, metadata fields and header extents.
 // Audit: profiles-payload-fields

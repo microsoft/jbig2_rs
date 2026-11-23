@@ -244,7 +244,7 @@ class ContractMutationTests(unittest.TestCase):
         identifiers = [mutation["id"] for mutation in MUTATIONS]
         certainty = [name for name in identifiers if name.startswith("arithmetic-certainty-")]
         self.assertEqual(len(certainty), 4)
-        self.assertGreaterEqual(len(identifiers) - len(certainty), 307)
+        self.assertEqual(len(identifiers) - len(certainty), 312)
         self.assertEqual(len(identifiers), len(set(identifiers)))
         for mutation in MUTATIONS:
             with self.subTest(mutation=mutation["id"]):

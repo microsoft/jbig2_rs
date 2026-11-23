@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "issue": 212,
+  "fixture": {
+    "revision": "e7ada1354dff4041cdeed3d8ba56fe01b6186132",
+    "name": "lenient_colour_region.jbig2",
+    "bytes": 1057,
+    "sha256": "16f760f10bc592a33d8854e424826624d44f9f70605bd96adb8db8741c06cf2c"
+  },
+  "independent_mask_decoder": "Published hayro-jbig2 0.4.0, strict mode, all complete packed pixels compared",
+  "mask_derivation": "Keep the original file/page header through byte43. Select each fixed-length generic segment in turn, number it1, and append empty EOP2. For the coloured segment, exclude only final GBFGCOLID4bytes and clear its colour flag in this mask-only carrier; retain its combination operator. No public bi-level acceptance is inferred from these derived carriers.",
+  "masks": [
+    {
+      "source_segment": 1,
+      "source_start": 43,
+      "source_end": 300,
+      "derived_bytes": 311,
+      "derived_sha256": "3960d1a90785ede66575fea3c787ff081934c375cbe6cca48b27458e986770fa",
+      "packed_sha256": "5678db6cb73c10a851f0270cf1e50bef76219b339c5e547519351bc53c85ceea",
+      "foreground_rgb": [0, 0, 0]
+    },
+    {
+      "source_segment": 2,
+      "source_start": 300,
+      "source_end": 794,
+      "derived_bytes": 544,
+      "derived_sha256": "7052ac95e96ffee288bdc6ccd266adbb840c9a349342ab73a5e1b85c7609a7df",
+      "packed_sha256": "966a35070812bba15de33b47d8517fa933571820cdd330f0965eff2c9999c953",
+      "foreground_rgb": [255, 0, 0]
+    },
+    {
+      "source_segment": 3,
+      "source_start": 794,
+      "source_end": 1046,
+      "derived_bytes": 306,
+      "derived_sha256": "51a378ddd562c418d80802a4a5b6028945370f5e3dc63db1e6dd48d395dd9259",
+      "packed_sha256": "1cc1a23ebf8e6b87b336db60cc20ae04e5971789b6f04ba8c3d0dfc1e148179f",
+      "foreground_rgb": [0, 0, 0]
+    }
+  ],
+  "rgb_derivation": "Initialize opaque white RGB8. In source segment order, independently scan each complete163x109 packed mask (stride21); where its MSB-first bit is1, paint its foreground RGB triple. Coloured background is transparent (T.88 6.2.7); its ID4 means default red (6.8.5/Table30). Monochrome OR paints black ink under the documented RGB presentation contract.",
+  "expected": {
+    "number": 1,
+    "width": 163,
+    "height": 109,
+    "stride": 489,
+    "rgb_bytes": 53301,
+    "red_pixels": 5809,
+    "rgb_sha256": "fe3ed9ccfa9309b20b5cca0fa612539a6cf3cf14f1782129649ab6f39e1071e4"
+  },
+  "normative_approval": false,
+  "scope": "Independent complete-mask/reference construction for the explicit RGB presentation profile, not a claim of full colour conformance or that the original bi-level honeycomb reference is a colour oracle."
+}
