@@ -117,12 +117,10 @@ def selected_proof(
         if Path(manifest).resolve() != (directory / "verification/Cargo.toml").resolve():
             raise ValueError("selected Cargo manifest must belong to the isolated proof workspace")
         build_root = Path(environment.get("JBIG2_SELECTED_BUILD_ROOT", directory))
-        if (
+        if "JBIG2_SELECTED_BUILD_ROOT" in environment and (
             not build_root.is_absolute() or build_root.resolve() != build_root
-            or "JBIG2_SELECTED_BUILD_ROOT" in environment and (
-                build_root.is_relative_to(directory)
-                or environment.get("CARGO_HOME") != str(build_root / "cargo-home")
-            )
+            or build_root.is_relative_to(directory)
+            or environment.get("CARGO_HOME") != str(build_root / "cargo-home")
         ):
             raise ValueError("selected dependency build root must match its isolated Cargo home")
         # The pinned focus mode appends verus-partial to its requested target.
