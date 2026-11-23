@@ -13,7 +13,7 @@
     "itu": "ITU-T T.88 (08/2018)",
     "iso": "ISO/IEC 14492:2019, Edition 2",
     "profile": "Project-defined broad bi-level decoder profile",
-    "profile_note": "This is not a claim of full Annex F profile 0x00000001 conformance because colour palette decoding is excluded."
+    "profile_note": "This remains the default bi-level API profile, not full Annex F profile 0x00000001 conformance. Main/0.3 additionally offers a separate limited generic-region RGB8 API; coloured text and other colour profiles remain excluded."
   },
   "rows": [
     {
@@ -162,7 +162,7 @@
       "feature": "colour_palette",
       "status": "unsupported",
       "clauses": ["6.8", "7.4.16"],
-      "failure": "typed unsupported-feature error"
+      "failure": "typed unsupported-feature error in the default bi-level APIs; the separate main/0.3 generic RGB8 API supports default and 8-bit RGB/sRGB palettes"
     },
     {
       "feature": "lossy_symbol_substitution_by_decoder",

@@ -12,7 +12,7 @@ from source_group import runtime_function
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PAGE_FIELDS = "crate::spec::segments::page_information_fields(payload@, info)"
+PAGE_FIELDS = "crate::spec::segments::colour_page_information_fields(payload@, info)"
 KNOWN_FIELDS = "document_spec::known_segment_data_fields(header.segment_type, payload@, data)"
 PROFILE_PREFIX = """(forall|index: int| 0 <= index < old(profiles)@.len() ==>
     #[trigger] final(profiles)@[index] == old(profiles)@[index])"""
@@ -26,7 +26,7 @@ PROFILE_LOOP_VALUES = """forall|position: int| 0 <= position < index ==>
             reader.bytes@, start + position * 4,
         ),"""
 BASELINE_GROUPS = (
-    ("segment_data", ("parse_page_information", "read_profiles_into")),
+    ("segment_data", ("parse_page_information_with_colour", "read_profiles_into")),
     ("document", ("parse_known_segment_data", "parse_random_access", "parse_sequential")),
 )
 
@@ -42,7 +42,7 @@ def body_case(identity, module, function, before, after, controls):
 
 def page_case(identity, before, after):
     return body_case(
-        identity, "segment_data", "parse_page_information", before, after,
+        identity, "segment_data", "parse_page_information_with_colour", before, after,
         ((PAGE_FIELDS, "true"),),
     )
 
@@ -69,8 +69,8 @@ def container_case(function, contract):
 
 CASES = (
     page_case(
-        "page_width_discarded", "Ok(PageInformation { width,",
-        "Ok(PageInformation { width: 0,",
+        "page_width_discarded", "PageInformation { width,",
+        "PageInformation { width: 0,",
     ),
     page_case("known_page_height_discarded", "Some(encoded_height)", "Some(0)"),
     page_case(

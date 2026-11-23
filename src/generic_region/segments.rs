@@ -72,7 +72,9 @@ pub(crate) fn decode_generic_region_segment_reused(
         )
     };
 
-    let bitmap = if header.mmr {
+    let bitmap = if !unknown_length {
+        decode_known_bitmap(coded, &header, limits, scratch)?
+    } else if header.mmr {
         let decoded = decode_mmr_reused(
             coded,
             header.region.width,
@@ -82,10 +84,8 @@ pub(crate) fn decode_generic_region_segment_reused(
             scratch,
         )?;
         pad_bitmap_height(decoded, header.region.height, limits)?
-    } else if unknown_length {
-        decode_arithmetic_generic(coded, &header, rows, None, limits)?
     } else {
-        decode_known_length_arithmetic_generic(coded, &header, rows, limits)?
+        decode_arithmetic_generic(coded, &header, rows, None, limits)?
     };
 
     let consumed_bytes = header_length
@@ -97,6 +97,30 @@ pub(crate) fn decode_generic_region_segment_reused(
         consumed_bytes,
         decoded_rows: rows,
     })
+}
+
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out.is_ok() ==> crate::spec::bitmap::storage_valid(&out.unwrap()),
+))]
+pub(super) fn decode_known_bitmap(
+    coded: &[u8],
+    header: &GenericRegionHeader,
+    limits: &Limits,
+    scratch: &mut MmrScratch,
+) -> Result<Bitmap, GenericRegionError> {
+    if header.mmr {
+        let bitmap = decode_mmr_reused(
+            coded,
+            header.region.width,
+            header.region.height,
+            limits,
+            EofbPolicy::Optional,
+            scratch,
+        )?;
+        pad_bitmap_height(bitmap, header.region.height, limits)
+    } else {
+        decode_known_length_arithmetic_generic(coded, header, header.region.height, limits)
+    }
 }
 
 /// Decode an arithmetic generic region directly into a matching, caller-owned

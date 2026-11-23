@@ -28,7 +28,7 @@ class SegmentDataProofFixtureTests(unittest.TestCase):
     def test_page_controls_keep_original_flag_dimension_and_payload_guarantees(self):
         source = source_text(TOOLS.parent, "src/segment_data.rs")
         for case in CASES:
-            if case["function"] != "parse_page_information":
+            if case["function"] != "parse_page_information_with_colour":
                 continue
             control = weakened_contract(source, case)
             self.assertNotIn(PAGE_FIELDS, control)

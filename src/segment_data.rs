@@ -50,6 +50,37 @@ pub(crate) fn parse_region_info(
     reader: &mut ByteReader<'_>,
     limits: &Limits,
 ) -> Result<RegionInfo, DecodeError> {
+    let (info, _) = parse_region_info_with_colour(reader, limits, false)?;
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        let flags = reader.bytes@[reader.position as int - 1];
+        assert(flags & 8 == 0);
+        assert(flags & 8 == 0 ==> flags & 0xf7 == flags) by(bit_vector);
+    }
+    Ok(info)
+}
+
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    requires old(reader).position <= old(reader).bytes@.len(),
+    ensures final(reader).bytes@ == old(reader).bytes@,
+        match out {
+            Ok((info, colour)) =>
+                crate::spec::segments::dimensions_within_limits(info.width, info.height, *limits)
+                && final(reader).position == old(reader).position + 17
+                && final(reader).position <= final(reader).bytes@.len()
+                && crate::spec::segments::region_flags_match(
+                    info, old(reader).bytes@[old(reader).position as int + 16] & 0xf7,
+                )
+                && colour == (old(reader).bytes@[old(reader).position as int + 16] & 8 != 0)
+                && (colour ==> allow_colour && info.operator == CombinationOperator::Replace),
+            Err(_) => true,
+        },
+))]
+pub(crate) fn parse_region_info_with_colour(
+    reader: &mut ByteReader<'_>,
+    limits: &Limits,
+    allow_colour: bool,
+) -> Result<(RegionInfo, bool), DecodeError> {
     let width = reader.read_u32()?;
     let height = reader.read_u32()?;
     enforce_dimension_limits(width, height, limits)?;
@@ -59,17 +90,30 @@ pub(crate) fn parse_region_info(
     if flags & 0xF0 != 0 {
         return Err(MalformedError::ReservedRegionFlags(flags & 0xF0).into());
     }
-    if flags & 0x08 != 0 {
+    let colour = flags & 0x08 != 0;
+    if colour && !allow_colour {
         return Err(DecodeError::Unsupported(UnsupportedFeature::Colour));
     }
     let operator = parse_combination_operator(flags & 0x07, true)?;
-    Ok(RegionInfo {
-        width,
-        height,
-        x,
-        y,
-        operator,
-    })
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        assert((flags & 0xf7) & 7 == flags & 7) by(bit_vector);
+        assert((flags & 0xf7) & 0xf0 == flags & 0xf0) by(bit_vector);
+        assert((flags & 0xf7) & 8 == 0) by(bit_vector);
+    }
+    if colour && !matches!(operator, CombinationOperator::Replace) {
+        return Err(MalformedError::InvalidPageState("coloured region must use REPLACE").into());
+    }
+    Ok((
+        RegionInfo {
+            width,
+            height,
+            x,
+            y,
+            operator,
+        },
+        colour,
+    ))
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -117,6 +161,39 @@ pub(crate) fn parse_page_information(
     payload: &[u8],
     limits: &Limits,
 ) -> Result<PageInformation, DecodeError> {
+    let (info, _) = parse_page_information_with_colour(payload, limits, false)?;
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        let flags = payload@[16];
+        assert(flags & 0x80 == 0);
+        assert(flags & 0x80 == 0 ==> flags & 0x7f == flags) by(bit_vector);
+    }
+    Ok(info)
+}
+
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match out {
+        Ok((info, colour)) =>
+            payload@.len() == 19
+            && match info.height {
+                Some(height) => crate::spec::segments::dimensions_within_limits(info.width, height, *limits),
+                None => info.width <= limits.max_width && info.striped,
+            }
+            && info.default_operator != CombinationOperator::Replace
+            && crate::spec::segments::page_flags_match(
+                info, payload@[16] & 0x7f, ((payload@[17] as u16) << 8) | payload@[18] as u16,
+            )
+            && crate::spec::segments::colour_page_information_fields(payload@, info)
+            && colour == (payload@[16] & 0x80 != 0)
+            && (colour ==> allow_colour),
+        Err(_) => true,
+    },
+))]
+pub(crate) fn parse_page_information_with_colour(
+    payload: &[u8],
+    limits: &Limits,
+    allow_colour: bool,
+) -> Result<(PageInformation, bool), DecodeError> {
     require_length(48, payload, 19)?;
     let mut reader = ByteReader::new(payload);
     let width = reader.read_u32()?;
@@ -139,29 +216,43 @@ pub(crate) fn parse_page_information(
     let x_resolution = reader.read_u32()?;
     let y_resolution = reader.read_u32()?;
     let flags = reader.read_u8()?;
-    if flags & 0x80 != 0 {
+    let colour = flags & 0x80 != 0;
+    if colour && !allow_colour {
         return Err(DecodeError::Unsupported(UnsupportedFeature::Colour));
     }
     let striping = reader.read_u16()?;
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        assert((flags & 0x7f) & 0x80 == 0) by(bit_vector);
+        assert((flags & 0x7f) & 1 == flags & 1) by(bit_vector);
+        assert((flags & 0x7f) & 2 == flags & 2) by(bit_vector);
+        assert((flags & 0x7f) & 4 == flags & 4) by(bit_vector);
+        assert((flags & 0x7f) & 0x20 == flags & 0x20) by(bit_vector);
+        assert((flags & 0x7f) & 0x40 == flags & 0x40) by(bit_vector);
+        assert(((flags & 0x7f) >> 3) & 3 == (flags >> 3) & 3) by(bit_vector);
+    }
     let striped = striping & 0x8000 != 0;
     if height.is_none() && !striped {
         return Err(MalformedError::UnknownHeightWithoutStriping.into());
     }
 
-    Ok(PageInformation {
-        width,
-        height,
-        x_resolution,
-        y_resolution,
-        eventually_lossless: flags & 0x01 != 0,
-        might_contain_refinements: flags & 0x02 != 0,
-        default_pixel: flags & 0x04 != 0,
-        default_operator: parse_combination_operator((flags >> 3) & 0x03, false)?,
-        requires_auxiliary_buffers: flags & 0x20 != 0,
-        combination_operator_override: flags & 0x40 != 0,
-        striped,
-        max_stripe_size: striping & 0x7FFF,
-    })
+    Ok((
+        PageInformation {
+            width,
+            height,
+            x_resolution,
+            y_resolution,
+            eventually_lossless: flags & 0x01 != 0,
+            might_contain_refinements: flags & 0x02 != 0,
+            default_pixel: flags & 0x04 != 0,
+            default_operator: parse_combination_operator((flags >> 3) & 0x03, false)?,
+            requires_auxiliary_buffers: flags & 0x20 != 0,
+            combination_operator_override: flags & 0x40 != 0,
+            striped,
+            max_stripe_size: striping & 0x7FFF,
+        },
+        colour,
+    ))
 }
 
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
@@ -512,7 +603,11 @@ fn parse_combination_operator(
         Err(_) => !crate::spec::segments::dimensions_within_limits(width, height, *limits),
     },
 ))]
-fn enforce_dimension_limits(width: u32, height: u32, limits: &Limits) -> Result<(), DecodeError> {
+pub(crate) fn enforce_dimension_limits(
+    width: u32,
+    height: u32,
+    limits: &Limits,
+) -> Result<(), DecodeError> {
     if width > limits.max_width {
         return Err(LimitExceeded {
             kind: LimitKind::Width,
