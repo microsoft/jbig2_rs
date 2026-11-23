@@ -79,8 +79,12 @@ PRE_REFERENCE_CATALOG_TOPOLOGY = {
         "default-decoder-3": 5, "region-dispatch": 10,
     },
 }
+# These 49-group histories predate public-global-results and its slot swap.
 CURRENT_TOPOLOGY = {
     **PRE_REFERENCE_CATALOG_TOPOLOGY,
+    "DEFAULT_SHARD_REBALANCE": {
+        **PRE_REFERENCE_CATALOG_TOPOLOGY["DEFAULT_SHARD_REBALANCE"], "default-limits-2": 2,
+    },
     "WHOLE_GROUPS": tuple(name for name in runner.WHOLE_GROUPS if name != "public-context"),
     "COLLECTOR_GROUPS": tuple(name for name in runner.COLLECTOR_GROUPS
                               if name not in {"clone-results", "context-callers"}),
@@ -278,7 +282,7 @@ class SemanticOrchestrationTests(unittest.TestCase):
         self.assertEqual(certainty[2], len(CASES))
         self.assertEqual(certainty[2], 4)
         self.assertEqual(runner.CI_SHARDS, 14)
-        self.assertEqual(runner.ADDED_SHARD_GROUPS["arithmetic-certainty"], 13)
+        self.assertEqual(runner.ADDED_SHARD_GROUPS["arithmetic-certainty"], 1)
         roles = (
             runner.configured_whole_checks(), runner.configured_collector_checks(),
             *runner.configured_shards(),
@@ -286,7 +290,7 @@ class SemanticOrchestrationTests(unittest.TestCase):
         assigned = [row for role in roles for row in role]
         self.assertEqual(set(assigned), set(checks))
         self.assertEqual(len(assigned), len(checks))
-        self.assertIn(certainty, runner.configured_shards()[13])
+        self.assertIn(certainty, runner.configured_shards()[1])
         self.assertGreaterEqual(sum(row[2] for row in checks), 498)
         future = ("future-rgb", "check_future_rgb_proofs.py", 3, "strong_contract", "weaker_control")
         with patch.object(runner, "CHECKS", (*checks, future)), patch.dict(
@@ -294,7 +298,7 @@ class SemanticOrchestrationTests(unittest.TestCase):
         ):
             shards = runner.configured_shards()
             self.assertEqual(len(shards), 14)
-            self.assertIn(certainty, shards[13])
+            self.assertIn(certainty, shards[1])
             self.assertIn(future, shards[13])
             all_roles = (
                 runner.configured_whole_checks(), runner.configured_collector_checks(), *shards,
@@ -319,7 +323,7 @@ class SemanticOrchestrationTests(unittest.TestCase):
         self.assertEqual(len(after), 14)
         for index, (old, current) in enumerate(zip(before, after)):
             self.assertEqual(tuple(row for row in current if row[0] != "colour-rgb"), old)
-            self.assertEqual(rgb in current, index == 13)
+            self.assertEqual(rgb in current, index == 10)
         self.assertEqual(runner.configured_whole_checks(), old_whole)
         self.assertEqual(runner.configured_collector_checks(), old_collector)
 
@@ -552,7 +556,7 @@ class SemanticOrchestrationTests(unittest.TestCase):
         self.assertLess(measured[13], 900)
 
     @patch.multiple(runner, **PRE_REFERENCE_CATALOG_TOPOLOGY)
-    def test_public_results_keep_every_old_role_and_use_existing_shard_four_headroom(self):
+    def test_public_results_keep_every_old_role_and_use_bounded_existing_shards(self):
         previous = {
             **runner.DEFAULT_SHARD_REBALANCE, "session-framing": 12,
         }
@@ -578,7 +582,12 @@ class SemanticOrchestrationTests(unittest.TestCase):
                 tuple(row for row in old if row[0] not in moved),
                 tuple(row for row in current if row[0] not in added | moved),
             )
-        self.assertEqual({row[0] for row in after[6] if row[0] in added}, added)
+        self.assertEqual(
+            {row[0] for row in after[6] if row[0] in added}, {"public-decode-results"},
+        )
+        self.assertEqual(
+            {row[0] for row in after[4] if row[0] in added}, {"public-global-results"},
+        )
         self.assertIn("session-framing", {row[0] for row in before[14]})
         self.assertIn("session-framing", {row[0] for row in after[15]})
         self.assertIn("public-context", {row[0] for row in before[0]})
