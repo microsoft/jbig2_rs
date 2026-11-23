@@ -24,7 +24,7 @@
   "model_classifications": {
     "review": "author-navigation-only-not-independent-normative-approval",
     "registry_sha256": "19f29e18950f5e35d011f88b528ba889ff3d4d000d12990d8f9c82d7de0c69cb",
-    "project_source_sha256": "1e6444eae80167ae30c6e88915eec7735e7900177e13727f1f4d5f3b84122c83",
+    "project_source_sha256": "8e0fed2c54e3ba49785698a0c562141ea0a38eadfb5da86fc1d5fe469455e463",
     "families": [
       {
         "file": "specs/huffman_lookup.rs",
@@ -1456,6 +1456,64 @@
         "justification": "Exact canonical prefix counts and zero sub-byte padding, plus complete-instance-count provenance at the final standalone Huffman strip boundary.",
         "ambiguity": "",
         "caveats": "Author navigation only; no independent normative approval or complete decoded-output proof."
+      },
+      {
+        "file": "specs/colour.rs",
+        "members": [
+          "spec::bytes",
+          "spec::height",
+          "spec::page_bitmap",
+          "spec::page_number",
+          "spec::pages",
+          "spec::stride",
+          "spec::width"
+        ],
+        "classification": "proof-support",
+        "justification": "Exact RGB row/channel/storage and palette wire fields, explicit colour declarations, and the supported generic-region presentation policy.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; not independent normative approval or a full decoded-output proof."
+      },
+      {
+        "file": "specs/colour.rs",
+        "members": [
+          "spec::document_valid",
+          "spec::storage_valid"
+        ],
+        "classification": "representation-invariant",
+        "justification": "Exact RGB row/channel/storage and palette wire fields, explicit colour declarations, and the supported generic-region presentation policy.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; not independent normative approval or a full decoded-output proof."
+      },
+      {
+        "file": "specs/colour.rs",
+        "members": [
+          "spec::palette_contents",
+          "spec::pixel"
+        ],
+        "classification": "project-result-model",
+        "justification": "Exact RGB row/channel/storage and palette wire fields, explicit colour declarations, and the supported generic-region presentation policy.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; not independent normative approval or a full decoded-output proof."
+      },
+      {
+        "file": "specs/colour.rs",
+        "members": [
+          "spec::paint_channel"
+        ],
+        "classification": "project-policy",
+        "justification": "Exact RGB row/channel/storage and palette wire fields, explicit colour declarations, and the supported generic-region presentation policy.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; not independent normative approval or a full decoded-output proof."
+      },
+      {
+        "file": "specs/segments.rs",
+        "members": [
+          "spec::colour_page_information_fields"
+        ],
+        "classification": "project-result-model",
+        "justification": "Exact RGB row/channel/storage and palette wire fields, explicit colour declarations, and the supported generic-region presentation policy.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; not independent normative approval or a full decoded-output proof."
       }
     ]
   },
@@ -2127,7 +2185,7 @@
     "specs/mmr.rs": "6333d8553b47d1bd6bcc996c0d0f3d0216d3f4d3eeff9c07e34a4dfeea5bb49c",
     "specs/mod.rs": "34f81994f8b77e618a7d48d4552175d09cf3be633307166227c13ce94a06ba21",
     "specs/readers.rs": "ee10b54a7ee8dce323488bf8ef5229fbbf1d5811888a3364cda8f2cc187ba251",
-    "specs/segments.rs": "a4a19a65babe5a29532273f3374434762cf0fd63d3336b0f49e4914e3e390bc0",
+    "specs/segments.rs": "dc288038574b7f902a15752e58096ef504d0253a0f308950474278ca2104e451",
     "specs/symbol_text.rs": "afaae649978ac149c9c387b5b1b4b7b9b018c38c1a84a607fa2fbab5f0dc2818",
     "specs/symbol_text/arithmetic_codec.rs": "c96145d1428fd0edda0b93437f15e15592e9f7476d8465dbd55feb071d1a866c",
     "specs/symbol_text/dictionary.rs": "f7994737d95cefbca3e6067754190b160ddb8c85900a17edf672b4f8d80882b2",
@@ -2147,10 +2205,10 @@
     "src/bitmap/storage.rs": "8f6ce10586869f2b0ec85214156dcd6ead236b88f7465f107f54df90698524e4",
     "src/bitmap/tests/composition.rs": "6e1643c277251306450aa427f99a143a82be3e1d32cb81ef037d6b527c92a9ba",
     "src/bitmap/tests/layout_and_access.rs": "794454828d33bf94749c93ec3091be8d216a05375088d42e68aafe44effad84a",
-    "src/decode.rs": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+    "src/decode.rs": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
     "src/decode/api.rs": "49d45b828fd56924b7176ac54283e1fadc70f93bec1d45945095db975ee6082c",
     "src/decode/dispatch/references.rs": "52e7500e0cef622729c3b19f535c8d0824644b5a954dd373ffeadeb34e649c67",
-    "src/decode/rendering.rs": "fa259425d937b3933ee01ccffdd2ddfe55d11097c5e5881645b1e09cf6ab3bad",
+    "src/decode/rendering.rs": "5e53e7f0f966dde5c300ea4c1402bdfe7f3e875e12a675a20e3bfbeef8bd64e3",
     "src/decode/resources.rs": "55f9ee8e2daa02d57b3778847780e98dd8e2b7cf0b7331d45f76e429011dfd1a",
     "src/decode/tests/container_routes.rs": "d84b63cd8fa430c1adec78535df904cf3521f33212cdefe8ee28241bc4c56b39",
     "src/decode/tests/direct_and_reuse.rs": "d46a5cbd0ee0791141d8b6115f090faa7a0315dc51437dcfb643dce6b58e116c",
@@ -2163,12 +2221,12 @@
     "src/document/tests/container_inspection.rs": "2ec6cd3bd75bda1c40165a09d767a85fb78359a10dbcb689ce3ea4d0b46a04af",
     "src/document/tests/payload_windows.rs": "96c85ffdb008808b7c63951c13564ec683bd327f1a4a95ebb27672905da5d0cc",
     "src/file_header.rs": "9011f761698f3772c953980e2d2d56ed5ece4f792c8e318ca89a0e0f8d326e11",
-    "src/generic_region.rs": "5aa90d8f1259d05a9b8285076b813ffa4751d07360c3ef000f92149aaba8219d",
+    "src/generic_region.rs": "4a5a3c10fe65a03ff47874993cf8b2359be5c60acfc2e9e04ba43692c0567501",
     "src/generic_region/contexts.rs": "3e86887633490b1d135db2f9b1f8aa9f92e097e43f22f8b29dd1ed3521ed66cb",
     "src/generic_region/generic.rs": "3ee87782e68a4116568f88e2f31dc53b4acd4ef90ead17b2e73241a9d19c3161",
-    "src/generic_region/headers.rs": "2b4932649f37b1b37f9ebc6fb9915ce2c8cf173e5c105fd1cb43548c506939f7",
+    "src/generic_region/headers.rs": "10a0bc319a6b79e0172b018433327edd5635cb44338e9e5c4fa061c65e7d0c7e",
     "src/generic_region/refinement.rs": "defb4386d60cf2b85b7de320ce5c8a53e83d4483ee30668e0cc3ab5a54e7b35c",
-    "src/generic_region/segments.rs": "d84e912d208b1dd85160d4e0065a0b682cc48f63fbcf53ada5488ccaf2a8e59a",
+    "src/generic_region/segments.rs": "3e7bbcb7bb7074ff16ce6024f94814a22ab4d010b0bb43dbb4ac250b66506837",
     "src/generic_region/support.rs": "f564fa0bda614940d4592b8958b236a1c8978ed56cf1ee9102e745f20ce62f16",
     "src/generic_region/tests/diagnostics.rs": "53850441984da91d10fcff41c144041ddb2102d03742aeadfac62b1fb40b01db",
     "src/generic_region/tests/headers_and_prediction.rs": "4dcb5015504f8a05453f8aef00a5e7129ddf84632b1585bb1a2b9faff691f8c0",
@@ -2192,7 +2250,7 @@
     "src/huffman/tests/wide_arithmetic.rs": "251462094b4817ff83394bb62072184b63796988e9606d75f29200eb1a1d8ca9",
     "src/huffman/validation.rs": "4d8612ef0cba9f16a12ae61886d225ab07766d74b21d727660405021a4f807ca",
     "src/huffman/wide.rs": "4f37abac40efc66f0c3eaa2637d211eaca5a5ea4fa7a14d7aadb07fbe2a8f0b0",
-    "src/lib.rs": "337d3bc10619a7a152cde540c80be72902e6a13b403960b2e94e772b21502b62",
+    "src/lib.rs": "dfc6fc903517de7b5dbb685d73b49b43333dec4d44af7e2f00c7cf3ca9e4bb6f",
     "src/mmr.rs": "939bdd232275bf07a8d776bacd891001dacdd49c828cfbb0abcbd40fa4adf5bb",
     "src/mmr/codes.rs": "06ad7fc805a4da335db691d5b1ada86f5f88d293ea2b8e33588326057fea5176",
     "src/mmr/raster.rs": "bd03d34f4154e629fce76707fae6dc06c12d2077a3e56fafd0198b6ae8176e4b",
@@ -2205,7 +2263,7 @@
     "src/mmr/tests/transition_cache.rs": "9694dc1674f651d821c3a40de0b2c052fc06d9c67f7a558a7856f6d917be41b2",
     "src/reader.rs": "9c64e44f1def255f1f7f285ada7608146d55dfb8d65bf31fca6464c2998f634f",
     "src/reader/tests.rs": "ff4f56ae43d4aea472a4d3ab04862edc802bf2d4413bb8de7646a1adf9cf9f47",
-    "src/segment_data.rs": "0a0a4bbf80d7c17a517d11b9f6943096a58fcdd80216800669efdac0b4e8c1af",
+    "src/segment_data.rs": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
     "src/segment_data/tests.rs": "7b082bcee501bd86382474823db6af59afb56842b7d053c3de8b77d2e5edfc15",
     "src/segment_header.rs": "ec5047080fa67fd0a8dd28e8101b972aeb23e3d10939906e1c059674ebaa528d",
     "src/segment_header/tests.rs": "41f4c9c942b49bc2d4d7c8588ac99ab655475803849836854afd349eee0d463c",
@@ -6257,7 +6315,8 @@
       "obligation_kind": "project_profile_policy",
       "policy_row_sha256": "62ced19cb640299c3f9cf1de1bf447145218ecc5f6847fa2b27d7ae91cfde549",
       "runtime": [
-        "segment_data::parse_page_information"
+        "segment_data::parse_page_information",
+        "segment_data::parse_page_information_with_colour"
       ],
       "models": [],
       "proof_macros": [],
