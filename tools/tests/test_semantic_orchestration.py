@@ -63,8 +63,12 @@ PRE_REFERENCE_CATALOG_TOPOLOGY = {
         "default-decoder-3": 5, "region-dispatch": 10,
     },
 }
+# These 49-group histories predate public-global-results and its slot swap.
 CURRENT_TOPOLOGY = {
     **PRE_REFERENCE_CATALOG_TOPOLOGY,
+    "DEFAULT_SHARD_REBALANCE": {
+        **PRE_REFERENCE_CATALOG_TOPOLOGY["DEFAULT_SHARD_REBALANCE"], "default-limits-2": 2,
+    },
     "WHOLE_GROUPS": tuple(name for name in runner.WHOLE_GROUPS if name != "public-context"),
     "COLLECTOR_GROUPS": tuple(name for name in runner.COLLECTOR_GROUPS
                               if name not in {"clone-results", "context-callers"}),
@@ -265,7 +269,7 @@ class SemanticOrchestrationTests(unittest.TestCase):
         self.assertEqual(len(after), 14)
         for index, (old, current) in enumerate(zip(before, after)):
             self.assertEqual(tuple(row for row in current if row[0] != "colour-rgb"), old)
-            self.assertEqual(rgb in current, index == 13)
+            self.assertEqual(rgb in current, index == 10)
         self.assertEqual(runner.configured_whole_checks(), old_whole)
         self.assertEqual(runner.configured_collector_checks(), old_collector)
 
@@ -498,7 +502,7 @@ class SemanticOrchestrationTests(unittest.TestCase):
         self.assertLess(measured[13], 900)
 
     @patch.multiple(runner, **PRE_REFERENCE_CATALOG_TOPOLOGY)
-    def test_public_results_keep_every_old_role_and_use_existing_shard_four_headroom(self):
+    def test_public_results_keep_every_old_role_and_use_bounded_existing_shards(self):
         previous = {
             **runner.DEFAULT_SHARD_REBALANCE, "session-framing": 12,
         }
@@ -524,7 +528,12 @@ class SemanticOrchestrationTests(unittest.TestCase):
                 tuple(row for row in old if row[0] not in moved),
                 tuple(row for row in current if row[0] not in added | moved),
             )
-        self.assertEqual({row[0] for row in after[6] if row[0] in added}, added)
+        self.assertEqual(
+            {row[0] for row in after[6] if row[0] in added}, {"public-decode-results"},
+        )
+        self.assertEqual(
+            {row[0] for row in after[4] if row[0] in added}, {"public-global-results"},
+        )
         self.assertIn("session-framing", {row[0] for row in before[14]})
         self.assertIn("session-framing", {row[0] for row in after[15]})
         self.assertIn("public-context", {row[0] for row in before[0]})
