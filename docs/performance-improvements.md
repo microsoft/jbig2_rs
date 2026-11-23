@@ -1,5 +1,9 @@
 # Measured decoder performance improvements
 
+Current proposal and all sixteen new investigations:
+[Performance roadmap evaluation](performance-roadmap-20261123.md).
+Its qualification gaps are separate from the historical retained results below.
+
 ## Unmeasured experiment: all-new identity exports (#226)
 
 The owning arithmetic and Huffman dictionary callers now return the decoded

@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
   "status": "verified_exact_project_scope_with_reviewed_limits",
-  "source_revision": "f4ba17a8f02596038da5d966e748f32ac7e7ab34",
-  "scope": "Fresh pinned whole verification including initialized real arithmetic decision provenance and certainty under arbitrary bounded numeric terminal-prefix/fill contributions. Standalone fixed-length unrefined text may recover only an ordinary final DS Value after every declared instance is fully placed and the immutable payload has literal FFAC; ordinary OOB succeeds without recovery and every DS error propagates unchanged. Prefix certainty is captured before final DS and does not assume alternative decisions agree. No bit or symbol is synthesized. Strict/default/reader/sink/embedded/nested/refinement routes, page framing/references and diagnostic/work/memory budgets are unchanged. The additive generic RGB8 profile is preserved when present in the baseline. Same executing sources, unchanged20 reviewed limitations, no new assumed I/O or algorithm bodies, native assumptions or runtime/proof substitutions. Component contracts and finite full-pixel references, not full decoded-output or independently approved normative proofs. Main/0.3 only.",
+  "source_revision": "f2ded09787e983edf76ed05a7487fabcbedfe728",
+  "scope": "Fresh pinned whole verification of owned arithmetic-halftone probability-bank validity reuse and identity-order all-new symbol export ownership transfer. The privately initialized bank invariant is strengthened and preserved across success and failure; arbitrary external banks retain checked validation. Export contracts retain exact count/order/content and current per-payload memory checks. Removed physical allocations have no phantom reservations or allocation failures. Other export selections retain the original copying path. Strict/Compatibility/RGB APIs, entropy order, logical work/decoded-byte/retained limits and the frozen bi-level support matrix are unchanged. Same20 reviewed limitations, no new assumptions, trusted bodies or runtime/proof substitutions. Component contracts and finite native oracles, not an allocator/aliasing theorem, full decoded-output proof, renewed normative approval or performance qualification.",
   "toolchain": {
     "manifest": "config/toolchain.json",
     "verus_version": "0.2026.10.04.426d8b0",
     "verus_commit": "426d8b01e7ffb910a36c15e1f870ff985bb61eef",
     "archive_sha256": "624018662868563a7bec0dd07be5e4dd0c3d61124b4b55105765884bf2d4d1a0"
   },
-  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-cargo cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/arithmetic-final/expanded\" --output-json",
+  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-cargo cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/owned-final/expanded\" --output-json",
   "result": {
-    "verified_obligations": 1529,
-    "verified_production_functions": 749,
+    "verified_obligations": 1532,
+    "verified_production_functions": 750,
     "errors": 0,
     "proof_build_compiles": true,
     "exact_production_source_compiles": true,
@@ -24,7 +24,7 @@
     "runtime_proof_divergences": 0,
     "incomplete_functions": 0
   },
-  "production_proof_coverage_sha256": "c62ec8c016b1e117e41af44b98eb6ad5cf5c2e2f28674f24e76f98eb3a05b781",
+  "production_proof_coverage_sha256": "13d4ba23adf60094f4888e39e48f9f314d6c01e77fe481e620b6d2bc1d01e5b0",
   "proof_dispositions_sha256": "0743e3eba8f677f1d891f669cee2929238ae73613896d4f0f0a3ef7329bb7faa",
   "standard_library_boundary": {
     "manifest": "verification/stdlib/review.json",
@@ -33,7 +33,7 @@
     "review_kind": "delegated_engineering_review",
     "normative_approval": false
   },
-  "current_evidence_note": "Exact runtime f4ba17a8f02596038da5d966e748f32ac7e7ab34; whole1529/0, exact749 verified functions and unchanged20 reviewed limitations. Original arithmetic #200 returns complete independent honeycomb pixels only in Compatibility; preserved-tail cut4 rejects, strict-accepted cuts2/10 remain ordinary no-recovery successes. All original32-file and ten-case strict conformance outputs are preserved except the explicitly classified original arithmetic compatibility success. All existing semantic contrasts and unchanged1050-second same-run guard remain mandatory. No backport, publication or renewed approval.",
+  "current_evidence_note": "Exact runtime f2ded09787e983edf76ed05a7487fabcbedfe728; fresh whole1532/0, exact750 direct verified functions and unchanged20 reviewed limitations. Native and expanded compiler inventories reconcile. All ten original strict conformance outcomes are byte-identical. Performance candidates remain subject to complete target/control qualification and protected CI, including all prior 503 contrasts plus the two owned-decode contrasts and unchanged1050-second guard. Matched ARM/LLVM24/PDFium and321-image/140-PDF qualification is absent and is not claimed. No backport, publication or renewed normative approval.",
   "duplicate_executable_proof_source": false,
   "embedded_recovery_ci_profile_correction": {
     "rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/44359238184",
@@ -864,5 +864,24 @@
     "unchanged_actual_guard_seconds": 1050,
     "audit_tests_passed": 840,
     "timing_fixture_sha256": "292a859302ef45cebdf29668129a99ae24ac09a0e4998ad3dd9768cb1990dba9"
+  },
+  "owned_decode_previous_baseline": {
+    "source_revision": "f4ba17a8f02596038da5d966e748f32ac7e7ab34",
+    "result": {
+      "verified_obligations": 1529,
+      "verified_production_functions": 749,
+      "errors": 0,
+      "proof_build_compiles": true,
+      "exact_production_source_compiles": true,
+      "algorithm_bodies_verified": false,
+      "production_coverage_complete": true,
+      "native_assumptions": [],
+      "reviewed_verifier_limitations": 20,
+      "audited_forwarders": 0,
+      "runtime_proof_divergences": 0,
+      "incomplete_functions": 0
+    },
+    "production_proof_coverage_sha256": "c62ec8c016b1e117e41af44b98eb6ad5cf5c2e2f28674f24e76f98eb3a05b781",
+    "scope": "Historical baseline, not a current execution or renewed normative approval."
   }
 }
