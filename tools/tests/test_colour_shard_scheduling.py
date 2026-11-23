@@ -11,6 +11,10 @@ sys.path.insert(0, str(TOOLS))
 import run_semantic_proofs as runner
 
 
+CURRENT_CHECKS = runner.CHECKS
+COLOUR_CERTAINTY_CHECKS = tuple(
+    row for row in CURRENT_CHECKS if row[0] not in {"owned-decode"}
+)
 TIMINGS = json.loads(
     (Path(__file__).parent / "fixtures/colour-rgb-semantic-timings.json").read_text()
 )
@@ -37,6 +41,31 @@ def maximum_seconds():
 
 
 class ColourShardSchedulingTests(unittest.TestCase):
+    def setUp(self):
+        historical = patch.object(runner, "CHECKS", COLOUR_CERTAINTY_CHECKS)
+        historical.start()
+        self.addCleanup(historical.stop)
+
+    def test_current_inventory_requires_owned_costs_without_changing_the_original_guard(self):
+        historical_rows = timing_rows(maximum_seconds())
+        with patch.object(runner, "CHECKS", CURRENT_CHECKS):
+            checks = runner.configured_checks()
+            self.assertEqual(len(checks), 64)
+            self.assertEqual(sum(row[2] for row in checks), 505)
+            owned = next(row for row in checks if row[0] == "owned-decode")
+            self.assertEqual(owned[2], 2)
+            self.assertIn(owned, runner.configured_shards()[0])
+            with self.assertRaisesRegex(ValueError, "every complete current-profile group"):
+                runner.measured_shard_seconds(historical_rows)
+            # Synthetic refusal control, not a measured cost for the new group.
+            rows = [
+                {"id": row[0], "status": "passed",
+                 "seconds": 1050.001 if row[0] == "owned-decode" else 1}
+                for row in checks
+            ]
+            with self.assertRaisesRegex(ValueError, "1050-second guard"):
+                runner.measured_shard_seconds(rows)
+
     def test_complete_actual_profiles_keep_every_group_and_rejected_timing(self):
         expected = {row[0] for row in runner.CHECKS if row[0] != "arithmetic-certainty"}
         self.assertEqual(set(TIMINGS["profiles"]), {"45092228281/1", "45102932751/1"})

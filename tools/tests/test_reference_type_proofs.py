@@ -14,6 +14,12 @@ from source_group import SourceGroup, bound_source_groups, relocate_cases
 import run_semantic_proofs as runner
 
 
+REFERENCE_TYPE_PROFILE_CHECKS = tuple(
+    row for row in runner.CHECKS
+    if row[0] not in {"colour-rgb", "arithmetic-certainty", "owned-decode"}
+)
+
+
 class ReferenceTypeProofTests(unittest.TestCase):
     def test_all_twelve_exact_sites_have_actual_native_and_selective_weaker_recipes(self):
         self.assertEqual({name: len(cases) for name, cases in CASE_GROUPS.items()}, {
@@ -42,9 +48,7 @@ class ReferenceTypeProofTests(unittest.TestCase):
                 relocated, _ = relocate_cases(ROOT, cases, baseline_groups(cases), sources)
                 self.assertEqual(len(relocated), 6)
 
-    @patch.object(runner, "CHECKS", tuple(
-        row for row in runner.CHECKS if row[0] not in {"colour-rgb", "arithmetic-certainty"}
-    ))
+    @patch.object(runner, "CHECKS", REFERENCE_TYPE_PROFILE_CHECKS)
     def test_new_groups_do_not_redistribute_any_old_case_or_add_roles(self):
         added = set(CASE_GROUPS)
         with patch.object(runner, "CHECKS", tuple(row for row in runner.CHECKS if row[0] not in added)):
@@ -59,9 +63,7 @@ class ReferenceTypeProofTests(unittest.TestCase):
         self.assertIn("reference-type-classes", {row[0] for row in after[15]})
 
     @patch.dict(runner.ADDED_SHARD_GROUPS, {"reference-type-lookup": 3})
-    @patch.object(runner, "CHECKS", tuple(
-        row for row in runner.CHECKS if row[0] not in {"colour-rgb", "arithmetic-certainty"}
-    ))
+    @patch.object(runner, "CHECKS", REFERENCE_TYPE_PROFILE_CHECKS)
     def test_complete_original_timing_profile_rejects_first_assignment_and_fits_corrected_one(self):
         # Same-run42310047778/attempt1 passed all61groups; seconds rounded up.
         costs = {
