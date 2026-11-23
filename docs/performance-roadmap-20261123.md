@@ -11,6 +11,9 @@ The issue baseline is `f8774dd4d09bec588f88cd4750334b398030057b`;
 the current-main baseline is `3cfff21b3bc157a5908e32199c1e94b2811ad806`.
 The proposed runtime is `f2ded09787e983edf76ed05a7487fabcbedfe728`.
 Later checker, documentation and evidence commits do not change that runtime.
+This document preserves the preliminary experiments. Subsequent local confirmation
+and exact-head CI receipts are recorded on the proposal's pull request; they do not
+relabel earlier screening runs or waive missing external qualification.
 
 **Still required:** the original matched Neoverse-N2 / LLVM24 / PDFium consumer,
 the frozen 321-image / 140-PDF qualification, and the original independent-output
@@ -32,7 +35,8 @@ O3, CPU-native, ThinLTO and one codegen unit. This is a shared x86-64 host;
 affinity to CPU2 is not CPU isolation. No host permissions, frequency settings,
 build alignment, allocator or thread budget is changed.
 
-Two preliminary five-round screens contain 6,985 and 4,445 paired measurements.
+Three preliminary five-round screens contain 6,985, 4,445 and 2,540 paired
+measurements, respectively.
 Each normal process uses 15 adaptive-batch samples targeting 100ms. The
 timed samples follow one validation decode, three additional warmups and one
 pilot decode. All five are included in whole-process CPU diagnostics. The
@@ -66,16 +70,16 @@ They are workload-specific and do not establish portable speedups.
 | #227 | Accumulate template-0 row words locally; exact state/error/pixel tests include widths through3562. The stripe control is1.53x slower in all five pairs and broad target benefit is absent. | Reject this variant; other packing designs are not proved unhelpful. |
 | #228 | Rolling refinement windows, then an independently guarded nominal-template variant. Nominal targets improve17-25%, but guarded refagg remains1.379x slower in all five pairs; custom-AT also regresses. | Reject both variants. Geometry guards do not resolve the wider generated-code/control effect. |
 | #229 | Owned refinement-bank invariant wrapper. Actual refagg targets make three calls over24,576 bank entries but have ratios near1.003. | Do not retain without material target benefit. |
-| #230 | Proved byte-aligned OR/REPLACE composition, retaining the existing unaligned/operator fallback. Halftone composition targets are about0.75/0.77, but slower controls are unresolved. | Unadopted; incremental/combined confirmation is required. |
+| #230 | Proved byte-aligned OR/REPLACE composition, retaining the existing fallback. Initial halftone targets are about0.75/0.77; incremental results over #225/#226 are0.85/0.96, with13 adverse control medians. | Unadopted; not bundled to conceal control regressions. |
 | #231 | Exact pattern-specific template-0 cursor, including lag129/255 and all fallback geometries. Pattern targets improve, but custom-AT/control regressions persist. | Do not retain the current enum-dispatch variant. A separate kernel remains a different experiment. |
 | #232 | Bounded machine-word canonical Huffman fallback. Relevant Huffman target ratios are1.0048/1.0181; unrelated faster cases do not qualify it. | Do not retain this variant. |
-| #233 | Actual attribution finds245 standard-table constructions in28 cases, not exclusive CPU time. An independently proved A-only immutable descriptor removes real owners while keeping other tables unchanged. | Prototype under evaluation; no global cache or adoption claim. |
+| #233 | Actual attribution finds245 standard-table constructions in28 cases, not exclusive CPU time. An A-only descriptor removes129 actual requests/447,200 cumulative bytes over25 hit cases, but relevant latency gains are unconvincing and20 control medians exceed5%. | Do not retain yet; the isolated prototype has component proofs, not performance qualification. |
 | #234 | Stable linear canonical Huffman construction. No convincing broad target gain and adverse controls. | Do not retain this variant. |
 | #235 | Aligned fixed-width reads; other reads unchanged. No convincing broad target gain. A reservoir would be a separate state/error-sensitive change. | Do not retain this variant; reservoir not justified by these data. |
 | #236 | Actual31 halftone grids contain14,841 cells; largest1,763 cells/7,052 index bytes. Potential narrow-index savings total40,773 bytes across the replay, not live memory. | Defer representation/fusion redesign until a real large-grid bandwidth target exists. |
 | #237 | Borrow split aggregate codebooks instead of flattening references. Generated128-aggregate ratio0.9521 and66,096 fewer requested bytes; only82 references in six actual public cases, plus adverse controls. | Scaling opportunity, not locally qualified for retention. |
 | #238 | Four external-global requests have four distinct exact identities and one use each: zero observed warm-reuse opportunities. | Defer document-cache/API redesign pending representative repeated-document ownership/lifetime traces. |
-| #239 | Checked pristine-zero XOR admission, then a vectorizable zero reduction. One20,000-byte allocation disappears in each of six actual targets, but first-screen latency is mixed and five measured peaks are unchanged. | Unadopted; do not infer peak/RSS savings from a removed temporary buffer. |
+| #239 | Checked pristine-zero XOR admission, then a vectorizable zero reduction. Both remove one20,000-byte request on six actual targets. Reduction latency remains mixed, with11 adverse control medians; five measured peaks are unchanged. | Do not retain yet; transient bytes removed are not peak/RSS savings. |
 | #240 | Actual29,111,339 arithmetic decisions:89.56% require no normalization;79.49% of normalizing decisions shift once. | Keep the shared engine unchanged pending actual cycle/state-traffic evidence. Counts alone do not justify a rewrite. |
 
 Rejecting one implementation does not prove that an entire optimization family
@@ -104,6 +108,18 @@ on each of the six identified399x400 cases. Only `bitmap-tpgdon` lowers the
 observed peak, from214,620 to204,460 bytes; the other five peaks are unchanged
 because a different phase determines the maximum. These observations do not
 support claiming a20,000-byte peak or RSS reduction per case.
+The originally reported two3562x851 inputs are unavailable; these results are
+not extrapolated to them.
+
+The #233 A-only allocation replay covers all123 cases, not just its25 hits.
+Its43 constructions remove three requests and10,400 requested bytes each.
+The unchanged production/model/dependency closure matches the archived1547/0
+whole-proof input across251 files; two later test-only differences are explicitly
+recorded rather than relabelling that receipt as a new proof run.
+
+Whole-consumer `.text` is636,782 bytes on current main and636,958 bytes for
+#225/#226 (+176 bytes); `.rodata` is unchanged at81,856 bytes. These are native
+x86-64 consumer sections, not an ARM result or a debug-containing file-size claim.
 
 ## Proposed runtime: correctness and proof scope
 
