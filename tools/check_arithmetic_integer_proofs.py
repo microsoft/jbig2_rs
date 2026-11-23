@@ -97,7 +97,7 @@ def case(identity, site, replacement, control, weaker="", function="ArithmeticDe
     elif identity == "iaid_invalid_length_mutates_context_storage":
         controls.append((IAID_CONTEXTS, ""))
     return {
-        "id": identity, "file": "src/arithmetic.rs", "module": "arithmetic",
+        "id": identity, "file": "src/arithmetic/integers.rs", "module": "arithmetic",
         "function": function,
         "site": site, "replacement": replacement,
         "controls": tuple(controls),
@@ -166,7 +166,7 @@ def main():
     try:
         report = check_semantic_cases(
             ROOT, arguments.verus_executable.resolve(), CASES,
-            ("src/arithmetic.rs", "specs/arithmetic.rs", "proofs/model_support/arithmetic.rs"),
+            ("src/arithmetic/integers.rs", "specs/arithmetic.rs", "proofs/model_support/arithmetic.rs"),
             "jbig2-arithmetic-integer-",
             "Exact single integer-bit decision/history, context frames and decoder/error step; exact IAID preflight errors and unchanged state; complete integer/IAID folds and normative interpretation remain separate",
             baseline_groups=BASELINE_GROUPS,

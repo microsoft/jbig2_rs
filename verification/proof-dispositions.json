@@ -5,21 +5,21 @@
     {
       "id": "arithmetic::ArithmeticError::fmt",
       "file": "src/arithmetic.rs",
-      "file_sha256": "3322814a9a7feedbd1d53c2b9aa6b5d9c1559b691a819cfbf5dcb2eb62d98d33",
+      "file_sha256": "a8e0ad666b2ea1750413da9601f665b197c2be0d012bd77c115539ee7c6ba971",
       "status": "reviewed-verifier-limitation",
       "reason": "The remaining standard Formatter operations used by this Display body are unsupported by the pin. Formatting trait precondition models exist; this is not a claim that every formatting model is absent. No standard formatting behavior or complete diagnostic text is inferred from codec proofs."
     },
     {
       "id": "decode::PageSink::write_page",
       "file": "src/decode.rs",
-      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+      "file_sha256": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
       "status": "reviewed-verifier-limitation",
       "reason": "This public or composed path depends on arbitrary caller-provided PageSink/FnMut callbacks and their error, side-effect and resource behavior. Those external implementations and the complete composed orchestration are not directly proved. Individually verified owned collection/allocation helpers do not remove this boundary; no blanket absence of fallible-allocation models is claimed."
     },
     {
       "id": "decode::F::write_page",
       "file": "src/decode.rs",
-      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+      "file_sha256": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
       "status": "reviewed-verifier-limitation",
       "reason": "This public or composed path depends on arbitrary caller-provided PageSink/FnMut callbacks and their error, side-effect and resource behavior. Those external implementations and the complete composed orchestration are not directly proved. Individually verified owned collection/allocation helpers do not remove this boundary; no blanket absence of fallible-allocation models is claimed."
     },
@@ -47,7 +47,7 @@
     {
       "id": "decode::write_page_to_sink",
       "file": "src/decode.rs",
-      "file_sha256": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+      "file_sha256": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
       "status": "reviewed-verifier-limitation",
       "reason": "This public or composed path depends on arbitrary caller-provided PageSink/FnMut callbacks and their error, side-effect and resource behavior. Those external implementations and the complete composed orchestration are not directly proved. Individually verified owned collection/allocation helpers do not remove this boundary; no blanket absence of fallible-allocation models is claimed."
     },
@@ -131,14 +131,14 @@
     {
       "id": "generic_region::GenericRegionError::fmt",
       "file": "src/generic_region.rs",
-      "file_sha256": "5aa90d8f1259d05a9b8285076b813ffa4751d07360c3ef000f92149aaba8219d",
+      "file_sha256": "4a5a3c10fe65a03ff47874993cf8b2359be5c60acfc2e9e04ba43692c0567501",
       "status": "reviewed-verifier-limitation",
       "reason": "The remaining standard Formatter operations used by this Display body are unsupported by the pin. Formatting trait precondition models exist; this is not a claim that every formatting model is absent. No standard formatting behavior or complete diagnostic text is inferred from codec proofs."
     },
     {
       "id": "generic_region::GenericRegionError::source",
       "file": "src/generic_region.rs",
-      "file_sha256": "5aa90d8f1259d05a9b8285076b813ffa4751d07360c3ef000f92149aaba8219d",
+      "file_sha256": "4a5a3c10fe65a03ff47874993cf8b2359be5c60acfc2e9e04ba43692c0567501",
       "status": "reviewed-verifier-limitation",
       "reason": "The pinned verifier does not declare the remaining core::error::Error source interface used here. This is a standard diagnostic trait boundary, not a raster or allocation-kernel limitation."
     }

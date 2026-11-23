@@ -56,9 +56,10 @@ use dispatch::{
     decode_refinement_segment, decode_symbol_dictionary_segment, decode_text_segment,
 };
 use orchestration::{decode_global_resources, decode_segments, decode_segments_collected};
+pub(crate) use rendering::check_combination_operator;
 use rendering::{
-    check_combination_operator, compose_immediate, find_page_info, note_page_write,
-    require_auxiliary_page, require_matching_geometry, seal_stripe, snapshot_region,
+    compose_immediate, find_page_info, note_page_write, require_auxiliary_page,
+    require_matching_geometry, seal_stripe, snapshot_region,
 };
 use resources::{
     allocation_size, bitmap_byte_len, get_huffman_table, get_patterns, get_region_buffer,
@@ -69,7 +70,7 @@ use resources::{
 };
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
-fn generic_error_into_decode(error: GenericRegionError) -> DecodeError {
+pub(crate) fn generic_error_into_decode(error: GenericRegionError) -> DecodeError {
     let kind = match error {
         GenericRegionError::Decode(error) => return error,
         GenericRegionError::ReservedFlags(flags) => GenericRegionErrorKind::ReservedFlags(flags),

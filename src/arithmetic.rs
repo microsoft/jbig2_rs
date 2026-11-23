@@ -311,10 +311,16 @@ fn unexpected_eof(offset: usize, needed: usize, remaining: usize) -> ArithmeticE
     })
 }
 
+mod certainty;
+mod certified_integers;
 mod decoding;
 mod integers;
 mod probability;
 mod refill;
+
+#[cfg(verus_keep_ghost)]
+pub(crate) use certainty::certainty_spec;
+pub(crate) use certainty::PrefixCertainty;
 
 use probability::QE_STATES;
 

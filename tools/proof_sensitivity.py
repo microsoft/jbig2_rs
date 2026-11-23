@@ -24,6 +24,28 @@ def replace_once(source: str, original: str, replacement: str) -> str:
     return pattern.sub(lambda _: replacement, source, count=1)
 
 
+def dependency_build_root(root: Path, cache: Path) -> Path:
+    if not cache.is_absolute() or cache.resolve() != cache or cache.is_relative_to(root.resolve()):
+        raise ValueError("selected dependency cache must be outside the checkout without symlinks")
+    paths = [
+        root / "config/toolchain.json",
+        root / "verification/Cargo.toml",
+        root / "verification/Cargo.lock",
+    ]
+    for name in ("stdlib", "proposals"):
+        paths.extend(path for path in (root / "verification" / name).rglob("*") if path.is_file())
+    identity = hashlib.sha256()
+    for path in sorted(paths):
+        if path.is_symlink() or path.resolve() != path.absolute():
+            raise ValueError("selected dependency inputs must not contain symlinks")
+        identity.update(path.relative_to(root).as_posix().encode() + b"\0" + path.read_bytes() + b"\0")
+    directory = cache / identity.hexdigest()
+    directory.mkdir(parents=True, exist_ok=True)
+    if directory.resolve() != directory:
+        raise ValueError("selected dependency cache must not contain symlinks")
+    return directory
+
+
 @contextmanager
 def proof_workspace(root: Path, executable: Path, prefix: str):
     manifest = json.loads((root / "config/toolchain.json").read_text())
@@ -45,6 +67,15 @@ def proof_workspace(root: Path, executable: Path, prefix: str):
             if dependency_root.is_dir():
                 shutil.copytree(dependency_root, directory / "verification" / name)
         environment = isolated_environment(directory)
+        environment.pop("JBIG2_SELECTED_BUILD_ROOT", None)
+        cache = environment.pop("JBIG2_SELECTED_DEPENDENCIES", None)
+        if cache is not None:
+            build_root = dependency_build_root(root, Path(cache))
+            for name in ("cargo-home", "proof-target"):
+                if (build_root / name).resolve() != build_root / name:
+                    raise ValueError("selected dependency cache must not contain symlinks")
+            environment["CARGO_HOME"] = str(build_root / "cargo-home")
+            environment["JBIG2_SELECTED_BUILD_ROOT"] = str(build_root)
         environment["RUSTUP_TOOLCHAIN"] = rust
         environment["VERUS_PATH"] = str(executable.resolve())
         environment["JBIG2_SELECTED_CARGO_MANIFEST"] = str(directory / "verification/Cargo.toml")
@@ -85,18 +116,25 @@ def selected_proof(
     if manifest is not None:
         if Path(manifest).resolve() != (directory / "verification/Cargo.toml").resolve():
             raise ValueError("selected Cargo manifest must belong to the isolated proof workspace")
+        build_root = Path(environment.get("JBIG2_SELECTED_BUILD_ROOT", directory))
+        if "JBIG2_SELECTED_BUILD_ROOT" in environment and (
+            not build_root.is_absolute() or build_root.resolve() != build_root
+            or build_root.is_relative_to(directory)
+            or environment.get("CARGO_HOME") != str(build_root / "cargo-home")
+        ):
+            raise ValueError("selected dependency build root must match its isolated Cargo home")
         # The pinned focus mode appends verus-partial to its requested target.
         run(
             ["cargo", "clean", "--package", "jbig2_rs_verification",
              "--manifest-path", manifest,
-             "--target-dir", str(directory / "proof-target/verus-partial"),
+             "--target-dir", str(build_root / "proof-target/verus-partial"),
              "--offline", "--locked"],
             directory, environment, capture=True,
         )
         command = [
             str(executable.resolve().parent / "cargo-verus"), "focus",
             "--manifest-path", manifest, "--offline", "--locked",
-            "--target-dir", str(directory / "proof-target"), "--", *arguments,
+            "--target-dir", str(build_root / "proof-target"), "--", *arguments,
         ]
     else:
         command = [

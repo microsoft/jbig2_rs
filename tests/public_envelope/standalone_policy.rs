@@ -538,6 +538,7 @@ fn standalone_policy_pinned_family_all_pages_and_text_oob_boundaries() {
         ("reserved_region_flags", &["truchet"][..]),
         ("reserved_segment_type", &["truchet"][..]),
         ("trailing_bytes", &["honeycomb"][..]),
+        ("missing_final_oob", &["honeycomb"][..]),
         ("missing_final_oob_huffman", &["honeycomb"][..]),
     ] {
         let bytes = std::fs::read(
@@ -586,6 +587,66 @@ fn standalone_policy_pinned_family_all_pages_and_text_oob_boundaries() {
                     .decode_with_policy(&truncated_symbol, policy)
                     .is_err());
             }
+            if name == "missing_final_oob" {
+                assert_eq!(
+                    format!("{:?}", decoder.decode(&bytes).unwrap_err()),
+                    "Malformed(InvalidSymbolText(\"too many text instances\"))",
+                );
+                assert!(decoder
+                    .decode_reader(&mut std::io::Cursor::new(&bytes))
+                    .is_err());
+                assert!(decoder.decode_with_sink(&bytes, &mut |_| Ok(())).is_err());
+                assert!(decoder
+                    .decode_reader_with_sink(&mut std::io::Cursor::new(&bytes), &mut |_| Ok(()))
+                    .is_err());
+                assert!(decoder.decode_embedded(&bytes[13..]).is_err());
+                assert_eq!(
+                    output.recoveries,
+                    [jbig2_decoder::Recovery {
+                        page: 1,
+                        byte_offset: None,
+                        kind: RecoveryKind::MissingFinalArithmeticStripEnd,
+                    }]
+                );
+                for cut in (1..=16).filter(|cut| ![2, 10].contains(cut)) {
+                    let mut damaged = bytes.clone();
+                    damaged.drain(215 - cut..215);
+                    damaged[155..159]
+                        .copy_from_slice(&(58_u32 - u32::try_from(cut).unwrap()).to_be_bytes());
+                    for policy in [DecodePolicy::Strict, DecodePolicy::Compatibility] {
+                        assert!(decoder.decode_with_policy(&damaged, policy).is_err());
+                    }
+                }
+                for cut in [2, 10] {
+                    let mut conforming = bytes.clone();
+                    conforming.drain(215 - cut..215);
+                    conforming[155..159]
+                        .copy_from_slice(&(58_u32 - u32::try_from(cut).unwrap()).to_be_bytes());
+                    let ordinary = decoder.decode(&conforming).unwrap();
+                    let compatible = decoder
+                        .decode_with_policy(&conforming, DecodePolicy::Compatibility)
+                        .unwrap();
+                    assert_eq!(compatible.value, ordinary);
+                    assert!(compatible.recoveries.is_empty());
+                    if cut == 2 {
+                        conforming[178..182].copy_from_slice(&91_u32.to_be_bytes());
+                        assert!(decoder
+                            .decode_with_policy(&conforming, DecodePolicy::Compatibility)
+                            .is_err());
+                    }
+                }
+                let mut no_boundary = bytes.clone();
+                no_boundary.remove(216);
+                no_boundary[155..159].copy_from_slice(&57_u32.to_be_bytes());
+                assert!(decoder
+                    .decode_with_policy(&no_boundary, DecodePolicy::Compatibility)
+                    .is_err());
+                let mut refined = bytes.clone();
+                refined[177] |= 2;
+                assert!(decoder
+                    .decode_with_policy(&refined, DecodePolicy::Compatibility)
+                    .is_err());
+            }
             let mut nonzero_padding = bytes.clone();
             nonzero_padding[339] |= 1;
             assert!(decoder
@@ -599,7 +660,7 @@ fn standalone_policy_pinned_family_all_pages_and_text_oob_boundaries() {
             assert_pixels(page, page.number(), width, height, &packed[8..]);
         }
     }
-    for name in ["missing_final_oob", "unknown_length_intermediate"] {
+    for name in ["unknown_length_intermediate"] {
         let bytes = std::fs::read(
             assets
                 .join("fixtures")
@@ -611,24 +672,6 @@ fn standalone_policy_pinned_family_all_pages_and_text_oob_boundaries() {
                 decoder.decode_with_policy(&bytes, policy).is_err(),
                 "{name}: {policy:?}"
             );
-        }
-        let mutation = match name {
-            "missing_final_oob" => Some((155, 211..215, 54_u32)),
-            _ => None,
-        };
-        if let Some((length_offset, coding_bytes, length)) = mutation {
-            let mut truncated_symbol = bytes.clone();
-            truncated_symbol.drain(coding_bytes);
-            truncated_symbol[length_offset..length_offset + 4]
-                .copy_from_slice(&length.to_be_bytes());
-            for policy in [DecodePolicy::Strict, DecodePolicy::Compatibility] {
-                assert!(
-                    decoder
-                        .decode_with_policy(&truncated_symbol, policy)
-                        .is_err(),
-                    "{name}: truncated symbol with preserved entropy tail, {policy:?}"
-                );
-            }
         }
     }
 }

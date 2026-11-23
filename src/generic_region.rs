@@ -38,12 +38,14 @@ mod generic_region_shared;
 #[path = "../proofs/production_impl/generic_region.rs"]
 mod generic_region_proofs;
 
+mod colour;
 mod contexts;
 mod generic;
 mod generic_context;
 mod headers;
 mod refinement;
 mod segments;
+pub(crate) use colour::decode_generic_with_colour;
 mod support;
 
 #[allow(unused_imports)]

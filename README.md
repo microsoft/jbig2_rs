@@ -5,7 +5,9 @@ A dependency-free Rust decoder for JBIG2 black-and-white images.
 **This is an early release under active development and is not yet suitable
 for untrusted production documents.** Verus coverage is partial; implemented
 features are not a claim of full JBIG2 or Annex F profile 1 conformance.
-Colour decoding is unsupported and encoding is outside the crate's scope.
+Existing bi-level APIs do not decode colour. Main/0.3 development additionally
+offers a limited, explicit [generic-region RGB8 profile](docs/generic-colour-0.3.md).
+Encoding remains outside the crate's scope.
 
 ## Decode a document
 
@@ -40,6 +42,11 @@ proof files. Choose application-appropriate `Limits` before accepting input.
 The 0.3 development byte-slice API additionally offers explicit, bounded
 [standalone compatibility](docs/standalone-compatibility.md), with recovery
 diagnostics and no partial-output fallback. Existing APIs remain strict.
+
+For supported coloured generic regions, `decode_rgb` and
+`decode_rgb_with_policy` return separate `DecodedColourDocument` / `RgbBitmap`
+values. They preserve RGB channels rather than flattening colour to bi-level
+pixels; their profile and recovery scope are deliberately narrower.
 
 ## Use with the image crate
 
@@ -79,6 +86,7 @@ allocation failure and I/O failure have distinct typed errors.
 | Receive completed pages | `decode_with_sink` / `decode_reader_with_sink` transfer each `Page` to a `PageSink`; closures can serve as sinks. Earlier callback effects are not rolled back after a later error. |
 | Decode embedded streams | `decode_embedded`, or `parse_globals` followed by `decode_embedded_with_globals`. Callers supply the extracted JBIG2 streams. |
 | Reuse scratch storage | `Decoder::context` returns a `DecoderContext`; reuse does not retain previous document semantics. |
+| Decode the 0.3 generic RGB8 profile | Byte-only `decode_rgb` / `decode_rgb_with_policy`; see the [profile contract](docs/generic-colour-0.3.md). Existing reader/context/sink APIs and the image companion remain bi-level. |
 
 Reader methods buffer bounded compressed input through EOF before parsing or
 delivering pages. A sink avoids collecting all decoded pages, but does not make

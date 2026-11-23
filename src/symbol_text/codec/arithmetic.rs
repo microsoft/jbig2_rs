@@ -36,6 +36,7 @@ impl IntegerContexts {
                 #[trigger] codec.iaid@[index]
                     == ArithmeticContext { state_index: 0, mps: 0 })
             && codec.refinement_work == 0
+            && codec.prefix.is_none()
             && codec.refinement.is_some() == refinement_template.is_some()
             && codec.decoder.bytes@ == bytes@
             && codec.decoder.interval == crate::arithmetic::MIN_INTERVAL
@@ -86,13 +87,57 @@ pub(in crate::symbol_text) fn new_arithmetic_codec<'a>(
             None => None,
         },
         refinement_work: 0,
+        prefix: None,
     })
 }
 
 impl ArithmeticCodec<'_> {
     #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        requires symbol_text_spec::arithmetic_codec_valid(old(self)),
+        ensures
+            symbol_text_spec::prefix_valid(final(self)),
+            out.is_ok() ==> symbol_text_spec::arithmetic_codec_valid(final(self)),
+            out == Ok(true) ==> symbol_text_spec::arithmetic_end_certificate(final(self), instances),
+            match symbol_text_spec::arithmetic_integer_result(
+                crate::arithmetic::arithmetic_spec::integer_state(
+                    old(self).decoder,
+                    old(self).integers.slots[
+                        symbol_text_spec::integer_field_slot(IntegerField::SubsequentS) as int
+                    ]@,
+                ).0,
+            ) {
+                Err(error) => out == Err(error),
+                Ok(EntropyInteger::OutOfBand) => out == Ok(false),
+                _ => true,
+            },
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    pub(in crate::symbol_text) fn decode_final_strip(
+        &mut self,
+        instances: u32,
+    ) -> Result<bool, SymbolTextError> {
+        let certified = match &mut self.prefix {
+            Some(prefix) => prefix.capture(&self.decoder, instances),
+            None => false,
+        };
+        match self.decode_integer(IntegerField::SubsequentS)? {
+            EntropyInteger::OutOfBand => return Ok(false),
+            EntropyInteger::Value(_) => {}
+        }
+        if certified {
+            if let (Some(prefix), Some(marker)) = (&self.prefix, self.decoder.marker()) {
+                if marker.offset == prefix.entropy_end && marker.code == 0xac {
+                    return Ok(true);
+                }
+            }
+        }
+        Err(SymbolTextError::InvalidCount("too many text instances"))
+    }
+
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
         requires crate::arithmetic::arithmetic_spec::decoder_valid(&old(self).decoder),
             symbol_text_spec::integer_contexts_valid(&old(self).integers),
+            symbol_text_spec::prefix_valid(old(self)),
         ensures
             crate::arithmetic::arithmetic_spec::decoder_state_valid(&final(self).decoder),
             final(self).decoder.bytes == old(self).decoder.bytes,
@@ -101,6 +146,8 @@ impl ArithmeticCodec<'_> {
             final(self).iaid@ == old(self).iaid@,
             final(self).refinement == old(self).refinement,
             final(self).refinement_work == old(self).refinement_work,
+            symbol_text_spec::prefix_valid(final(self)),
+            symbol_text_spec::prefix_saved_unchanged(old(self), final(self)),
             out == symbol_text_spec::arithmetic_integer_result(
                 crate::arithmetic::arithmetic_spec::integer_state(
                     old(self).decoder,
@@ -131,7 +178,13 @@ impl ArithmeticCodec<'_> {
         field: IntegerField,
     ) -> Result<EntropyInteger, SymbolTextError> {
         let slot = field.slot();
-        let decoded = match self.decoder.decode_integer(&mut self.integers.slots[slot]) {
+        let result = match &mut self.prefix {
+            Some(observer) => self
+                .decoder
+                .decode_integer_certified(&mut self.integers.slots[slot], observer),
+            None => self.decoder.decode_integer(&mut self.integers.slots[slot]),
+        };
+        let decoded = match result {
             Ok(decoded) => decoded,
             Err(error) => return Err(SymbolTextError::Decode(error.into_decode())),
         };
@@ -145,12 +198,15 @@ impl ArithmeticCodec<'_> {
         requires
             crate::arithmetic::arithmetic_spec::decoder_valid(&old(self).decoder),
             symbol_text_spec::arithmetic_contexts_valid(old(self).iaid@),
+            symbol_text_spec::prefix_valid(old(self)),
         ensures
             crate::arithmetic::arithmetic_spec::decoder_state_valid(&final(self).decoder),
             symbol_text_spec::arithmetic_contexts_valid(final(self).iaid@),
             final(self).integers.slots@ == old(self).integers.slots@,
             final(self).refinement == old(self).refinement,
             final(self).refinement_work == old(self).refinement_work,
+            symbol_text_spec::prefix_valid(final(self)),
+            symbol_text_spec::prefix_saved_unchanged(old(self), final(self)),
             out == symbol_text_spec::arithmetic_symbol_id_result(
                 crate::arithmetic::arithmetic_spec::iaid_state(
                     old(self).decoder, old(self).iaid@, request.code_length,
@@ -178,10 +234,16 @@ impl ArithmeticCodec<'_> {
         &mut self,
         request: SymbolIdRequest,
     ) -> Result<u32, SymbolTextError> {
-        match self
-            .decoder
-            .decode_iaid(request.code_length, &mut self.iaid)
-        {
+        let result = match &mut self.prefix {
+            Some(observer) => {
+                self.decoder
+                    .decode_iaid_certified(request.code_length, &mut self.iaid, observer)
+            }
+            None => self
+                .decoder
+                .decode_iaid(request.code_length, &mut self.iaid),
+        };
+        match result {
             Ok(value) => Ok(value),
             Err(error) => Err(SymbolTextError::Decode(error.into_decode())),
         }
@@ -198,7 +260,8 @@ impl ArithmeticCodec<'_> {
                         &final(self).decoder
                     )
                     && final(self).integers.slots@ == old(self).integers.slots@
-                    && final(self).iaid@ == old(self).iaid@,
+                    && final(self).iaid@ == old(self).iaid@
+                    && final(self).prefix.is_none(),
             Err(_) => true,
         },
     ))]
@@ -207,6 +270,7 @@ impl ArithmeticCodec<'_> {
         request: RefinementRequest<'_>,
         limits: &Limits,
     ) -> Result<Bitmap, SymbolTextError> {
+        self.prefix = None;
         let adaptive = [
             TemplateOffset::new(
                 i32::from(request.adaptive_pixels[0].0),
@@ -260,7 +324,8 @@ impl ArithmeticCodec<'_> {
                     )
                     && final(self).integers.slots@ == old(self).integers.slots@
                     && final(self).iaid@ == old(self).iaid@
-                    && crate::generic_region::generic_region_spec::generic_contexts_valid(final(contexts)),
+                    && crate::generic_region::generic_region_spec::generic_contexts_valid(final(contexts))
+                    && final(self).prefix.is_none(),
             Err(_) => true,
         },
     ))]
@@ -272,6 +337,7 @@ impl ArithmeticCodec<'_> {
         limits: &Limits,
         cumulative_work: &mut u64,
     ) -> Result<Bitmap, SymbolTextError> {
+        self.prefix = None;
         Ok(decode_generic_on_validated(
             &mut self.decoder,
             contexts,

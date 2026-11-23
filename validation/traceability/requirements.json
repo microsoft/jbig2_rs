@@ -24,7 +24,7 @@
   "model_classifications": {
     "review": "author-navigation-only-not-independent-normative-approval",
     "registry_sha256": "19f29e18950f5e35d011f88b528ba889ff3d4d000d12990d8f9c82d7de0c69cb",
-    "project_source_sha256": "1e6444eae80167ae30c6e88915eec7735e7900177e13727f1f4d5f3b84122c83",
+    "project_source_sha256": "4509d82f44c482fe38178563fcd7f2e6ea4a46d3b36567d428e51ff35ea9f443",
     "families": [
       {
         "file": "specs/huffman_lookup.rs",
@@ -1054,7 +1054,6 @@
       {
         "file": "specs/symbol_text.rs",
         "members": [
-          "spec::arithmetic_codec_valid",
           "spec::arithmetic_contexts_valid",
           "spec::bitmap_refs_valid",
           "spec::bitmaps_valid",
@@ -1456,6 +1455,138 @@
         "justification": "Exact canonical prefix counts and zero sub-byte padding, plus complete-instance-count provenance at the final standalone Huffman strip boundary.",
         "ambiguity": "",
         "caveats": "Author navigation only; no independent normative approval or complete decoded-output proof."
+      },
+      {
+        "file": "specs/colour.rs",
+        "members": [
+          "spec::bytes",
+          "spec::height",
+          "spec::page_bitmap",
+          "spec::page_number",
+          "spec::pages",
+          "spec::stride",
+          "spec::width"
+        ],
+        "classification": "proof-support",
+        "justification": "Exact RGB row/channel/storage and palette wire fields, explicit colour declarations, and the supported generic-region presentation policy.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; not independent normative approval or a full decoded-output proof."
+      },
+      {
+        "file": "specs/colour.rs",
+        "members": [
+          "spec::document_valid",
+          "spec::storage_valid"
+        ],
+        "classification": "representation-invariant",
+        "justification": "Exact RGB row/channel/storage and palette wire fields, explicit colour declarations, and the supported generic-region presentation policy.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; not independent normative approval or a full decoded-output proof."
+      },
+      {
+        "file": "specs/colour.rs",
+        "members": [
+          "spec::palette_contents",
+          "spec::pixel"
+        ],
+        "classification": "project-result-model",
+        "justification": "Exact RGB row/channel/storage and palette wire fields, explicit colour declarations, and the supported generic-region presentation policy.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; not independent normative approval or a full decoded-output proof."
+      },
+      {
+        "file": "specs/colour.rs",
+        "members": [
+          "spec::paint_channel"
+        ],
+        "classification": "project-policy",
+        "justification": "Exact RGB row/channel/storage and palette wire fields, explicit colour declarations, and the supported generic-region presentation policy.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; not independent normative approval or a full decoded-output proof."
+      },
+      {
+        "file": "specs/segments.rs",
+        "members": [
+          "spec::colour_page_information_fields"
+        ],
+        "classification": "project-result-model",
+        "justification": "Exact RGB row/channel/storage and palette wire fields, explicit colour declarations, and the supported generic-region presentation policy.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; not independent normative approval or a full decoded-output proof."
+      },
+      {
+        "file": "specs/arithmetic_certainty.rs",
+        "members": [
+          "spec::initialized",
+          "spec::observer_valid",
+          "spec::saved_prefix",
+          "spec::saved_valid",
+          "spec::step_valid",
+          "spec::trace_valid"
+        ],
+        "classification": "representation-invariant",
+        "justification": "Initialized immutable real decision traces, numeric terminal-prefix/fill enclosures, context agreement and pre-final-DS saved provenance.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; no independent normative approval or full decoded-output proof."
+      },
+      {
+        "file": "specs/arithmetic_certainty.rs",
+        "members": [
+          "spec::after_decision",
+          "spec::alternative_codes",
+          "spec::alternative_normalization",
+          "spec::alternative_step",
+          "spec::checked_decision",
+          "spec::decision_frame",
+          "spec::decision_spread",
+          "spec::initial_spread",
+          "spec::normalization_spread",
+          "spec::normalized_next",
+          "spec::refill_contribution",
+          "spec::saved_observer",
+          "spec::trace_upper",
+          "spec::trace_width"
+        ],
+        "classification": "project-result-model",
+        "justification": "Initialized immutable real decision traces, numeric terminal-prefix/fill enclosures, context agreement and pre-final-DS saved provenance.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; no independent normative approval or full decoded-output proof."
+      },
+      {
+        "file": "specs/arithmetic_certainty.rs",
+        "members": [
+          "spec::admissible_initial",
+          "spec::admissible_prefix",
+          "spec::admissible_sources",
+          "spec::source_choices_admissible",
+          "spec::source_unknown"
+        ],
+        "classification": "project-policy",
+        "justification": "Initialized immutable real decision traces, numeric terminal-prefix/fill enclosures, context agreement and pre-final-DS saved provenance.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; no independent normative approval or full decoded-output proof."
+      },
+      {
+        "file": "specs/symbol_text/prefix.rs",
+        "members": [
+          "spec::arithmetic_codec_valid",
+          "spec::prefix_saved_unchanged",
+          "spec::prefix_valid"
+        ],
+        "classification": "representation-invariant",
+        "justification": "Initialized immutable real decision traces, numeric terminal-prefix/fill enclosures, context agreement and pre-final-DS saved provenance.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; no independent normative approval or full decoded-output proof."
+      },
+      {
+        "file": "specs/symbol_text/prefix.rs",
+        "members": [
+          "spec::arithmetic_end_certificate"
+        ],
+        "classification": "project-policy",
+        "justification": "Initialized immutable real decision traces, numeric terminal-prefix/fill enclosures, context agreement and pre-final-DS saved provenance.",
+        "ambiguity": "",
+        "caveats": "Author navigation only; no independent normative approval or full decoded-output proof."
       }
     ]
   },
@@ -2127,17 +2258,17 @@
     "specs/mmr.rs": "6333d8553b47d1bd6bcc996c0d0f3d0216d3f4d3eeff9c07e34a4dfeea5bb49c",
     "specs/mod.rs": "34f81994f8b77e618a7d48d4552175d09cf3be633307166227c13ce94a06ba21",
     "specs/readers.rs": "ee10b54a7ee8dce323488bf8ef5229fbbf1d5811888a3364cda8f2cc187ba251",
-    "specs/segments.rs": "a4a19a65babe5a29532273f3374434762cf0fd63d3336b0f49e4914e3e390bc0",
-    "specs/symbol_text.rs": "afaae649978ac149c9c387b5b1b4b7b9b018c38c1a84a607fa2fbab5f0dc2818",
+    "specs/segments.rs": "dc288038574b7f902a15752e58096ef504d0253a0f308950474278ca2104e451",
+    "specs/symbol_text.rs": "26395f97c269d85dc074ea8a1979f6428217074d7f5c5e930f0135ef9477bf89",
     "specs/symbol_text/arithmetic_codec.rs": "c96145d1428fd0edda0b93437f15e15592e9f7476d8465dbd55feb071d1a866c",
     "specs/symbol_text/dictionary.rs": "f7994737d95cefbca3e6067754190b160ddb8c85900a17edf672b4f8d80882b2",
     "specs/symbol_text/huffman_codec.rs": "3a56e2a0f9c27443b1ee91029c92584a45df3398fc4f433de4ffc1e717246295",
     "specs/symbol_text/symbol_ids.rs": "a08f24685e8ef5f95e98b5bb953ad18a1b6dbbffd754ca48f09931f36a87aacc",
-    "src/arithmetic.rs": "3322814a9a7feedbd1d53c2b9aa6b5d9c1559b691a819cfbf5dcb2eb62d98d33",
+    "src/arithmetic.rs": "a8e0ad666b2ea1750413da9601f665b197c2be0d012bd77c115539ee7c6ba971",
     "src/arithmetic/decoding.rs": "537afa619108dc6ce7773688683d85eb5b4251dbb75a939c92223746b7a90fd5",
     "src/arithmetic/integers.rs": "ca1828b214769e1192785acc2dd369e0776f38654f74885dbfc32bd0025fc350",
     "src/arithmetic/refill.rs": "737ee41e1e4bfd62104fd48dcc612ff83ba9cc1b6b0ec1ca0e741909ce505769",
-    "src/arithmetic/tests.rs": "24fa75f21b569d1518fdf5191d21b38aeb430c04695e9d103f3ff0ee8f495e8f",
+    "src/arithmetic/tests.rs": "b6aeabc70cd42500a42eb4c319717cbc5cc540f57bc4908138fb021486adc1df",
     "src/arithmetic/tests/context_state.rs": "cf1908a60d5aa6cf91d8522644169a9eebe2521c0bd114f3950b29df5900566f",
     "src/arithmetic/tests/decoder_registers.rs": "eb973972578c2b74f0d2d5a390d2b169807f3ce970d7908d1b5453cf6156121d",
     "src/arithmetic/tests/integer_procedures.rs": "0004c5bc599217400bd463c3c2efd859d8fb5d7689c6e957b096a7e42c062d26",
@@ -2147,10 +2278,10 @@
     "src/bitmap/storage.rs": "8f6ce10586869f2b0ec85214156dcd6ead236b88f7465f107f54df90698524e4",
     "src/bitmap/tests/composition.rs": "6e1643c277251306450aa427f99a143a82be3e1d32cb81ef037d6b527c92a9ba",
     "src/bitmap/tests/layout_and_access.rs": "794454828d33bf94749c93ec3091be8d216a05375088d42e68aafe44effad84a",
-    "src/decode.rs": "8b5d88225cc15c05f7498f6afbd116e91d6acd24df8420c2eb06b67edaa00615",
+    "src/decode.rs": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
     "src/decode/api.rs": "49d45b828fd56924b7176ac54283e1fadc70f93bec1d45945095db975ee6082c",
     "src/decode/dispatch/references.rs": "52e7500e0cef622729c3b19f535c8d0824644b5a954dd373ffeadeb34e649c67",
-    "src/decode/rendering.rs": "fa259425d937b3933ee01ccffdd2ddfe55d11097c5e5881645b1e09cf6ab3bad",
+    "src/decode/rendering.rs": "5e53e7f0f966dde5c300ea4c1402bdfe7f3e875e12a675a20e3bfbeef8bd64e3",
     "src/decode/resources.rs": "55f9ee8e2daa02d57b3778847780e98dd8e2b7cf0b7331d45f76e429011dfd1a",
     "src/decode/tests/container_routes.rs": "d84b63cd8fa430c1adec78535df904cf3521f33212cdefe8ee28241bc4c56b39",
     "src/decode/tests/direct_and_reuse.rs": "d46a5cbd0ee0791141d8b6115f090faa7a0315dc51437dcfb643dce6b58e116c",
@@ -2163,12 +2294,12 @@
     "src/document/tests/container_inspection.rs": "2ec6cd3bd75bda1c40165a09d767a85fb78359a10dbcb689ce3ea4d0b46a04af",
     "src/document/tests/payload_windows.rs": "96c85ffdb008808b7c63951c13564ec683bd327f1a4a95ebb27672905da5d0cc",
     "src/file_header.rs": "9011f761698f3772c953980e2d2d56ed5ece4f792c8e318ca89a0e0f8d326e11",
-    "src/generic_region.rs": "5aa90d8f1259d05a9b8285076b813ffa4751d07360c3ef000f92149aaba8219d",
+    "src/generic_region.rs": "4a5a3c10fe65a03ff47874993cf8b2359be5c60acfc2e9e04ba43692c0567501",
     "src/generic_region/contexts.rs": "3e86887633490b1d135db2f9b1f8aa9f92e097e43f22f8b29dd1ed3521ed66cb",
     "src/generic_region/generic.rs": "3ee87782e68a4116568f88e2f31dc53b4acd4ef90ead17b2e73241a9d19c3161",
-    "src/generic_region/headers.rs": "2b4932649f37b1b37f9ebc6fb9915ce2c8cf173e5c105fd1cb43548c506939f7",
+    "src/generic_region/headers.rs": "10a0bc319a6b79e0172b018433327edd5635cb44338e9e5c4fa061c65e7d0c7e",
     "src/generic_region/refinement.rs": "defb4386d60cf2b85b7de320ce5c8a53e83d4483ee30668e0cc3ab5a54e7b35c",
-    "src/generic_region/segments.rs": "d84e912d208b1dd85160d4e0065a0b682cc48f63fbcf53ada5488ccaf2a8e59a",
+    "src/generic_region/segments.rs": "3e7bbcb7bb7074ff16ce6024f94814a22ab4d010b0bb43dbb4ac250b66506837",
     "src/generic_region/support.rs": "f564fa0bda614940d4592b8958b236a1c8978ed56cf1ee9102e745f20ce62f16",
     "src/generic_region/tests/diagnostics.rs": "53850441984da91d10fcff41c144041ddb2102d03742aeadfac62b1fb40b01db",
     "src/generic_region/tests/headers_and_prediction.rs": "4dcb5015504f8a05453f8aef00a5e7129ddf84632b1585bb1a2b9faff691f8c0",
@@ -2192,7 +2323,7 @@
     "src/huffman/tests/wide_arithmetic.rs": "251462094b4817ff83394bb62072184b63796988e9606d75f29200eb1a1d8ca9",
     "src/huffman/validation.rs": "4d8612ef0cba9f16a12ae61886d225ab07766d74b21d727660405021a4f807ca",
     "src/huffman/wide.rs": "4f37abac40efc66f0c3eaa2637d211eaca5a5ea4fa7a14d7aadb07fbe2a8f0b0",
-    "src/lib.rs": "337d3bc10619a7a152cde540c80be72902e6a13b403960b2e94e772b21502b62",
+    "src/lib.rs": "dfc6fc903517de7b5dbb685d73b49b43333dec4d44af7e2f00c7cf3ca9e4bb6f",
     "src/mmr.rs": "939bdd232275bf07a8d776bacd891001dacdd49c828cfbb0abcbd40fa4adf5bb",
     "src/mmr/codes.rs": "06ad7fc805a4da335db691d5b1ada86f5f88d293ea2b8e33588326057fea5176",
     "src/mmr/raster.rs": "bd03d34f4154e629fce76707fae6dc06c12d2077a3e56fafd0198b6ae8176e4b",
@@ -2205,15 +2336,15 @@
     "src/mmr/tests/transition_cache.rs": "9694dc1674f651d821c3a40de0b2c052fc06d9c67f7a558a7856f6d917be41b2",
     "src/reader.rs": "9c64e44f1def255f1f7f285ada7608146d55dfb8d65bf31fca6464c2998f634f",
     "src/reader/tests.rs": "ff4f56ae43d4aea472a4d3ab04862edc802bf2d4413bb8de7646a1adf9cf9f47",
-    "src/segment_data.rs": "0a0a4bbf80d7c17a517d11b9f6943096a58fcdd80216800669efdac0b4e8c1af",
+    "src/segment_data.rs": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
     "src/segment_data/tests.rs": "7b082bcee501bd86382474823db6af59afb56842b7d053c3de8b77d2e5edfc15",
     "src/segment_header.rs": "ec5047080fa67fd0a8dd28e8101b972aeb23e3d10939906e1c059674ebaa528d",
     "src/segment_header/tests.rs": "41f4c9c942b49bc2d4d7c8588ac99ab655475803849836854afd349eee0d463c",
-    "src/symbol_text.rs": "bac0549e15a2592276bc2a24a448186158dbb8adb0cd99e8dd0247bb8d00ab3d",
+    "src/symbol_text.rs": "3bdf11ab2da830a6cbcb53d97972cc93030258947679b347dbbea0b817d587d4",
     "src/symbol_text/bitmap.rs": "d872783ab5e9768ba4064ca309700f089e31b3ca799425edc6a5d7471efc40b2",
     "src/symbol_text/codebook.rs": "3ad3dd4131dbb7343a3267f32718d4c5278f029c1b90937f45d06363b8defbcc",
     "src/symbol_text/codec.rs": "4f975eff5bd958e0b201dd9c80e91b40be4681254a56adb02a681cc87e297e78",
-    "src/symbol_text/codec/arithmetic.rs": "e21fd9639fc1839c74bc6b5bdb2af53b6dbe6d6bdbfdd43d073481d9e6fa3fda",
+    "src/symbol_text/codec/arithmetic.rs": "041f67c8c84b3387a1b2e5dec0d3ae7d8754abf060e036013d2780e43d37c284",
     "src/symbol_text/codec/huffman.rs": "a706f6674a164c1398d6fdc199a4a0ef8614a86e0be69e6eb13e3a8c2f6b83a1",
     "src/symbol_text/codec/refinement.rs": "71d5bb90d828932191eba96f52982c1f7adc24433cb5e4d21dc721b3f6997d83",
     "src/symbol_text/codec/symbols.rs": "01f2f2d2739c42ce2ed5fe4ed170451082478dcfc7f405b73ac9f6a819ce3248",
@@ -2224,22 +2355,22 @@
     "src/symbol_text/headers.rs": "69da74f1ff5627d013f327d5c152d49582c7bb82462fc70b48b82159b9e8d987",
     "src/symbol_text/placement.rs": "6fe7228afc13c0735fcfe0d9359e07e03dfdd5a6883ba8d79523dcfde8885e5d",
     "src/symbol_text/tests/arithmetic_composition.rs": "8749f6561c7b3030deafa47358bd499514821726851cb296d4f00b2ff2110120",
-    "src/symbol_text/tests/codec_and_exports.rs": "2fe7e304d5ce85cc18f39cd026f09ea919435d3eeb277577e784e2933f5d2269",
+    "src/symbol_text/tests/codec_and_exports.rs": "4215ca5d6af0d628d33fb5b9818d0c0012f8ef09dddf4b5a73f8db467f02540f",
     "src/symbol_text/tests/dictionary_dispatch.rs": "632ca48342adb2713092cecab915ee9f67eb3610dc92a2764cb429773a103f82",
     "src/symbol_text/tests/dictionary_dispatch/huffman_aggregation.rs": "0349534fe6854219a69f33105ed9fdf5cdfe63d0298002bdc4a6098c43afcc8b",
     "src/symbol_text/tests/flags_and_tables.rs": "ac4e3ee2b5aadda78ebbe2c7804584f49a48a96816c85fa37adb99aa2a0113fe",
-    "src/symbol_text/tests/huffman_fields.rs": "6143db3e01fdba1da997da801b7f3ccc799e36e51ef1935f995bf58482b94b9b",
+    "src/symbol_text/tests/huffman_fields.rs": "5c93de28ea3e786db07de325f86e7ea3bc375febf7920925af1ad02b630685ac",
     "src/symbol_text/tests/huffman_symbol_ids.rs": "89dce150f0deb0e9eb16bb38cda5238c6546589d8022829680c412ff4f3becd0",
     "src/symbol_text/tests/placement_render.rs": "5d07c12827335abdba47df041992ea76e1b12d1a2ae1fb598ba3d4ecba1350b1",
     "src/symbol_text/tests/placement_state.rs": "4842dd4690593cf25b854787030a1e99f93c5611801899a22fce35f9625c75e3",
     "src/symbol_text/tests/resource_accounting.rs": "88581edeabfa81aeb30bee5dd89ad07692931b6754248abe1755ffda3809cc13",
-    "src/symbol_text/tests/text_termination.rs": "878fbd53aa0ef632484aeca3d649933e9a2fb894ffb93eb57a76519fe34a15cb",
-    "src/symbol_text/text.rs": "f6ec2cbd5bd6cc3bda8fcbc80868780b34545b87f9411f350f0fcb9b2422f54c",
+    "src/symbol_text/tests/text_termination.rs": "b9f9a7f38eedd3d792acc7838b8ed96c445fea786751fc0e0124222e454211e3",
+    "src/symbol_text/text.rs": "02bb1a60f754d4f426e8054e03d84ba6363cd75ece55705ee8ffda180e619d8a",
     "tests/catalog_contracts.rs": "d4eb4fd3d554494fcd99fa58def0eaa542fca7f97ff32c2083cfa0d3e1545da2",
     "tests/spec_header.rs": "6c8d30477d3be9080827bf0eab191739ab4fe844fe856c60020eb53a50cbcdda",
     "tests/traceability_organization.rs": "967cd92362829cc4258db0ab7300a8f28b53055dbd61489c3c3262ee6d539b5f",
     "tests/traceability_semantics.rs": "e7189d9cb70fa9b021b221f02942d90e64e9f96f9d38040edf4fa8599dfaa5f9",
-    "src/symbol_text/text/segment.rs": "1c395e072a26c37077848d31448c1949dbfe1c0373475c691e38a8caac5ee4c3"
+    "src/symbol_text/text/segment.rs": "a29166557a81d2dcd888c7101973b552c73a6ebd611453f5d81a118689e8651b"
   },
   "definitions": {
     "mmr-mode-table-entry": {
@@ -6257,7 +6388,8 @@
       "obligation_kind": "project_profile_policy",
       "policy_row_sha256": "62ced19cb640299c3f9cf1de1bf447145218ecc5f6847fa2b27d7ae91cfde549",
       "runtime": [
-        "segment_data::parse_page_information"
+        "segment_data::parse_page_information",
+        "segment_data::parse_page_information_with_colour"
       ],
       "models": [],
       "proof_macros": [],

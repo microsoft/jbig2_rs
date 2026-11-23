@@ -33,13 +33,16 @@ resource-test inputs. Matching a permissive output is not grounds to invent
 symbols, clamp pattern indices, fill missing rows, ignore a necessary extension
 or return a partial image as a complete bitmap.
 
-Of the 32 reported files, five now decode strictly and twelve decode with explicit
-Compatibility selected. The remaining 20 retain an intentional malformed,
+Of the 32 reported files, five now decode strictly and thirteen decode with explicit
+Compatibility selected. The remaining 19 retain an intentional malformed,
 unsupported or work-limit outcome. The pinned replay checks 160 configurations
 and 224 decoder calls, including reuse of the same context; every successful
 page must match its complete expected pixels. The cycle-performance follow-up
 adds ten default-budget nonprogress configurations, for 170 configurations
 and 238 actual calls; those exact Work errors must complete within three seconds.
+The separate [generic RGB8 API](generic-colour-0.3.md) additionally decodes the
+colour reproduction with complete reference channels. It is not counted as a
+bi-level success and does not change the existing 170-configuration replay.
 
 ## Strict decoding corrections
 
@@ -71,7 +74,7 @@ acquisition and then select the byte API; existing reader APIs stay strict.
 | #197 | Compatibility may close a page only at an independently validated complete boundary, without inventing image data. Strict still requires the marker. |
 | #198 | Compatibility may reconcile the file count with complete validated pages. Every page remains subject to the original limits and is returned in order. Strict count mismatch remains fatal. |
 | #199 | Ignore exactly one CR LF after an independently framed EOF, or after a final empty, reference-free EOP with a positive known page count matching distinct closed pages and no open page. The original sequential fixture now matches the complete honeycomb bitmap, with `TrailingCrLf` at byte 228. D.1 does not require an EOF segment in sequential organization; D.2 requires one for random-access header-table delimitation, and 7.4.11 constrains it when present. Strict still rejects the suffix; arbitrary short headers remain errors. |
-| #200, two files | Both remain strict errors. Standalone Compatibility now recovers the unrefined fixed-length Huffman file only after all declared instances are complete and the final field has only zero padding, fewer than eight bits and shorter than every table prefix. A real OOB is tried first and reported without recovery; partial prefixes with any possible complete prefix length, nonzero padding, extra bytes and earlier failures remain fatal. The complete honeycomb matches. Arithmetic remains rejected: its final marker is already observed after instance 87 of 90, and a discarded count-plus-marker shortcut accepted damaged bodies with corrupted pixels. |
+| #200, two files | Both remain strict errors. Standalone byte Compatibility recovers the fixed-length unrefined Huffman file using table-aware zero-padding certainty, and the arithmetic file using a verified initialized actual-trace interval certificate independent of numeric marker-prefix/fill contributions. Every declared instance must first be fully decoded and placed. Normal OOB wins without recovery. The arithmetic snapshot precedes final DS and additionally requires the real bounded final `FF AC`; the unsafe count-plus-marker shortcut is not used. Both complete honeycombs match. The four-byte deletion, incomplete prefixes, earlier failures, refinement and nested/shared codecs remain rejected. |
 | #201 | The individually documented reserved-bit recovery is explicit compatibility only, not a strict-mode mask or colour-extension waiver. |
 | #202 | The individually documented reserved-type recovery requires complete fixed-length framing and no live reference to the skipped segment. It does not ignore arbitrary unknown necessary semantics. |
 | #203 | Unknown-length intermediate generic segments remain rejected. The immediate-generic sentinel rule is not extended by guessing a delimiter. T.88 7.2.7. |
@@ -93,7 +96,7 @@ policy in these APIs.
 | #209 | Missing MMR rows remain fatal; no blank padding or cross-segment reads. T.88 6.2 and MMR framing. |
 | #210 | Declared segment payloads must be fully present. Compatibility does not convert 430 available bytes into the declared 479. T.88 7.2.7. |
 | #211 | Unrepresentable Huffman values remain rejected by checked arithmetic/conversion, not wrapped or clamped. T.88 B.2 limits the integer domain. |
-| #212 | Colour requires actual extension semantics and a colour output contract. It remains typed `Unsupported`, not a lenient bi-level success. The original additionally clears file-header colour bit 3 while setting a region's colour bit, contrary to D.4.2; fixing that flag alone cannot implement channel/palette semantics. The supported bi-level profile is unchanged. |
+| #212 | The additive generic-region RGB8 API now preserves actual palette channels and transparent coloured foreground, rather than returning a bi-level approximation. The original requires explicit Compatibility repairs for missing file/page colour declarations (D.4.2, 7.4.8.5); setting both declarations gives a strict RGB regression. Complete RGB reference pixels are checked independently. Existing bi-level APIs and other unsupported colour profiles retain `Unsupported`; see the [profile contract](generic-colour-0.3.md). |
 | #213 | An unknown necessary extension cannot yield a complete successful decode. Optional and necessary extension cases remain distinct. T.88 7.4 extension rules. |
 | #214 | Preserve the original framing rejection and separately test correctly framed matching/incompatible retained models; the filename does not establish which check was reached. T.88 7.4.2.2 and Annex E. |
 | #215, #216 | Preserve legal zero runs/empty classes and the original budgets. A complete decoder/input/bank/cursor recurrence within an actually executed zero-only trace proves that the loop cannot finish, allowing the same eventual `Work` boundary to be reported without billions of repeated iterations. The 100,000-unit-cap errors remain exact; default-budget errors now complete within the three-second regression deadline. No arbitrary repetition limit is introduced. T.88 6.5 and Annex A. |
@@ -108,8 +111,8 @@ versus retained model selection, zero-plane initialization and bounded recovery
 preparation. Exact-pixel regressions, negative controls and work/memory tests
 supplement those component contracts.
 
-Local validation including the final-Huffman recovery has 1,424 verified obligations
-with zero errors, exact accounting of 710 directly verified production functions
+Local validation including the generic RGB8 profile has 1,484 verified obligations
+with zero errors, exact accounting of 740 directly verified production functions
 and the unchanged 20
 reviewed verifier limitations. There are no incomplete functions, new native
 assumptions or runtime/proof substitutions. The 623 native/doctest and 822

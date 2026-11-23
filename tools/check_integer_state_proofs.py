@@ -42,7 +42,7 @@ SIGN = "let sign = self.decode_integer_bit(&mut previous, contexts)?;"
 
 def case(identity, function, site, replacement, control):
     return {
-        "id": identity, "file": "src/arithmetic.rs", "module": "arithmetic",
+        "id": identity, "file": "src/arithmetic/integers.rs", "module": "arithmetic",
         "function": f"ArithmeticDecoder::{function}",
         "site": site, "replacement": replacement, "controls": ((control, ""),),
     }
@@ -108,7 +108,7 @@ def main():
     try:
         report = check_semantic_cases(
             ROOT, arguments.verus_executable.resolve(), CASES,
-            ("src/arithmetic.rs", "specs/arithmetic.rs", "proofs/model_support/arithmetic.rs"),
+            ("src/arithmetic/integers.rs", "specs/arithmetic.rs", "proofs/model_support/arithmetic.rs"),
             "jbig2-integer-state-",
             "Complete project signed-integer and payload result, history, decoder and bank composition; independent normative procedure/table/caller interpretation remains separate",
             baseline_groups=BASELINE_GROUPS,

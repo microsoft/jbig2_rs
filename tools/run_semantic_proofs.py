@@ -13,6 +13,8 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
+import threading
 import time
 
 
@@ -22,6 +24,8 @@ CI_SHARDS = 14
 WHOLE_GROUPS = ("arithmetic-codec",)
 COLLECTOR_GROUPS = ("arithmetic-decision", "reset", "clone-results", "context-callers")
 ADDED_SHARD_GROUPS = {
+    "arithmetic-certainty": 1,
+    "colour-rgb": 10,
     "reference-type-lookup": 10, "reference-type-classes": 13,
     "reference-accounting": 10, "reference-catalog": 12,
     "public-context": 7,
@@ -56,8 +60,71 @@ DEFAULT_SHARD_REBALANCE = {
     "session-framing": 13,
     "mmr-span": 1, "default-limits-4": 13, "page-finish": 13, "default-limits-5": 13,
 }
+# Additive profile: five complete shard profiles and measured dependency reuse.
+# Legacy profiles retain their original allocation and timing interpretation.
+COLOUR_SHARD_ALLOCATION = {
+    "arithmetic-certainty": 2,
+    "huffman-codec": 6,
+    "context-lifecycle": 9,
+    "session-framing": 10,
+    "public-context": 13,
+    "value-bridge": 2,
+    "document-count": 7,
+    "mmr-reference": 5,
+    "document-layout": 8,
+    "page-state": 3,
+    "text-batch": 4,
+    "symbol-cardinality": 1,
+    "segment-data": 9,
+    "reader-error": 5,
+    "page-public": 7,
+    "arithmetic-integer": 10,
+    "halftone-header": 11,
+    "integer-state": 12,
+    "segment-header": 11,
+    "black-span": 9,
+    "page-finish": 12,
+    "mmr-horizontal": 13,
+    "bitmap-compose": 10,
+    "bitmap-copy": 4,
+    "mmr-span": 3,
+    "arithmetic-refill": 1,
+    "arithmetic-normalization": 11,
+    "iaid-state": 7,
+    "arithmetic-initialization": 10,
+    "mmr-run": 5,
+    "huffman-assignment": 0,
+    "region-dispatch": 11,
+    "operator-bit": 11,
+    "retention": 12,
+    "bitmap-chunk": 7,
+    "mmr-prefix": 13,
+    "error-conversion": 12,
+    "error-wrappers-basic": 13,
+    "error-wrappers-regions": 8,
+    "error-wrappers-symbol": 3,
+    "default-limits-1": 4,
+    "default-limits-2": 2,
+    "default-limits-3": 12,
+    "default-limits-4": 8,
+    "default-limits-5": 8,
+    "default-decoder-1": 9,
+    "default-decoder-2": 1,
+    "default-decoder-3": 3,
+    "default-decoder-4": 4,
+    "default-decoder-5": 5,
+    "collector-sink": 13,
+    "public-decode-results": 6,
+    "public-global-results": 5,
+    "reference-accounting": 4,
+    "reference-catalog": 2,
+    "reference-type-lookup": 6,
+    "reference-type-classes": 6,
+    "colour-rgb": 8,
+}
 RECEIPT_SCHEMA = 3
 CHECKS = (
+    ("arithmetic-certainty", "check_arithmetic_certainty_proofs.py", 4, "strong_contract", "weaker_control"),
     ("arithmetic-codec", "check_arithmetic_codec_proofs.py", 27, "strong_contract", "weaker_control"),
     ("huffman-codec", "check_arithmetic_codec_proofs.py", 13, "strong_contract", "weaker_control"),
     ("context-lifecycle", "check_context_lifecycle_proofs.py", 12, "strong_contract", "weaker_control"),
@@ -119,6 +186,7 @@ CHECKS = (
     ("reference-catalog", "check_reference_catalog_proofs.py", 6, "strong_contract", "weaker_control"),
     ("reference-type-lookup", "check_reference_type_proofs.py", 6, "strong_contract", "weaker_control"),
     ("reference-type-classes", "check_reference_type_proofs.py", 6, "strong_contract", "weaker_control"),
+    ("colour-rgb", "check_colour_proofs.py", 5, "strong_contract", "weaker_control"),
 )
 
 SUMMARY = "semantic-proof-summary.json"
@@ -188,6 +256,14 @@ def configured_shards():
                     shard.remove(match)
                     shards[min(destination, count - 1)].append(match)
                     break
+    if count == CI_SHARDS == 14 and any(check[0] == "colour-rgb" for check in checks):
+        legacy_slots = {
+            check[0]: index for index, shard in enumerate(shards) for check in shard
+        }
+        shards = [[] for _ in range(count)]
+        for check in checks:
+            destination = COLOUR_SHARD_ALLOCATION.get(check[0], legacy_slots[check[0]])
+            shards[destination].append(check)
     return tuple(tuple(shard) for shard in shards)
 
 
@@ -482,6 +558,7 @@ def run_checks(
     whole = load_whole_baseline(root, whole_baseline) if whole_baseline is not None else None
     environment = os.environ.copy()
     environment.pop("JBIG2_WHOLE_BASELINE", None)
+    environment.pop("JBIG2_SELECTED_DEPENDENCIES", None)
     if whole_baseline is not None:
         environment["JBIG2_WHOLE_BASELINE"] = str(whole_baseline.resolve())
     identity_binding = run_identity()
@@ -509,10 +586,14 @@ def run_checks(
                 "check_reference_type_proofs.py",
             } else []
             with log.open("w", encoding="utf-8") as stream:
+                checker_environment = {
+                    **environment,
+                    "JBIG2_SELECTED_DEPENDENCIES": str(cache_root / str(threading.get_ident())),
+                }
                 process = subprocess.run(
                     [sys.executable, "-B", str(source), "--verus-executable",
                      str(executable), *selection, "--output", str(report)],
-                    cwd=root, stdout=stream, stderr=subprocess.STDOUT, check=False, env=environment,
+                    cwd=root, stdout=stream, stderr=subprocess.STDOUT, check=False, env=checker_environment,
                 )
             result["exit_code"] = process.returncode
             if process.returncode != 0:
@@ -527,8 +608,10 @@ def run_checks(
         result["seconds"] = time.monotonic() - started
         return result
 
-    with ThreadPoolExecutor(max_workers=workers) as executor:
-        results = list(executor.map(execute, checks))
+    with tempfile.TemporaryDirectory(prefix="jbig2-semantic-dependencies-") as temporary:
+        cache_root = Path(temporary).resolve()
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            results = list(executor.map(execute, checks))
     if manifest(root) != current:
         raise ValueError("source changed during semantic checks")
     summary = {

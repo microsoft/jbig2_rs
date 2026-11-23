@@ -12,6 +12,7 @@ from pathlib import Path
 
 from check_distribution import isolated_environment, run
 from check_arithmetic_codec_proofs import CASES as ENTROPY_CODEC_CASES
+from check_arithmetic_certainty_proofs import CASES as ARITHMETIC_CERTAINTY_CASES
 from check_context_lifecycle_proofs import CASES as CONTEXT_LIFECYCLE_CASES
 from check_session_framing_proofs import CASES as SESSION_FRAMING_CASES
 from check_clone_result_proofs import CASES as CLONE_RESULT_CASES
@@ -27,6 +28,7 @@ from check_page_state_proofs import CASES as PAGE_STATE_CASES
 from check_segment_data_proofs import CASES as SEGMENT_DATA_CASES
 from check_segment_header_proofs import CASES as HEADER_CASES
 from check_symbol_cardinality_proofs import CASES as SYMBOL_CARDINALITY_CASES
+from check_colour_proofs import CASES as COLOUR_CASES
 from check_text_batch_proofs import CASES as TEXT_CASES
 from proof_sensitivity import replace_once
 
@@ -68,6 +70,13 @@ DOCUMENT_WINDOW_TESTS = {
     "embedded_discards_first_input_byte": "raw_sequential_and_embedded_layouts_match_literal_windows_and_order_policy",
 }
 MUTATIONS = tuple(
+    {
+        "id": "arithmetic-certainty-" + case["id"],
+        "file": case["file"], "before": case["site"], "after": case["replacement"],
+        "target": "lib", "test": case["native_test"], "whitespace_flexible": True,
+    }
+    for case in ARITHMETIC_CERTAINTY_CASES
+) + tuple(
     {
         "id": "reference-type-" + case["id"],
         "file": case["file"], "before": case["site"], "after": case["replacement"],
@@ -181,6 +190,13 @@ MUTATIONS = tuple(
         "whitespace_flexible": True,
     }
     for case in SEGMENT_DATA_CASES
+ ) + tuple(
+    {
+        "id": "colour-" + case["id"],
+        "file": case["file"], "before": case["site"], "after": case["replacement"],
+        "target": "colour", "test": case["native_test"], "whitespace_flexible": True,
+    }
+    for case in COLOUR_CASES
 ) + tuple(
     {
         "id": "text-" + case["id"],

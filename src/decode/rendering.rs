@@ -46,7 +46,7 @@ pub(super) fn same_combination_operator(
                 && !refinement,
     },
 ))]
-pub(super) fn check_combination_operator(
+pub(crate) fn check_combination_operator(
     combination_override: bool,
     region_operator: crate::bitmap::CombinationOperator,
     page_operator: crate::bitmap::CombinationOperator,

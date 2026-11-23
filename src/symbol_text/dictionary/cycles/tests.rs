@@ -13,6 +13,7 @@ fn codec(bytes: &[u8]) -> ArithmeticCodec<'_> {
         iaid: vec![ArithmeticContext::new()],
         refinement: None,
         refinement_work: 0,
+        prefix: None,
     }
 }
 

@@ -7,7 +7,9 @@
 #[cfg(test)]
 use std::collections::VecDeque;
 
-use crate::arithmetic::{ArithmeticContext, ArithmeticDecoder, ArithmeticError, ArithmeticInteger};
+use crate::arithmetic::{
+    ArithmeticContext, ArithmeticDecoder, ArithmeticError, ArithmeticInteger, PrefixCertainty,
+};
 use crate::bitmap::{Bitmap, CombinationOperator, RowBlit};
 use crate::generic_region::{
     decode_generic_on_validated, decode_refinement_on, GenericArithmeticCall,
@@ -47,14 +49,6 @@ mod symbol_text_properties;
 #[rustfmt::skip]
 #[path = "../proofs/production_impl/symbol_text.rs"]
 mod symbol_text_proofs;
-
-
-
-
-
-
-
-
 
 /// Internal symbol/text decoding failure.
 #[derive(Debug)]
@@ -629,6 +623,7 @@ struct ArithmeticCodec<'a> {
     iaid: Vec<ArithmeticContext>,
     refinement: Option<RefinementContexts>,
     refinement_work: u64,
+    prefix: Option<PrefixCertainty<'a>>,
 }
 
 /// Concrete state for every symbol/text entropy mode.
@@ -739,6 +734,7 @@ pub(crate) struct TextRegionInput<'a> {
     pub(crate) custom_tables: &'a [&'a HuffmanTable],
     pub(crate) limits: &'a Limits,
     pub(crate) allow_missing_final_huffman_oob: bool,
+    pub(crate) allow_missing_final_arithmetic_oob: bool,
 }
 
 /// Complete output of one text-region segment payload decode.
@@ -748,6 +744,7 @@ pub(crate) struct TextRegionOutput {
     pub(crate) bitmap: Bitmap,
     pub(crate) consumed_bytes: usize,
     pub(crate) missing_final_huffman_oob: bool,
+    pub(crate) missing_final_arithmetic_oob: bool,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -755,9 +752,13 @@ pub(crate) struct TextRegionOutput {
 enum TextRegionEnd {
     Strict,
     BoundedHuffman,
+    BoundedArithmetic,
     RecoveredHuffman {
         instances: u32,
         padding_start: usize,
+    },
+    RecoveredArithmetic {
+        instances: u32,
     },
 }
 

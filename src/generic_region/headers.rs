@@ -6,7 +6,7 @@ use super::{
     RefinementTemplate, TemplateOffset,
 };
 use crate::reader::ByteReader;
-use crate::segment_data::parse_region_info;
+use crate::segment_data::{parse_region_info, parse_region_info_with_colour};
 use crate::{Limits, MalformedError};
 #[cfg(verus_keep_ghost)]
 use vstd::prelude::*;
@@ -58,9 +58,34 @@ pub(crate) fn parse_generic_region_header(
     payload: &[u8],
     limits: &Limits,
 ) -> Result<(GenericRegionHeader, usize), GenericRegionError> {
+    let (header, length, _) = parse_generic_region_header_with_colour(payload, limits, false)?;
+    Ok((header, length))
+}
+
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match out {
+        Ok((header, length, colour)) =>
+            payload@.len() >= 18
+                && length == generic_region_spec::generic_header_length(payload@[17])
+                && length <= payload@.len()
+                && header.mmr == (payload@[17] & 1 != 0)
+                && crate::spec::segments::dimensions_within_limits(
+                    header.region.width, header.region.height, *limits,
+                )
+                && colour == (payload@[16] & 8 != 0)
+                && (colour ==> allow_colour
+                    && header.region.operator == crate::bitmap::CombinationOperator::Replace),
+        Err(_) => true,
+    },
+))]
+pub(super) fn parse_generic_region_header_with_colour(
+    payload: &[u8],
+    limits: &Limits,
+    allow_colour: bool,
+) -> Result<(GenericRegionHeader, usize, bool), GenericRegionError> {
     enforce_input_limit(payload, limits)?;
     let mut reader = ByteReader::new(payload);
-    let region = parse_region_info(&mut reader, limits)?;
+    let (region, colour) = parse_region_info_with_colour(&mut reader, limits, allow_colour)?;
     let flags = reader.read_u8()?;
     let reserved = generic_reserved_flags(flags);
     if reserved != 0 {
@@ -120,6 +145,7 @@ pub(crate) fn parse_generic_region_header(
             adaptive,
         },
         reader.position(),
+        colour,
     ))
 }
 

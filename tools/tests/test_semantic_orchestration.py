@@ -17,7 +17,24 @@ sys.path.insert(0, str(TOOLS))
 import run_semantic_proofs as runner
 
 
-LIVE_CHECKS = runner.CHECKS
+ORIGINAL_CHECK_IDS = frozenset("""
+arithmetic-codec huffman-codec context-lifecycle session-framing clone-results
+public-context context-callers value-bridge arithmetic-decision document-count
+reset mmr-reference document-layout page-state text-batch symbol-cardinality
+segment-data reader-error page-public arithmetic-integer halftone-header
+integer-state segment-header black-span page-finish mmr-horizontal bitmap-compose
+bitmap-copy mmr-span arithmetic-refill arithmetic-normalization iaid-state
+arithmetic-initialization mmr-run huffman-assignment region-dispatch operator-bit
+retention bitmap-chunk mmr-prefix error-conversion error-wrappers-basic
+error-wrappers-regions error-wrappers-symbol default-limits-1 default-limits-2
+default-limits-3 default-limits-4 default-limits-5 default-decoder-1
+default-decoder-2 default-decoder-3 default-decoder-4 default-decoder-5
+collector-sink public-decode-results public-global-results reference-accounting
+reference-catalog reference-type-lookup reference-type-classes
+""".split())
+CURRENT_CHECKS = runner.CHECKS
+LIVE_CHECKS = tuple(row for row in CURRENT_CHECKS if row[0] in ORIGINAL_CHECK_IDS)
+RGB_CHECKS = tuple(row for row in CURRENT_CHECKS if row[0] != "arithmetic-certainty")
 PRE_REFERENCE_TYPE_CHECKS = tuple(
     row for row in LIVE_CHECKS if row[0] not in {"reference-type-lookup", "reference-type-classes"}
 )
@@ -62,8 +79,12 @@ PRE_REFERENCE_CATALOG_TOPOLOGY = {
         "default-decoder-3": 5, "region-dispatch": 10,
     },
 }
+# These 49-group histories predate public-global-results and its slot swap.
 CURRENT_TOPOLOGY = {
     **PRE_REFERENCE_CATALOG_TOPOLOGY,
+    "DEFAULT_SHARD_REBALANCE": {
+        **PRE_REFERENCE_CATALOG_TOPOLOGY["DEFAULT_SHARD_REBALANCE"], "default-limits-2": 2,
+    },
     "WHOLE_GROUPS": tuple(name for name in runner.WHOLE_GROUPS if name != "public-context"),
     "COLLECTOR_GROUPS": tuple(name for name in runner.COLLECTOR_GROUPS
                               if name not in {"clone-results", "context-callers"}),
@@ -248,6 +269,75 @@ def evidence():
 
 
 class SemanticOrchestrationTests(unittest.TestCase):
+    @patch.object(runner, "CHECKS", CURRENT_CHECKS)
+    @patch.multiple(runner, **LIVE_TOPOLOGY)
+    def test_certainty_addition_preserves_original_floor_and_future_rgb_extension(self):
+        from check_arithmetic_certainty_proofs import CASES
+
+        self.assertEqual(len(ORIGINAL_CHECK_IDS), 61)
+        self.assertEqual({row[0] for row in LIVE_CHECKS}, ORIGINAL_CHECK_IDS)
+        self.assertEqual(sum(row[2] for row in LIVE_CHECKS), 494)
+        checks = runner.configured_checks()
+        certainty = next(row for row in checks if row[0] == "arithmetic-certainty")
+        self.assertEqual(certainty[2], len(CASES))
+        self.assertEqual(certainty[2], 4)
+        self.assertEqual(runner.CI_SHARDS, 14)
+        self.assertEqual(runner.ADDED_SHARD_GROUPS["arithmetic-certainty"], 1)
+        roles = (
+            runner.configured_whole_checks(), runner.configured_collector_checks(),
+            *runner.configured_shards(),
+        )
+        assigned = [row for role in roles for row in role]
+        self.assertEqual(set(assigned), set(checks))
+        self.assertEqual(len(assigned), len(checks))
+        slot = runner.COLOUR_SHARD_ALLOCATION["arithmetic-certainty"] if any(
+            row[0] == "colour-rgb" for row in checks
+        ) else runner.ADDED_SHARD_GROUPS["arithmetic-certainty"]
+        self.assertIn(certainty, runner.configured_shards()[slot])
+        self.assertGreaterEqual(sum(row[2] for row in checks), 498)
+        future = ("future-rgb", "check_future_rgb_proofs.py", 3, "strong_contract", "weaker_control")
+        with patch.object(runner, "CHECKS", (*checks, future)), patch.dict(
+            runner.ADDED_SHARD_GROUPS, {"future-rgb": 13},
+        ):
+            shards = runner.configured_shards()
+            self.assertEqual(len(shards), 14)
+            self.assertIn(certainty, shards[slot])
+            self.assertIn(future, shards[13])
+            all_roles = (
+                runner.configured_whole_checks(), runner.configured_collector_checks(), *shards,
+            )
+            combined = [row for role in all_roles for row in role]
+            self.assertEqual(set(combined), set(checks) | {future})
+            self.assertEqual(len(combined), len(checks) + 1)
+
+    @patch.object(runner, "CHECKS", RGB_CHECKS)
+    @patch.multiple(runner, **LIVE_TOPOLOGY)
+    def test_rgb_allocation_preserves_every_membership_role_and_canonical_order(self):
+        rgb = next(row for row in RGB_CHECKS if row[0] == "colour-rgb")
+        self.assertEqual(rgb[2], 5)
+        self.assertEqual(tuple(row for row in RGB_CHECKS if row[0] != "colour-rgb"), LIVE_CHECKS)
+        self.assertEqual(sum(row[2] for row in LIVE_CHECKS), 494)
+        self.assertEqual(sum(row[2] for row in RGB_CHECKS), 499)
+        with patch.object(runner, "CHECKS", LIVE_CHECKS):
+            before = runner.configured_shards()
+            old_whole = runner.configured_whole_checks()
+            old_collector = runner.configured_collector_checks()
+        after = runner.configured_shards()
+        self.assertEqual(len(after), 14)
+        original = [row for shard in before for row in shard]
+        current = [row for shard in after for row in shard if row[0] != "colour-rgb"]
+        self.assertEqual(set(current), set(original))
+        self.assertEqual(len(current), len(original))
+        for index, shard in enumerate(after):
+            self.assertEqual(
+                shard, tuple(row for row in RGB_CHECKS if row in shard),
+            )
+            for row in shard:
+                self.assertEqual(runner.COLOUR_SHARD_ALLOCATION[row[0]], index)
+        self.assertIn(rgb, after[runner.COLOUR_SHARD_ALLOCATION["colour-rgb"]])
+        self.assertEqual(runner.configured_whole_checks(), old_whole)
+        self.assertEqual(runner.configured_collector_checks(), old_collector)
+
     @patch.object(runner, "CHECKS", LIVE_CHECKS)
     @patch.multiple(runner, **LIVE_TOPOLOGY)
     def test_embedded_recovery_profile_preserves_the_original_timing_guard(self):
@@ -477,7 +567,7 @@ class SemanticOrchestrationTests(unittest.TestCase):
         self.assertLess(measured[13], 900)
 
     @patch.multiple(runner, **PRE_REFERENCE_CATALOG_TOPOLOGY)
-    def test_public_results_keep_every_old_role_and_use_existing_shard_four_headroom(self):
+    def test_public_results_keep_every_old_role_and_use_bounded_existing_shards(self):
         previous = {
             **runner.DEFAULT_SHARD_REBALANCE, "session-framing": 12,
         }
@@ -503,7 +593,12 @@ class SemanticOrchestrationTests(unittest.TestCase):
                 tuple(row for row in old if row[0] not in moved),
                 tuple(row for row in current if row[0] not in added | moved),
             )
-        self.assertEqual({row[0] for row in after[6] if row[0] in added}, added)
+        self.assertEqual(
+            {row[0] for row in after[6] if row[0] in added}, added,
+        )
+        self.assertEqual(
+            {row[0] for row in after[4] if row[0] in added}, set(),
+        )
         self.assertIn("session-framing", {row[0] for row in before[14]})
         self.assertIn("session-framing", {row[0] for row in after[15]})
         self.assertIn("public-context", {row[0] for row in before[0]})
@@ -1160,7 +1255,7 @@ class SemanticOrchestrationTests(unittest.TestCase):
                 self.assertEqual(result["status"], "passed")
 
     def test_manifest_covers_every_semantic_checker_without_fixed_group_or_case_totals(self):
-        with patch.object(runner, "CHECKS", LIVE_CHECKS):
+        with patch.object(runner, "CHECKS", CURRENT_CHECKS):
             checks = runner.configured_checks()
         self.assertEqual(len({row[0] for row in checks}), len(checks))
         self.assertEqual(
@@ -1480,6 +1575,31 @@ class SemanticOrchestrationTests(unittest.TestCase):
             rows[0]["seconds"] = 1050
             with self.assertRaisesRegex(ValueError, "1050"):
                 runner.measured_shard_seconds(rows)
+
+    def test_serial_groups_share_only_a_fresh_job_local_dependency_cache(self):
+        caches = []
+
+        def process(command, **kwargs):
+            cache = Path(kwargs["env"]["JBIG2_SELECTED_DEPENDENCIES"])
+            self.assertFalse(cache.is_relative_to(self.root))
+            self.assertTrue(cache.parent.is_dir())
+            caches.append(cache)
+            return self.passing_process(command, **kwargs)
+
+        with patch.object(runner, "CHECKS", self.checks), patch.object(
+            runner, "WHOLE_GROUPS", ("0", "1"),
+        ), patch.dict(os.environ, {"JBIG2_SELECTED_DEPENDENCIES": "/stale-cache"}), patch.object(
+            runner.subprocess, "run", side_effect=process,
+        ):
+            for _ in range(2):
+                result = runner.run_checks(
+                    self.root, self.root / "verus", self.output, whole_groups=True,
+                )
+                self.assertEqual(result["status"], "passed")
+                self.assertFalse(caches[-1].parent.exists())
+        self.assertEqual(caches[0], caches[1])
+        self.assertEqual(caches[2], caches[3])
+        self.assertNotEqual(caches[0], caches[2])
 
     @patch.object(runner, "CHECKS", PRE_CONVERSION_CHECKS)
     @patch.object(runner, "WHOLE_GROUPS", ("arithmetic-codec", "value-bridge"))

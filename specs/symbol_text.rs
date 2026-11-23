@@ -39,6 +39,12 @@ pub(super) use dictionary::{
 };
 pub(crate) use dictionary::{dictionary_config_safe, dictionary_state_valid, symbol_count_result};
 
+#[path = "symbol_text/prefix.rs"]
+mod prefix;
+pub(super) use prefix::{
+    arithmetic_codec_valid, arithmetic_end_certificate, prefix_saved_unchanged, prefix_valid,
+};
+
 verus! {
 
 // Model navigation: spec::text_end_matches_count [project-policy]
@@ -57,6 +63,12 @@ pub(super) open spec fn text_end_matches_count(
                     padding_start <= h.reader.bit_position
                     && h.reader.bit_position - padding_start < 8
                     && h.reader.bit_position == h.reader.bytes@.len() * 8,
+                _ => false,
+            },
+        super::TextRegionEnd::RecoveredArithmetic { instances } =>
+            instances == count && count > 0 && !refinement
+            && match *codec {
+                super::SymbolCodec::Arithmetic(a) => arithmetic_end_certificate(&a, count),
                 _ => false,
             },
         _ => false,
@@ -265,18 +277,6 @@ pub(super) open spec fn arithmetic_contexts_valid(
 ) -> bool {
     forall|index: int| 0 <= index < contexts.len()
         ==> crate::arithmetic::arithmetic_spec::context_valid(contexts[index])
-}
-
-// Model navigation: spec::arithmetic_codec_valid [representation-invariant]
-// Purpose: Codec banks/bitmaps, table slots, export counters and placement-bound invariants.
-// Mapping: no registered requirement/locator mapping.
-// Fidelity: unresolved; no independent normative approval.
-pub(super) open spec fn arithmetic_codec_valid(
-    arithmetic: &super::ArithmeticCodec,
-) -> bool {
-    crate::arithmetic::arithmetic_spec::decoder_valid(&arithmetic.decoder)
-        && integer_contexts_valid(&arithmetic.integers)
-        && arithmetic_contexts_valid(arithmetic.iaid@)
 }
 
 // Model navigation: spec::integer_field_slot [proof-support]

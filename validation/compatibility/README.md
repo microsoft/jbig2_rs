@@ -43,6 +43,11 @@ original strict reader and byte APIs retain identical outcomes. Pixel output
 and recovery reports must be identical across
 the supported API shapes.
 
+Both #200 originals have separate final-strip certificates. Arithmetic recovery
+requires a complete, initialized actual prefix independent of numeric terminal
+contributions; strict/context-strict/reader outcomes remain unchanged. See the
+[certificate and proof model](../../docs/arithmetic-prefix-certainty.md).
+
 Comparator acceptance is not validity evidence. See the complete
 [0.3 disposition report](../../docs/compatibility-0.3.md) and
 [standalone recovery policy](../../docs/standalone-compatibility.md).

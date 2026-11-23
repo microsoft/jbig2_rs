@@ -5,6 +5,7 @@ mod context_state;
 mod decoder_registers;
 mod error_projection;
 mod integer_procedures;
+mod prefix_certainty;
 
 use super::*;
 
