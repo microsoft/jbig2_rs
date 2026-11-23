@@ -17,7 +17,8 @@ sys.path.insert(0, str(TOOLS))
 import run_semantic_proofs as runner
 
 
-LIVE_CHECKS = runner.CHECKS
+LIVE_CHECKS = tuple(row for row in runner.CHECKS if row[0] != "colour-rgb")
+RGB_CHECKS = runner.CHECKS
 PRE_REFERENCE_TYPE_CHECKS = tuple(
     row for row in LIVE_CHECKS if row[0] not in {"reference-type-lookup", "reference-type-classes"}
 )
@@ -248,6 +249,26 @@ def evidence():
 
 
 class SemanticOrchestrationTests(unittest.TestCase):
+    @patch.object(runner, "CHECKS", RGB_CHECKS)
+    @patch.multiple(runner, **LIVE_TOPOLOGY)
+    def test_rgb_group_preserves_every_original_case_and_uses_existing_shard_headroom(self):
+        rgb = next(row for row in RGB_CHECKS if row[0] == "colour-rgb")
+        self.assertEqual(rgb[2], 5)
+        self.assertEqual(tuple(row for row in RGB_CHECKS if row[0] != "colour-rgb"), LIVE_CHECKS)
+        self.assertEqual(sum(row[2] for row in LIVE_CHECKS), 494)
+        self.assertEqual(sum(row[2] for row in RGB_CHECKS), 499)
+        with patch.object(runner, "CHECKS", LIVE_CHECKS):
+            before = runner.configured_shards()
+            old_whole = runner.configured_whole_checks()
+            old_collector = runner.configured_collector_checks()
+        after = runner.configured_shards()
+        self.assertEqual(len(after), 14)
+        for index, (old, current) in enumerate(zip(before, after)):
+            self.assertEqual(tuple(row for row in current if row[0] != "colour-rgb"), old)
+            self.assertEqual(rgb in current, index == 13)
+        self.assertEqual(runner.configured_whole_checks(), old_whole)
+        self.assertEqual(runner.configured_collector_checks(), old_collector)
+
     @patch.object(runner, "CHECKS", LIVE_CHECKS)
     @patch.multiple(runner, **LIVE_TOPOLOGY)
     def test_embedded_recovery_profile_preserves_the_original_timing_guard(self):
@@ -1160,7 +1181,7 @@ class SemanticOrchestrationTests(unittest.TestCase):
                 self.assertEqual(result["status"], "passed")
 
     def test_manifest_covers_every_semantic_checker_without_fixed_group_or_case_totals(self):
-        with patch.object(runner, "CHECKS", LIVE_CHECKS):
+        with patch.object(runner, "CHECKS", RGB_CHECKS):
             checks = runner.configured_checks()
         self.assertEqual(len({row[0] for row in checks}), len(checks))
         self.assertEqual(

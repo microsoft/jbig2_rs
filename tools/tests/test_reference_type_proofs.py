@@ -56,6 +56,7 @@ class ReferenceTypeProofTests(unittest.TestCase):
         self.assertIn("reference-type-classes", {row[0] for row in after[15]})
 
     @patch.dict(runner.ADDED_SHARD_GROUPS, {"reference-type-lookup": 3})
+    @patch.object(runner, "CHECKS", tuple(row for row in runner.CHECKS if row[0] != "colour-rgb"))
     def test_complete_original_timing_profile_rejects_first_assignment_and_fits_corrected_one(self):
         # Same-run42310047778/attempt1 passed all61groups; seconds rounded up.
         costs = {

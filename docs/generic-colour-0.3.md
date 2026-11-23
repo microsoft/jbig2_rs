@@ -56,7 +56,8 @@ Its GBFGCOLID is 4 (red), with a transparent background. Its complete 163x109
 RGB output has 53,301 bytes and SHA-256
 `fe3ed9ccfa9309b20b5cca0fa612539a6cf3cf14f1782129649ab6f39e1071e4`.
 The independently decoded contributing masks and scalar RGB composition are
-the reference; the upstream bi-level honeycomb image is not a colour oracle.
+the [reference](../validation/compatibility/colour-reference.json); the upstream
+bi-level honeycomb image is not a colour oracle.
 Setting both declarations gives a strict RGB regression with the same pixels.
 
 ## Resources and proof scope
