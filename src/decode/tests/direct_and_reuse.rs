@@ -26,6 +26,54 @@ fn direct_page_matches_intermediate_compose_oracle() {
 }
 
 #[test]
+fn pristine_xor_pages_match_buffered_pixels_and_charge_the_same_work() {
+    let limits = Limits::default();
+    let mut random = 0x7d31_4a86_52b0_9fce;
+    for width in [1, 7, 8, 9, 31, 32, 33, 65, 129] {
+        let height = 1 + width % 4;
+        let coded = arithmetic_test_bytes(&mut random);
+        let document = arithmetic_generic_document(width, height, 2, &coded);
+        let (_, segments) = parse_standalone_document(&document, &limits).unwrap();
+        let mut pages = vec![(
+            1,
+            runtime_test_page(
+                width,
+                height,
+                false,
+                true,
+                CombinationOperator::Xor,
+                &limits,
+            ),
+        )];
+        let work = DecodeWork::new(0, &limits).unwrap();
+        assert_eq!(
+            direct_generic_page_index(&segments[1], &pages, &work, &limits),
+            Some(0)
+        );
+        assert_direct_page_matches_oracle(
+            &document,
+            false,
+            true,
+            CombinationOperator::Xor,
+            &limits,
+        );
+        pages[0].1.bitmap.set_pixel(0, 0, true).unwrap();
+        assert_eq!(
+            direct_generic_page_index(&segments[1], &pages, &work, &limits),
+            None
+        );
+        assert_direct_page_matches_oracle(&document, true, true, CombinationOperator::Xor, &limits);
+        assert_direct_page_matches_oracle(
+            &document,
+            false,
+            false,
+            CombinationOperator::Xor,
+            &limits,
+        );
+    }
+}
+
+#[test]
 fn incompatible_and_limited_direct_pages_use_exact_oracle_fallback() {
     let mut state = 0xd630_18ab_795c_42ef;
     let coded = arithmetic_test_bytes(&mut state);

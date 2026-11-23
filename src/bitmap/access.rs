@@ -46,6 +46,61 @@ pub(super) fn copy_row_bytes(destination: &mut [u8], source: &[u8]) {
 }
 
 impl Bitmap {
+    /// Tests every stored byte, including padding.
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures
+            out == crate::spec::bitmap::zeroed_storage(self),
+            out ==> forall|index: int, value: u8|
+                0 <= index < crate::views::bitmap_data(self).len() ==>
+                    #[trigger] crate::spec::bitmap::operator_byte(
+                        crate::bitmap::CombinationOperator::Xor,
+                        crate::views::bitmap_data(self)[index],
+                        value,
+                    ) == value,
+    ))]
+    pub(crate) fn is_zeroed_storage(&self) -> bool {
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            crate::views::bitmap_fields(self);
+            reveal(crate::spec::bitmap::zeroed_storage);
+        }
+        let mut index = 0_usize;
+        #[cfg_attr(verus_keep_ghost, verus_spec(
+            invariant
+                index <= self.data@.len(),
+                forall|before: int| 0 <= before < index ==>
+                    #[trigger] self.data@[before] == 0,
+            decreases self.data@.len() - index,
+        ))]
+        while index < self.data.len() {
+            if self.data[index] != 0 {
+                #[cfg(verus_keep_ghost)]
+                proof! {
+                    crate::views::bitmap_fields(self);
+                    reveal(crate::spec::bitmap::zeroed_storage);
+                    assert(crate::views::bitmap_data(self)[index as int] != 0);
+                    assert(!crate::spec::bitmap::zeroed_storage(self));
+                }
+                return false;
+            }
+            index += 1;
+        }
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            assert forall|position: int, value: u8|
+                0 <= position < crate::views::bitmap_data(self).len()
+                implies crate::spec::bitmap::operator_byte(
+                    crate::bitmap::CombinationOperator::Xor,
+                    crate::views::bitmap_data(self)[position],
+                    value,
+                ) == value by {
+                assert(crate::views::bitmap_data(self)[position] == 0);
+                assert(0u8 ^ value == value) by(bit_vector);
+            }
+        }
+        true
+    }
+
     /// Returns a pixel, or `None` when the coordinates are outside the bitmap.
     #[must_use]
     #[cfg_attr(verus_keep_ghost, verus_spec(out =>

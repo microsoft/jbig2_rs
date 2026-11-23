@@ -440,3 +440,16 @@ fn chunk_span_fill_and_row_copy_match_scalar_oracles() {
         }
     }
 }
+#[test]
+fn zero_storage_check_rejects_nonzero_bytes_including_padding() {
+    for width in [0, 1, 7, 8, 9, 65] {
+        let mut bitmap = Bitmap::blank(width, 3, &Limits::default()).unwrap();
+        assert!(bitmap.is_zeroed_storage());
+        for index in 0..bitmap.data.len() {
+            bitmap.data[index] = 1;
+            assert!(!bitmap.is_zeroed_storage());
+            bitmap.data[index] = 0;
+        }
+        assert!(bitmap.is_zeroed_storage());
+    }
+}

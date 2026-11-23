@@ -291,7 +291,7 @@ pub(super) fn direct_generic_page_index(
         || header.region.y != 0
         || !matches!(
             header.region.operator,
-            CombinationOperator::Or | CombinationOperator::Replace
+            CombinationOperator::Or | CombinationOperator::Replace | CombinationOperator::Xor
         )
     {
         return None;
@@ -311,6 +311,9 @@ pub(super) fn direct_generic_page_index(
     let pixels = u64::from(header.region.width).checked_mul(u64::from(header.region.height))?;
     let region_work = pixels.checked_mul(18)?;
     if !work.can_charge_pair(region_work, pixels, limits) {
+        return None;
+    }
+    if header.region.operator == CombinationOperator::Xor && !page.bitmap.is_zeroed_storage() {
         return None;
     }
     Some(index)
