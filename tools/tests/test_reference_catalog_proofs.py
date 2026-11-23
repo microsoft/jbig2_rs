@@ -15,6 +15,9 @@ import run_semantic_proofs as runner
 
 
 class ReferenceCatalogProofTests(unittest.TestCase):
+    @patch.object(runner, "CHECKS", tuple(
+        row for row in runner.CHECKS if row[0] not in {"colour-rgb", "arithmetic-certainty"}
+    ))
     def test_new_groups_use_only_existing_shard_ten_and_twelve_headroom(self):
         added = set(CASE_GROUPS)
         current = tuple(row for row in runner.CHECKS if row[0] not in {

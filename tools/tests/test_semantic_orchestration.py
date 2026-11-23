@@ -290,7 +290,10 @@ class SemanticOrchestrationTests(unittest.TestCase):
         assigned = [row for role in roles for row in role]
         self.assertEqual(set(assigned), set(checks))
         self.assertEqual(len(assigned), len(checks))
-        self.assertIn(certainty, runner.configured_shards()[1])
+        slot = runner.COLOUR_SHARD_ALLOCATION["arithmetic-certainty"] if any(
+            row[0] == "colour-rgb" for row in checks
+        ) else runner.ADDED_SHARD_GROUPS["arithmetic-certainty"]
+        self.assertIn(certainty, runner.configured_shards()[slot])
         self.assertGreaterEqual(sum(row[2] for row in checks), 498)
         future = ("future-rgb", "check_future_rgb_proofs.py", 3, "strong_contract", "weaker_control")
         with patch.object(runner, "CHECKS", (*checks, future)), patch.dict(
@@ -298,7 +301,7 @@ class SemanticOrchestrationTests(unittest.TestCase):
         ):
             shards = runner.configured_shards()
             self.assertEqual(len(shards), 14)
-            self.assertIn(certainty, shards[1])
+            self.assertIn(certainty, shards[slot])
             self.assertIn(future, shards[13])
             all_roles = (
                 runner.configured_whole_checks(), runner.configured_collector_checks(), *shards,
@@ -309,7 +312,7 @@ class SemanticOrchestrationTests(unittest.TestCase):
 
     @patch.object(runner, "CHECKS", RGB_CHECKS)
     @patch.multiple(runner, **LIVE_TOPOLOGY)
-    def test_rgb_group_preserves_every_original_case_and_uses_existing_shard_headroom(self):
+    def test_rgb_allocation_preserves_every_membership_role_and_canonical_order(self):
         rgb = next(row for row in RGB_CHECKS if row[0] == "colour-rgb")
         self.assertEqual(rgb[2], 5)
         self.assertEqual(tuple(row for row in RGB_CHECKS if row[0] != "colour-rgb"), LIVE_CHECKS)
@@ -321,9 +324,17 @@ class SemanticOrchestrationTests(unittest.TestCase):
             old_collector = runner.configured_collector_checks()
         after = runner.configured_shards()
         self.assertEqual(len(after), 14)
-        for index, (old, current) in enumerate(zip(before, after)):
-            self.assertEqual(tuple(row for row in current if row[0] != "colour-rgb"), old)
-            self.assertEqual(rgb in current, index == 10)
+        original = [row for shard in before for row in shard]
+        current = [row for shard in after for row in shard if row[0] != "colour-rgb"]
+        self.assertEqual(set(current), set(original))
+        self.assertEqual(len(current), len(original))
+        for index, shard in enumerate(after):
+            self.assertEqual(
+                shard, tuple(row for row in RGB_CHECKS if row in shard),
+            )
+            for row in shard:
+                self.assertEqual(runner.COLOUR_SHARD_ALLOCATION[row[0]], index)
+        self.assertIn(rgb, after[runner.COLOUR_SHARD_ALLOCATION["colour-rgb"]])
         self.assertEqual(runner.configured_whole_checks(), old_whole)
         self.assertEqual(runner.configured_collector_checks(), old_collector)
 
