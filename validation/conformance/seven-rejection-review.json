@@ -239,7 +239,7 @@
     "src/symbol_text/text/segment.rs": "a29166557a81d2dcd888c7101973b552c73a6ebd611453f5d81a118689e8651b",
     "src/symbol_text/text.rs": "02bb1a60f754d4f426e8054e03d84ba6363cd75ece55705ee8ffda180e619d8a",
     "src/symbol_text/validation.rs": "e8a1dc46cdc2686a6fba452fed7b40ea670ad22c3c656433f09ab31f4811b961",
-    "src/symbol_text.rs": "214ccd5c58ee49df2e183b84c965c263880a1dc6b0d0f52b6c553a40793e2be4"
+    "src/symbol_text.rs": "3bdf11ab2da830a6cbcb53d97972cc93030258947679b347dbbea0b817d587d4"
   },
   "ordinary_runtime_source_sha256": "9522006a853643a5022479a2f2ee5e1855df1c883f42eeda02a431a5372b3778",
   "normal_decoder_sha256": "28aad50cced4dd0bcc4838571a425f97e8aa82f52fece315d9fbb1095f87c941",
@@ -283,7 +283,7 @@
     "tools/evidence.py": "1286345e1679a72362fc4cc60f3ef1d6294b19df4edcea7c6d0f74970d117571",
     "tools/verify_provenance.py": "0d9be7e393273d59adf5d38adeb828cb8299d63365412dee3e61f565d7ee9aed",
     "validation/source-provenance.json": "95e21a8330540c2f1be6ae7446764a97047ee6cd9412516775da935f3c3b8571",
-    "validation/conformance/expected-differences.json": "fb7d0d42cca24093e152cd86b9c1257bc2d42249a801425fdeb94953825d8b63",
+    "validation/conformance/expected-differences.json": "a0ced751a5b819ff6c7183b690f0d26092b7b67c4fe2bc8e7e2483f2ed8ce425",
     "validation/conformance/fetch_itu.py": "ef7d846d05440ff052581de0d04caaa76f6e9cc9582ee1b9fb8baff34b89e86b",
     "tools/tests/test_conformance_acquisition.py": "57535afa7a966244302b51554c3dd6dc1fc00dac11fec7f33f49906fe35258f7",
     "tools/check_workflows.py": "87b60e17f0db77c901ead2cb8da715a7454b2053883aa5c34b96bb7260857ae4",
@@ -1315,7 +1315,7 @@
     "scope": "Fresh exact original ten-case bi-level strict replay after adding a separate RGB8 API; historical dispositions and normative approval are not renewed."
   },
   "arithmetic_prefix_certainty_replay": {
-    "source_revision": "d8a0a3c64c5c0369c7cebccaa9d568c4b92e4720",
+    "source_revision": "f4ba17a8f02596038da5d966e748f32ac7e7ab34",
     "results_sha256": "b6607a6ce27fe85c06441a8f276a192afe95dceb8e7db462c924d713b533260c",
     "scope": "Fresh exact original ten-case strict replay; historical dispositions and normative approval are not renewed."
   }

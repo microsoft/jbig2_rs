@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "status": "verified_exact_project_scope_with_reviewed_limits",
-  "source_revision": "d8a0a3c64c5c0369c7cebccaa9d568c4b92e4720",
+  "source_revision": "f4ba17a8f02596038da5d966e748f32ac7e7ab34",
   "scope": "Fresh pinned whole verification including initialized real arithmetic decision provenance and certainty under arbitrary bounded numeric terminal-prefix/fill contributions. Standalone fixed-length unrefined text may recover only an ordinary final DS Value after every declared instance is fully placed and the immutable payload has literal FFAC; ordinary OOB succeeds without recovery and every DS error propagates unchanged. Prefix certainty is captured before final DS and does not assume alternative decisions agree. No bit or symbol is synthesized. Strict/default/reader/sink/embedded/nested/refinement routes, page framing/references and diagnostic/work/memory budgets are unchanged. The additive generic RGB8 profile is preserved when present in the baseline. Same executing sources, unchanged20 reviewed limitations, no new assumed I/O or algorithm bodies, native assumptions or runtime/proof substitutions. Component contracts and finite full-pixel references, not full decoded-output or independently approved normative proofs. Main/0.3 only.",
   "toolchain": {
     "manifest": "config/toolchain.json",
@@ -24,7 +24,7 @@
     "runtime_proof_divergences": 0,
     "incomplete_functions": 0
   },
-  "production_proof_coverage_sha256": "0294d72f976295bac3521f24212f4a82d0597e3fccb617a1a485ae3c93e748d1",
+  "production_proof_coverage_sha256": "c62ec8c016b1e117e41af44b98eb6ad5cf5c2e2f28674f24e76f98eb3a05b781",
   "proof_dispositions_sha256": "0743e3eba8f677f1d891f669cee2929238ae73613896d4f0f0a3ef7329bb7faa",
   "standard_library_boundary": {
     "manifest": "verification/stdlib/review.json",
@@ -33,7 +33,7 @@
     "review_kind": "delegated_engineering_review",
     "normative_approval": false
   },
-  "current_evidence_note": "Exact runtime d8a0a3c64c5c0369c7cebccaa9d568c4b92e4720; whole1529/0, exact749 verified functions and unchanged20 reviewed limitations. Original arithmetic #200 returns complete independent honeycomb pixels only in Compatibility; preserved-tail cut4 rejects, strict-accepted cuts2/10 remain ordinary no-recovery successes. All original32-file and ten-case strict conformance outputs are preserved except the explicitly classified original arithmetic compatibility success. All existing semantic contrasts and unchanged1050-second same-run guard remain mandatory. No backport, publication or renewed approval.",
+  "current_evidence_note": "Exact runtime f4ba17a8f02596038da5d966e748f32ac7e7ab34; whole1529/0, exact749 verified functions and unchanged20 reviewed limitations. Original arithmetic #200 returns complete independent honeycomb pixels only in Compatibility; preserved-tail cut4 rejects, strict-accepted cuts2/10 remain ordinary no-recovery successes. All original32-file and ten-case strict conformance outputs are preserved except the explicitly classified original arithmetic compatibility success. All existing semantic contrasts and unchanged1050-second same-run guard remain mandatory. No backport, publication or renewed approval.",
   "duplicate_executable_proof_source": false,
   "embedded_recovery_ci_profile_correction": {
     "rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/44359238184",

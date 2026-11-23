@@ -24,7 +24,7 @@
   "model_classifications": {
     "review": "author-navigation-only-not-independent-normative-approval",
     "registry_sha256": "19f29e18950f5e35d011f88b528ba889ff3d4d000d12990d8f9c82d7de0c69cb",
-    "project_source_sha256": "be48cc20ac61d522494cfb080c432239e0a7fa942201b07938f652e46bbcdd29",
+    "project_source_sha256": "4509d82f44c482fe38178563fcd7f2e6ea4a46d3b36567d428e51ff35ea9f443",
     "families": [
       {
         "file": "specs/huffman_lookup.rs",
@@ -1054,7 +1054,6 @@
       {
         "file": "specs/symbol_text.rs",
         "members": [
-          "spec::arithmetic_codec_valid",
           "spec::arithmetic_contexts_valid",
           "spec::bitmap_refs_valid",
           "spec::bitmaps_valid",
@@ -1568,8 +1567,9 @@
         "caveats": "Author navigation only; no independent normative approval or full decoded-output proof."
       },
       {
-        "file": "specs/symbol_text.rs",
+        "file": "specs/symbol_text/prefix.rs",
         "members": [
+          "spec::arithmetic_codec_valid",
           "spec::prefix_saved_unchanged",
           "spec::prefix_valid"
         ],
@@ -1579,7 +1579,7 @@
         "caveats": "Author navigation only; no independent normative approval or full decoded-output proof."
       },
       {
-        "file": "specs/symbol_text.rs",
+        "file": "specs/symbol_text/prefix.rs",
         "members": [
           "spec::arithmetic_end_certificate"
         ],
@@ -2259,7 +2259,7 @@
     "specs/mod.rs": "34f81994f8b77e618a7d48d4552175d09cf3be633307166227c13ce94a06ba21",
     "specs/readers.rs": "ee10b54a7ee8dce323488bf8ef5229fbbf1d5811888a3364cda8f2cc187ba251",
     "specs/segments.rs": "dc288038574b7f902a15752e58096ef504d0253a0f308950474278ca2104e451",
-    "specs/symbol_text.rs": "b0e8c31a75c68f45bf9876e6bfdc289ca2da3ce5b6d5d2e2c262e3c2cdb24720",
+    "specs/symbol_text.rs": "26395f97c269d85dc074ea8a1979f6428217074d7f5c5e930f0135ef9477bf89",
     "specs/symbol_text/arithmetic_codec.rs": "c96145d1428fd0edda0b93437f15e15592e9f7476d8465dbd55feb071d1a866c",
     "specs/symbol_text/dictionary.rs": "f7994737d95cefbca3e6067754190b160ddb8c85900a17edf672b4f8d80882b2",
     "specs/symbol_text/huffman_codec.rs": "3a56e2a0f9c27443b1ee91029c92584a45df3398fc4f433de4ffc1e717246295",
@@ -2340,7 +2340,7 @@
     "src/segment_data/tests.rs": "7b082bcee501bd86382474823db6af59afb56842b7d053c3de8b77d2e5edfc15",
     "src/segment_header.rs": "ec5047080fa67fd0a8dd28e8101b972aeb23e3d10939906e1c059674ebaa528d",
     "src/segment_header/tests.rs": "41f4c9c942b49bc2d4d7c8588ac99ab655475803849836854afd349eee0d463c",
-    "src/symbol_text.rs": "214ccd5c58ee49df2e183b84c965c263880a1dc6b0d0f52b6c553a40793e2be4",
+    "src/symbol_text.rs": "3bdf11ab2da830a6cbcb53d97972cc93030258947679b347dbbea0b817d587d4",
     "src/symbol_text/bitmap.rs": "d872783ab5e9768ba4064ca309700f089e31b3ca799425edc6a5d7471efc40b2",
     "src/symbol_text/codebook.rs": "3ad3dd4131dbb7343a3267f32718d4c5278f029c1b90937f45d06363b8defbcc",
     "src/symbol_text/codec.rs": "4f975eff5bd958e0b201dd9c80e91b40be4681254a56adb02a681cc87e297e78",
