@@ -24,7 +24,7 @@ CI_SHARDS = 14
 WHOLE_GROUPS = ("arithmetic-codec",)
 COLLECTOR_GROUPS = ("arithmetic-decision", "reset", "clone-results", "context-callers")
 ADDED_SHARD_GROUPS = {
-    "owned-decode": 0,
+    "owned-decode": 1,
     "arithmetic-certainty": 1,
     "colour-rgb": 10,
     "reference-type-lookup": 10, "reference-type-classes": 13,
@@ -125,7 +125,7 @@ COLOUR_SHARD_ALLOCATION = {
 }
 OWNED_DECODE_SHARD_ALLOCATION = {
     **COLOUR_SHARD_ALLOCATION,
-    "owned-decode": 0,
+    "owned-decode": 1,
 }
 RECEIPT_SCHEMA = 3
 CHECKS = (

@@ -18,6 +18,9 @@ COLOUR_CERTAINTY_CHECKS = tuple(
 TIMINGS = json.loads(
     (Path(__file__).parent / "fixtures/colour-rgb-semantic-timings.json").read_text()
 )
+OWNED_REJECTED = json.loads(
+    (Path(__file__).parent / "fixtures/owned-decode-rejected-shard-timings.json").read_text()
+)
 EXPECTED_BOUNDS = (
     1037.521383123, 1040.108429994, 1040.703310944, 1030.325156962,
     1037.335416414, 1039.711085949, 1039.446731117, 1043.280104190,
@@ -46,6 +49,101 @@ class ColourShardSchedulingTests(unittest.TestCase):
         historical.start()
         self.addCleanup(historical.stop)
 
+    def test_owned_relocation_preserves_rejected_partial_run_and_exact_projection(self):
+        self.assertEqual(OWNED_REJECTED["run_identity"], {
+            "GITHUB_REPOSITORY": "microsoft/jbig2_rs",
+            "GITHUB_RUN_ID": "45280486638",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_SHA": "030ec395517a6e9a9ca8091a6c0a02aa4776165f",
+        })
+        self.assertEqual(OWNED_REJECTED["proposal_head"], "12cc1f5")
+        observed = {
+            row["id"]: row["seconds"]
+            for rows in OWNED_REJECTED["shards"].values() for row in rows
+        }
+        counts = {row[0]: row[2] for row in CURRENT_CHECKS}
+        for rows in OWNED_REJECTED["shards"].values():
+            for row in rows:
+                self.assertEqual(row["status"], "passed")
+                self.assertEqual(row["counterexamples"], counts[row["id"]])
+        with patch.object(runner, "CHECKS", CURRENT_CHECKS):
+            with patch.object(runner, "OWNED_DECODE_SHARD_ALLOCATION", {
+                **runner.OWNED_DECODE_SHARD_ALLOCATION, "owned-decode": 0,
+            }):
+                original = runner.configured_shards()
+                for index, rows in OWNED_REJECTED["shards"].items():
+                    self.assertEqual(
+                        [row[0] for row in original[int(index)]],
+                        [row["id"] for row in rows],
+                    )
+                previous = [
+                    math.fsum(observed[row[0]] for row in original[index])
+                    for index in range(4)
+                ]
+            self.assertAlmostEqual(previous[0], 1075.4300956399998, places=9)
+            self.assertGreater(previous[0], 1050)
+            self.assertAlmostEqual(previous[1], 811.748944268, places=9)
+            current = runner.configured_shards()
+            projected = [
+                math.fsum(observed[row[0]] for row in current[index])
+                for index in range(4)
+            ]
+            self.assertAlmostEqual(projected[0], 1006.8452078149999, places=9)
+            self.assertAlmostEqual(projected[1], 880.3338320929998, places=9)
+            self.assertEqual(projected[2:], previous[2:])
+            partial_rows = [
+                {"id": name, "status": "passed", "seconds": seconds}
+                for name, seconds in observed.items()
+            ]
+            with self.assertRaisesRegex(ValueError, "every complete current-profile group"):
+                runner.measured_shard_seconds(partial_rows)
+
+    def test_owned_relocation_keeps_complete_historical_maxima_as_planning_not_acceptance(self):
+        # No setup-saving deductions or acceptance inferred from different-source runs.
+        with patch.object(runner, "CHECKS", CURRENT_CHECKS):
+            current = runner.configured_shards()
+            historical_sharded = {
+                row[0] for shard in current for row in shard if row[0] != "owned-decode"
+            }
+            cache = TIMINGS["dependency_reuse"]
+            profiles = list(cache["shard_profiles"].values())
+            self.assertEqual(len(profiles), 5)
+            self.assertEqual(set().union(*(set(row) for row in profiles)), historical_sharded)
+            seconds = {
+                name: max(row[name] for row in profiles if name in row)
+                for name in historical_sharded
+            }
+            for group in (*runner.configured_whole_checks(), *runner.configured_collector_checks()):
+                seconds[group[0]] = max(
+                    row["seconds"][group[0]] for row in TIMINGS["profiles"].values()
+                )
+            seconds["arithmetic-certainty"] = max(
+                seconds["arithmetic-certainty"], cache["certainty_budget_seconds"],
+            )
+            for rows in OWNED_REJECTED["shards"].values():
+                for row in rows:
+                    seconds[row["id"]] = max(seconds.get(row["id"], 0), row["seconds"])
+            self.assertEqual(set(seconds), {row[0] for row in runner.configured_checks()})
+            self.assertEqual(len(seconds), 64)
+            projected = [
+                math.fsum(seconds[row[0]] for row in shard) for shard in current
+            ]
+            self.assertAlmostEqual(projected[0], 1023.021545111, places=9)
+            self.assertAlmostEqual(projected[1], 1117.426081810, places=9)
+            self.assertGreater(projected[1], 1050)
+            rows = timing_rows(seconds)
+            with self.assertRaisesRegex(ValueError, "1050-second guard"):
+                runner.measured_shard_seconds(rows)
+            with patch.object(runner, "OWNED_DECODE_SHARD_ALLOCATION", {
+                **runner.OWNED_DECODE_SHARD_ALLOCATION, "owned-decode": 0,
+            }):
+                old_bound = math.fsum(
+                    seconds[row[0]] for row in runner.configured_shards()[0]
+                )
+                self.assertGreaterEqual(old_bound, 1075.4300956399998)
+                with self.assertRaisesRegex(ValueError, "1050-second guard"):
+                    runner.measured_shard_seconds(rows)
+
     def test_current_inventory_requires_owned_costs_without_changing_the_original_guard(self):
         historical_rows = timing_rows(maximum_seconds())
         with patch.object(runner, "CHECKS", CURRENT_CHECKS):
@@ -54,7 +152,7 @@ class ColourShardSchedulingTests(unittest.TestCase):
             self.assertEqual(sum(row[2] for row in checks), 505)
             owned = next(row for row in checks if row[0] == "owned-decode")
             self.assertEqual(owned[2], 2)
-            self.assertIn(owned, runner.configured_shards()[0])
+            self.assertIn(owned, runner.configured_shards()[1])
             with self.assertRaisesRegex(ValueError, "every complete current-profile group"):
                 runner.measured_shard_seconds(historical_rows)
             # Synthetic refusal control, not a measured cost for the new group.

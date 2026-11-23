@@ -182,7 +182,7 @@ Semantic contrasts require an exact positive baseline, an ordinarily compiling
 mutant, strong proof rejection and success under only the selected weakened
 guarantee. Every configured group is required.
 
-The current profile adds the complete two-case `owned-decode` group on shard 0:
+The current profile assigns the complete two-case `owned-decode` group to shard 1:
 64 groups / 505 contrasts, retaining all prior 63 groups / 503 contrasts and
 their assignments. Historical colour/certainty profiles retain their original
 membership and timing interpretation. Fourteen shards, whole/collector roles,
@@ -191,6 +191,18 @@ two local workers, at most four concurrent CI semantic jobs and the actual
 the new group's complete measured cost; historical timings are not new acceptance.
 The runner's `--only owned-decode` selector runs both contrasts through
 `check_owned_decode_proofs.py` without case-group or mode flags.
+
+The initial shard-0 assignment was rejected: run `45280486638/1`, checkout
+`030ec395517a6e9a9ca8091a6c0a02aa4776165f` (proposal head `12cc1f5`), recorded
+1,006.845207815 seconds for `huffman-assignment` plus 68.584887825 seconds for
+`owned-decode`, a 1,075.430095640-second lower bound above the unchanged guard.
+Only the complete new group moves; all older groups and roles stay fixed.
+Reusing those partial receipts projects source/destination totals of
+1,006.845207815 / 880.333832093 seconds. This rejected partial run gives no
+acceptance credit. Complete prior-source per-group maxima remain conservative
+planning inputs, not current measurements; their raw shard-1 bound is still
+1,117.426081810 seconds. Qualification requires a fresh complete same-run result
+under the unchanged guard, not either projection.
 
 Native mutations separately require an original passing test and failure of
 that exact test after a compiling change:

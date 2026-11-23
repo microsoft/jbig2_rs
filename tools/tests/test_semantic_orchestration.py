@@ -272,7 +272,7 @@ def evidence():
 class SemanticOrchestrationTests(unittest.TestCase):
     @patch.object(runner, "CHECKS", CURRENT_CHECKS)
     @patch.multiple(runner, **LIVE_TOPOLOGY)
-    def test_owned_decode_is_additive_on_shard_zero_without_moving_any_existing_group(self):
+    def test_owned_decode_is_additive_on_shard_one_without_moving_any_existing_group(self):
         from check_owned_decode_proofs import CASES
 
         checks = runner.configured_checks()
@@ -293,10 +293,11 @@ class SemanticOrchestrationTests(unittest.TestCase):
             collector = runner.configured_collector_checks()
         current = runner.configured_shards()
         self.assertEqual(len(current), 14)
-        self.assertIn(owned, current[0])
+        self.assertIn(owned, current[1])
+        self.assertEqual(runner.ADDED_SHARD_GROUPS["owned-decode"], 1)
         self.assertNotIn("owned-decode", runner.COLOUR_SHARD_ALLOCATION)
         self.assertEqual(runner.OWNED_DECODE_SHARD_ALLOCATION, {
-            **runner.COLOUR_SHARD_ALLOCATION, "owned-decode": 0,
+            **runner.COLOUR_SHARD_ALLOCATION, "owned-decode": 1,
         })
         self.assertEqual(
             tuple(tuple(row for row in shard if row != owned) for shard in current),
@@ -321,10 +322,10 @@ class SemanticOrchestrationTests(unittest.TestCase):
         with patch.object(runner, "CHECKS", PRE_OWNED_CHECKS):
             previous = runner.measured_shard_seconds(previous_rows)
         current = runner.measured_shard_seconds(rows)
-        self.assertEqual(current, [previous[0] + 1, *previous[1:]])
+        self.assertEqual(current, [previous[0], previous[1] + 1, *previous[2:]])
         owned = next(row for row in rows if row["id"] == "owned-decode")
-        owned["seconds"] = 1050 - previous[0]
-        self.assertEqual(runner.measured_shard_seconds(rows)[0], 1050)
+        owned["seconds"] = 1050 - previous[1]
+        self.assertEqual(runner.measured_shard_seconds(rows)[1], 1050)
         owned["seconds"] += 1
         with self.assertRaisesRegex(ValueError, "1050-second guard"):
             runner.measured_shard_seconds(rows)
