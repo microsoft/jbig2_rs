@@ -4,6 +4,50 @@
 use super::*;
 
 #[test]
+fn pattern_rows_match_literal_contexts_for_wide_lags_and_other_adaptive_shapes() {
+    let mut random = 0x7d26_4f13_025c_9a6b;
+    for width in [9, 33, 257, 513] {
+        let bitmap = random_bitmap(width, 5, &mut random);
+        for lag in [1, 7, 8, 9, 16, 23, 48, 128, 129, 255, 256, 1024, i32::MAX] {
+            for moved in [false, true] {
+                let mut adaptive =
+                    generic_header(width, 5, GenericTemplate::Template0, false, false).adaptive;
+                adaptive[0] = TemplateOffset::new(-lag, 0);
+                if moved {
+                    adaptive[2].x = 1;
+                }
+                let descriptor =
+                    GenericContextDescriptor::new(GenericTemplate::Template0, false, &adaptive);
+                for y in 0..7 {
+                    let mut row = GenericRowContext::new(descriptor, &bitmap, y);
+                    for x in 0..width + 5 {
+                        let history = control_window(&bitmap, i64::from(x), i64::from(y), -4, 4);
+                        let expected = generic_context(
+                            &bitmap,
+                            x,
+                            y,
+                            GenericTemplate::Template0,
+                            false,
+                            &adaptive,
+                        );
+                        assert_eq!(descriptor.context(&bitmap, x, y, history), expected);
+                        if x % 7 == 0 {
+                            row.advance(&bitmap, x);
+                        } else {
+                            assert_eq!(
+                                row.context_and_advance(&bitmap, x, y, history),
+                                expected,
+                                "pattern lag{lag},x{x},y{y},moved{moved}",
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+#[test]
 fn raw_context_memory_guards_match_wide_arithmetic_and_priority() {
     let values = [0, 1, 2, u64::MAX / 2, u64::MAX / 2 + 1, u64::MAX];
     for bytes in values {

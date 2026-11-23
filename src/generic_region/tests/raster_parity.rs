@@ -4,6 +4,69 @@
 use super::*;
 
 #[test]
+fn pattern_adaptive_rows_preserve_full_raster_and_entropy_state() {
+    let limits = Limits::default();
+    let mut random = 0x6a22_7c93_5b06_1f4d;
+    for lag in [9, 16, 23, 48, 128, 129, 255] {
+        let width = 2 * lag + 3;
+        for prediction in [false, true] {
+            for skipping in [false, true] {
+                for truncated in [false, true] {
+                    let mut coded = arithmetic_bytes(&mut random);
+                    if truncated {
+                        coded.truncate(2);
+                        coded.copy_from_slice(&[0x10, 0x04]);
+                    }
+                    let mut decoder = ArithmeticDecoder::new(&coded).unwrap();
+                    let mut reference_decoder = ArithmeticDecoder::new(&coded).unwrap();
+                    let mut contexts = vec![
+                        ArithmeticContext::new();
+                        generic_context_count(GenericTemplate::Template0)
+                    ];
+                    let mut reference_contexts = contexts.clone();
+                    let mut bitmap = Bitmap::blank(width, 6, &limits).unwrap();
+                    let mut reference = Bitmap::blank(width, 6, &limits).unwrap();
+                    let skip = skipping.then(|| random_bitmap(width, 6, &mut random));
+                    let mut adaptive =
+                        generic_header(width, 6, GenericTemplate::Template0, false, prediction)
+                            .adaptive;
+                    adaptive[0] = TemplateOffset::new(-i32::try_from(lag).unwrap(), 0);
+                    let actual = decode_generic_with(
+                        &mut bitmap,
+                        6,
+                        GenericTemplate::Template0,
+                        false,
+                        &adaptive,
+                        prediction,
+                        skip.as_ref(),
+                        &mut decoder,
+                        &mut contexts,
+                    );
+                    let expected = decode_generic_with_oracle(
+                        &mut reference,
+                        6,
+                        GenericTemplate::Template0,
+                        false,
+                        &adaptive,
+                        prediction,
+                        skip.as_ref(),
+                        &mut reference_decoder,
+                        &mut reference_contexts,
+                    );
+                    assert_eq!(
+                        actual.as_ref().err().map(|error| format!("{error:?}")),
+                        expected.as_ref().err().map(|error| format!("{error:?}")),
+                    );
+                    assert_eq!(bitmap, reference);
+                    assert_eq!(contexts, reference_contexts);
+                    assert_decoder_state_eq(&decoder, &reference_decoder);
+                }
+            }
+        }
+    }
+}
+
+#[test]
 fn specialized_generic_kernels_match_scalar_oracle_randomized() {
     let limits = Limits::default();
     let templates = [
