@@ -182,8 +182,10 @@ Semantic contrasts require an exact positive baseline, an ordinarily compiling
 mutant, strong proof rejection and success under only the selected weakened
 guarantee. Every configured group is required.
 
-The current profile uses an additive overlay on the original owned allocation:
-only the complete three-case `default-limits-3` group moves from shard 12 to 13.
+The current portable profile uses an additive overlay on the frozen owned-balanced
+allocation: only the complete three-case `default-limits-3` group moves from
+shard 13 to 4. The preceding owned-balanced correction from shard 12 to 13 is
+preserved as historical data, not reinterpreted.
 All 64 groups / 505 contrasts remain; the two-case `owned-decode` group stays on
 shard 1. Historical colour/certainty and original owned maps retain their
 membership and timing interpretation. Fourteen shards, whole/collector roles,
@@ -208,8 +210,8 @@ colour profiles remain planning only, not current qualification.
 
 The corrected run `45289712820/1`, checkout
 `a8fc8d65fe429fa6374483be0cdfd33ece3a6006`, completed all 64 groups / 505
-contrasts but was rejected at shard 12's 1,054.647908281 seconds. The current
-overlay moves only its smallest timed complete group, `default-limits-3`
+contrasts but was rejected at shard 12's 1,054.647908281 seconds. Its original
+correction moved only its smallest timed complete group, `default-limits-3`
 (90.951952146 seconds), to shard 13. Reusing the complete rejected profile
 projects shard 12 / 13 at 963.695956135 / 829.459011706 seconds and the full
 16-role maximum at 1,029.196259829 seconds. A per-group conservative envelope
@@ -217,6 +219,20 @@ including every earlier owned-run component has the same prospective maximum,
 without setup deductions or discarded adverse timings. These are planning
 calculations, not acceptance credit. Qualification still requires a fresh
 complete same-run result under the unchanged guard.
+
+The portable-assets run `45375474932/1`, checkout
+`f329ffc076846491a711c18befa3db567d7dccc9`, also passed all 64 groups / 505
+contrasts, but its canonical profile rejected shard 13 at 1,126.437413592 seconds.
+The current overlay moves only the complete `default-limits-3` group
+(92.399836174 seconds) from shard 13 to 4. Its measured projection is
+1,034.037577418 / 875.938735740 seconds there. A per-group envelope including
+the earlier complete rejected profile, every partial owned-run component and
+the accepted `45304768601/1` profile projects a maximum of
+1,045.988282866 seconds; destination shard 4 projects 1,021.836501295 seconds.
+All rejected and accepted observations retain their original identities and
+interpretation. These calculations are planning only, not a latency guarantee
+or acceptance credit. A fresh complete same-run profile is required; no case,
+role, compiler/resource setting, parallelism or guard is changed.
 
 Native mutations separately require an original passing test and failure of
 that exact test after a compiling change:
