@@ -1,0 +1,167 @@
+{
+  "issue": 239,
+  "baseline_main": "775e57f2f99d1dbad386e51e094f2994f817ceaf",
+  "candidate": "82610c93d2f290f7d3bb6d9d24065f0710dc9ded",
+  "scope": "Original wide native-raster XOR follow-up; every123 prior control retained plus one unique94-byte3562x851 input. Two original PDF uses keep distinct canvases in provenance, not duplicated native timing credit. Not full-PDF or matched N2 qualification. Actual allocation/live payload is not RSS. Not retained.",
+  "retained": false,
+  "cases": 124,
+  "latency_configurations": 128,
+  "native_target_wire_generic_flags": 0,
+  "native_target_wire_template": 0,
+  "classification_erratum": "The immutable raw manifest/pair family annotation incorrectly says template1. The exact94-byte input actually has generic flags0/template0, no MMR/prediction. The decoder derives this from the input, not the family string. Family is descriptive only and does not select operations, input, ordering or statistics. Raw annotations remain preserved; no input or measurement is rewritten.",
+  "rounds": 9,
+  "paired_measurements": 1152,
+  "samples": 31,
+  "target_ms": 350,
+  "raw_latency_sha256": "4d8f128bfdb0eb8b1e158d8b8fe60972a389290e137711f2fe6bdea45e8f3330",
+  "raw_allocation_sha256": "5ae40552ba081f126a98992cc56815234ae7ba80b1dc5f8a2ad95d121f133dbb",
+  "protocol_sha256": "88fb5ee3e7d9a72026536d16e8e3b247071a91201873e1c59cc57c7c30fc8ad3",
+  "cohort_sha256": "06f2848e01710512ecdebc49b776aaf858be1669fb1d8bec6316409f9c591b13",
+  "target": {
+    "comparison": "239-original-wide",
+    "id": "original-wide-xor-native-3562x851",
+    "mode": "fresh",
+    "paired_median_ratio": 0.9771852580744926,
+    "paired_bootstrap95": [
+      0.9528116195994538,
+      0.9905070843458339
+    ],
+    "faster_pairs": 8,
+    "before_median_ns": 16251201,
+    "after_median_ns": 15868574,
+    "secondary_process_cpu_ratio": 0.9750874232059873
+  },
+  "target_allocation_and_peak": {
+    "id": "original-wide-xor-native-3562x851",
+    "mode": "fresh",
+    "halftone-symbols-alloc": {
+      "allocations_peak": 13,
+      "allocations_total": 21,
+      "bytes_current": 379834,
+      "bytes_peak": 914228,
+      "bytes_total": 914852,
+      "exact_output_checked": true,
+      "id": "original-wide-xor-native-3562x851",
+      "mode": "fresh",
+      "scope": "one warm-input operation, result held at end; existing input/expected/globals outside tracking"
+    },
+    "current-pristine-xor-alloc": {
+      "allocations_peak": 12,
+      "allocations_total": 20,
+      "bytes_current": 379834,
+      "bytes_peak": 534682,
+      "bytes_total": 535306,
+      "exact_output_checked": true,
+      "id": "original-wide-xor-native-3562x851",
+      "mode": "fresh",
+      "scope": "one warm-input operation, result held at end; existing input/expected/globals outside tracking"
+    }
+  },
+  "adverse_over_5_percent": [
+    {
+      "comparison": "239-original-wide",
+      "id": "bitmap-customat-tpgdon",
+      "mode": "fresh",
+      "paired_median_ratio": 1.0539407694307403,
+      "paired_bootstrap95": [
+        0.9753835695562642,
+        1.4481065599536258
+      ],
+      "faster_pairs": 2,
+      "before_median_ns": 1387699,
+      "after_median_ns": 1443296,
+      "secondary_process_cpu_ratio": 1.0157477986944625
+    },
+    {
+      "comparison": "239-original-wide",
+      "id": "bitmap-symbol-context-reuse-huffman-refagg",
+      "mode": "fresh",
+      "paired_median_ratio": 1.0530814482157107,
+      "paired_bootstrap95": [
+        0.9616029504297254,
+        1.1267333585355623
+      ],
+      "faster_pairs": 3,
+      "before_median_ns": 540992,
+      "after_median_ns": 567474,
+      "secondary_process_cpu_ratio": 1.0850202197819667
+    },
+    {
+      "comparison": "239-original-wide",
+      "id": "bitmap-symbol-symhuffuncompressed-texthuff",
+      "mode": "fresh",
+      "paired_median_ratio": 1.068606210667492,
+      "paired_bootstrap95": [
+        0.9156659819876758,
+        1.1549625468164795
+      ],
+      "faster_pairs": 4,
+      "before_median_ns": 48465,
+      "after_median_ns": 51790,
+      "secondary_process_cpu_ratio": 1.0643433794954869
+    },
+    {
+      "comparison": "239-original-wide",
+      "id": "bitmap-template1-tpgdon",
+      "mode": "fresh",
+      "paired_median_ratio": 1.0577849107964625,
+      "paired_bootstrap95": [
+        0.8852647357088672,
+        1.0706673701796299
+      ],
+      "faster_pairs": 4,
+      "before_median_ns": 1987090,
+      "after_median_ns": 1849811,
+      "secondary_process_cpu_ratio": 0.9407268277414206
+    }
+  ],
+  "fresh_whole_verified": 1536,
+  "fresh_whole_errors": 0,
+  "native_tests": 643,
+  "doctests": 1,
+  "ignored_existing": 16,
+  "public_correctness_cases": 124,
+  "public_api_checks_per_binary": 472,
+  "reused_wide_context_output_checks": [
+    {
+      "binary": "halftone-symbols",
+      "exact_output_checked": true,
+      "recoveries": "[]",
+      "width": 3562,
+      "height": 851,
+      "actual_api_calls": 10,
+      "all_timings_discarded": true
+    },
+    {
+      "binary": "current-pristine-xor",
+      "exact_output_checked": true,
+      "recoveries": "[]",
+      "width": 3562,
+      "height": 851,
+      "actual_api_calls": 10,
+      "all_timings_discarded": true
+    }
+  ],
+  "build_identities": {
+    "current-pristine-xor": {
+      "source_revision": "82610c93d2f290f7d3bb6d9d24065f0710dc9ded",
+      "binary_sha256": "c2ec394cbb5750b97886447f779191ad5390ad559f439426819b720f8fa3ce4e",
+      "runtime_sha256": "e8fab29751542f463ddf98823c3af4bf2316055787d13ed887d4280ebb6574b5"
+    },
+    "halftone-symbols": {
+      "source_revision": "f2ded09787e983edf76ed05a7487fabcbedfe728",
+      "binary_sha256": "23d20d6124d71d096e9de63931c6d4d26dce60ddd73bc6ce0a0e7045d8d3dc0c",
+      "runtime_sha256": "44c42898d63a1aa6c9d41943e74dec5d0bc4b2dc6276078c674229a14a475de5"
+    },
+    "halftone-symbols-alloc": {
+      "source_revision": "f2ded09787e983edf76ed05a7487fabcbedfe728",
+      "binary_sha256": "bf9925cba92389864e29f3da3cad4affde5bc4dec221bf680023dce48e4fbc7e",
+      "runtime_sha256": "44c42898d63a1aa6c9d41943e74dec5d0bc4b2dc6276078c674229a14a475de5"
+    },
+    "current-pristine-xor-alloc": {
+      "source_revision": "82610c93d2f290f7d3bb6d9d24065f0710dc9ded",
+      "binary_sha256": "66c6ae91e65ebcf25b9f45930a74025b7ea63e6a3e4e7382b97d6b60bcad1253",
+      "runtime_sha256": "e8fab29751542f463ddf98823c3af4bf2316055787d13ed887d4280ebb6574b5"
+    }
+  }
+}
