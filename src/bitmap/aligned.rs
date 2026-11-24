@@ -28,6 +28,40 @@ fn or_bytes(destination: &mut [u8], source: &[u8]) {
     }
 }
 
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match out {
+        Ok((start, end)) =>
+            start <= end
+                && start as int == y as int * stride as int
+                && end as int == (y as int + height as int) * stride as int
+                && end as int - start as int == height as int * stride as int,
+        Err(_) => true,
+    },
+))]
+fn row_span(y: u32, height: u32, stride: usize) -> Result<(usize, usize), MalformedError> {
+    let end_row = y
+        .checked_add(height)
+        .ok_or(MalformedError::IntegerOverflow)?;
+    let start = usize::try_from(y)
+        .map_err(|_| MalformedError::IntegerOverflow)?
+        .checked_mul(stride)
+        .ok_or(MalformedError::IntegerOverflow)?;
+    let end = usize::try_from(end_row)
+        .map_err(|_| MalformedError::IntegerOverflow)?
+        .checked_mul(stride)
+        .ok_or(MalformedError::IntegerOverflow)?;
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        vstd::arithmetic::mul::lemma_mul_is_distributive_add_other_way(
+            stride as int, y as int, height as int,
+        );
+        vstd::arithmetic::mul::lemma_mul_inequality(
+            y as int, y as int + height as int, stride as int,
+        );
+    }
+    Ok((start, end))
+}
+
 #[allow(clippy::too_many_arguments)]
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires
@@ -74,63 +108,64 @@ pub(super) fn compose_region(
         usize::try_from(source_x / 8).map_err(|_| MalformedError::IntegerOverflow)?;
     let destination_column =
         usize::try_from(destination_x / 8).map_err(|_| MalformedError::IntegerOverflow)?;
+    let source_column_end = source_column
+        .checked_add(bytes)
+        .ok_or(MalformedError::IntegerOverflow)?;
+    let destination_column_end = destination_column
+        .checked_add(bytes)
+        .ok_or(MalformedError::IntegerOverflow)?;
+    let source_stride = source.stride;
+    let destination_stride = destination.stride;
+    if source_column_end > source_stride || destination_column_end > destination_stride {
+        return Err(MalformedError::IntegerOverflow);
+    }
+    let (source_start, source_end) = row_span(source_y, height, source_stride)?;
+    let (destination_start, destination_end) = row_span(destination_y, height, destination_stride)?;
+    let mut source_rows = source
+        .data
+        .get(source_start..source_end)
+        .ok_or(MalformedError::IntegerOverflow)?;
+    let Some(mut destination_rows) = destination.data.get_mut(destination_start..destination_end)
+    else {
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            crate::views::bitmap_fields(destination);
+            reveal(crate::spec::bitmap::storage_valid);
+        }
+        return Err(MalformedError::IntegerOverflow);
+    };
     let mut row = 0_u32;
     #[cfg_attr(verus_keep_ghost, verus_spec(
         invariant
             row <= height,
             width > 0,
             height > 0,
-            destination.width == old(destination).width,
-            destination.height == old(destination).height,
-            destination.stride == old(destination).stride,
-            destination.data@.len() == old(destination).data@.len(),
-            destination.stride as nat
-                == crate::spec::bitmap::stride_for_width(destination.width as nat),
-            destination.data@.len()
-                == destination.stride as nat * destination.height as nat,
-            crate::spec::bitmap::storage_valid(destination),
+            source_stride > 0,
+            destination_stride > 0,
+            source_rows@.len() == (height - row) as int * source_stride,
+            destination_rows@.len() == (height - row) as int * destination_stride,
+            source_column <= source_column_end <= source_stride,
+            destination_column <= destination_column_end <= destination_stride,
+            source_column_end - source_column == bytes,
+            destination_column_end - destination_column == bytes,
         decreases height - row,
     ))]
     while row < height {
-        let source_row = usize::try_from(
-            source_y
-                .checked_add(row)
-                .ok_or(MalformedError::IntegerOverflow)?,
-        )
-        .map_err(|_| MalformedError::IntegerOverflow)?;
-        let source_start = source_row
-            .checked_mul(source.stride)
-            .and_then(|offset| offset.checked_add(source_column))
-            .ok_or(MalformedError::IntegerOverflow)?;
-        let source_end = source_start
-            .checked_add(bytes)
-            .ok_or(MalformedError::IntegerOverflow)?;
-        let source_slice = source
-            .data
-            .get(source_start..source_end)
-            .ok_or(MalformedError::IntegerOverflow)?;
-        let destination_row = usize::try_from(
-            destination_y
-                .checked_add(row)
-                .ok_or(MalformedError::IntegerOverflow)?,
-        )
-        .map_err(|_| MalformedError::IntegerOverflow)?;
-        let destination_start = destination_row
-            .checked_mul(destination.stride)
-            .and_then(|offset| offset.checked_add(destination_column))
-            .ok_or(MalformedError::IntegerOverflow)?;
-        let destination_end = destination_start
-            .checked_add(bytes)
-            .ok_or(MalformedError::IntegerOverflow)?;
-        let Some(destination_slice) = destination.data.get_mut(destination_start..destination_end)
-        else {
-            #[cfg(verus_keep_ghost)]
-            proof! {
-                crate::views::bitmap_fields(destination);
-                reveal(crate::spec::bitmap::storage_valid);
-            }
-            return Err(MalformedError::IntegerOverflow);
-        };
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            vstd::arithmetic::mul::lemma_mul_inequality(
+                1, height as int - row as int, source_stride as int,
+            );
+            vstd::arithmetic::mul::lemma_mul_inequality(
+                1, height as int - row as int, destination_stride as int,
+            );
+        }
+        let (source_row, source_tail) = source_rows.split_at(source_stride);
+        let (destination_row, destination_tail) = destination_rows.split_at_mut(destination_stride);
+        source_rows = source_tail;
+        destination_rows = destination_tail;
+        let source_slice = &source_row[source_column..source_column_end];
+        let destination_slice = &mut destination_row[destination_column..destination_column_end];
         if replace {
             copy_row_bytes(destination_slice, source_slice);
         } else {
@@ -138,10 +173,23 @@ pub(super) fn compose_region(
         }
         #[cfg(verus_keep_ghost)]
         proof! {
-            crate::views::bitmap_fields(destination);
-            reveal(crate::spec::bitmap::storage_valid);
+            vstd::arithmetic::mul::lemma_mul_is_distributive_sub_other_way(
+                source_stride as int, height as int - row as int, 1,
+            );
+            vstd::arithmetic::mul::lemma_mul_is_distributive_sub_other_way(
+                destination_stride as int, height as int - row as int, 1,
+            );
+            assert(source_rows@.len()
+                == (height as int - row as int - 1) * source_stride as int);
+            assert(destination_rows@.len()
+                == (height as int - row as int - 1) * destination_stride as int);
         }
         row += 1;
+    }
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        crate::views::bitmap_fields(destination);
+        reveal(crate::spec::bitmap::storage_valid);
     }
     Ok(())
 }
