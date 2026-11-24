@@ -1,0 +1,166 @@
+{
+  "issue": 230,
+  "baseline_main": "775e57f2f99d1dbad386e51e094f2994f817ceaf",
+  "scope": "Three complete predeclared local nine-round confirmations. Every candidate fails at least one127-configuration greater-than5-percent median control gate and is not retained. Shared x86-64 Rust consumer, not matched N2/PDFium qualification. All exact-output checks and adverse records remain; no alignment/padding changes or unchanged-source reruns to obtain a pass.",
+  "rounds_per_experiment": 9,
+  "configurations_per_experiment": 127,
+  "paired_measurements_per_experiment": 1143,
+  "samples": 31,
+  "target_ms": 350,
+  "cold_single_decode_case": "bitmap-symbol-manysyms",
+  "experiments": [
+    {
+      "id": "initial",
+      "source_revision": "261da64e7f70bb75879ffb1b2990b31a29008f6c",
+      "raw_file": "confirmation-compose-merged-main.json",
+      "raw_sha256": "3bcb1fd024f151eb2804bee5aebe6c29c21c0ece476ca143f0d995dcaa2484ec",
+      "protocol_sha256": "88fb5ee3e7d9a72026536d16e8e3b247071a91201873e1c59cc57c7c30fc8ad3",
+      "cohort_sha256": "389759957774c7c2d22eb09cd3b5463202eda0ca07fd701a8f0361b84cded39a",
+      "builds": {
+        "halftone-symbols": {
+          "source_revision": "f2ded09787e983edf76ed05a7487fabcbedfe728",
+          "binary_sha256": "23d20d6124d71d096e9de63931c6d4d26dce60ddd73bc6ce0a0e7045d8d3dc0c",
+          "runtime_sha256": "44c42898d63a1aa6c9d41943e74dec5d0bc4b2dc6276078c674229a14a475de5"
+        },
+        "performance-compose": {
+          "source_revision": "3ba22e8610679c94ae0997657d7005fc7a472f42",
+          "binary_sha256": "ff63f1100097233edebe85f98663e30dba4dc9eacd545c1845594286abe44157",
+          "runtime_sha256": "2242bc0e177d73dd770d2ada2ca1d0327ba84b2861a8b1a1ff3d853cb8285d5f"
+        }
+      },
+      "adverse_over_5_percent": [
+        {
+          "comparison": "230-incremental",
+          "id": "bitmap-symbol-symhuff-texthuffB10B13",
+          "mode": "fresh",
+          "paired_median_ratio": 1.0573409860404483,
+          "paired_bootstrap95": [
+            1.0152134885528679,
+            1.0971061999929506
+          ],
+          "faster_pairs": 1,
+          "before_median_ns": 55231,
+          "after_median_ns": 57039,
+          "secondary_process_cpu_ratio": 1.0381373456203782
+        },
+        {
+          "comparison": "230-incremental",
+          "id": "generated-white-512",
+          "mode": "fresh",
+          "paired_median_ratio": 1.0629402523691278,
+          "paired_bootstrap95": [
+            0.9668830245889989,
+            1.108953957139826
+          ],
+          "faster_pairs": 3,
+          "before_median_ns": 19733,
+          "after_median_ns": 20975,
+          "secondary_process_cpu_ratio": 0.9874521705580761
+        },
+        {
+          "comparison": "230-incremental",
+          "id": "symbol-identity-4096",
+          "mode": "fresh",
+          "paired_median_ratio": 1.0521145855792315,
+          "paired_bootstrap95": [
+            0.9315224035481762,
+            1.3374555917029054
+          ],
+          "faster_pairs": 4,
+          "before_median_ns": 546099,
+          "after_median_ns": 575816,
+          "secondary_process_cpu_ratio": 1.1889840997692098
+        }
+      ],
+      "retained": false
+    },
+    {
+      "id": "streamed",
+      "source_revision": "f1540e5f520860d9d19f104728797f33eff0ea66",
+      "raw_file": "confirmation-streamed-compose-main.json",
+      "raw_sha256": "95277b22356a0fa51c406caecfd0b2b64565f9b1ca17caca946e33cf06f1fd0e",
+      "protocol_sha256": "88fb5ee3e7d9a72026536d16e8e3b247071a91201873e1c59cc57c7c30fc8ad3",
+      "cohort_sha256": "389759957774c7c2d22eb09cd3b5463202eda0ca07fd701a8f0361b84cded39a",
+      "builds": {
+        "halftone-symbols": {
+          "source_revision": "f2ded09787e983edf76ed05a7487fabcbedfe728",
+          "binary_sha256": "23d20d6124d71d096e9de63931c6d4d26dce60ddd73bc6ce0a0e7045d8d3dc0c",
+          "runtime_sha256": "44c42898d63a1aa6c9d41943e74dec5d0bc4b2dc6276078c674229a14a475de5"
+        },
+        "streamed-compose": {
+          "source_revision": "f1540e5f520860d9d19f104728797f33eff0ea66",
+          "binary_sha256": "e3a62a9b7b93d7a6ef048d6052817c85dace4d833f3a09f803dccaf0a17bf09b",
+          "runtime_sha256": "3a9124afbf9067f0540e763e804aaeee92898bae968dd43f89e031635553ecc7"
+        }
+      },
+      "adverse_over_5_percent": [
+        {
+          "comparison": "230-streamed",
+          "id": "bitmap-symbol-manysyms",
+          "mode": "fresh",
+          "paired_median_ratio": 1.073147104848693,
+          "paired_bootstrap95": [
+            0.9683106038007141,
+            1.206856174611526
+          ],
+          "faster_pairs": 2,
+          "before_median_ns": 131013338,
+          "after_median_ns": 150215529,
+          "secondary_process_cpu_ratio": 1.0680340102519075
+        },
+        {
+          "comparison": "230-streamed",
+          "id": "bitmap-template1-tpgdon",
+          "mode": "fresh",
+          "paired_median_ratio": 1.0682693606362856,
+          "paired_bootstrap95": [
+            0.995941192022716,
+            1.1373575641522757
+          ],
+          "faster_pairs": 2,
+          "before_median_ns": 1882689,
+          "after_median_ns": 2000455,
+          "secondary_process_cpu_ratio": 1.0126934566561892
+        }
+      ],
+      "retained": false
+    },
+    {
+      "id": "outlined",
+      "source_revision": "6e98cc0719af9587564922b7bcaa4c8053a6711f",
+      "raw_file": "confirmation-outlined-compose-main.json",
+      "raw_sha256": "94540ecebd1e1d3245a9f885a6b619baa06e87e3882c045729dff10865cfaeff",
+      "protocol_sha256": "88fb5ee3e7d9a72026536d16e8e3b247071a91201873e1c59cc57c7c30fc8ad3",
+      "cohort_sha256": "389759957774c7c2d22eb09cd3b5463202eda0ca07fd701a8f0361b84cded39a",
+      "builds": {
+        "halftone-symbols": {
+          "source_revision": "f2ded09787e983edf76ed05a7487fabcbedfe728",
+          "binary_sha256": "23d20d6124d71d096e9de63931c6d4d26dce60ddd73bc6ce0a0e7045d8d3dc0c",
+          "runtime_sha256": "44c42898d63a1aa6c9d41943e74dec5d0bc4b2dc6276078c674229a14a475de5"
+        },
+        "outlined-streamed-compose": {
+          "source_revision": "6e98cc0719af9587564922b7bcaa4c8053a6711f",
+          "binary_sha256": "a8441f88ba8a56d702b3032d9cece06b0a3721b774bdbf80a92d02ad38d10f50",
+          "runtime_sha256": "54cd66ab8c58cb2106e5ce6bc59fff8feee89075140ea1dc881c4c38a8acba1a"
+        }
+      },
+      "adverse_over_5_percent": [
+        {
+          "comparison": "230-outlined",
+          "id": "generated-white-512",
+          "mode": "fresh",
+          "paired_median_ratio": 1.0568030349636008,
+          "paired_bootstrap95": [
+            1.0336911150864638,
+            1.0995924339011391
+          ],
+          "faster_pairs": 1,
+          "before_median_ns": 19291,
+          "after_median_ns": 20614,
+          "secondary_process_cpu_ratio": 1.0062638736635177
+        }
+      ],
+      "retained": false
+    }
+  ]
+}
