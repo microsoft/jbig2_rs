@@ -1,0 +1,361 @@
+{
+  "scope": "Measured host build-tool compilation optimization, not decoder latency, a proof-result cache, weakened verification or canonical hosted acceptance. Same pinned Rust/Verus and all native/strong/weaker queries; shared x86-64 host, no isolation guarantee. Cold setup is included and adverse small-checker/O3 results are retained.",
+  "baseline_source": "470aaa6e556443872a77784dece82ebab0bafb4f",
+  "changed_input": "verification/Cargo.toml [profile.dev.build-override] opt-level=1",
+  "verification_manifest_sha256": "be67ee3fa5a0accb90082c430272d24c429b425056f3b7674828a67a6a0c1431",
+  "production_library_profile_unchanged": true,
+  "production_debug_assertions_and_overflow_checks_unchanged": true,
+  "all_query_and_native_result_values_equal": true,
+  "primary_before": {
+    "label": "decision-overhead-before",
+    "seconds": 595.6813784660771,
+    "selected_proofs": 31,
+    "production_root_invalidations": 31,
+    "native_mutant_checks": 15,
+    "counterexamples": 15,
+    "result_document_sha256": "b8c4f2fd69a35c4c6fbd951e0c24073083f926d0e62968efd01d116b867e41b1"
+  },
+  "primary_after": {
+    "label": "decision-build-dependencies-o1",
+    "seconds": 535.7713022930548,
+    "selected_proofs": 31,
+    "production_root_invalidations": 31,
+    "native_mutant_checks": 15,
+    "counterexamples": 15,
+    "result_document_sha256": "b8c4f2fd69a35c4c6fbd951e0c24073083f926d0e62968efd01d116b867e41b1"
+  },
+  "primary_time_ratio": 0.899425971100028,
+  "cold_small_checker_before": {
+    "label": "reset-verus-timing-before",
+    "seconds": 125.86903222184628,
+    "selected_proofs": 5,
+    "production_root_invalidations": 5,
+    "native_mutant_checks": 2,
+    "counterexamples": 2,
+    "result_document_sha256": "7532179749eb38911ecb657c7b26c450380692f463798d4e992680f159933819"
+  },
+  "cold_small_checker_after": {
+    "label": "reset-build-dependencies-o1",
+    "seconds": 139.7509636459872,
+    "selected_proofs": 5,
+    "production_root_invalidations": 5,
+    "native_mutant_checks": 2,
+    "counterexamples": 2,
+    "result_document_sha256": "7532179749eb38911ecb657c7b26c450380692f463798d4e992680f159933819"
+  },
+  "unretained_opt_level_3_seconds": 211.65251602698117,
+  "unretained_opt_level_3_note": "Diagnostic run included first-build exec tracing; not latency-equivalent adoption evidence.",
+  "actual_cargo_artifact_profiles": [
+    {
+      "target": "equivalent",
+      "kind": [
+        "lib"
+      ],
+      "profile": {
+        "opt_level": "1",
+        "debuginfo": 0,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "fresh": false
+    },
+    {
+      "target": "unicode_ident",
+      "kind": [
+        "lib"
+      ],
+      "profile": {
+        "opt_level": "1",
+        "debuginfo": 0,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "fresh": false
+    },
+    {
+      "target": "build-script-build",
+      "kind": [
+        "custom-build"
+      ],
+      "profile": {
+        "opt_level": "1",
+        "debuginfo": 0,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "fresh": false
+    },
+    {
+      "target": "build-script-build",
+      "kind": [
+        "custom-build"
+      ],
+      "profile": {
+        "opt_level": "1",
+        "debuginfo": 0,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "fresh": false
+    },
+    {
+      "target": "verus_builtin",
+      "kind": [
+        "lib"
+      ],
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "fresh": false
+    },
+    {
+      "target": "build-script-build",
+      "kind": [
+        "custom-build"
+      ],
+      "profile": {
+        "opt_level": "1",
+        "debuginfo": 0,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "fresh": false
+    },
+    {
+      "target": "build-script-build",
+      "kind": [
+        "custom-build"
+      ],
+      "profile": {
+        "opt_level": "1",
+        "debuginfo": 0,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "fresh": false
+    },
+    {
+      "target": "convert_case",
+      "kind": [
+        "lib"
+      ],
+      "profile": {
+        "opt_level": "1",
+        "debuginfo": 0,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "fresh": false
+    },
+    {
+      "target": "hashbrown",
+      "kind": [
+        "lib"
+      ],
+      "profile": {
+        "opt_level": "1",
+        "debuginfo": 0,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "fresh": false
+    },
+    {
+      "target": "indexmap",
+      "kind": [
+        "lib"
+      ],
+      "profile": {
+        "opt_level": "1",
+        "debuginfo": 0,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "fresh": false
+    },
+    {
+      "target": "quote",
+      "kind": [
+        "lib"
+      ],
+      "profile": {
+        "opt_level": "1",
+        "debuginfo": 0,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "fresh": false
+    },
+    {
+      "target": "proc_macro2",
+      "kind": [
+        "lib"
+      ],
+      "profile": {
+        "opt_level": "1",
+        "debuginfo": 0,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "fresh": false
+    },
+    {
+      "target": "synstructure",
+      "kind": [
+        "lib"
+      ],
+      "profile": {
+        "opt_level": "1",
+        "debuginfo": 0,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "fresh": false
+    },
+    {
+      "target": "verus_prettyplease",
+      "kind": [
+        "lib"
+      ],
+      "profile": {
+        "opt_level": "1",
+        "debuginfo": 0,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "fresh": false
+    },
+    {
+      "target": "syn",
+      "kind": [
+        "lib"
+      ],
+      "profile": {
+        "opt_level": "1",
+        "debuginfo": 0,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "fresh": false
+    },
+    {
+      "target": "verus_syn",
+      "kind": [
+        "lib"
+      ],
+      "profile": {
+        "opt_level": "1",
+        "debuginfo": 0,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "fresh": false
+    },
+    {
+      "target": "verus_state_machines_macros",
+      "kind": [
+        "proc-macro"
+      ],
+      "profile": {
+        "opt_level": "1",
+        "debuginfo": 0,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "fresh": false
+    },
+    {
+      "target": "verus_builtin_macros",
+      "kind": [
+        "proc-macro"
+      ],
+      "profile": {
+        "opt_level": "1",
+        "debuginfo": 0,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "fresh": false
+    },
+    {
+      "target": "vstd",
+      "kind": [
+        "lib"
+      ],
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "fresh": false
+    },
+    {
+      "target": "jbig2_capacity_interface",
+      "kind": [
+        "lib"
+      ],
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "fresh": false
+    },
+    {
+      "target": "jbig2_rs_production",
+      "kind": [
+        "lib"
+      ],
+      "profile": {
+        "opt_level": "0",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": false
+      },
+      "fresh": false
+    }
+  ],
+  "fresh_whole_verified": 1532,
+  "fresh_whole_errors": 0,
+  "coverage_byte_identical": true,
+  "fresh_coverage_counts": {
+    "verified": 750,
+    "reviewed-verifier-limitation": 20,
+    "audited-forwarder": 0,
+    "runtime-proof-divergence": 0,
+    "native-assumption": 0,
+    "incomplete": 0
+  },
+  "reviewed_limitations_unchanged": 20,
+  "guard_seconds_unchanged": 1050,
+  "proof_result_caching": false,
+  "whole_collector_roles_changed": false,
+  "semantic_group_or_contrast_membership_changed": false,
+  "normative_approval": false
+}

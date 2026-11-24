@@ -250,6 +250,40 @@ These are planning bounds, not acceptance or universal timing guarantees.
 All earlier allocations, roles, observations and rejection evidence remain;
 only fresh complete same-run CI can qualify the new profile.
 
+### Host procedural-macro build overhead
+
+The verification workspace builds host-only procedural macros and their build
+dependencies at development opt-level 1. The production library and ordinary
+verification dependencies retain their original development compilation profile.
+The pinned Rust/Verus versions, debug assertions, proof checks, selectors,
+rlimit/thread/timeout settings and every native/strong/weaker query remain.
+This changes host build-tool compilation, not a proof or runtime resource gate.
+The ordinary crate manifest and native decoder source are unchanged.
+
+Real profiling attributed more than 98% of a 15-contrast arithmetic-decision
+checker to subprocesses, not Python. A local same-source run including fresh
+dependency setup measured 595.681 seconds before and 535.771 seconds after
+(10.1% less time). Both performed 31 fresh selected proofs, 31 production-root
+invalidations and 15 native mutant checks; their entire result documents,
+including all source bindings and strong/weaker outcomes, match exactly.
+The [source/profile/timing receipt](performance/proof-host-build-profile.json)
+also records the actual Cargo artifact profiles and the adverse observations.
+The warm-query saving comes from faster macro expansion. It is not free:
+the small two-contrast reset checker regressed from 125.869 to 139.751 seconds
+including cold setup. An opt-level 3 diagnostic also recorded first-build
+execution tracing; it is retained separately, not used as equivalent latency
+evidence or adopted. Host build dependencies are reused only within the existing fresh
+per-worker cache, amortizing setup across complete groups; no proof result or
+production-root artifact is cached.
+
+The host build profile is part of `verification/Cargo.toml`, so the existing
+dependency-cache digest binds it and invalidates incompatible host artifacts.
+The cache regression test covers this manifest as well as the toolchain,
+lockfile and reviewed interface sources. These shared-host observations are
+planning evidence, not portable timing guarantees or a canonical CI pass.
+The complete 64-group/505-contrast same-run pipeline and unchanged 1,050-second
+guard must still pass on the final head.
+
 Native mutations separately require an original passing test and failure of
 that exact test after a compiling change:
 

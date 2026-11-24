@@ -9,7 +9,7 @@
     "verus_commit": "426d8b01e7ffb910a36c15e1f870ff985bb61eef",
     "archive_sha256": "624018662868563a7bec0dd07be5e4dd0c3d61124b4b55105765884bf2d4d1a0"
   },
-  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-cargo cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/owned-final/expanded\" --output-json",
+  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-cargo-macro-o1 CARGO_INCREMENTAL=0 cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/macro-build-profile/expanded\" --output-json",
   "result": {
     "verified_obligations": 1532,
     "verified_production_functions": 750,
@@ -33,7 +33,42 @@
     "review_kind": "delegated_engineering_review",
     "normative_approval": false
   },
-  "current_evidence_note": "Exact runtime f2ded09787e983edf76ed05a7487fabcbedfe728; fresh whole1532/0, exact750 direct verified functions and unchanged20 reviewed limitations. Native and expanded compiler inventories reconcile. All ten original strict conformance outcomes are byte-identical. Performance candidates remain subject to complete target/control qualification and protected CI, including all prior 503 contrasts plus the two owned-decode contrasts and unchanged1050-second guard. Matched ARM/LLVM24/PDFium and321-image/140-PDF qualification is absent and is not claimed. No backport, publication or renewed normative approval.",
+  "current_evidence_note": "Exact runtime f2ded09787e983edf76ed05a7487fabcbedfe728 is unchanged. Fresh whole1532/0 after optimizing only host build dependencies, exact750 direct verified functions and unchanged20 reviewed limitations; coverage is byte-identical, expanded inventory and source-bound traceability pass. Actual Cargo profiles retain production/vstd/reviewed-interface opt0, debug2 and debug/overflow checks; only host procedural macros/build dependencies use opt1. Every selected proof, native query, root invalidation, resource cap, role and the1050-second guard remains. Original N2/LLVM24/PDFium321-image/140-PDF qualification for121bee27 is separately published under tools/pdfium-qualification/runs/pr241-121bee27-n2 and is not relabelled as a new measurement. Fresh complete64-group/505-contrast same-run CI remains required on the corrected head. No backport, publication or renewed normative approval.",
+  "host_build_dependency_ci_repair": {
+    "baseline_source": "470aaa6e556443872a77784dece82ebab0bafb4f",
+    "preserved_rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/45410252328",
+    "rejected_attempts": [
+      {
+        "attempt": 1,
+        "all_groups_passed": true,
+        "group_count": 64,
+        "contrast_count": 505,
+        "rejected_role": "shard-3",
+        "seconds": 1074.516898703
+      },
+      {
+        "attempt": 2,
+        "all_groups_passed": true,
+        "group_count": 64,
+        "contrast_count": 505,
+        "rejected_role": "collector",
+        "seconds": 1102.266124819,
+        "maximum_shard_seconds": 1047.6986833110002
+      }
+    ],
+    "change": "verification/Cargo.toml profile.dev.build-override opt-level=1",
+    "evidence": "validation/performance/proof-host-build-profile.json",
+    "measured_checker_before_seconds": 595.6813784660771,
+    "measured_checker_after_seconds": 535.7713022930548,
+    "same_selected_proof_queries": 31,
+    "same_production_root_invalidations": 31,
+    "same_native_mutant_checks": 15,
+    "result_documents_equal": true,
+    "production_library_profile_unchanged": true,
+    "debug_assertions_and_overflow_checks_unchanged": true,
+    "guard_seconds_unchanged": 1050,
+    "scope": "Substantive measured reduction in host procedural-macro execution overhead, not another unchanged-head rerun or timing-gate relaxation. Cold setup is included; the adverse small-checker result and instrumented unretainedopt3 diagnostic remain in the evidence. Macro/build-tool compilation changes, while pinned compiler/verifier versions, verified/native production profiles, every proof/native query and root invalidation, roles, concurrency and resource limits remain. Existing ephemeral dependency reuse is keyed by this changed manifest; no production or proof-result cache is added. Both rejected complete attempts remain rejected, never stitched. Local measurements and fresh whole1532/0 are not canonical acceptance; require a fresh complete same-run CI profile."
+  },
   "owned_decode_ci_profile_correction": {
     "rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/45280486638",
     "attempt": 1,
