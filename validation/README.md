@@ -182,10 +182,11 @@ Semantic contrasts require an exact positive baseline, an ordinarily compiling
 mutant, strong proof rejection and success under only the selected weakened
 guarantee. Every configured group is required.
 
-The current portable profile uses an additive overlay on the frozen owned-balanced
-allocation: only the complete three-case `default-limits-3` group moves from
-shard 13 to 4. The preceding owned-balanced correction from shard 12 to 13 is
-preserved as historical data, not reinterpreted.
+The current robust portable profile balances seven complete groups over the
+preceding portable allocation. That preceding correction moved the complete
+three-case `default-limits-3` group from shard 13 to 4; the earlier owned-balanced
+correction moved it from shard 12 to 13. Both older allocations are preserved
+as historical data, not reinterpreted.
 All 64 groups / 505 contrasts remain; the two-case `owned-decode` group stays on
 shard 1. Historical colour/certainty and original owned maps retain their
 membership and timing interpretation. Fourteen shards, whole/collector roles,
@@ -223,7 +224,7 @@ complete same-run result under the unchanged guard.
 The portable-assets run `45375474932/1`, checkout
 `f329ffc076846491a711c18befa3db567d7dccc9`, also passed all 64 groups / 505
 contrasts, but its canonical profile rejected shard 13 at 1,126.437413592 seconds.
-The current overlay moves only the complete `default-limits-3` group
+Its original correction moved only the complete `default-limits-3` group
 (92.399836174 seconds) from shard 13 to 4. Its measured projection is
 1,034.037577418 / 875.938735740 seconds there. A per-group envelope including
 the earlier complete rejected profile, every partial owned-run component and
@@ -233,6 +234,21 @@ All rejected and accepted observations retain their original identities and
 interpretation. These calculations are planning only, not a latency guarantee
 or acceptance credit. A fresh complete same-run profile is required; no case,
 role, compiler/resource setting, parallelism or guard is changed.
+
+Run `45391179475/1`, checkout `eb1a5dc7bb9a84b199803f501fec8f95b3029b51`,
+again passed all 64 groups / 505 contrasts but rejected shard 4 at
+1,063.714668023 seconds. Moving a single group left insufficient timing margin.
+The current static overlay therefore balances seven complete groups using the
+per-group maxima from every owned/portable partial, rejected and accepted
+profile above: reference-catalog to 9, mmr-span to 6, bitmap-copy to 2,
+reader-error to 13, public-decode-results to 5, black-span to 4, and
+error-wrappers-basic to 3. No group is split, removed or weakened.
+The latest complete-profile shard projection has maximum 1,019.920750152
+seconds; the complete component-envelope shard maximum is 1,025.695969442.
+The unchanged collector's component envelope is still 1,049.066534463 seconds.
+These are planning bounds, not acceptance or universal timing guarantees.
+All earlier allocations, roles, observations and rejection evidence remain;
+only fresh complete same-run CI can qualify the new profile.
 
 Native mutations separately require an original passing test and failure of
 that exact test after a compiling change:

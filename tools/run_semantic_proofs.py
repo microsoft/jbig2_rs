@@ -135,6 +135,16 @@ PORTABLE_SHARD_ALLOCATION = {
     **OWNED_BALANCED_SHARD_ALLOCATION,
     "default-limits-3": 4,
 }
+PORTABLE_ROBUST_SHARD_ALLOCATION = {
+    **PORTABLE_SHARD_ALLOCATION,
+    "reference-catalog": 9,
+    "mmr-span": 6,
+    "bitmap-copy": 2,
+    "reader-error": 13,
+    "public-decode-results": 5,
+    "black-span": 4,
+    "error-wrappers-basic": 3,
+}
 RECEIPT_SCHEMA = 3
 CHECKS = (
     ("arithmetic-certainty", "check_arithmetic_certainty_proofs.py", 4, "strong_contract", "weaker_control"),
@@ -272,7 +282,7 @@ def configured_shards():
                     break
     if count == CI_SHARDS == 14 and any(check[0] == "colour-rgb" for check in checks):
         allocation = (
-            PORTABLE_SHARD_ALLOCATION
+            PORTABLE_ROBUST_SHARD_ALLOCATION
             if any(check[0] == "owned-decode" for check in checks)
             else COLOUR_SHARD_ALLOCATION
         )

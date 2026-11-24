@@ -101,6 +101,32 @@
     "semantic_shards_unchanged": 14,
     "scope": "Complete preserved same-run profile: all64 groups/505 contrasts pass, but shard13 exceeds the unchanged guard. A current-only overlay moves one complete three-case group to shard4. Historical colour/owned allocations and all partial, rejected and accepted observations retain their original scope. The conservative component envelope includes the earlier owned rejected/partial data and the accepted45304768601/1 profile; it is planning, not acceptance credit. Every case, checker, compiler/resource cap, whole/collector role and parallelism setting remains. Runtime and N2 measurement receipts are unchanged; require fresh complete same-run CI on the corrected head."
   },
+  "portable_qualification_robust_ci_profile": {
+    "rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/45391179475",
+    "attempt": 1,
+    "source_revision": "656913e2a87e3151725a8e3841e9088befa9d28a",
+    "actual_checkout": "eb1a5dc7bb9a84b199803f501fec8f95b3029b51",
+    "all_semantic_groups_passed": true,
+    "group_count": 64,
+    "contrast_count": 505,
+    "rejected_shard": 4,
+    "rejected_shard_seconds": 1063.714668023,
+    "complete_group_destinations": {
+      "reference-catalog": 9,
+      "mmr-span": 6,
+      "bitmap-copy": 2,
+      "reader-error": 13,
+      "public-decode-results": 5,
+      "black-span": 4,
+      "error-wrappers-basic": 3
+    },
+    "latest_profile_projected_shard_maximum_seconds": 1019.920750152,
+    "complete_component_envelope_shard_maximum_seconds": 1025.695969442,
+    "unchanged_collector_component_envelope_seconds": 1049.066534463,
+    "guard_seconds_unchanged": 1050,
+    "semantic_shards_unchanged": 14,
+    "scope": "A second complete all64/505 passing-component profile exceeds the unchanged shard guard. Replace single-group placement with a static seven-complete-group balance derived from all retained owned/portable component maxima, including partial, rejected and accepted observations. No case is split, removed or weakened; historical maps retain their meanings, and whole/collector roles, compiler/resource caps and parallelism remain fixed. Projections are planning only and do not claim new acceptance or a universal timing guarantee. Runtime, native consumer bytes and N2 measurements are unchanged. Require fresh complete same-run CI on the corrected head."
+  },
   "duplicate_executable_proof_source": false,
   "embedded_recovery_ci_profile_correction": {
     "rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/44359238184",
