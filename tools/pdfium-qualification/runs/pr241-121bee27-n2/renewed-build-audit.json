@@ -1,0 +1,42 @@
+{
+  "environment": {
+    "architecture": "aarch64",
+    "cpu_model": "Neoverse-N2",
+    "clang": "clang version 24.0.0git (https://chromium.googlesource.com/external/github.com/llvm/llvm-project c3223914b50811fb3be915840f06456acb83d096)",
+    "rustc": "rustc 1.101.0-nightly (41b321963 2026-10-29) (96a18bf5ffa2b24f9cf3d1c731a9eb121c1acad9-5-llvmorg-24-init-17044-gc3223914 chromium)",
+    "affinity_cpu": 2,
+    "shared_host": true,
+    "host_policy_changed": false
+  },
+  "cpp": {
+    "c_cpp_o3_native_thinlto_commands": 1232,
+    "final_lto_opt": 3,
+    "binary_sha256": "a854099a628a7ef303fcb9a68f8a6186d6e4021acd8471a6aea3f6a0181e638d"
+  },
+  "base_strict": {
+    "c_cpp_o3_native_thinlto_commands": 1236,
+    "final_lto_opt": 3,
+    "binary_sha256": "2876626f5fd94c28b4c16193b2de2a114ebda5e1c5ac16331e879481c1221eb9",
+    "core_archive_sha256": "d1628bf881891787de4e7aa20dbd4865931571f083585e0f242d3c4685155a5b"
+  },
+  "base_best": {
+    "c_cpp_o3_native_thinlto_commands": 1236,
+    "final_lto_opt": 3,
+    "binary_sha256": "09009b3573e0878c1f9c1868be218be6a1954cc1d96e528890e7628488065c66",
+    "core_archive_sha256": "d1628bf881891787de4e7aa20dbd4865931571f083585e0f242d3c4685155a5b"
+  },
+  "candidate_strict": {
+    "c_cpp_o3_native_thinlto_commands": 1236,
+    "final_lto_opt": 3,
+    "binary_sha256": "f92691c09194b9d727edc743b0fe1e58a83efde5b8735dfda0d494d9e4ac5568",
+    "core_archive_sha256": "fd16007066ae7817ca0cad1c52a9dc3b18914558e64ee457cef758c67d799b15"
+  },
+  "candidate_best": {
+    "c_cpp_o3_native_thinlto_commands": 1236,
+    "final_lto_opt": 3,
+    "binary_sha256": "cd91b42972cc53221cf7ca7035126fbf33c82f52f7dddff782e97c3efabc4035",
+    "core_archive_sha256": "fd16007066ae7817ca0cad1c52a9dc3b18914558e64ee457cef758c67d799b15"
+  },
+  "base_source": "3cfff21b3bc157a5908e32199c1e94b2811ad806",
+  "candidate_source": "121bee27be8080a6de3642375d2f84d1967f24dd"
+}

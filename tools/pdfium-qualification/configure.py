@@ -22,6 +22,8 @@ def main():
     pdfium, crate, clang, rust = (p.resolve() for p in (args.pdfium, args.crate, args.clang, args.rust))
     if platform.system() != "Linux" or platform.machine() not in ("aarch64", "arm64"):
         raise SystemExit("Original N2 consumer qualification requires native Linux ARM64; other hosts are additional evidence.")
+    if "Neoverse-N2" not in subprocess.check_output(["lscpu"], text=True):
+        raise SystemExit("This is not the original Neoverse-N2 host class; report other CPUs separately.")
     if not args.prefix.isalnum():
         raise SystemExit("Build prefix must be alphanumeric.")
     clang_version = subprocess.check_output([str(clang / "bin/clang"), "--version"], text=True)

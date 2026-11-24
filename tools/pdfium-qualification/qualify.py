@@ -7,7 +7,9 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import platform
 import random
+import re
 import shlex
 import statistics
 import subprocess
@@ -38,6 +40,19 @@ def module(name):
 
 def audit(args):
     receipt = {}
+    cpu = subprocess.check_output(["lscpu"], text=True)
+    if platform.machine() not in ("aarch64", "arm64") or "Neoverse-N2" not in cpu:
+        raise SystemExit("Original matched qualification requires native Neoverse-N2.")
+    config = (args.work / "out/BaseStrict/args.gn").read_text()
+    clang = Path(re.search(r'clang_base_path = "([^"]+)"', config).group(1))
+    rust = Path(re.search(r'rust_sysroot_absolute = "([^"]+)"', config).group(1))
+    clang_version = subprocess.check_output([str(clang / "bin/clang"), "--version"], text=True).splitlines()[0]
+    rust_version = subprocess.check_output([str(rust / "bin/rustc"), "--version"], text=True).strip()
+    rust_verbose = subprocess.check_output([str(rust / "bin/rustc"), "--version", "--verbose"], text=True)
+    assert "c3223914b508" in clang_version and "41b321963" in rust_version and "LLVM version: 24." in rust_verbose
+    receipt["environment"] = dict(architecture=platform.machine(), cpu_model="Neoverse-N2",
+                                  clang=clang_version, rustc=rust_version, affinity_cpu=2,
+                                  shared_host=True, host_policy_changed=False)
     for backend, build in BUILDS.items():
         out = args.work / "out" / build
         raw = subprocess.check_output([str(args.work / "third_party/ninja/ninja"), "-C", str(out),

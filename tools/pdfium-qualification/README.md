@@ -5,6 +5,15 @@ expected outcomes and receipts required by PR #241. It is not a decoder
 optimization, release, gate waiver or a claim that the candidate has passed.
 Fresh candidate results, when available, are stored under `runs/`.
 
+The held original consumer gate has now been executed for PR #241:
+[complete N2 results and raw receipts](runs/pr241-121bee27-n2/README.md).
+The functional and per-case median performance gates pass for the exact
+tested base/head. This is separate from project proof/CI and not merge approval.
+
+The original narrative and TSVs are under `frozen/`; JSON outcomes are portable
+projections, so their file hashes deliberately differ from the original
+machine-local JSON hashes recorded in the historical verification receipt.
+
 ## What is actually supplied
 
 - The original real-PDFium C++ consumer, its complete integration patch
@@ -129,6 +138,33 @@ For renewed PR qualification compare its exact base/head as well as C++.
 `f8774dd4` is the historical Rust source, not a substitute for a later main
 control. Preserve every adverse row and the original intentional refusals.
 Do not count blank/omitted images as decoder successes or speedups.
+
+## Renew the exact base/candidate qualification
+
+Configure one disposable consumer for the exact PR base with `--prefix Base`,
+then configure its candidate with `--prepared --prefix Candidate`. Build all
+four `BaseStrict`, `BaseBest`, `CandidateStrict`, `CandidateBest` executables
+and their targeted tests, retaining the original C++ control. `qualify.py`
+audits the effective commands and requires the recorded C++ binary identity.
+
+```sh
+for phase in audit functional references performance summarize; do
+  python3 tools/pdfium-qualification/qualify.py "$phase" --rounds 9 \
+    --work /absolute/disposable/pdfium \
+    --results /absolute/qualification-results \
+    --base /absolute/exact-pr-base \
+    --candidate /absolute/exact-pr-head \
+    --hayro /absolute/hayro-source/hayro-jbig2/tests
+done
+python3 tools/pdfium-qualification/export_run.py \
+  --results /absolute/qualification-results \
+  --output /absolute/reviewable-receipts
+```
+
+Declare the round count and full frozen selection before measurement; do not
+repeat favorable subsets or mix runs. The summary retains every case and
+flags each paired median above1.05. Exported receipts remove local paths but
+preserve the complete measured data. A failed gate remains a failed gate.
 
 ## Interpretation and licensing
 
