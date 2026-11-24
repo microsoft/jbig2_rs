@@ -58,6 +58,28 @@
     "semantic_shards_unchanged": 14,
     "scope": "The two completed shard0 groups already exceed the unchanged guard, so this partial run cannot be acceptance evidence even though those components pass. Move only the complete new two-contrast group to completed shard1. Projections are planning, not a fresh result. Preserve every prior group, contrast, checker, compiler/resource cap, whole/collector role and parallelism setting; require a fresh complete same-run profile before integration."
   },
+  "owned_decode_complete_ci_profile_correction": {
+    "rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/45289712820",
+    "attempt": 1,
+    "source_revision": "310efe8f188e475aadc925af15ed3d566eb05808",
+    "actual_checkout": "a8fc8d65fe429fa6374483be0cdfd33ece3a6006",
+    "all_semantic_groups_passed": true,
+    "group_count": 64,
+    "contrast_count": 505,
+    "rejected_shard": 12,
+    "rejected_shard_seconds": 1054.6479082810001,
+    "moved_group": "default-limits-3",
+    "destination_shard": 13,
+    "measured_group_seconds": 90.95195214599994,
+    "projected_source_shard_seconds": 963.6959561350002,
+    "projected_destination_shard_seconds": 829.459011706,
+    "complete_per_group_projected_maximum_seconds": 1029.1962598290002,
+    "measured_collector_seconds": 929.5245687859999,
+    "measured_whole_group_seconds": 819.586809338,
+    "guard_seconds_unchanged": 1050,
+    "semantic_shards_unchanged": 14,
+    "scope": "Complete preserved same-run profile: all64 groups/505 contrasts pass, but shard12 exceeds the unchanged guard by4.648 seconds. Move one complete existing group to shard13; preserve historical allocation interpretation and every case, checker, compiler/resource cap, whole/collector role and parallelism setting. Complete-profile projections are planning only, not acceptance credit. Runtime and measured binaries are unchanged; require a fresh complete same-run profile on the corrected head."
+  },
   "duplicate_executable_proof_source": false,
   "embedded_recovery_ci_profile_correction": {
     "rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/44359238184",
