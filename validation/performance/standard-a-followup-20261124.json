@@ -1,0 +1,80 @@
+{
+  "issue": 233,
+  "baseline_main": "775e57f2f99d1dbad386e51e094f2994f817ceaf",
+  "candidate": "4c6f0cc789b4a665d3a5ace9bdd004d46a8aefbc",
+  "scope": "Independent A-only immutable-descriptor experiment over merged main. Real memory savings do not override the complete latency control gate. Not retained; not a new N2/PDFium321-image/140-PDF qualification. Allocator requests/live payload are not RSS.",
+  "retained": false,
+  "rounds": 9,
+  "configurations": 127,
+  "paired_measurements": 1143,
+  "samples": 31,
+  "target_ms": 350,
+  "raw_latency_sha256": "acb8fbb108613f017e2b609e5c9c4d2e538eaf8292a9af86c4367f7d552b3734",
+  "raw_allocation_sha256": "14d4275f034eeba7cbf2a0780fd2c6b1af457b0363dabe442622bbbd7bdf26a4",
+  "protocol_sha256": "88fb5ee3e7d9a72026536d16e8e3b247071a91201873e1c59cc57c7c30fc8ad3",
+  "cohort_sha256": "389759957774c7c2d22eb09cd3b5463202eda0ca07fd701a8f0361b84cded39a",
+  "adverse_over_5_percent": [
+    {
+      "comparison": "233-a-only",
+      "id": "bitmap-symbol-manysyms",
+      "mode": "fresh",
+      "paired_median_ratio": 1.050207205419718,
+      "paired_bootstrap95": [
+        1.0076477510993078,
+        1.1668777459020052
+      ],
+      "faster_pairs": 1,
+      "before_median_ns": 120663219,
+      "after_median_ns": 125093710,
+      "secondary_process_cpu_ratio": 1.0466333729417248
+    },
+    {
+      "comparison": "233-a-only",
+      "id": "generated-white-512",
+      "mode": "fresh",
+      "paired_median_ratio": 1.0782517665532583,
+      "paired_bootstrap95": [
+        1.042385206731768,
+        1.094093047569263
+      ],
+      "faster_pairs": 1,
+      "before_median_ns": 19252,
+      "after_median_ns": 20696,
+      "secondary_process_cpu_ratio": 1.1215094480656271
+    }
+  ],
+  "allocation_cases_checked": 123,
+  "allocation_hit_cases": 25,
+  "allocation_requests_avoided": 129,
+  "cumulative_requested_bytes_avoided": 447200,
+  "peak_payload_change_must_be_read_per_case": true,
+  "fresh_whole_verified": 1550,
+  "fresh_whole_errors": 0,
+  "native_tests": 646,
+  "doctests": 1,
+  "ignored_existing": 16,
+  "public_correctness_cases": 123,
+  "public_api_checks": 468,
+  "build_identities": {
+    "current-standard-a": {
+      "source_revision": "4c6f0cc789b4a665d3a5ace9bdd004d46a8aefbc",
+      "binary_sha256": "7200ee0a3f34653cbb75f1f2d97aad4db93b20854fe69a5a87b0536beba83e6c",
+      "runtime_sha256": "39a4aabddc4ad9353958c688a99046c73cb2ac3ddd0d6acf2d4c14840c4365d3"
+    },
+    "halftone-symbols": {
+      "source_revision": "f2ded09787e983edf76ed05a7487fabcbedfe728",
+      "binary_sha256": "23d20d6124d71d096e9de63931c6d4d26dce60ddd73bc6ce0a0e7045d8d3dc0c",
+      "runtime_sha256": "44c42898d63a1aa6c9d41943e74dec5d0bc4b2dc6276078c674229a14a475de5"
+    },
+    "halftone-symbols-alloc": {
+      "source_revision": "f2ded09787e983edf76ed05a7487fabcbedfe728",
+      "binary_sha256": "bf9925cba92389864e29f3da3cad4affde5bc4dec221bf680023dce48e4fbc7e",
+      "runtime_sha256": "44c42898d63a1aa6c9d41943e74dec5d0bc4b2dc6276078c674229a14a475de5"
+    },
+    "current-standard-a-alloc": {
+      "source_revision": "4c6f0cc789b4a665d3a5ace9bdd004d46a8aefbc",
+      "binary_sha256": "03570c800e0ceb41c103a2f8f8c6e4027af4cb30238c7b5b951b8b23ecc5c73e",
+      "runtime_sha256": "39a4aabddc4ad9353958c688a99046c73cb2ac3ddd0d6acf2d4c14840c4365d3"
+    }
+  }
+}
