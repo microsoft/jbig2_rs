@@ -11,12 +11,41 @@ from unittest.mock import patch
 
 TOOLS = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(TOOLS))
-from source_group import source_text
-from check_symbol_cardinality_proofs import CASES
+from source_group import runtime_function, source_text
+from rust_source import source_functions
+from check_symbol_cardinality_proofs import CASES, EXPORT_CONTENT, contract
 from proof_sensitivity import replace_once, weakened_contract
 
 
 class SymbolCardinalityProofTests(unittest.TestCase):
+    def test_export_assembly_control_is_bound_to_the_original_declaration(self):
+        case = next(row for row in CASES if row["id"] ==
+                    "export_assembly_repeats_first_selection_instead_of_requested_order")
+        source = source_text(TOOLS.parent, case["file"])
+        changed = replace_once(source, case["site"], case["replacement"])
+        weaker = weakened_contract(changed, case)
+        target = runtime_function(
+            TOOLS.parent, "symbol_text::dictionary", "assemble_exported_symbols",
+        )
+        original, replacement = case["controls"][0]
+        self.assertEqual(original, contract(target))
+        self.assertEqual(replacement, replace_once(original, EXPORT_CONTENT, ""))
+        self.assertIn("fn assemble_exported_symbols", original)
+        self.assertNotIn(original, weaker)
+        self.assertIn(replacement, weaker)
+        peers = [
+            row for row in source_functions(TOOLS.parent)
+            if row["file"] == target["file"] and row["name"] != target["name"]
+            and any("symbol_text_spec::exported_contents_match(" in attribute
+                    for attribute in row["attributes"])
+        ]
+        self.assertTrue(peers)
+        for peer in peers:
+            self.assertIn(contract(peer), source)
+            self.assertIn(contract(peer), weaker)
+        with self.assertRaises(ValueError):
+            replace_once(changed, EXPORT_CONTENT, "")
+
     def test_segment_controls_retain_original_output_consumption_and_input_contracts(self):
         segments = [case for case in CASES if "_segment_" in case["id"]]
         self.assertEqual(len(segments), 4)

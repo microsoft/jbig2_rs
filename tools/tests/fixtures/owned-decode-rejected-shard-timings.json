@@ -1,0 +1,33 @@
+{
+  "scope": "Completed components from four shards of a partial rejected run. Preserve the observed shard-0 lower bound; projections and prior-source timings are planning only, never acceptance credit.",
+  "run_identity": {
+    "GITHUB_REPOSITORY": "microsoft/jbig2_rs",
+    "GITHUB_RUN_ID": "45280486638",
+    "GITHUB_RUN_ATTEMPT": "1",
+    "GITHUB_SHA": "030ec395517a6e9a9ca8091a6c0a02aa4776165f"
+  },
+  "proposal_head": "12cc1f5",
+  "shards": {
+    "0": [
+      {"id": "huffman-assignment", "status": "passed", "counterexamples": 33, "seconds": 1006.8452078149999},
+      {"id": "owned-decode", "status": "passed", "counterexamples": 2, "seconds": 68.5848878249999}
+    ],
+    "1": [
+      {"id": "symbol-cardinality", "status": "passed", "counterexamples": 22, "seconds": 589.007022024},
+      {"id": "arithmetic-refill", "status": "passed", "counterexamples": 6, "seconds": 147.068388367},
+      {"id": "default-decoder-2", "status": "passed", "counterexamples": 3, "seconds": 75.67353387699995}
+    ],
+    "2": [
+      {"id": "arithmetic-certainty", "status": "passed", "counterexamples": 4, "seconds": 142.354023001},
+      {"id": "value-bridge", "status": "passed", "counterexamples": 18, "seconds": 497.833064964},
+      {"id": "default-limits-2", "status": "passed", "counterexamples": 3, "seconds": 84.41018098200004},
+      {"id": "reference-catalog", "status": "passed", "counterexamples": 6, "seconds": 172.14140007000003}
+    ],
+    "3": [
+      {"id": "page-state", "status": "passed", "counterexamples": 13, "seconds": 410.110519726},
+      {"id": "mmr-span", "status": "passed", "counterexamples": 8, "seconds": 233.4073161990001},
+      {"id": "error-wrappers-symbol", "status": "passed", "counterexamples": 7, "seconds": 219.89677054100002},
+      {"id": "default-decoder-3", "status": "passed", "counterexamples": 3, "seconds": 88.53433622400007}
+    ]
+  }
+}

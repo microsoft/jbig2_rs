@@ -1,7 +1,7 @@
 use crate::bitmap::CombinationOperator;
 use crate::generic_region::{
-    decode_generic_on, GenericArithmeticCall, GenericArithmeticSession, GenericRegionError,
-    GenericTemplate, TemplateOffset,
+    decode_generic_on_validated, GenericArithmeticCall, GenericArithmeticSession,
+    GenericRegionError, GenericTemplate, TemplateOffset,
 };
 use crate::mmr::{decode_mmr, decode_mmr_prefix, EofbPolicy, MmrError};
 use crate::{
@@ -420,7 +420,7 @@ impl<'a> GenericRegionState<'a> {
                 adaptive[1] = TemplateOffset::new(adaptive_pixels[1].0, adaptive_pixels[1].1);
                 adaptive[2] = TemplateOffset::new(adaptive_pixels[2].0, adaptive_pixels[2].1);
                 adaptive[3] = TemplateOffset::new(adaptive_pixels[3].0, adaptive_pixels[3].1);
-                match decode_generic_on(
+                match decode_generic_on_validated(
                     &mut session.decoder,
                     &mut session.contexts,
                     GenericArithmeticCall {

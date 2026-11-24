@@ -7,8 +7,8 @@ use super::cycles::{CycleMode, IntegerCycle, HEIGHT_CYCLE_MIN_WORK};
 use super::*;
 #[cfg(not(verus_keep_ghost))]
 use super::{
-    assemble_exported_symbols, check_dimensions, decode_checked_symbol_id, decode_export_runs,
-    decode_text_region_body, generic_template_from_u8, new_arithmetic_codec,
+    assemble_owned_exported_symbols, check_dimensions, decode_checked_symbol_id,
+    decode_export_runs, decode_text_region_body, generic_template_from_u8, new_arithmetic_codec,
     normalized_bounded_arithmetic, refinement_template_from_u8, required_integer, symbol_by_id,
     validate_bounded_arithmetic_marker, ArithmeticDictionaryResult, Bitmap, CombinationOperator,
     DecodeError, DictionaryClassState, DictionaryContexts, EntropyInteger, GenericArithmeticCall,
@@ -571,7 +571,8 @@ pub(in crate::symbol_text) fn decode_symbol_dictionary_arithmetic(
         None => None,
     };
 
-    let exported_symbols = assemble_exported_symbols(imported, &new_symbols, &exported, limits)?;
+    let exported_symbols =
+        assemble_owned_exported_symbols(imported, new_symbols, &exported, limits)?;
     Ok((
         exported_symbols,
         retained_generic,

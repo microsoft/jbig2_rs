@@ -180,9 +180,46 @@ matching function names.
 
 Semantic contrasts require an exact positive baseline, an ordinarily compiling
 mutant, strong proof rejection and success under only the selected weakened
-guarantee. Every configured group is required. Native mutations separately
-require an original passing test and failure of that exact test after a
-compiling change:
+guarantee. Every configured group is required.
+
+The current profile uses an additive overlay on the original owned allocation:
+only the complete three-case `default-limits-3` group moves from shard 12 to 13.
+All 64 groups / 505 contrasts remain; the two-case `owned-decode` group stays on
+shard 1. Historical colour/certainty and original owned maps retain their
+membership and timing interpretation. Fourteen shards, whole/collector roles,
+two local workers, at most four concurrent CI semantic jobs and the actual
+1,050-second role/shard guard are unchanged. Current-profile collection requires
+the new group's complete measured cost; historical timings are not new acceptance.
+The runner's `--only owned-decode` selector runs both contrasts through
+`check_owned_decode_proofs.py` without case-group or mode flags.
+
+The initial shard-0 assignment was rejected: run `45280486638/1`, checkout
+`030ec395517a6e9a9ca8091a6c0a02aa4776165f` (proposal head `12cc1f5`), recorded
+1,006.845207815 seconds for `huffman-assignment` plus 68.584887825 seconds for
+`owned-decode`, a 1,075.430095640-second lower bound above the unchanged guard.
+That first correction moved only the complete new group, with older groups and
+roles fixed under its original owned allocation.
+Reusing those partial receipts projects source/destination totals of
+1,006.845207815 / 880.333832093 seconds. This rejected partial run gives no
+acceptance credit. Complete prior-source per-group maxima remain conservative
+planning inputs, not current measurements; their raw shard-1 bound is still
+1,117.426081810 seconds under that original allocation. Those different-source
+colour profiles remain planning only, not current qualification.
+
+The corrected run `45289712820/1`, checkout
+`a8fc8d65fe429fa6374483be0cdfd33ece3a6006`, completed all 64 groups / 505
+contrasts but was rejected at shard 12's 1,054.647908281 seconds. The current
+overlay moves only its smallest timed complete group, `default-limits-3`
+(90.951952146 seconds), to shard 13. Reusing the complete rejected profile
+projects shard 12 / 13 at 963.695956135 / 829.459011706 seconds and the full
+16-role maximum at 1,029.196259829 seconds. A per-group conservative envelope
+including every earlier owned-run component has the same prospective maximum,
+without setup deductions or discarded adverse timings. These are planning
+calculations, not acceptance credit. Qualification still requires a fresh
+complete same-run result under the unchanged guard.
+
+Native mutations separately require an original passing test and failure of
+that exact test after a compiling change:
 
 ```sh
 python3 -B tools/check_contract_mutations.py --toolchain nightly-2026-10-12 \

@@ -24,7 +24,8 @@ BASELINE_GROUPS = (
 )
 GET = runtime_function(ROOT, "symbol_text", "SymbolCodebook::get")["body_text"]
 LOOKUP = runtime_function(ROOT, "symbol_text", "symbol_by_id")["body_text"]
-ASSEMBLE = runtime_function(ROOT, "symbol_text::dictionary", "assemble_exported_symbols")["body_text"]
+ASSEMBLE_TARGET = runtime_function(ROOT, "symbol_text::dictionary", "assemble_exported_symbols")
+ASSEMBLE = ASSEMBLE_TARGET["body_text"]
 EXPORT_RUNS = runtime_function(ROOT, "symbol_text::dictionary", "decode_export_runs")["body_text"]
 CODEBOOK_COUNT = """crate::symbol_text::symbol_text_spec::codebook_len(out)
     == decode_spec::collected_symbol_count(self),"""
@@ -63,6 +64,17 @@ RUN_OUTER_BOUND = """forall|offset: int| 0 <= offset < exported@.len()
     ==> #[trigger] exported@[offset] < index,"""
 RUN_INNER_BOUND = """forall|offset: int| 0 <= offset < exported@.len()
     ==> #[trigger] exported@[offset] < candidate,"""
+
+
+def contract(row):
+    attributes = [value for value in row["attributes"] if "verus_spec(" in value]
+    if len(attributes) != 1:
+        raise ValueError("symbol export target needs one exact attached contract")
+    visibility = "" if row["visibility"] == "private" else row["visibility"] + " "
+    return attributes[0] + "\n" + visibility + "fn " + row["name"]
+
+
+ASSEMBLE_CONTRACT = contract(ASSEMBLE_TARGET)
 
 
 def case(identity, function, site, replacement, controls, *,
@@ -157,7 +169,8 @@ CASES = (
             ASSEMBLE, "let symbol_id = exported_indices[index];",
             "let symbol_id = exported_indices[0];",
         ),
-        ((EXPORT_CONTENT, ""), (EXPORT_PREFIX, "")),
+        ((ASSEMBLE_CONTRACT, replace_once(ASSEMBLE_CONTRACT, EXPORT_CONTENT, "")),
+         (EXPORT_PREFIX, "")),
         file="src/symbol_text.rs", module="symbol_text",
     ),
     case(
