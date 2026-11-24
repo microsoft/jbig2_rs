@@ -1,0 +1,259 @@
+# PDFium C++ versus latest-main Rust JBIG2
+
+Date: 2026-11-23. This is a new matched integration measurement, not a reuse of
+the crate documentation's older independent PDFium results.
+
+## Result
+
+Rust is much closer to native C++ than in the earlier JPEG2000 comparison.
+Best-effort Rust matches every pixel of all **118 existing-PDF image requests
+it accepts**, while C++ accepts 121. The three remaining C++-only requests have
+documented limit/validation dispositions. There are also conformance cases
+where Rust is correct and C++ rejects or renders different pixels.
+
+On the selected pixel-qualified workloads, median best-effort Rust time is
+**1.30x C++ for extracted images**, **1.24x for full PDFs**, and **1.59x across
+all selected image requests**. Small synthetic symbol cases are competitive
+or slightly faster in Rust. These are sample-specific results, not a universal
+performance or production-document success-rate claim.
+
+## Source, integration and optimization
+
+- Latest `microsoft/jbig2_rs` main was fetched and pinned at
+  [`f8774dd4d09bec588f88cd4750334b398030057b`](https://github.com/microsoft/jbig2_rs/commit/f8774dd4d09bec588f88cd4750334b398030057b).
+  The pinned source worktree remains clean.
+- Native PDFium C++ and both Rust integrations use the same PDFium source,
+  commit `5932789adab7df4d03de4d8fdff2077845b13682`, plus a snapshot of the
+  user's existing README, clipping adapter and unit-test changes. Those user
+  changes were preserved byte-for-byte; the original checkout was not edited.
+- A disposable PDFium worktree uses the actual `Jbig2Decoder::StartDecode` /
+  `ContinueDecode` interface and real PDFium page rendering.
+- Three builds: **C++**, **Rust strict** (the current adapter policy), and
+  **Rust explicit best effort**. Neither Rust build falls back to C++.
+  The experimental best-effort selection is confined to the private evaluation;
+  it does not silently change the product default.
+- Host: Linux AArch64, Neoverse-N2. Matched Clang 24 and Chromium Rust
+  1.101.0-nightly, LLVM 24.
+- Actual timed compilation commands verify **O3, native CPU and ThinLTO**
+  for all linked C/C++ units; Rust core and adapter use optimization level 3,
+  native CPU, one codegen unit, disabled debug assertions/overflow checks and
+  linker-plugin LTO. Final linking explicitly uses **`--lto-O3`**.
+  Split ThinLTO IR from the C++ arithmetic decoder confirms `neoverse-n2`.
+  No fast-math, PGO, XFA, JavaScript, Skia or Fontations.
+- Strict and best-effort Rust core archives are **byte-identical**, SHA-256
+  `cc0a97db2b13a7de897942a4a2ab615f4660bea7f7570a26200cd822162912dc`.
+  Only the wrapper's explicit policy selection differs.
+
+See [actual compiler/link audit](build-audit.json).
+
+## Corpus and canonical pixels
+
+The [frozen manifest](manifest.json) contains:
+
+- **123 extracted image requests from 125 existing PDFs**, including seven
+  requests with external JBIG2 globals.
+- **198 normalized embedded page requests from 190 Hayro files**, including
+  arithmetic templates, MMR, symbols, text, Huffman, halftone, refinement,
+  composition, stripes, malformed and resource-boundary cases.
+- **15 generated wrapper PDFs** in addition to the 125 originals.
+- In total, **321 image requests, 140 PDFs, 461 unique requests**, each compared
+  across three backends: **1,383 final backend outcomes**.
+
+The 321 images have 315 distinct encoded-stream/globals/canvas tuples. Hayro's
+original standalone containers are converted to sequential embedded page
+streams for *both* PDFium backends: random-access headers/payloads are
+interleaved, globals remain association zero, local page associations become
+one, and container EOF segments are omitted. Segment IDs, references and
+entropy payloads are preserved. Unknown-length single-page tails remain
+verbatim. This evaluates PDFium-compatible embedded pages, **not original
+standalone file-header admission**.
+
+Eight isolated multipage requests were explicitly rechecked after qualifying
+page-association normalization; C++ pixels stayed identical, and six Rust
+requests changed from an artificial missing-page-one error to correct output.
+See [normalization receipt](normalization-validation.json).
+
+Four extraction/adaptation exclusions are explicit in
+[extraction-errors.json](extraction-errors.json): two malformed/unsupported PDF
+extraction paths and two truncated/trailing-data Hayro containers. The two
+original PDFs still participate in full-page rendering, but cannot qualify
+for timing without image preflight. No exclusion is counted as a decoder
+rejection or success.
+
+Image pixels are the actual PDF canvas after the adapter: packed 1-bit rows
+with white=1/black=0, row padding removed and unused trailing bits normalized.
+Differences are counted in **pixels**, not differing packed bytes. Page
+outputs are white-background BGRA at 72 DPI. Both Rust variants retain the
+existing clipping/white-fill adapter behavior.
+
+## Acceptance and image pixels
+
+| Image request set | Cases | C++ accepted | Rust strict | Rust best effort |
+|---|---:|---:|---:|---:|
+| Extracted existing-PDF images | 123 | **121** | **102** | **118** |
+| Normalized Hayro pages | 198 | **182** | **173** | **173** |
+| **Combined** | **321** | **303** | **275** | **291** |
+
+- Every one of the **118 accepted existing-PDF Rust best-effort outputs** is
+  pixel-exact with C++. All 102 strict successes are exact too.
+- Best effort gains **16 existing-PDF image requests**. Its recovery receipts
+  identify page auxiliary/refinement flags and one known-length arithmetic
+  terminator normalization. It is an allowlist, not a retry accepting any error.
+  Defaults and logical resource limits remain unchanged.
+- Across all images C++ and Rust best effort share **286** successes:
+  **277 exact**, **9 different**. C++ alone accepts 17, Rust alone accepts 5,
+  and neither completes 13 within the test bounds.
+- Three intentionally malformed Hayro symbol-dictionary cases did not finish
+  through C++ within **20 seconds**. They are reported as timeouts, not proven
+  permanent hangs; Rust returns bounded typed errors. No process crashes
+  occurred. There were no Rust timeouts.
+
+### Remaining existing-PDF differences
+
+| PDF/image | C++ | Rust best effort |
+|---|---|---|
+| `bitmap-symbol-symhuff-texthuff-manysyms.pdf` | Accepts | Actual temporary collective bitmap width 1,000,008 exceeds the default 1,000,000 width cap |
+| `bitmap-symbol-symhuffcustom-texthuffcustom.pdf` | Accepts | Refuses aggregation fields when refinement aggregation is disabled; not in the recovery allowlist |
+| `bug_867501.pdf` | Accepts | Refuses page-information payload length zero rather than reproducing cross-segment reads and substituting PDF dimensions |
+| `bug_527174.pdf` | Rejects | Rejects invalid geometry exceeding the height limit |
+| `bug_963885.pdf` | Rejects | Rejects nonzero unused retention flags |
+
+The first three are the remaining C++-only image requests; the last two are
+shared refusals. The policy background is in upstream's
+[embedded recovery documentation](https://github.com/microsoft/jbig2_rs/blob/f8774dd4d09bec588f88cd4750334b398030057b/docs/embedded-recovery.md).
+Changing a configured width cap is a separate experiment, not evidence that
+best-effort decoding is missing a recovery.
+
+### Independent reference adjudication
+
+Hayro PNG references could be mapped unambiguously to **183** requests:
+
+| Backend | Exact reference | Different pixels | Not decoded |
+|---|---:|---:|---:|
+| C++ | 164 | **11** | 8 |
+| Rust strict | **166** | **0** | 17 |
+| Rust best effort | **166** | **0** | 17 |
+
+The other 15 requests have explicit missing/cropped/shape-dependent reference
+mapping dispositions; no expected pixels were invented.
+
+All nine shared C++/Rust pixel differences agree with the independent reference
+through Rust. They cover extended template-0 arithmetic, halftone pattern
+widths 129/255, default-pixel refinement/composition, large Huffman refinement
+offsets and partial-page refinement.
+
+Five requests decode only through Rust in this embedded comparison:
+custom Huffman minimum-low and long-prefix tables, zero-height MMR region,
+far-left text placement, and many text instances. Acceptance of an input named
+“malformed” is not by itself a correctness claim; the exact per-case reference
+results are preserved in
+[reference-adjudication.json](reference-adjudication.json).
+
+## Complete PDFs: successful API return is not image acceptance
+
+All three render APIs return a page raster for all 140 PDFs, even when an image
+was rejected. **This is not 140 successful JBIG2 image decodes.**
+
+| PDF set | Cases | Strict Rust exact vs C++ | Best-effort Rust exact vs C++ |
+|---|---:|---:|---:|
+| Existing PDFs | 125 | **106** | **122** |
+| Generated Hayro wrappers | 15 | 12 | 12 |
+| **Total** | **140** | **118** | **134** |
+
+The three remaining original-PDF mismatches are omitted Rust images for the
+three C++-only cases above. The three wrapper mismatches favor Rust: C++ omits
+the two custom-Huffman images or differs on partial-page refinement, while
+Rust's decoded pixels match the independent references.
+
+Some malformed source images are rejected by both and may be absent from both
+otherwise identical page rasters. Those are not classified as repaired or used
+to obtain faster benchmark results.
+
+## Performance
+
+**Primary table: explicit best-effort Rust divided by native C++ elapsed time.**
+Ratios below one favor Rust. Only successful, pixel-equal outputs qualify.
+
+| Selected workload family | Cases | Median Rust/C++ time | Per-case range |
+|---|---:|---:|---:|
+| Existing-PDF extracted images | 13 | **1.30x** | 1.19–3.77x |
+| Full PDFs | 26 | **1.24x** | 1.02–2.12x |
+| Generic arithmetic/MMR | 7 | 1.62x | 1.06–1.84x |
+| Refinement | 3 | 1.71x | 1.59–1.78x |
+| Symbols | 3 | **0.93x** | 0.92–0.98x |
+| Huffman | 3 | 2.21x | 1.07–2.77x |
+| Halftone | 4 | 1.83x | 1.14–2.10x |
+| Text | 3 | 1.12x | 1.00–1.14x |
+| Composition | 3 | 1.76x | 1.50–3.00x |
+| Page/stripe cases | 3 | 1.68x | 1.57–1.71x |
+
+Across all 42 selected image workloads the median is **1.59x**. The higher
+native-image outliers are halftone composition, not all image classes.
+The benchmark intentionally excludes C++-incorrect or rejected images, even
+when Rust renders them correctly; it is a common-correct-output timing set,
+not a performance score for every supported feature.
+
+Representative median milliseconds:
+
+| Image | C++ | Rust strict | Rust best effort |
+|---|---:|---:|---:|
+| Generic template 0 | 0.106 | 0.164 | 0.168 |
+| Generic MMR | 0.034 | 0.035 | 0.036 |
+| Generic template 3 | 0.077 | 0.139 | 0.122 |
+| Symbol aggregation | 0.137 | 0.125 | 0.126 |
+| Custom Huffman aggregate count | 0.063 | 0.170 | 0.174 |
+
+### Timing controls and limitations
+
+- **68 workloads / 204 case-rounds / 591 processes**. Three rotating-order
+  rounds, three warmups per process, **31 timed image repetitions** or
+  **11 timed PDF repetitions**, CPU 2. A shorter pilot is retained separately
+  and is not mixed into these statistics.
+- Every timed output reproduces its functional hash. Every selected PDF has
+  accepted pixel-exact known JBIG2 payloads; incomplete extraction or rejected
+  content disqualifies it. Explicit globals and multiple generic templates are
+  included.
+- Raw image timing creates a fresh `Jbig2Context` and document-symbol cache
+  each iteration, including globals parse/decode. Full-PDF timing creates a
+  fresh document each iteration and preserves each backend's actual intra-
+  document cache behavior. Rust does not gain a cache absent from the adapter.
+- Input loading, process startup, output-file writing and PDFium library init
+  are outside timing. Image timing includes decoder construction, decoding,
+  inversion/packing/canonicalization and destruction. PDF timing includes fresh
+  document/page loading and full rendering. Repeatability checks are outside
+  the measured interval.
+- Recovery receipts are enabled for functional runs and disabled for timing;
+  typed errors remain visible. Successful recovery tracing is not charged as
+  a decoder algorithm cost.
+- Strict Rust is additionally timed on **61** shared pixel-qualified workloads.
+  On those *same* workloads best-effort/strict median time is **1.0012x**,
+  below observed variability. Different aggregate subsets must not be used to
+  infer that one policy is intrinsically faster.
+- Median per-file inter-round ratio spans are about 1.4% for extracted images,
+  1.7% for PDFs and 3.8% for symbols. Shared-host frequency/scheduling remains
+  uncontrolled; small near-parity differences are not statistical certificates.
+  Many conformance fixtures are deliberately small.
+
+See [per-file timings](performance.tsv),
+[raw process measurements](performance.json), and
+[selection/methodology](benchmark-selection.json).
+
+## Validation and scope
+
+- Latest crate on Rust **1.88 MSRV**: `cargo test --all-targets --locked --offline`,
+  **631 tests passed, 15 existing tests/benchmarks ignored**.
+- Focused actual PDFium JBIG2 suites: **21 C++ + 22 strict Rust + 22 best-effort
+  Rust tests passed**.
+- No expectation/suppression changes, product decoder modifications, dependency
+  version edits or C++ fallback were used to make results pass.
+- This is not a full PDFium test-suite, official-vector certification or fresh
+  Verus/package-qualification run.
+- Two malformed PDF extraction paths and two unadaptable malformed standalone
+  files remain explicit limitations. Normalized embedded acceptance must not
+  be relabelled original standalone-file acceptance.
+
+Reproducible local helpers: [comparison runner](compare.py),
+[corpus extraction/normalization](prepare_corpus.py),
+[independent reference comparison](adjudicate.py).
+Detailed outcomes: [per-request table](functionality.tsv),
+[full functional records](functionality.json), and [summary](summary.json).

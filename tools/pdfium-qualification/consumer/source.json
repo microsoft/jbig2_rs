@@ -1,0 +1,7 @@
+{
+  "source_url": "https://raw.githubusercontent.com/microsoft/jbig2_rs/51630797ec0b2475a2836502ad315cea29ac0218/tools/pdfium-qualification/consumer/jbig2_eval.cpp",
+  "sha256": "7bc0238440ebf1c80d847ec5d4fa07c02380fb70d5fcf268582588901be931fd",
+  "size_bytes": 5395,
+  "license": "MIT; first-party evaluation consumer, covered by the repository LICENSE at the pinned revision",
+  "scope": "External validation only. Download into the disposable PDFium checkout; no native consumer, fixture, binary or toolchain is vendored in the crate."
+}

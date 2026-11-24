@@ -32,7 +32,7 @@ class SelectedProofEvidenceTests(unittest.TestCase):
             (root / "src/lib.rs").write_text("a different production mutant")
             self.assertEqual(dependency_build_root(root, cache), first)
             for name in (
-                "config/toolchain.json", "verification/Cargo.lock",
+                "config/toolchain.json", "verification/Cargo.toml", "verification/Cargo.lock",
                 "verification/stdlib/interface/lib.rs",
             ):
                 path = root / name

@@ -1,0 +1,22 @@
+{
+  "result": "PASS",
+  "total": 88,
+  "consumers": {
+    "BaseStrict": {
+      "tests": 22,
+      "failures": 0
+    },
+    "BaseBest": {
+      "tests": 22,
+      "failures": 0
+    },
+    "CandidateStrict": {
+      "tests": 22,
+      "failures": 0
+    },
+    "CandidateBest": {
+      "tests": 22,
+      "failures": 0
+    }
+  }
+}

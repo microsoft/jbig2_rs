@@ -18,6 +18,9 @@ verify = true
 
 [workspace]
 
+[profile.dev.build-override]
+opt-level = 1
+
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = [
   "cfg(fuzzing)",

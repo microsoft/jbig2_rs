@@ -1,0 +1,81 @@
+{
+  "reason": "Standalone pages 2/3 must use page association 1 when isolated as independent embedded PDF image requests; global association zero and all segment IDs/references/payloads remain unchanged.",
+  "changed_cases": [
+    {
+      "id": "hayro/file_pages-page2",
+      "best": "ok",
+      "comparison": {
+        "comparison": "exact",
+        "different_pixels": 0,
+        "different_samples": 0,
+        "max_delta": 0
+      }
+    },
+    {
+      "id": "hayro/file_pages-page3",
+      "best": "ok",
+      "comparison": {
+        "comparison": "exact",
+        "different_pixels": 0,
+        "different_samples": 0,
+        "max_delta": 0
+      }
+    },
+    {
+      "id": "hayro/lenient_end_of_page_of_previous_page-page2",
+      "best": "decode_error",
+      "comparison": {
+        "comparison": "not_both_accepted"
+      }
+    },
+    {
+      "id": "hayro/lenient_end_of_page_of_previous_page-page3",
+      "best": "decode_error",
+      "comparison": {
+        "comparison": "not_both_accepted"
+      }
+    },
+    {
+      "id": "hayro/lenient_page_count_mismatch-page2",
+      "best": "ok",
+      "comparison": {
+        "comparison": "exact",
+        "different_pixels": 0,
+        "different_samples": 0,
+        "max_delta": 0
+      }
+    },
+    {
+      "id": "hayro/lenient_page_count_mismatch-page3",
+      "best": "ok",
+      "comparison": {
+        "comparison": "exact",
+        "different_pixels": 0,
+        "different_samples": 0,
+        "max_delta": 0
+      }
+    },
+    {
+      "id": "hayro/lenient_page_without_end_of_page-page2",
+      "best": "ok",
+      "comparison": {
+        "comparison": "exact",
+        "different_pixels": 0,
+        "different_samples": 0,
+        "max_delta": 0
+      }
+    },
+    {
+      "id": "hayro/lenient_page_without_end_of_page-page3",
+      "best": "ok",
+      "comparison": {
+        "comparison": "exact",
+        "different_pixels": 0,
+        "different_samples": 0,
+        "max_delta": 0
+      }
+    }
+  ],
+  "cpp_pixels_unchanged": true,
+  "benchmark_inputs_unchanged": true
+}

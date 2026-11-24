@@ -24,6 +24,12 @@ OWNED_REJECTED = json.loads(
 OWNED_COMPLETE_REJECTED = json.loads(
     (Path(__file__).parent / "fixtures/owned-decode-complete-rejected-profile.json").read_text()
 )
+PORTABLE_REJECTED = json.loads(
+    (Path(__file__).parent / "fixtures/portable-qualification-rejected-profile.json").read_text()
+)
+PORTABLE_BALANCED_REJECTED = json.loads(
+    (Path(__file__).parent / "fixtures/portable-balanced-rejected-profile.json").read_text()
+)
 EXPECTED_BOUNDS = (
     1037.521383123, 1040.108429994, 1040.703310944, 1030.325156962,
     1037.335416414, 1039.711085949, 1039.446731117, 1043.280104190,
@@ -54,11 +60,164 @@ def configured_roles():
     }
 
 
+class RobustPortableShardSchedulingTests(unittest.TestCase):
+    @patch.object(runner, "CHECKS", CURRENT_CHECKS)
+    def test_complete_rejection_is_preserved_and_only_whole_groups_are_rebalanced(self):
+        profile = PORTABLE_BALANCED_REJECTED
+        self.assertEqual(profile["run_identity"], {
+            "GITHUB_REPOSITORY": "microsoft/jbig2_rs",
+            "GITHUB_RUN_ID": "45391179475",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_SHA": "eb1a5dc7bb9a84b199803f501fec8f95b3029b51",
+        })
+        self.assertTrue(profile["all_groups_passed"])
+        self.assertEqual(profile["counterexamples"], 505)
+        seconds = profile["seconds"]
+        self.assertEqual(set(seconds), {row[0] for row in runner.configured_checks()})
+        with patch.object(
+            runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", runner.PORTABLE_SHARD_ALLOCATION,
+        ):
+            previous = configured_roles()
+            self.assertEqual(
+                {role: [row[0] for row in groups] for role, groups in previous.items()},
+                profile["role_groups"],
+            )
+            for role, groups in previous.items():
+                self.assertAlmostEqual(
+                    math.fsum(seconds[row[0]] for row in groups),
+                    profile["role_seconds"][role], places=9,
+                )
+            self.assertAlmostEqual(profile["role_seconds"]["shard-4"], 1063.714668023, places=9)
+            with self.assertRaisesRegex(ValueError, "1050-second guard"):
+                runner.measured_shard_seconds(timing_rows(seconds))
+        current = configured_roles()
+        moved = {
+            "reference-catalog", "mmr-span", "bitmap-copy", "reader-error",
+            "public-decode-results", "black-span", "error-wrappers-basic",
+        }
+        for role in previous:
+            self.assertEqual(
+                [row for row in previous[role] if row[0] not in moved],
+                [row for row in current[role] if row[0] not in moved],
+            )
+        self.assertEqual(current["whole"], previous["whole"])
+        self.assertEqual(current["collector"], previous["collector"])
+        assigned = [row for groups in current.values() for row in groups]
+        self.assertEqual(len(assigned), 64)
+        self.assertEqual(set(assigned), set(runner.configured_checks()))
+        self.assertEqual(sum(row[2] for row in assigned), 505)
+        projected = runner.measured_shard_seconds(timing_rows(seconds))
+        self.assertAlmostEqual(max(projected), 1019.920750152, places=9)
+        self.assertEqual(len(projected), 14)
+
+    @patch.object(runner, "CHECKS", CURRENT_CHECKS)
+    def test_complete_component_envelope_keeps_all_adverse_observations(self):
+        seconds = dict(OWNED_COMPLETE_REJECTED["seconds"])
+        for rows in OWNED_REJECTED["shards"].values():
+            for row in rows:
+                seconds[row["id"]] = max(seconds[row["id"]], row["seconds"])
+        for source in (
+            PORTABLE_REJECTED["prior_accepted"]["seconds"],
+            PORTABLE_REJECTED["seconds"], PORTABLE_BALANCED_REJECTED["seconds"],
+        ):
+            self.assertEqual(set(source), set(seconds))
+            for name, elapsed in source.items():
+                seconds[name] = max(seconds[name], elapsed)
+        projected = runner.measured_shard_seconds(timing_rows(seconds))
+        self.assertAlmostEqual(max(projected), 1025.695969442, places=9)
+        collector = math.fsum(seconds[row[0]] for row in runner.configured_collector_checks())
+        self.assertAlmostEqual(collector, 1049.066534463, places=9)
+        with patch.object(
+            runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", runner.PORTABLE_SHARD_ALLOCATION,
+        ), self.assertRaisesRegex(ValueError, "1050-second guard"):
+            runner.measured_shard_seconds(timing_rows(seconds))
+
+
+class PortableShardSchedulingTests(unittest.TestCase):
+    @patch.object(runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", runner.PORTABLE_SHARD_ALLOCATION)
+    @patch.object(runner, "CHECKS", CURRENT_CHECKS)
+    def test_complete_portable_rejection_moves_only_one_complete_group(self):
+        profile = PORTABLE_REJECTED
+        self.assertEqual(profile["run_identity"], {
+            "GITHUB_REPOSITORY": "microsoft/jbig2_rs",
+            "GITHUB_RUN_ID": "45375474932",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_SHA": "f329ffc076846491a711c18befa3db567d7dccc9",
+        })
+        self.assertTrue(profile["all_groups_passed"])
+        self.assertEqual(profile["counterexamples"], 505)
+        seconds = profile["seconds"]
+        self.assertEqual(set(seconds), {row[0] for row in runner.configured_checks()})
+        with patch.object(
+            runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", runner.OWNED_BALANCED_SHARD_ALLOCATION,
+        ):
+            previous = configured_roles()
+            self.assertEqual(
+                {name: [row[0] for row in groups] for name, groups in previous.items()},
+                profile["role_groups"],
+            )
+            for name, groups in previous.items():
+                self.assertAlmostEqual(
+                    math.fsum(seconds[row[0]] for row in groups),
+                    profile["role_seconds"][name], places=9,
+                )
+            self.assertAlmostEqual(profile["role_seconds"]["shard-13"], 1126.437413592, places=9)
+            with self.assertRaisesRegex(ValueError, "1050-second guard"):
+                runner.measured_shard_seconds(timing_rows(seconds))
+        current = configured_roles()
+        moved = "default-limits-3"
+        self.assertEqual(runner.PORTABLE_SHARD_ALLOCATION, {
+            **runner.OWNED_BALANCED_SHARD_ALLOCATION, moved: 4,
+        })
+        self.assertEqual(runner.OWNED_BALANCED_SHARD_ALLOCATION[moved], 13)
+        for name in previous:
+            self.assertEqual(
+                [row for row in previous[name] if row[0] != moved],
+                [row for row in current[name] if row[0] != moved],
+            )
+        self.assertIn(moved, [row[0] for row in current["shard-4"]])
+        self.assertNotIn(moved, [row[0] for row in current["shard-13"]])
+        self.assertEqual(current["whole"], previous["whole"])
+        self.assertEqual(current["collector"], previous["collector"])
+        projected = runner.measured_shard_seconds(timing_rows(seconds))
+        self.assertAlmostEqual(projected[13], 1034.037577418, places=9)
+        self.assertAlmostEqual(projected[4], 875.938735740, places=9)
+        self.assertAlmostEqual(max(projected), 1045.988282866, places=9)
+
+    @patch.object(runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", runner.PORTABLE_SHARD_ALLOCATION)
+    @patch.object(runner, "CHECKS", CURRENT_CHECKS)
+    def test_portable_plan_preserves_all_known_owned_components_as_planning_only(self):
+        seconds = dict(OWNED_COMPLETE_REJECTED["seconds"])
+        for rows in OWNED_REJECTED["shards"].values():
+            for row in rows:
+                seconds[row["id"]] = max(seconds[row["id"]], row["seconds"])
+        for source in (PORTABLE_REJECTED["prior_accepted"]["seconds"], PORTABLE_REJECTED["seconds"]):
+            self.assertEqual(set(source), set(seconds))
+            for name, elapsed in source.items():
+                seconds[name] = max(seconds[name], elapsed)
+        self.assertEqual(len(seconds), 64)
+        self.assertEqual(sum(row[2] for row in runner.configured_checks()), 505)
+        projected = runner.measured_shard_seconds(timing_rows(seconds))
+        self.assertAlmostEqual(projected[0], 1006.845207815, places=9)
+        self.assertAlmostEqual(projected[4], 1021.836501295, places=9)
+        self.assertAlmostEqual(projected[13], 1034.037577418, places=9)
+        self.assertAlmostEqual(max(projected), 1045.988282866, places=9)
+        with patch.object(
+            runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", runner.OWNED_BALANCED_SHARD_ALLOCATION,
+        ), self.assertRaisesRegex(ValueError, "1050-second guard"):
+            runner.measured_shard_seconds(timing_rows(seconds))
+
+
 class ColourShardSchedulingTests(unittest.TestCase):
     def setUp(self):
         historical = patch.object(runner, "CHECKS", COLOUR_CERTAINTY_CHECKS)
         historical.start()
         self.addCleanup(historical.stop)
+        allocation = patch.object(
+            runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", runner.OWNED_BALANCED_SHARD_ALLOCATION,
+        )
+        allocation.start()
+        self.addCleanup(allocation.stop)
 
     def test_owned_relocation_preserves_rejected_partial_run_and_exact_projection(self):
         self.assertEqual(OWNED_REJECTED["run_identity"], {
@@ -78,7 +237,7 @@ class ColourShardSchedulingTests(unittest.TestCase):
                 self.assertEqual(row["status"], "passed")
                 self.assertEqual(row["counterexamples"], counts[row["id"]])
         with patch.object(runner, "CHECKS", CURRENT_CHECKS):
-            with patch.object(runner, "OWNED_BALANCED_SHARD_ALLOCATION", {
+            with patch.object(runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", {
                 **runner.OWNED_DECODE_SHARD_ALLOCATION, "owned-decode": 0,
             }):
                 original = runner.configured_shards()
@@ -112,7 +271,7 @@ class ColourShardSchedulingTests(unittest.TestCase):
     def test_owned_relocation_keeps_complete_historical_maxima_as_planning_not_acceptance(self):
         # No setup-saving deductions or acceptance inferred from different-source runs.
         with patch.object(runner, "CHECKS", CURRENT_CHECKS), patch.object(
-            runner, "OWNED_BALANCED_SHARD_ALLOCATION", runner.OWNED_DECODE_SHARD_ALLOCATION,
+            runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", runner.OWNED_DECODE_SHARD_ALLOCATION,
         ):
             current = runner.configured_shards()
             historical_sharded = {
@@ -147,7 +306,7 @@ class ColourShardSchedulingTests(unittest.TestCase):
             rows = timing_rows(seconds)
             with self.assertRaisesRegex(ValueError, "1050-second guard"):
                 runner.measured_shard_seconds(rows)
-            with patch.object(runner, "OWNED_BALANCED_SHARD_ALLOCATION", {
+            with patch.object(runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", {
                 **runner.OWNED_DECODE_SHARD_ALLOCATION, "owned-decode": 0,
             }):
                 old_bound = math.fsum(
@@ -174,7 +333,7 @@ class ColourShardSchedulingTests(unittest.TestCase):
             self.assertEqual(sum(row[2] for row in runner.configured_checks()), 505)
             rows = timing_rows(seconds)
             with patch.object(
-                runner, "OWNED_BALANCED_SHARD_ALLOCATION", runner.OWNED_DECODE_SHARD_ALLOCATION,
+                runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", runner.OWNED_DECODE_SHARD_ALLOCATION,
             ):
                 original = configured_roles()
                 self.assertEqual(len(original), 16)

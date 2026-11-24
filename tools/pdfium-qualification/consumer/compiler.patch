@@ -1,0 +1,51 @@
+--- a/build/config/compiler/BUILD.gn
++++ b/build/config/compiler/BUILD.gn
+@@ -1297,7 +1297,7 @@
+ # building with ThinLTO, no optimization is performed in the link step.
+ config("thinlto_optimize_default") {
+   if (!is_debug && use_thin_lto && is_a_target_toolchain) {
+-    lto_opt_level = 0
++    lto_opt_level = 3
+ 
+     if (is_win) {
+       ldflags = [ "/opt:lldlto=" + lto_opt_level ]
+@@ -2719,12 +2719,20 @@
+     # vectorization while otherwise optimizing for size.
+     rustflags = [ "-Copt-level=s" ]
+   } else {
+-    cflags = [ "-O2" ] + common_optimize_on_cflags
++    cflags = [ "-O3", "-mcpu=native" ] + common_optimize_on_cflags
+ 
+     # The `-O3` for clang turns on extra optimizations compared to the standard
+     # `-O2`. But for rust, `-Copt-level=3` is the default and is thus reliable
+     # to use.
+     rustflags = [ "-Copt-level=3" ]
++  }
++  if (!is_debug && is_linux && current_cpu == "arm64") {
++    rustflags += [
++      "-Ctarget-cpu=native",
++      "-Ccodegen-units=1",
++      "-Cdebug-assertions=no",
++      "-Coverflow-checks=no",
++    ]
+   }
+   ldflags = common_optimize_on_ldflags
+ }
+@@ -2774,7 +2782,7 @@
+   } else if (optimize_for_fuzzing) {
+     cflags = [ "-O1" ] + common_optimize_on_cflags
+   } else {
+-    cflags = [ "-O2" ] + common_optimize_on_cflags
++    cflags = [ "-O3", "-mcpu=native" ] + common_optimize_on_cflags
+   }
+   rustflags = [ "-Copt-level=3" ]
+ }
+@@ -2798,7 +2806,7 @@
+   } else if (optimize_for_fuzzing) {
+     cflags = [ "-O1" ] + common_optimize_on_cflags
+   } else {
+-    cflags = [ "-O3" ] + common_optimize_on_cflags
++    cflags = [ "-O3", "-mcpu=native" ] + common_optimize_on_cflags
+   }
+   rustflags = [ "-Copt-level=3" ]
+ }

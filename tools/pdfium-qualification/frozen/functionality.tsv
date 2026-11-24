@@ -1,0 +1,462 @@
+id	group	cpp	rust_strict	rust_best	cpp_vs_strict	cpp_vs_best	different_pixels	different_samples	max_delta
+embedded/aba211c04ee4dfb4	embedded	ok	decode_error	ok	not_both_accepted	exact	0	0	0
+embedded/19d2f799615eda71	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/4dd852dc801e55e7	embedded	ok	decode_error	ok	not_both_accepted	exact	0	0	0
+embedded/431bbb6ee9244e41	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/9552a1f00f162690	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/9c43bc75b23cda25	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/a6f7768707d2e8fa	embedded	ok	decode_error	ok	not_both_accepted	exact	0	0	0
+embedded/e0f8ecb9620a91d4	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/f680579c2ad2d143	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/6770504d35d352e9	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/15cc88c4decd13e3	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/936bd477e4943205	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/47cbd066ba46eb06	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/bbeb633a03b3ca28	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/3d41a83fd9b66f22	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/b05b82e7d69eabb5	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/fc320c8c4ea2f283	embedded	ok	decode_error	ok	not_both_accepted	exact	0	0	0
+embedded/2917a067d3144df1	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/8024d04611c0c037	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/ebd35a0a0d7466f4	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/9e8fae7d90a5e4be	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/b3c11eb2748669cf	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/8b2119c44e347314	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/ad4f129165eb26db	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/82c35f6158e887ea	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/403fb8c6c1d83ac5	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/998c81edd352e92c	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/f30ca6de0a53bb41	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/ae003b8bc41bd3bb	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/79583e13f319a704	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/b631bf58599eda24	embedded	ok	decode_error	ok	not_both_accepted	exact	0	0	0
+embedded/f51aa6cf426e2d62	embedded	ok	decode_error	ok	not_both_accepted	exact	0	0	0
+embedded/b6cc5034c6f079c9	embedded	ok	decode_error	ok	not_both_accepted	exact	0	0	0
+embedded/ef1602156083ca1a	embedded	ok	decode_error	ok	not_both_accepted	exact	0	0	0
+embedded/8ad61bc7b7afacc7	embedded	ok	decode_error	ok	not_both_accepted	exact	0	0	0
+embedded/fcdca0a4fae7c9cc	embedded	ok	decode_error	ok	not_both_accepted	exact	0	0	0
+embedded/a8775441976392b3	embedded	ok	decode_error	ok	not_both_accepted	exact	0	0	0
+embedded/899b72905c321e74	embedded	ok	decode_error	ok	not_both_accepted	exact	0	0	0
+embedded/acc40610ef05604d	embedded	ok	decode_error	ok	not_both_accepted	exact	0	0	0
+embedded/aa4b839b73821449	embedded	ok	decode_error	ok	not_both_accepted	exact	0	0	0
+embedded/2e55a0225d655250	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/7fdfb251dbe08b1f	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/64b3be07e964f663	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/345ff6045f564395	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/827a57ac13da3cb9	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/ff325014ff252005	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/3261c3ecf45e8ce2	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/fd6a5accc84579e3	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/8b982f97a6859a1e	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/9c63b3e45e35f234	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/c809ae4b11af5fa2	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/4c7fd642926f59eb	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/640c37f67be8b89f	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/1491bda86723d3b2	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/7a83d5d849a8e3d9	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/ac6f13f6a1a816f4	embedded	ok	decode_error	ok	not_both_accepted	exact	0	0	0
+embedded/3142abd507f194d4	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/14a05bc08d885cb7	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/09cdc49a3b9ff595	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/de58cecfffed182b	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/b52d90752018265c	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/c638058796f3fc54	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/2ac83abac8eff918	embedded	ok	decode_error	decode_error	not_both_accepted	not_both_accepted			
+embedded/ba4f6135e65ac9f7	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/5442c9c525f2c6e3	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/0dc5d71bc69b32c8	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/06dbd76327adf56a	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/55da7b337f6a040a	embedded	ok	decode_error	decode_error	not_both_accepted	not_both_accepted			
+embedded/8b28ce824da80f72	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/372b999083a186e6	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/d7ef3389439b6994	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/915e575201187e75	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/908c494da44be986	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/27dc372b253873b5	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/3a30c8a2b161287d	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/f29580bb33ae3284	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/a9da627c250fd639	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/f30782aee235458b	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/0f5f7e219cf75b9e	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/4a433811afbeb863	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/14108da72f3eee87	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/cc21cab294f728ee	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/f03a355f31bc8e68	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/62713bb0c5fe1015	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/0a352f4cc26e6c81	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/9fbe39a87b37805b	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/831c68c61476ed29	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/d071ee428fbd6818	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/75743dc8e2ae0273	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/2a9e580c7796c3ab	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/f075ed97b075aa80	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/5d7519ff2d383581	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/ae729a625edbf3ab	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/a194e6a18571a3ad	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/d3232ca303f98a8e	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/783ed327e66500e8	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/b439f7d18b02ebf1	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/a4275611aeab39cd	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/dc3ad1c91219bb34	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/0e21f4922163acb2	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/45fc094b43ba076b	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/5c454f15adb7865a	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/be168a9851ca35b7	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/758e85ee4e3a9c65	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/932a96e3baed3121	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/e1b80d96ee54a20f	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/b8644f87490efc62	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/3edc16dc0470fef8	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/9b050fbe5efd7fc8	embedded	ok	decode_error	ok	not_both_accepted	exact	0	0	0
+embedded/4a7b72ef773f4b2c	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/7ca4dd43bea04763	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/dd741728d6ebf82f	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/b75f1a8fc24e3881	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/cad55441ee2af1dd	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/f236d5e82384d00f	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/09c08b171a745fa1	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/e434f28150343037	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/9a4633304b4e1cc6	embedded	decode_error	decode_error	decode_error	not_both_accepted	not_both_accepted			
+embedded/01b6975ef8ff128b	embedded	ok	decode_error	decode_error	not_both_accepted	not_both_accepted			
+embedded/722dfba827a7d78d	embedded	decode_error	decode_error	decode_error	not_both_accepted	not_both_accepted			
+embedded/28d4d1bc607043a7	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/dd77406b6171e59c	embedded	ok	ok	ok	exact	exact	0	0	0
+embedded/a80313fb23473902	embedded	ok	ok	ok	exact	exact	0	0	0
+hayro/composite_and_xnor-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/composite_and_xnor_halftone-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/composite_and_xnor_refine-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/composite_and_xnor_text-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/composite_or_xor_replace-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/composite_or_xor_replace_halftone-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/composite_or_xor_replace_refine-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/composite_or_xor_replace_text-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/composite_page_default_pixel_and-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/composite_page_default_pixel_replace-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/composite_page_default_pixel_xnor-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/composite_page_replace-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/composite_region_default_pixel-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/file_page_association_32bit-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/file_pages-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/file_pages-page2	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/file_pages-page3	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/file_random_access-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_mmr-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_row_ending_in_full_chunks-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_template0-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_template0_custom_at-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_template0_custom_at_tpgdon-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_template0_ext-page1	hayro	ok	ok	ok	pixels_differ	pixels_differ	8853		
+hayro/generic_template0_ext_custom_at-page1	hayro	ok	ok	ok	pixels_differ	pixels_differ	8851		
+hayro/generic_template0_ext_custom_at_tpgdon-page1	hayro	ok	ok	ok	pixels_differ	pixels_differ	7661		
+hayro/generic_template0_tpgdon-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_template1-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_template1_custom_at-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_template1_custom_at_tpgdon-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_template1_tpgdon-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_template2-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_template2_custom_at-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_template2_custom_at_tpgdon-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_template2_tpgdon-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_template3-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_template3_custom_at-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_template3_custom_at_tpgdon-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_template3_tpgdon-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_trailing_7fff_stripped-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_trailing_7fff_stripped_many-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_unknown_length-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_unknown_length_custom_at-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/generic_unknown_length_mmr-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_10_bitplanes-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_10_bitplanes_mmr-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_combination_operators-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_global-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_large_patterns-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_mmr_bitplane_boundary-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_pattern_width_128-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_pattern_width_129-page1	hayro	ok	ok	ok	pixels_differ	pixels_differ	8729		
+hayro/halftone_pattern_width_255-page1	hayro	ok	ok	ok	pixels_differ	pixels_differ	8861		
+hayro/halftone_replace_word_aligned-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_rotated_grid-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_rotated_grid_skip-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_rotated_grid_skip_template1-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_rotated_grid_skip_template2-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_rotated_grid_skip_template3-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_single_pattern-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_single_pattern_mmr-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_skip_unused-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_tall_patterns-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_template1-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_template2-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_template3-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_then_refine-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_then_refine_default_pixel-page1	hayro	ok	ok	ok	pixels_differ	pixels_differ	7584		
+hayro/halftone_tiles_and-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_tiles_replace-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_tiles_xnor-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/halftone_tiles_xor-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/huffman_custom_aggregate_count-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/huffman_custom_table_htlow_min-page1	hayro	decode_error	ok	ok	not_both_accepted	not_both_accepted			
+hayro/huffman_custom_table_long_prefixes-page1	hayro	decode_error	ok	ok	not_both_accepted	not_both_accepted			
+hayro/huffman_custom_tables-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/huffman_many_symbols-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/huffman_standard_tables-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/huffman_symbol_id_run_codes-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/huffman_table_b12_transposed-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/huffman_tables_b10_b13-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/huffman_tables_b5_b3_b7_b9_b12-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/huffman_text_refine-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/huffman_text_refine_b15-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/huffman_text_refine_custom-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/huffman_text_refine_custom_data_size-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/huffman_text_refine_custom_offsets-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/huffman_text_refine_custom_sizes-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/huffman_text_refine_custom_sizes_offsets-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/huffman_text_refine_custom_x_offset-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/huffman_text_refine_different_offset_tables-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/huffman_text_refine_global_tables-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/huffman_text_refine_large_offsets-page1	hayro	ok	ok	ok	pixels_differ	pixels_differ	2415		
+hayro/huffman_trailing_unused_symbols-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/huffman_uncompressed_symbols-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/lenient_colour_region-page1	hayro	ok	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/lenient_end_of_page_of_previous_page-page1	hayro	ok	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/lenient_end_of_page_of_previous_page-page2	hayro	ok	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/lenient_end_of_page_of_previous_page-page3	hayro	ok	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/lenient_failing_region-page1	hayro	decode_error	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/lenient_gray_value_out_of_range-page1	hayro	ok	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/lenient_intermediate_page_refinement-page1	hayro	ok	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/lenient_missing_final_oob-page1	hayro	ok	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/lenient_missing_final_oob_huffman-page1	hayro	ok	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/lenient_missing_reference-page1	hayro	decode_error	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/lenient_mmr_rows_missing-page1	hayro	ok	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/lenient_necessary_extension-page1	hayro	ok	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/lenient_page_count_mismatch-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/lenient_page_count_mismatch-page2	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/lenient_page_count_mismatch-page3	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/lenient_page_without_end_of_page-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/lenient_page_without_end_of_page-page2	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/lenient_page_without_end_of_page-page3	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/lenient_refinement_of_immediate_region-page1	hayro	decode_error	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/lenient_reserved_region_flags-page1	hayro	ok	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/lenient_reserved_segment_type-page1	hayro	ok	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/lenient_symbol_out_of_range-page1	hayro	decode_error	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/lenient_table_past_hthigh-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/lenient_unknown_length_intermediate-page1	hayro	ok	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/malformed_huffman_value_out_of_range-page1	hayro	decode_error	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/malformed_mmr_region_with_height_0-page1	hayro	decode_error	ok	ok	not_both_accepted	not_both_accepted			
+hayro/malformed_reused_contexts_of_another_template-page1	hayro	decode_error	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/malformed_symbol_dictionary_empty_export_runs-page1	hayro	timeout	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/malformed_symbol_dictionary_empty_height_classes-page1	hayro	timeout	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/malformed_symbol_dictionary_garbage_data-page1	hayro	timeout	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/malformed_text_placement_out_of_range-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/memory_halftone_grid-page1	hayro	ok	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/memory_immediate_regions-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/memory_intermediate_regions-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/memory_page-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/memory_symbol_dictionary_global-page1	hayro	decode_error	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/memory_symbol_dictionary_large_symbol-page1	hayro	decode_error	decode_error	decode_error	not_both_accepted	not_both_accepted			
+hayro/memory_symbol_dictionary_many_symbols-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/page_striped-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/page_striped_last_stripe_implicit-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/page_striped_no_end_of_stripe-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/page_striped_single_stripe-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/page_striped_unknown_height-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/refine_lossless-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/refine_page-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/refine_page_part-page1	hayro	ok	ok	ok	pixels_differ	pixels_differ	2563		
+hayro/refine_refined_region-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/refine_template0-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/refine_template0_custom_at-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/refine_template0_custom_at_tpgron-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/refine_template0_tpgron-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/refine_template1-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/refine_template1_tpgron-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/refine_trailing_7fff_stripped_many-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_aggregate-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_aggregate_then_refine-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_context_reuse-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_context_reuse_refine-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_custom_at-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_empty-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_global-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_huffman_aggregate-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_huffman_aggregate_then_refine-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_huffman_context_reuse_refine-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_huffman_context_reuse_refine_table-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_huffman_refine_after_arithmetic-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_huffman_refine_offsets-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_huffman_refine_one-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_huffman_refine_text_refine-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_huffman_refine_text_refine_export-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_large_segment_numbers-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_many_dictionaries-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_many_symbols-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_refine_offsets-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_refine_one-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_refine_one_custom_at-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_refine_one_template1-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_refine_text_refine-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_refine_text_refine_export-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/symbol_template2-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/text_bottomleft-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/text_bottomleft_transposed-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/text_bottomright-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/text_bottomright_transposed-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/text_composition-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/text_instance_far_left-page1	hayro	decode_error	ok	ok	not_both_accepted	not_both_accepted			
+hayro/text_large_integer-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/text_many_instances-page1	hayro	decode_error	ok	ok	not_both_accepted	not_both_accepted			
+hayro/text_negative_ds_offset-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/text_refine-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/text_refine_custom_at-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/text_refine_far_reference-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/text_refine_large_offsets-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/text_refine_negative_delta_width-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/text_refine_positive_offset-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/text_refine_template1-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/text_then_refine-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/text_then_refine_default_pixel-page1	hayro	ok	ok	ok	pixels_differ	pixels_differ	9020		
+hayro/text_topleft_transposed-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/text_topright-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+hayro/text_topright_transposed-page1	hayro	ok	ok	ok	exact	exact	0	0	0
+corpus/pdfium/bug_511_jbig_null_crash.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/pdfium/bug_880920.pdf	pdf	ok	ok	ok	pixels_differ	exact	0	0	0
+corpus/third_party/jbig2/bitmap-composite-and-xnor-halftone.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-composite-and-xnor-refine.pdf	pdf	ok	ok	ok	pixels_differ	exact	0	0	0
+corpus/third_party/jbig2/bitmap-composite-and-xnor-text.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-composite-and-xnor.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-composite-or-xor-replace-halftone.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-composite-or-xor-replace-refine.pdf	pdf	ok	ok	ok	pixels_differ	exact	0	0	0
+corpus/third_party/jbig2/bitmap-composite-or-xor-replace-text.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-composite-or-xor-replace.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-customat-tpgdon.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-customat.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-halftone-10bpp-mmr.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-halftone-10bpp.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-halftone-composite.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-halftone-global.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-halftone-grid.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-halftone-refine.pdf	pdf	ok	ok	ok	pixels_differ	exact	0	0	0
+corpus/third_party/jbig2/bitmap-halftone-skip-dummy.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-halftone-skip-grid-template1.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-halftone-skip-grid-template2.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-halftone-skip-grid-template3.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-halftone-skip-grid.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-halftone-template1.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-halftone-template2.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-halftone-template3.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-halftone.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-initially-unknown-size.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-mmr.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-p32-eof.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-randomaccess.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-refine-customat-tpgron.pdf	pdf	ok	ok	ok	pixels_differ	exact	0	0	0
+corpus/third_party/jbig2/bitmap-refine-customat.pdf	pdf	ok	ok	ok	pixels_differ	exact	0	0	0
+corpus/third_party/jbig2/bitmap-refine-lossless.pdf	pdf	ok	ok	ok	pixels_differ	exact	0	0	0
+corpus/third_party/jbig2/bitmap-refine-page-subrect.pdf	pdf	ok	ok	ok	pixels_differ	exact	0	0	0
+corpus/third_party/jbig2/bitmap-refine-page.pdf	pdf	ok	ok	ok	pixels_differ	exact	0	0	0
+corpus/third_party/jbig2/bitmap-refine-refine.pdf	pdf	ok	ok	ok	pixels_differ	exact	0	0	0
+corpus/third_party/jbig2/bitmap-refine-template1-tpgron.pdf	pdf	ok	ok	ok	pixels_differ	exact	0	0	0
+corpus/third_party/jbig2/bitmap-refine-template1.pdf	pdf	ok	ok	ok	pixels_differ	exact	0	0	0
+corpus/third_party/jbig2/bitmap-refine-tpgron.pdf	pdf	ok	ok	ok	pixels_differ	exact	0	0	0
+corpus/third_party/jbig2/bitmap-refine.pdf	pdf	ok	ok	ok	pixels_differ	exact	0	0	0
+corpus/third_party/jbig2/bitmap-stripe-initially-unknown-height.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-stripe-last-implicit.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-stripe-single-no-end-of-stripe.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-stripe-single.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-stripe.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-32bit-arithint.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-big-segmentid.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-context-reuse-huffman-refagg.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-context-reuse-refagg.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-context-reuse.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-empty.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-global.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-manyrefs.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-manysyms.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-negative-sbdsoffset.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-refine.pdf	pdf	ok	ok	ok	pixels_differ	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-symbolrefine-textrefine-export.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-symbolrefine-textrefine.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-symbolrefineone-customat.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-symbolrefineone-template1.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-symbolrefineone.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-symbolrefineseveral.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-symhuff-texthuff-manysyms.pdf	pdf	ok	ok	ok	pixels_differ	pixels_differ		32850	255
+corpus/third_party/jbig2/bitmap-symbol-symhuff-texthuff-runcodes32-34.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-symhuff-texthuff.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-symhuff-texthuffB10B13.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-symhuffB5B3-texthuffB7B9B12.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-symhuffcustom-texthuffcustom.pdf	pdf	ok	ok	ok	pixels_differ	pixels_differ		32850	255
+corpus/third_party/jbig2/bitmap-symbol-symhuffrefine-textrefine-export.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-symhuffrefine-textrefine.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-symhuffrefineone.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-symhuffrefineseveral.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-symhuffuncompressed-texthuff.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-textbottomleft.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-textbottomlefttranspose.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-textbottomright.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-textbottomrighttranspose.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-textcomposite.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-texthuff-runcodes32-34.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-texthuff-trailingsymbols.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-texthuffrefine.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-texthuffrefineB15.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-texthuffrefinecustom.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-texthuffrefinecustomdims.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-texthuffrefinecustompos-global.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-texthuffrefinecustompos.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-texthuffrefinecustomposdims.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-texthuffrefinecustomsize.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-textrefine-customat.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-textrefine-negative-delta-width.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-textrefine.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-texttopright.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-texttoprighttranspose.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol-texttranspose.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-symbol.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-template1-customat-tpgdon.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-template1-customat.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-template1-tpgdon.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-template1.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-template2-customat-tpgdon.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-template2-customat.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-template2-tpgdon.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-template2.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-template3-customat-tpgdon.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-template3-customat.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-template3-tpgdon.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-template3.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-tpgdon.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-trailing-7fff-stripped-harder-refine.pdf	pdf	ok	ok	ok	pixels_differ	exact	0	0	0
+corpus/third_party/jbig2/bitmap-trailing-7fff-stripped-harder.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap-trailing-7fff-stripped.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+corpus/third_party/jbig2/bitmap.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+resources/bug_631912.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+resources/bug_674771.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+resources/drawing/bug_552046.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+resources/pixel/bug_1087.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+resources/pixel/bug_1236.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+resources/pixel/bug_1478366.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+resources/pixel/bug_527174.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+resources/pixel/bug_867501.pdf	pdf	ok	ok	ok	pixels_differ	pixels_differ		42750	255
+resources/pixel/bug_963885.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+resources/pixel/composite-and-xnor.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+resources/pixel/composite-or-xor-replace.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+resources/pixel/transfer_function.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+wrapped/wrapped-generic_mmr-page1.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+wrapped/wrapped-generic_row_ending_in_full_chunks-page1.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+wrapped/wrapped-generic_template0-page1.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+wrapped/wrapped-halftone-page1.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+wrapped/wrapped-halftone_10_bitplanes-page1.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+wrapped/wrapped-halftone_10_bitplanes_mmr-page1.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+wrapped/wrapped-huffman_custom_aggregate_count-page1.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+wrapped/wrapped-huffman_custom_table_htlow_min-page1.pdf	pdf	ok	ok	ok	pixels_differ	pixels_differ		17082	255
+wrapped/wrapped-huffman_custom_table_long_prefixes-page1.pdf	pdf	ok	ok	ok	pixels_differ	pixels_differ		17082	255
+wrapped/wrapped-refine_lossless-page1.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+wrapped/wrapped-refine_page-page1.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+wrapped/wrapped-refine_page_part-page1.pdf	pdf	ok	ok	ok	pixels_differ	pixels_differ		7689	255
+wrapped/wrapped-symbol-page1.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+wrapped/wrapped-symbol_aggregate-page1.pdf	pdf	ok	ok	ok	exact	exact	0	0	0
+wrapped/wrapped-symbol_aggregate_then_refine-page1.pdf	pdf	ok	ok	ok	exact	exact	0	0	0

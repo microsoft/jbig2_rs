@@ -1,0 +1,15 @@
+import("//build/rust/rust_static_library.gni")
+
+declare_args() {
+  jbig2_eval_core_root = "//third_party/jbig2_decoder/upstream"
+}
+
+rust_static_library("lib") {
+  crate_name = "jbig2_decoder"
+  crate_root = "$jbig2_eval_core_root/src/lib.rs"
+  edition = "2021"
+  sources = exec_script("//jbig2_eval_sources.py",
+                        [ rebase_path("$jbig2_eval_core_root/src") ],
+                        "list lines")
+  rustflags = [ "-Aunexpected_cfgs" ]
+}

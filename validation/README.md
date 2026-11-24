@@ -182,8 +182,11 @@ Semantic contrasts require an exact positive baseline, an ordinarily compiling
 mutant, strong proof rejection and success under only the selected weakened
 guarantee. Every configured group is required.
 
-The current profile uses an additive overlay on the original owned allocation:
-only the complete three-case `default-limits-3` group moves from shard 12 to 13.
+The current robust portable profile balances seven complete groups over the
+preceding portable allocation. That preceding correction moved the complete
+three-case `default-limits-3` group from shard 13 to 4; the earlier owned-balanced
+correction moved it from shard 12 to 13. Both older allocations are preserved
+as historical data, not reinterpreted.
 All 64 groups / 505 contrasts remain; the two-case `owned-decode` group stays on
 shard 1. Historical colour/certainty and original owned maps retain their
 membership and timing interpretation. Fourteen shards, whole/collector roles,
@@ -208,8 +211,8 @@ colour profiles remain planning only, not current qualification.
 
 The corrected run `45289712820/1`, checkout
 `a8fc8d65fe429fa6374483be0cdfd33ece3a6006`, completed all 64 groups / 505
-contrasts but was rejected at shard 12's 1,054.647908281 seconds. The current
-overlay moves only its smallest timed complete group, `default-limits-3`
+contrasts but was rejected at shard 12's 1,054.647908281 seconds. Its original
+correction moved only its smallest timed complete group, `default-limits-3`
 (90.951952146 seconds), to shard 13. Reusing the complete rejected profile
 projects shard 12 / 13 at 963.695956135 / 829.459011706 seconds and the full
 16-role maximum at 1,029.196259829 seconds. A per-group conservative envelope
@@ -217,6 +220,69 @@ including every earlier owned-run component has the same prospective maximum,
 without setup deductions or discarded adverse timings. These are planning
 calculations, not acceptance credit. Qualification still requires a fresh
 complete same-run result under the unchanged guard.
+
+The portable-assets run `45375474932/1`, checkout
+`f329ffc076846491a711c18befa3db567d7dccc9`, also passed all 64 groups / 505
+contrasts, but its canonical profile rejected shard 13 at 1,126.437413592 seconds.
+Its original correction moved only the complete `default-limits-3` group
+(92.399836174 seconds) from shard 13 to 4. Its measured projection is
+1,034.037577418 / 875.938735740 seconds there. A per-group envelope including
+the earlier complete rejected profile, every partial owned-run component and
+the accepted `45304768601/1` profile projects a maximum of
+1,045.988282866 seconds; destination shard 4 projects 1,021.836501295 seconds.
+All rejected and accepted observations retain their original identities and
+interpretation. These calculations are planning only, not a latency guarantee
+or acceptance credit. A fresh complete same-run profile is required; no case,
+role, compiler/resource setting, parallelism or guard is changed.
+
+Run `45391179475/1`, checkout `eb1a5dc7bb9a84b199803f501fec8f95b3029b51`,
+again passed all 64 groups / 505 contrasts but rejected shard 4 at
+1,063.714668023 seconds. Moving a single group left insufficient timing margin.
+The current static overlay therefore balances seven complete groups using the
+per-group maxima from every owned/portable partial, rejected and accepted
+profile above: reference-catalog to 9, mmr-span to 6, bitmap-copy to 2,
+reader-error to 13, public-decode-results to 5, black-span to 4, and
+error-wrappers-basic to 3. No group is split, removed or weakened.
+The latest complete-profile shard projection has maximum 1,019.920750152
+seconds; the complete component-envelope shard maximum is 1,025.695969442.
+The unchanged collector's component envelope is still 1,049.066534463 seconds.
+These are planning bounds, not acceptance or universal timing guarantees.
+All earlier allocations, roles, observations and rejection evidence remain;
+only fresh complete same-run CI can qualify the new profile.
+
+### Host procedural-macro build overhead
+
+The verification workspace builds host-only procedural macros and their build
+dependencies at development opt-level 1. The production library and ordinary
+verification dependencies retain their original development compilation profile.
+The pinned Rust/Verus versions, debug assertions, proof checks, selectors,
+rlimit/thread/timeout settings and every native/strong/weaker query remain.
+This changes host build-tool compilation, not a proof or runtime resource gate.
+The ordinary crate manifest and native decoder source are unchanged.
+
+Real profiling attributed more than 98% of a 15-contrast arithmetic-decision
+checker to subprocesses, not Python. A local same-source run including fresh
+dependency setup measured 595.681 seconds before and 535.771 seconds after
+(10.1% less time). Both performed 31 fresh selected proofs, 31 production-root
+invalidations and 15 native mutant checks; their entire result documents,
+including all source bindings and strong/weaker outcomes, match exactly.
+The [source/profile/timing receipt](performance/proof-host-build-profile.json)
+also records the actual Cargo artifact profiles and the adverse observations.
+The warm-query saving comes from faster macro expansion. It is not free:
+the small two-contrast reset checker regressed from 125.869 to 139.751 seconds
+including cold setup. An opt-level 3 diagnostic also recorded first-build
+execution tracing; it is retained separately, not used as equivalent latency
+evidence or adopted. Host build dependencies are reused only within the existing fresh
+per-worker cache, amortizing setup across complete groups; no proof result or
+production-root artifact is cached.
+
+The host build profile is part of `verification/Cargo.toml`, so the existing
+dependency-cache digest binds it and invalidates incompatible host artifacts.
+The cache regression test covers this manifest as well as the toolchain,
+lockfile and reviewed interface sources. These shared-host observations are
+planning evidence, not portable timing guarantees or a canonical CI pass.
+The complete 64-group/505-contrast same-run pipeline and unchanged 1,050-second
+guard must still pass on the final head.
 
 Native mutations separately require an original passing test and failure of
 that exact test after a compiling change:

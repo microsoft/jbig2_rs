@@ -1,0 +1,16 @@
+{
+  "result": "PASS",
+  "materialization": {
+    "result": "PASS",
+    "image_requests": 321,
+    "pdfs": 140,
+    "portable_cohort_sha256": "0927ef58a0c7cac5f821125486487630028d3fc786e6f52f1a5817bb9a47f848"
+  },
+  "public_base_integration_patch_applies": true,
+  "public_base_compiler_patch_applies": true,
+  "matched_four_rust_consumers_build": true,
+  "targeted_pdfium_tests_passed": 88,
+  "original_cpp_identity_unchanged": true,
+  "source_commit": "121bee27be8080a6de3642375d2f84d1967f24dd",
+  "note": "Asset usability receipt, not a performance or merge-approval receipt."
+}

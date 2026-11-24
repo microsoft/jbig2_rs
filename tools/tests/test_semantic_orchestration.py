@@ -270,6 +270,7 @@ def evidence():
 
 
 class SemanticOrchestrationTests(unittest.TestCase):
+    @patch.object(runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", runner.OWNED_BALANCED_SHARD_ALLOCATION)
     @patch.object(runner, "CHECKS", CURRENT_CHECKS)
     @patch.multiple(runner, **LIVE_TOPOLOGY)
     def test_current_owned_balance_moves_only_one_complete_group_and_freezes_prior_maps(self):
@@ -282,7 +283,7 @@ class SemanticOrchestrationTests(unittest.TestCase):
             **runner.OWNED_DECODE_SHARD_ALLOCATION, "default-limits-3": 13,
         })
         with patch.object(
-            runner, "OWNED_BALANCED_SHARD_ALLOCATION", runner.OWNED_DECODE_SHARD_ALLOCATION,
+            runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", runner.OWNED_DECODE_SHARD_ALLOCATION,
         ):
             previous = runner.configured_shards()
             whole = runner.configured_whole_checks()
@@ -306,7 +307,7 @@ class SemanticOrchestrationTests(unittest.TestCase):
         self.assertEqual(set(assigned), set(checks))
         self.assertEqual(runner.WORKERS, 2)
 
-    @patch.object(runner, "OWNED_BALANCED_SHARD_ALLOCATION", runner.OWNED_DECODE_SHARD_ALLOCATION)
+    @patch.object(runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", runner.OWNED_DECODE_SHARD_ALLOCATION)
     @patch.object(runner, "CHECKS", CURRENT_CHECKS)
     @patch.multiple(runner, **LIVE_TOPOLOGY)
     def test_original_owned_profile_is_additive_on_shard_one_without_moving_existing_groups(self):
@@ -347,7 +348,7 @@ class SemanticOrchestrationTests(unittest.TestCase):
         self.assertEqual(set(assigned), set(checks))
         self.assertEqual(runner.WORKERS, 2)
 
-    @patch.object(runner, "OWNED_BALANCED_SHARD_ALLOCATION", runner.OWNED_DECODE_SHARD_ALLOCATION)
+    @patch.object(runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", runner.OWNED_DECODE_SHARD_ALLOCATION)
     @patch.object(runner, "CHECKS", CURRENT_CHECKS)
     @patch.multiple(runner, **LIVE_TOPOLOGY)
     def test_owned_profile_requires_its_actual_complete_cost_under_the_unchanged_guard(self):

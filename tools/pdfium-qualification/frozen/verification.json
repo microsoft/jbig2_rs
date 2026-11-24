@@ -1,0 +1,31 @@
+{
+  "result": "PASS",
+  "source": "f8774dd4d09bec588f88cd4750334b398030057b",
+  "image_requests": 321,
+  "pdfs": 140,
+  "final_outcomes": 1383,
+  "normalization_rechecks": 24,
+  "persistent_functional_output_hashes_verified": 1289,
+  "independent_reference_cases": 183,
+  "timed_workloads": 68,
+  "timing_case_rounds": 204,
+  "timing_processes": 591,
+  "pdfium_tests_passed": 65,
+  "upstream_tests_passed": 631,
+  "upstream_existing_ignored": 15,
+  "cpp_timeouts_20_seconds": 3,
+  "rust_timeouts": 0,
+  "process_crashes": 0,
+  "source_clean": true,
+  "original_user_changes_unchanged": true,
+  "deliverable_sha256": {
+    "report.md": "e331d91ed18571cd9de7912c84d64de1fc05b194621864b17130f0c5ef6b75e8",
+    "functionality.tsv": "878716fc67fe88343e09924d1403c83fec0d6dca58f874130483599d0624eb0b",
+    "performance.tsv": "04a91afb210cd1a77a5f2ee096ac887efe2fa3f6c1c447be2273f2863ce6249a",
+    "functionality.json": "87b6a9b3ba29948ad071ecd4a431b7f9a65df307e70174db3b52d1042f9ceda9",
+    "performance.json": "6e6d11a2f6879cbb66b0f410ba67d0da004811bf4c47a718ff6ed236a866b628",
+    "reference-adjudication.json": "5229a8750e7bbbc7cb6a22e17f23de61e617ce41b2688ceeb3c298f6237f8f31",
+    "manifest.json": "d09f5f265c4f8f5a1ec57a51b1df95cfb7371ad70a1cb33512fe6321b87d3e0d",
+    "build-audit.json": "b4c0510d241b41ba194e91a11ab3fe31827b8949ff0ce04861fd1024274cceba"
+  }
+}

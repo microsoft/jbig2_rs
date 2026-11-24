@@ -1,0 +1,194 @@
+{
+  "scope": "Complete second portable rejection: all64groups/505contrastspass but shard4 exceeds unchanged1050-secondguard. Preserve all component/role timings; alternative regrouping is planning only, not acceptance.",
+  "run_identity": {
+    "GITHUB_REPOSITORY": "microsoft/jbig2_rs",
+    "GITHUB_RUN_ID": "45391179475",
+    "GITHUB_RUN_ATTEMPT": "1",
+    "GITHUB_SHA": "eb1a5dc7bb9a84b199803f501fec8f95b3029b51"
+  },
+  "proposal_head": "656913e2a87e3151725a8e3841e9088befa9d28a",
+  "all_groups_passed": true,
+  "counterexamples": 505,
+  "seconds": {
+    "clone-results": 327.18303249499996,
+    "context-callers": 210.316617183,
+    "arithmetic-decision": 449.9805891010001,
+    "reset": 61.586295684000106,
+    "huffman-assignment": 855.677430693,
+    "symbol-cardinality": 561.894259338,
+    "arithmetic-refill": 145.72032398600004,
+    "default-decoder-2": 74.9948899850001,
+    "owned-decode": 52.54960302200004,
+    "session-framing": 379.053679114,
+    "arithmetic-integer": 261.60802887399996,
+    "bitmap-compose": 205.17759481000007,
+    "arithmetic-initialization": 174.08144735400003,
+    "halftone-header": 245.089165129,
+    "segment-header": 246.11013157799994,
+    "arithmetic-normalization": 145.680909542,
+    "region-dispatch": 76.86782975900007,
+    "operator-bit": 97.03554855499999,
+    "integer-state": 329.066541981,
+    "page-finish": 207.89018072500005,
+    "retention": 89.73506783500011,
+    "error-conversion": 294.731827943,
+    "public-context": 336.261865671,
+    "mmr-horizontal": 209.26831709600003,
+    "mmr-prefix": 126.16362632200003,
+    "error-wrappers-basic": 287.2147872390001,
+    "collector-sink": 61.715801586,
+    "arithmetic-certainty": 149.6176298,
+    "value-bridge": 523.68245929,
+    "default-limits-2": 88.98853889500003,
+    "reference-catalog": 178.87306774400008,
+    "page-state": 321.507598885,
+    "mmr-span": 180.694614398,
+    "error-wrappers-symbol": 174.33226765299992,
+    "default-decoder-3": 72.17342323699995,
+    "text-batch": 363.434906155,
+    "bitmap-copy": 242.420468367,
+    "default-limits-1": 91.06199820999996,
+    "default-limits-3": 91.79853085299999,
+    "default-decoder-4": 92.30876144000001,
+    "reference-accounting": 182.69000299799995,
+    "mmr-reference": 409.13341162599994,
+    "reader-error": 277.361380487,
+    "mmr-run": 131.67414002399994,
+    "default-decoder-5": 95.72675477300004,
+    "public-global-results": 127.68679929399991,
+    "huffman-codec": 412.17435115899997,
+    "public-decode-results": 245.88258632100002,
+    "reference-type-lookup": 187.248782215,
+    "reference-type-classes": 182.23924939400013,
+    "document-count": 289.749719222,
+    "page-public": 194.912925626,
+    "iaid-state": 197.74633686599998,
+    "bitmap-chunk": 88.31459013400001,
+    "document-layout": 324.64473811,
+    "error-wrappers-regions": 208.366583972,
+    "default-limits-4": 74.12243846599995,
+    "default-limits-5": 74.77779409300001,
+    "colour-rgb": 126.27555930899996,
+    "context-lifecycle": 259.17801856299997,
+    "segment-data": 202.113266828,
+    "black-span": 125.84627527399999,
+    "default-decoder-1": 61.37626861499996,
+    "arithmetic-codec": 882.458516387
+  },
+  "role_groups": {
+    "collector": [
+      "clone-results",
+      "context-callers",
+      "arithmetic-decision",
+      "reset"
+    ],
+    "shard-0": [
+      "huffman-assignment"
+    ],
+    "shard-1": [
+      "symbol-cardinality",
+      "arithmetic-refill",
+      "default-decoder-2",
+      "owned-decode"
+    ],
+    "shard-10": [
+      "session-framing",
+      "arithmetic-integer",
+      "bitmap-compose",
+      "arithmetic-initialization"
+    ],
+    "shard-11": [
+      "halftone-header",
+      "segment-header",
+      "arithmetic-normalization",
+      "region-dispatch",
+      "operator-bit"
+    ],
+    "shard-12": [
+      "integer-state",
+      "page-finish",
+      "retention",
+      "error-conversion"
+    ],
+    "shard-13": [
+      "public-context",
+      "mmr-horizontal",
+      "mmr-prefix",
+      "error-wrappers-basic",
+      "collector-sink"
+    ],
+    "shard-2": [
+      "arithmetic-certainty",
+      "value-bridge",
+      "default-limits-2",
+      "reference-catalog"
+    ],
+    "shard-3": [
+      "page-state",
+      "mmr-span",
+      "error-wrappers-symbol",
+      "default-decoder-3"
+    ],
+    "shard-4": [
+      "text-batch",
+      "bitmap-copy",
+      "default-limits-1",
+      "default-limits-3",
+      "default-decoder-4",
+      "reference-accounting"
+    ],
+    "shard-5": [
+      "mmr-reference",
+      "reader-error",
+      "mmr-run",
+      "default-decoder-5",
+      "public-global-results"
+    ],
+    "shard-6": [
+      "huffman-codec",
+      "public-decode-results",
+      "reference-type-lookup",
+      "reference-type-classes"
+    ],
+    "shard-7": [
+      "document-count",
+      "page-public",
+      "iaid-state",
+      "bitmap-chunk"
+    ],
+    "shard-8": [
+      "document-layout",
+      "error-wrappers-regions",
+      "default-limits-4",
+      "default-limits-5",
+      "colour-rgb"
+    ],
+    "shard-9": [
+      "context-lifecycle",
+      "segment-data",
+      "black-span",
+      "default-decoder-1"
+    ],
+    "whole": [
+      "arithmetic-codec"
+    ]
+  },
+  "role_seconds": {
+    "collector": 1049.0665344630002,
+    "shard-0": 855.677430693,
+    "shard-1": 835.1590763310002,
+    "shard-10": 1019.920750152,
+    "shard-11": 810.783584563,
+    "shard-12": 921.4236184840001,
+    "shard-13": 1020.6243979140002,
+    "shard-2": 941.1616957290001,
+    "shard-3": 748.7079041729999,
+    "shard-4": 1063.7146680229998,
+    "shard-5": 1041.582486204,
+    "shard-6": 1027.544969089,
+    "shard-7": 770.723571848,
+    "shard-8": 808.1871139499999,
+    "shard-9": 648.51382928,
+    "whole": 882.458516387
+  }
+}

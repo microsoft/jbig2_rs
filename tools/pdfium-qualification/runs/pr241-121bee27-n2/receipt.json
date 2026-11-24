@@ -1,0 +1,35 @@
+{
+  "functional_gate": "PASS",
+  "performance_gate": "PASS",
+  "base": "3cfff21b3bc157a5908e32199c1e94b2811ad806",
+  "candidate": "121bee27be8080a6de3642375d2f84d1967f24dd",
+  "rounds": 9,
+  "cases": 68,
+  "processes": 2934,
+  "environment": {
+    "architecture": "aarch64",
+    "cpu_model": "Neoverse-N2",
+    "clang": "clang version 24.0.0git (https://chromium.googlesource.com/external/github.com/llvm/llvm-project c3223914b50811fb3be915840f06456acb83d096)",
+    "rustc": "rustc 1.101.0-nightly (41b321963 2026-10-29) (96a18bf5ffa2b24f9cf3d1c731a9eb121c1acad9-5-llvmorg-24-init-17044-gc3223914 chromium)",
+    "affinity_cpu": 2,
+    "shared_host": true,
+    "host_policy_changed": false
+  },
+  "host_policy_changed": false,
+  "runtime_modified": false,
+  "merge_approval": false,
+  "method": "Original frozen cohort/selection, three warmups,31 image/11 PDF timed repetitions; nine predeclared rotating paired-process rounds. All adverse rows retained.",
+  "projection": "Only machine-local paths and temporary pixel locations removed; logical outcomes, exact hashes, typed diagnostics and timings retained.",
+  "files": {
+    "README.md": "f4c7f8eef61a25a5506fae3f0568baee47df519efe6d71cc74148f8f0dd96099",
+    "materialization-verification.json": "22ed3f2206ac845503b65f78f8e4a7cfb66595600af84a00a081b0e10282ab06",
+    "per-case.tsv": "4399f6aef6a86bf24932afb396249d43acc111db6d802eef4ac048bf3770f41f",
+    "renewed-build-audit.json": "bdb374763099d061734c36173ced4448d7db3f4ec3b2bdef82b0d0b1d771ea1d",
+    "renewed-functional-gate.json": "c9339e6b02ec88c9181fba80d5e0527ece5fa50d5169c807c7b2db3ed80d8fb0",
+    "renewed-functionality.json": "a4729eef894b8cfc438d27bfc3eeb7d8b8b241866e9f3ee002a80722cbb09864",
+    "renewed-performance.json": "5010b4bb0d533acad069c66c66d009a5851d9231b041d754d20239d352aab94f",
+    "renewed-references.json": "828be60b6d9b9f4ee6010d1a25c3183524a55a30c79a18cf1183880df42bc720",
+    "renewed-summary.json": "e58d5b194ef01726fac6fe75a696cf3eefaa6cff8c48a9b5edeb52c26bafd07f",
+    "targeted-tests.json": "95782d08ba64da40555be6323400fc55767c2a70cf0000200e7019a7a913fd37"
+  }
+}
