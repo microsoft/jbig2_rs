@@ -63,6 +63,7 @@ fn row_span(y: u32, height: u32, stride: usize) -> Result<(usize, usize), Malfor
 }
 
 #[allow(clippy::too_many_arguments)]
+#[inline(never)]
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires
         crate::spec::bitmap::storage_valid(old(destination)),
