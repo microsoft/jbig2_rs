@@ -1,0 +1,26 @@
+[
+  {
+    "id": "corpus/pdfium/bug_511_jbig_null_crash.pdf",
+    "stage": "pdf-extraction",
+    "error": "Stream has ended unexpectedly"
+  },
+  {
+    "id": "resources/drawing/bug_552046.pdf",
+    "stage": "pdf-extraction",
+    "error": "JBIG2 is not the final filter"
+  },
+  {
+    "id": "hayro/lenient_trailing_bytes.jbig2",
+    "stage": "standalone-to-embedded",
+    "error": "Truncated segment header",
+    "size": 230,
+    "sha256": "2b703c2309ee8e539e4b11096831dff296c39ab6cd76377a1494a8b9a9aa3c44"
+  },
+  {
+    "id": "hayro/lenient_truncated_segment.jbig2",
+    "stage": "standalone-to-embedded",
+    "error": "Truncated declared payload",
+    "size": 974,
+    "sha256": "38f1b80a54072cae8a637ebd913c00bfa7ff203f3c2f6e9dacfd0ac2ded39ba5"
+  }
+]

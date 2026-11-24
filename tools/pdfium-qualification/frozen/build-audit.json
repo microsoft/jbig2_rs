@@ -1,0 +1,31 @@
+{
+  "cpp": {
+    "c_cpp_commands": {
+      "-O3": 1232
+    },
+    "final_lto_opt": 3,
+    "binary_sha256": "a854099a628a7ef303fcb9a68f8a6186d6e4021acd8471a6aea3f6a0181e638d"
+  },
+  "rust_strict": {
+    "c_cpp_commands": {
+      "-O3": 1236
+    },
+    "final_lto_opt": 3,
+    "binary_sha256": "7703000267d2219948d758b24be624c6dab1d047c1d04dc779892f524106cdf5",
+    "core_archive_sha256": "cc0a97db2b13a7de897942a4a2ab615f4660bea7f7570a26200cd822162912dc"
+  },
+  "rust_best": {
+    "c_cpp_commands": {
+      "-O3": 1236
+    },
+    "final_lto_opt": 3,
+    "binary_sha256": "da2dc92f307feb90ac204cd66e5b648713cb7174f07a0b42f53d1093ad6f9f98",
+    "core_archive_sha256": "cc0a97db2b13a7de897942a4a2ab615f4660bea7f7570a26200cd822162912dc"
+  },
+  "jbig2_source": "f8774dd4d09bec588f88cd4750334b398030057b",
+  "verified_cpp_ir_cpus": [
+    "neoverse-n2"
+  ],
+  "pdfium_commit": "5932789adab7df4d03de4d8fdff2077845b13682",
+  "integration_patch_sha256": "ed88dbb875b4f4230f055f4440686e7a12ae35604e653386e59c2cf389d1e3aa"
+}

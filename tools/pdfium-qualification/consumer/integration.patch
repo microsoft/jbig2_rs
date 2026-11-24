@@ -1,0 +1,646 @@
+diff --git a/.gitignore b/.gitignore
+index 7d32143ac..c9f4a993e 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -77,3 +77,4 @@
+ *.xcodeproj
+ *~
+ 
++/third_party/jbig2_decoder/upstream/
+diff --git a/BUILD.gn b/BUILD.gn
+index 42715bddb..72c73e394 100644
+--- a/BUILD.gn
++++ b/BUILD.gn
+@@ -7,6 +7,17 @@ import("//build/config/gclient_args.gni")
+ import("//testing/test.gni")
+ import("pdfium.gni")
+ 
++executable("jbig2_eval") {
++  sources = [ "jbig2_eval.cpp" ]
++  configs += [ ":pdfium_core_config" ]
++  cflags = [ "-Wno-missing-field-initializers" ]
++  deps = [
++    ":pdfium",
++    "core/fxcodec",
++    "core/fxcrt",
++  ]
++}
++
+ group("default") {
+   testonly = true
+   deps = [ ":pdfium" ]
+@@ -50,6 +61,10 @@ config("pdfium_common_config") {
+     defines += [ "PDF_ENABLE_RUST_JPEG" ]
+   }
+ 
++  if (pdf_enable_rust_jbig2) {
++    defines += [ "PDF_ENABLE_RUST_JBIG2" ]
++  }
++
+   if (pdf_enable_rust_png) {
+     defines += [ "PDF_ENABLE_RUST_PNG" ]
+   }
+diff --git a/DEPS b/DEPS
+index 42270b345..62644b681 100644
+--- a/DEPS
++++ b/DEPS
+@@ -58,6 +58,9 @@ vars = {
+   # }
+   'checkout_rust': False,
+ 
++  # Enable alongside checkout_rust for the experimental Rust JBIG2 backend.
++  'checkout_jbig2_decoder': False,
++
+   'checkout_skia': 'checkout_configuration != "minimal"',
+ 
+   'checkout_testing_corpus': 'checkout_configuration != "small" and checkout_configuration != "minimal"',
+@@ -279,6 +282,7 @@ vars = {
+ # If you need to add a new host, and the new host is not in Chromium's DEPS
+ # file's allowed_hosts list, contact Chrome infrastructure team.
+ allowed_hosts = [
++  'github.com',
+   'chromium.googlesource.com',
+   'pdfium.googlesource.com',
+   'skia.googlesource.com',
+@@ -288,6 +292,12 @@ allowed_hosts = [
+ ]
+ 
+ deps = {
++  'third_party/jbig2_decoder/upstream': {
++    # Source revision of jbig2-decoder 0.2.0 on crates.io.
++    'url': 'https://github.com/microsoft/jbig2_rs.git@4f52fd1a31a2c3e37cff9d898401b6e4a6729e6b',
++    'condition': 'checkout_rust and checkout_jbig2_decoder',
++  },
++
+   'base/allocator/partition_allocator':
+     Var('chromium_git') +
+         '/chromium/src/base/allocator/partition_allocator.git@' +
+diff --git a/README.md b/README.md
+index daa08494f..ece85e125 100644
+--- a/README.md
++++ b/README.md
+@@ -106,6 +106,16 @@ like `pdfium_test` are not built by default. To build these, add the argument
+ 
+ By default, the entire project builds with C++20.
+ 
++The experimental Rust JBIG2 decoder is disabled by default. For standalone
++builds, set `"custom_vars": {"checkout_rust": True,
++"checkout_jbig2_decoder": True}` in your `.gclient` solution and run
++`gclient sync`. Set `enable_rust = true`, `enable_rust_cxx = true`, and
++`pdf_enable_rust_jbig2 = true` in the GN args. The experimental backend decodes
++each JBIG2 image synchronously and does not fall back to the C++ decoder.
++The adapter clips the decoded bitmap to the PDF image dimensions and fills
++uncovered pixels with white bitmap samples before PDF color or mask processing.
++It is intended for testing, not production use.
++
+ By default, PDFium expects to build with a clang compiler that provides
+ additional chrome plugins. To build against a vanilla one lacking these,
+ one must set
+diff --git a/core/fxcodec/BUILD.gn b/core/fxcodec/BUILD.gn
+index 77d827d84..4190aa867 100644
+--- a/core/fxcodec/BUILD.gn
++++ b/core/fxcodec/BUILD.gn
+@@ -5,11 +5,14 @@
+ import("../../pdfium.gni")
+ import("../../testing/test.gni")
+ 
+-if (pdf_enable_rust_bmp || pdf_enable_rust_jpeg || pdf_enable_rust_png) {
+-  import("//build/rust/rust_static_library.gni")
++declare_args() {
++  jbig2_eval_best_effort = false
+ }
+ 
+-if (pdf_enable_rust_bmp || pdf_enable_rust_jpeg || pdf_enable_rust_png) {
++if (pdf_enable_rust_bmp || pdf_enable_rust_jbig2 || pdf_enable_rust_jpeg ||
++    pdf_enable_rust_png) {
++  import("//build/rust/rust_static_library.gni")
++
+   config("pdfium_rust_ffi_config") {
+     include_dirs = [ "$target_gen_dir/../.." ]
+   }
+@@ -30,6 +33,25 @@ if (pdf_enable_rust_bmp) {
+   }
+ }
+ 
++if (pdf_enable_rust_jbig2) {
++  rust_static_library("rust_jbig2_ffi") {
++    crate_name = "rust_jbig2_ffi"
++    rustflags = [ "-Aunexpected_cfgs" ]
++    if (jbig2_eval_best_effort) {
++      rustflags += [ "--cfg=pdf_eval_jbig2_best_effort" ]
++    }
++    allow_unsafe = true
++    crate_root = "jbig2/rust_jbig2_ffi.rs"
++    sources = [ crate_root ]
++    cxx_bindings = [ crate_root ]
++    public_configs = [ ":pdfium_rust_ffi_config" ]
++    deps = [
++      "../../third_party/jbig2_decoder:lib",
++      "//build/rust:cxx_cppdeps",
++    ]
++  }
++}
++
+ if (pdf_enable_rust_jpeg) {
+   rust_static_library("rust_jpeg_ffi") {
+     crate_name = "rust_jpeg_ffi"
+@@ -139,6 +161,12 @@ source_set("fxcodec") {
+     "../fxge",
+   ]
+   defines = []
++  if (pdf_enable_rust_jbig2) {
++    deps += [
++      ":rust_jbig2_ffi",
++      "//build/rust:cxx_cppdeps",
++    ]
++  }
+   if (pdf_enable_brotli) {
+     sources += [
+       "brotli/brotli_decoder.cpp",
+@@ -263,6 +291,7 @@ pdfium_unittest_source_set("unittests") {
+     "icc/icc_transform_unittest.cpp",
+     "image_predictors_unittest.cpp",
+     "jbig2/jbig2_bit_stream_unittest.cpp",
++    "jbig2/jbig2_decoder_unittest.cpp",
+     "jbig2/jbig2_image_unittest.cpp",
+     "jpeg/jpegmodule_unittest.cpp",
+     "jpx/jpx_unittest.cpp",
+diff --git a/core/fxcodec/jbig2/jbig2_decoder.cpp b/core/fxcodec/jbig2/jbig2_decoder.cpp
+index 20e17c1d0..948de0b5a 100644
+--- a/core/fxcodec/jbig2/jbig2_decoder.cpp
++++ b/core/fxcodec/jbig2/jbig2_decoder.cpp
+@@ -14,8 +14,13 @@
+ #include "core/fxcrt/fx_2d_size.h"
+ #include "core/fxcrt/span_util.h"
+ 
++#if defined(PDF_ENABLE_RUST_JBIG2)
++#include "core/fxcodec/jbig2/rust_jbig2_ffi.rs.h"
++#endif
++
+ namespace fxcodec {
+ 
++#if !defined(PDF_ENABLE_RUST_JBIG2)
+ namespace {
+ 
+ FXCODEC_STATUS Decode(Jbig2Context* pJbig2Context, bool decode_success) {
+@@ -37,6 +42,7 @@ FXCODEC_STATUS Decode(Jbig2Context* pJbig2Context, bool decode_success) {
+ }
+ 
+ }  // namespace
++#endif
+ 
+ Jbig2Context::Jbig2Context() = default;
+ 
+@@ -56,6 +62,18 @@ FXCODEC_STATUS Jbig2Decoder::StartDecode(
+     uint32_t dest_pitch,
+     PauseIndicatorIface* pPause,
+     bool reject_large_regions_when_fuzzing) {
++#if defined(PDF_ENABLE_RUST_JBIG2)
++  // The Rust decoder decodes an entire embedded stream in one call.
++  auto out = dest_buf.first(Fx2DSizeOrDie(height, dest_pitch));
++  return rust_jbig2::decode(
++             rust::Slice<const uint8_t>(src_span.data(), src_span.size()),
++             rust::Slice<const uint8_t>(global_span.data(), global_span.size()),
++             width, height, dest_pitch,
++             rust::Slice<uint8_t>(out.data(), out.size()),
++             reject_large_regions_when_fuzzing)
++             ? FXCODEC_STATUS::kDecodeFinished
++             : FXCODEC_STATUS::kError;
++#else
+   pJbig2Context->width_ = width;
+   pJbig2Context->height_ = height;
+   pJbig2Context->src_span_ = src_span;
+@@ -76,13 +94,19 @@ FXCODEC_STATUS Jbig2Decoder::StartDecode(
+   bool succeeded = pJbig2Context->context_->GetFirstPage(
+       dest_buf, width, height, dest_pitch, pPause);
+   return Decode(pJbig2Context, succeeded);
++#endif
+ }
+ 
+ // static
+ FXCODEC_STATUS Jbig2Decoder::ContinueDecode(Jbig2Context* pJbig2Context,
+                                             PauseIndicatorIface* pPause) {
++#if defined(PDF_ENABLE_RUST_JBIG2)
++  // StartDecode never returns kDecodeToBeContinued with this backend.
++  return FXCODEC_STATUS::kError;
++#else
+   bool succeeded = pJbig2Context->context_->Continue(pPause);
+   return Decode(pJbig2Context, succeeded);
++#endif
+ }
+ 
+ }  // namespace fxcodec
+diff --git a/core/fxcodec/jbig2/jbig2_decoder_unittest.cpp b/core/fxcodec/jbig2/jbig2_decoder_unittest.cpp
+new file mode 100644
+index 000000000..df51d77d9
+--- /dev/null
++++ b/core/fxcodec/jbig2/jbig2_decoder_unittest.cpp
+@@ -0,0 +1,70 @@
++// Copyright 2026 The PDFium Authors
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++#include "core/fxcodec/jbig2/jbig2_decoder.h"
++
++#include <array>
++
++#include "core/fxcodec/jbig2/jbig2_document_context.h"
++#include "testing/gtest/include/gtest/gtest.h"
++
++namespace fxcodec {
++namespace {
++
++// An embedded 9x2 page with black as its default pixel and no regions.
++constexpr uint8_t kStream[] = {
++    0, 0, 0, 1, 48, 0, 1, 0, 0, 0, 19,  // Page information header.
++    0, 0, 0, 9, 0,  0, 0, 2,            // Width and height.
++    0, 0, 0, 0, 0,  0, 0, 0,            // Resolution.
++    4, 0, 0,                            // Flags and striping.
++    0, 0, 0, 2, 49, 0, 1, 0, 0, 0, 0,   // End of page.
++};
++
++TEST(Jbig2DecoderTest, DecodesEmbeddedPageWithPitchedRows) {
++  Jbig2Context context;
++  JBig2_DocumentContext document;
++  alignas(uint32_t) std::array<uint8_t, 9> dest = {};
++  dest.back() = 0x5a;
++
++  EXPECT_EQ(FXCODEC_STATUS::kDecodeFinished,
++            Jbig2Decoder::StartDecode(&context, &document, 9, 2, kStream, 0, {},
++                                      0, dest, 4, nullptr, false));
++  EXPECT_EQ(0, dest[0]);
++  EXPECT_EQ(0, dest[1] & 0x80);
++  EXPECT_EQ(0, dest[4]);
++  EXPECT_EQ(0, dest[5] & 0x80);
++  EXPECT_EQ(0x5a, dest.back());
++}
++
++TEST(Jbig2DecoderTest, ClipsToSmallerCanvas) {
++  Jbig2Context context;
++  JBig2_DocumentContext document;
++  alignas(uint32_t) std::array<uint8_t, 5> dest = {};
++  dest.back() = 0x5a;
++
++  ASSERT_EQ(FXCODEC_STATUS::kDecodeFinished,
++            Jbig2Decoder::StartDecode(&context, &document, 5, 1, kStream, 0, {},
++                                      0, dest, 4, nullptr, false));
++  EXPECT_EQ(0, dest[0] & 0xf8);
++  EXPECT_EQ(0x5a, dest.back());
++}
++
++#if defined(PDF_ENABLE_RUST_JBIG2)
++TEST(Jbig2DecoderTest, FillsUncoveredCanvasPixelsAndPadding) {
++  Jbig2Context context;
++  JBig2_DocumentContext document;
++  alignas(uint32_t) std::array<uint8_t, 12> dest = {};
++
++  ASSERT_EQ(FXCODEC_STATUS::kDecodeFinished,
++            Jbig2Decoder::StartDecode(&context, &document, 10, 3, kStream, 0,
++                                      {}, 0, dest, 4, nullptr, false));
++  constexpr std::array<uint8_t, 12> kExpected = {
++      0, 0x7f, 0xff, 0xff, 0, 0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
++  };
++  EXPECT_EQ(kExpected, dest);
++}
++#endif
++
++}  // namespace
++}  // namespace fxcodec
+diff --git a/core/fxcodec/jbig2/rust_jbig2_ffi.rs b/core/fxcodec/jbig2/rust_jbig2_ffi.rs
+new file mode 100644
+index 000000000..8206137fa
+--- /dev/null
++++ b/core/fxcodec/jbig2/rust_jbig2_ffi.rs
+@@ -0,0 +1,114 @@
++// Copyright 2026 The PDFium Authors
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++use jbig2_decoder::{Decoder, Limits};
++
++#[cxx::bridge(namespace = "fxcodec::rust_jbig2")]
++mod ffi {
++    extern "Rust" {
++        fn decode(
++            src: &[u8],
++            globals: &[u8],
++            width: u32,
++            height: u32,
++            pitch: usize,
++            dest: &mut [u8],
++            reject_large_regions_when_fuzzing: bool,
++        ) -> bool;
++    }
++}
++
++fn decode(
++    src: &[u8],
++    globals: &[u8],
++    width: u32,
++    height: u32,
++    pitch: usize,
++    dest: &mut [u8],
++    reject_large_regions_when_fuzzing: bool,
++) -> bool {
++    let row_bytes = (width as usize).div_ceil(8);
++    if width == 0
++        || height == 0
++        || pitch < row_bytes
++        || pitch.checked_mul(height as usize) != Some(dest.len())
++    {
++        return false;
++    }
++
++    let mut limits = Limits::default();
++    limits.max_pages = 1;
++    if reject_large_regions_when_fuzzing {
++        limits.max_width = 4096;
++        limits.max_height = 4096;
++        limits.max_pixels_per_page = 4096 * 4096;
++    }
++    let decoder = Decoder::new(limits);
++    let mut context = decoder.context();
++    #[cfg(not(pdf_eval_jbig2_best_effort))]
++    let result = if globals.is_empty() {
++        context.decode_embedded(src)
++    } else {
++        context
++            .parse_globals(globals)
++            .and_then(|globals| context.decode_embedded_with_globals(src, &globals))
++    };
++    #[cfg(pdf_eval_jbig2_best_effort)]
++    let result = (|| {
++        let parsed = if globals.is_empty() {
++            None
++        } else {
++            Some(context.parse_globals(globals)?)
++        };
++        context
++            .decode_embedded_with_policy(
++                src,
++                parsed.as_ref(),
++                jbig2_decoder::EmbeddedPolicy::BestEffort,
++            )
++            .map(|decoded| {
++                static DIAGNOSTICS: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
++                if *DIAGNOSTICS.get_or_init(|| std::env::var_os("JBIG2_EVAL_RECOVERIES").is_some()) {
++                    for recovery in &decoded.recoveries {
++                        eprintln!("JBIG2_RECOVERY {recovery:?}");
++                    }
++                }
++                decoded.value
++            })
++    })();
++    let document = match result {
++        Ok(document) => document,
++        Err(error) => {
++            eprintln!("JBIG2_ERROR {error:?}");
++            return false;
++        }
++    };
++    let [page] = document.pages() else {
++        return false;
++    };
++    let bitmap = page.bitmap();
++    let copy_width = width.min(bitmap.width()) as usize;
++    let copy_height = height.min(bitmap.height()) as usize;
++    if copy_width == 0 || copy_height == 0 {
++        return false;
++    }
++    let copy_bytes = copy_width.div_ceil(8);
++
++    // Clip to the PDF canvas and leave uncovered pixels and padding white.
++    // JBIG2 stores black as 1; PDFium expects black as 0.
++    dest.fill(0xff);
++    for (out, input) in dest
++        .chunks_exact_mut(pitch)
++        .take(copy_height)
++        .zip(bitmap.bytes().chunks_exact(bitmap.stride()))
++    {
++        for (out_byte, input_byte) in out[..copy_bytes].iter_mut().zip(input) {
++            *out_byte = !input_byte;
++        }
++        if copy_width % 8 != 0 {
++            out[copy_bytes - 1] |= (1 << (8 - copy_width % 8)) - 1;
++        }
++    }
++    true
++}
+diff --git a/pdfium.gni b/pdfium.gni
+index 41b3672b1..c222a6b75 100644
+--- a/pdfium.gni
++++ b/pdfium.gni
+@@ -66,6 +66,9 @@ declare_args() {
+   # PDFium doesn't depend on `libjpeg`.
+   pdf_enable_rust_jpeg = pdf_enable_rust_jpeg_override
+ 
++  # Select the experimental Rust JBIG2 decoder instead of the C++ backend.
++  pdf_enable_rust_jbig2 = false
++
+   # Build PDFium with Rust-based PNG decoder and encoder.
+   # If enabled, it ensures that PDFium doesn't depend on `libpng`.
+   pdf_enable_rust_png = pdf_enable_rust_png_override
+@@ -124,6 +127,10 @@ assert(
+     !pdf_enable_rust_jpeg || (enable_rust && enable_rust_cxx),
+     "pdf_enable_rust_jpeg=true requires enable_rust=true and enable_rust_cxx=true")
+ 
++assert(
++    !pdf_enable_rust_jbig2 || (enable_rust && enable_rust_cxx),
++    "pdf_enable_rust_jbig2=true requires enable_rust=true and enable_rust_cxx=true")
++
+ assert(
+     !pdf_enable_rust_png || (enable_rust && enable_rust_cxx),
+     "pdf_enable_rust_png=true requires enable_rust=true and enable_rust_cxx=true")
+diff --git a/third_party/jbig2_decoder/BUILD.gn b/third_party/jbig2_decoder/BUILD.gn
+new file mode 100644
+index 000000000..27685634d
+--- /dev/null
++++ b/third_party/jbig2_decoder/BUILD.gn
+@@ -0,0 +1,167 @@
++# Copyright 2026 The PDFium Authors
++# Use of this source code is governed by a BSD-style license that can be
++# found in the LICENSE file.
++
++import("//build/rust/rust_static_library.gni")
++
++rust_static_library("lib") {
++  crate_name = "jbig2_decoder"
++  crate_root = "upstream/src/lib.rs"
++  edition = "2021"
++  sources = [
++    "upstream/src/arithmetic.rs",
++    "upstream/src/arithmetic/decoding.rs",
++    "upstream/src/arithmetic/integers.rs",
++    "upstream/src/arithmetic/probability.rs",
++    "upstream/src/arithmetic/refill.rs",
++    "upstream/src/arithmetic/tests.rs",
++    "upstream/src/arithmetic/tests/context_state.rs",
++    "upstream/src/arithmetic/tests/decoder_registers.rs",
++    "upstream/src/arithmetic/tests/error_projection.rs",
++    "upstream/src/arithmetic/tests/integer_procedures.rs",
++    "upstream/src/bitmap.rs",
++    "upstream/src/bitmap/access.rs",
++    "upstream/src/bitmap/chunks.rs",
++    "upstream/src/bitmap/compose.rs",
++    "upstream/src/bitmap/operators.rs",
++    "upstream/src/bitmap/region.rs",
++    "upstream/src/bitmap/storage.rs",
++    "upstream/src/bitmap/tests.rs",
++    "upstream/src/bitmap/tests/benchmarks.rs",
++    "upstream/src/bitmap/tests/composition.rs",
++    "upstream/src/bitmap/tests/layout_and_access.rs",
++    "upstream/src/bitmap/tests/region_composition.rs",
++    "upstream/src/decode.rs",
++    "upstream/src/decode/api.rs",
++    "upstream/src/decode/dispatch.rs",
++    "upstream/src/decode/dispatch/references.rs",
++    "upstream/src/decode/orchestration.rs",
++    "upstream/src/decode/rendering.rs",
++    "upstream/src/decode/resources.rs",
++    "upstream/src/decode/tests.rs",
++    "upstream/src/decode/tests/budgets_and_pages.rs",
++    "upstream/src/decode/tests/container_routes.rs",
++    "upstream/src/decode/tests/direct_and_reuse.rs",
++    "upstream/src/decode/tests/dispatch_and_resources.rs",
++    "upstream/src/decode/tests/error_adapters.rs",
++    "upstream/src/decode/tests/symbol_resources.rs",
++    "upstream/src/document.rs",
++    "upstream/src/document/input.rs",
++    "upstream/src/document/pages.rs",
++    "upstream/src/document/parsing.rs",
++    "upstream/src/document/references.rs",
++    "upstream/src/document/tests.rs",
++    "upstream/src/document/tests/container_inspection.rs",
++    "upstream/src/document/tests/payload_windows.rs",
++    "upstream/src/document/tests/quotas_and_references.rs",
++    "upstream/src/document/tests/reference_types.rs",
++    "upstream/src/error.rs",
++    "upstream/src/error/tests.rs",
++    "upstream/src/file_header.rs",
++    "upstream/src/file_header/tests.rs",
++    "upstream/src/generic_region.rs",
++    "upstream/src/generic_region/contexts.rs",
++    "upstream/src/generic_region/generic.rs",
++    "upstream/src/generic_region/generic_context.rs",
++    "upstream/src/generic_region/headers.rs",
++    "upstream/src/generic_region/refinement.rs",
++    "upstream/src/generic_region/segments.rs",
++    "upstream/src/generic_region/support.rs",
++    "upstream/src/generic_region/tests.rs",
++    "upstream/src/generic_region/tests/benchmarks.rs",
++    "upstream/src/generic_region/tests/diagnostics.rs",
++    "upstream/src/generic_region/tests/headers_and_prediction.rs",
++    "upstream/src/generic_region/tests/preflight_and_templates.rs",
++    "upstream/src/generic_region/tests/raster_parity.rs",
++    "upstream/src/generic_region/tests/row_ring_oracle.rs",
++    "upstream/src/generic_region/tests/scalar_oracles.rs",
++    "upstream/src/generic_region/tests/segment_framing.rs",
++    "upstream/src/generic_region/tests/sessions_and_snapshots.rs",
++    "upstream/src/generic_region/tests/word_raster_oracle.rs",
++    "upstream/src/generic_row_ring.rs",
++    "upstream/src/generic_row_ring/tests.rs",
++    "upstream/src/halftone.rs",
++    "upstream/src/halftone/headers.rs",
++    "upstream/src/halftone/planes.rs",
++    "upstream/src/halftone/render.rs",
++    "upstream/src/halftone/resources.rs",
++    "upstream/src/halftone/tests.rs",
++    "upstream/src/halftone/tests/benchmarks.rs",
++    "upstream/src/halftone/tests/codec_state.rs",
++    "upstream/src/halftone/tests/error_adapters.rs",
++    "upstream/src/halftone/tests/geometry_and_render.rs",
++    "upstream/src/halftone/tests/headers_and_patterns.rs",
++    "upstream/src/huffman.rs",
++    "upstream/src/huffman/construction.rs",
++    "upstream/src/huffman/decoding.rs",
++    "upstream/src/huffman/tables.rs",
++    "upstream/src/huffman/tests.rs",
++    "upstream/src/huffman/tests/benchmarks.rs",
++    "upstream/src/huffman/tests/cache_map.rs",
++    "upstream/src/huffman/tests/canonical_decoding.rs",
++    "upstream/src/huffman/tests/fallback_state.rs",
++    "upstream/src/huffman/tests/table_validation.rs",
++    "upstream/src/huffman/tests/wide_arithmetic.rs",
++    "upstream/src/huffman/validation.rs",
++    "upstream/src/huffman/wide.rs",
++    "upstream/src/lib.rs",
++    "upstream/src/limits.rs",
++    "upstream/src/mmr.rs",
++    "upstream/src/mmr/codes.rs",
++    "upstream/src/mmr/memory.rs",
++    "upstream/src/mmr/raster.rs",
++    "upstream/src/mmr/reference.rs",
++    "upstream/src/mmr/spans.rs",
++    "upstream/src/mmr/tables.rs",
++    "upstream/src/mmr/termination.rs",
++    "upstream/src/mmr/tests.rs",
++    "upstream/src/mmr/tests/horizontal_runs.rs",
++    "upstream/src/mmr/tests/normative_decode.rs",
++    "upstream/src/mmr/tests/prefix_codes.rs",
++    "upstream/src/mmr/tests/scratch_and_diagnostics.rs",
++    "upstream/src/mmr/tests/transition_cache.rs",
++    "upstream/src/reader.rs",
++    "upstream/src/reader/tests.rs",
++    "upstream/src/segment_data.rs",
++    "upstream/src/segment_data/tests.rs",
++    "upstream/src/segment_header.rs",
++    "upstream/src/segment_header/tests.rs",
++    "upstream/src/symbol_text.rs",
++    "upstream/src/symbol_text/bitmap.rs",
++    "upstream/src/symbol_text/codebook.rs",
++    "upstream/src/symbol_text/codec.rs",
++    "upstream/src/symbol_text/codec/arithmetic.rs",
++    "upstream/src/symbol_text/codec/huffman.rs",
++    "upstream/src/symbol_text/codec/refinement.rs",
++    "upstream/src/symbol_text/codec/symbols.rs",
++    "upstream/src/symbol_text/dictionary.rs",
++    "upstream/src/symbol_text/dictionary/arithmetic.rs",
++    "upstream/src/symbol_text/dictionary/exports.rs",
++    "upstream/src/symbol_text/dictionary/huffman.rs",
++    "upstream/src/symbol_text/headers.rs",
++    "upstream/src/symbol_text/macros.rs",
++    "upstream/src/symbol_text/numbers.rs",
++    "upstream/src/symbol_text/placement.rs",
++    "upstream/src/symbol_text/resources.rs",
++    "upstream/src/symbol_text/tables.rs",
++    "upstream/src/symbol_text/tests.rs",
++    "upstream/src/symbol_text/tests/arithmetic_composition.rs",
++    "upstream/src/symbol_text/tests/benchmarks.rs",
++    "upstream/src/symbol_text/tests/codec_and_exports.rs",
++    "upstream/src/symbol_text/tests/dictionary_dispatch.rs",
++    "upstream/src/symbol_text/tests/flags_and_tables.rs",
++    "upstream/src/symbol_text/tests/huffman_fields.rs",
++    "upstream/src/symbol_text/tests/huffman_symbol_ids.rs",
++    "upstream/src/symbol_text/tests/placement_render.rs",
++    "upstream/src/symbol_text/tests/placement_state.rs",
++    "upstream/src/symbol_text/tests/resource_accounting.rs",
++    "upstream/src/symbol_text/tests/text_termination.rs",
++    "upstream/src/symbol_text/text.rs",
++    "upstream/src/symbol_text/validation.rs",
++  ]
++
++  # Standalone GN does not read the upstream Cargo.toml's custom cfg lint list.
++  rustflags = [ "-Aunexpected_cfgs" ]
++  sources = []
++  sources = exec_script("//jbig2_eval_sources.py", [], "list lines")
++}
+diff --git a/third_party/jbig2_decoder/README.chromium b/third_party/jbig2_decoder/README.chromium
+new file mode 100644
+index 000000000..14ac229fe
+--- /dev/null
++++ b/third_party/jbig2_decoder/README.chromium
+@@ -0,0 +1,14 @@
++Name: jbig2-decoder
++URL: https://github.com/microsoft/jbig2_rs
++Version: 0.2.0
++Revision: 4f52fd1a31a2c3e37cff9d898401b6e4a6729e6b
++License: MIT
++License File: upstream/LICENSE
++Security Critical: yes
++Shipped: no
++
++Description:
++An experimental Rust decoder for JBIG2 image streams.
++
++Local Modifications:
++None.

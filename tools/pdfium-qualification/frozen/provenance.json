@@ -1,0 +1,11 @@
+{
+  "original_manifest_sha256": "d09f5f265c4f8f5a1ec57a51b1df95cfb7371ad70a1cb33512fe6321b87d3e0d",
+  "original_pdfium_integration": "5932789adab7df4d03de4d8fdff2077845b13682",
+  "public_pdfium_base": "68f43efa71ac66ba843ba286bb76d075aa1c49df",
+  "public_pdfium_tests": "2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5",
+  "public_hayro": "e7ada1354dff4041cdeed3d8ba56fe01b6186132",
+  "original_rust": "f8774dd4d09bec588f88cd4750334b398030057b",
+  "projection": "Absolute machine paths and temporary output paths removed; logical IDs, input/output hashes, canvas, outcomes, reference decisions and timings preserved.",
+  "pypdf": "7.1.1",
+  "note": "No fixtures, oracle images, toolchains or compiled third-party binaries are redistributed."
+}
