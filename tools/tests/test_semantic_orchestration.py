@@ -272,7 +272,44 @@ def evidence():
 class SemanticOrchestrationTests(unittest.TestCase):
     @patch.object(runner, "CHECKS", CURRENT_CHECKS)
     @patch.multiple(runner, **LIVE_TOPOLOGY)
-    def test_owned_decode_is_additive_on_shard_one_without_moving_any_existing_group(self):
+    def test_current_owned_balance_moves_only_one_complete_group_and_freezes_prior_maps(self):
+        checks = runner.configured_checks()
+        self.assertEqual(len(checks), 64)
+        self.assertEqual(sum(row[2] for row in checks), 505)
+        self.assertEqual(runner.COLOUR_SHARD_ALLOCATION["default-limits-3"], 12)
+        self.assertEqual(runner.OWNED_DECODE_SHARD_ALLOCATION["default-limits-3"], 12)
+        self.assertEqual(runner.OWNED_BALANCED_SHARD_ALLOCATION, {
+            **runner.OWNED_DECODE_SHARD_ALLOCATION, "default-limits-3": 13,
+        })
+        with patch.object(
+            runner, "OWNED_BALANCED_SHARD_ALLOCATION", runner.OWNED_DECODE_SHARD_ALLOCATION,
+        ):
+            previous = runner.configured_shards()
+            whole = runner.configured_whole_checks()
+            collector = runner.configured_collector_checks()
+        current = runner.configured_shards()
+        moved = next(row for row in checks if row[0] == "default-limits-3")
+        self.assertEqual(moved[2], 3)
+        self.assertIn(moved, previous[12])
+        self.assertIn(moved, current[13])
+        self.assertNotIn(moved, current[12])
+        for before, after in zip(previous, current):
+            self.assertEqual(
+                tuple(row for row in before if row != moved),
+                tuple(row for row in after if row != moved),
+            )
+        self.assertEqual(len(current), 14)
+        self.assertEqual(runner.configured_whole_checks(), whole)
+        self.assertEqual(runner.configured_collector_checks(), collector)
+        assigned = [row for role in (whole, collector, *current) for row in role]
+        self.assertEqual(len(assigned), len(checks))
+        self.assertEqual(set(assigned), set(checks))
+        self.assertEqual(runner.WORKERS, 2)
+
+    @patch.object(runner, "OWNED_BALANCED_SHARD_ALLOCATION", runner.OWNED_DECODE_SHARD_ALLOCATION)
+    @patch.object(runner, "CHECKS", CURRENT_CHECKS)
+    @patch.multiple(runner, **LIVE_TOPOLOGY)
+    def test_original_owned_profile_is_additive_on_shard_one_without_moving_existing_groups(self):
         from check_owned_decode_proofs import CASES
 
         checks = runner.configured_checks()
@@ -310,6 +347,7 @@ class SemanticOrchestrationTests(unittest.TestCase):
         self.assertEqual(set(assigned), set(checks))
         self.assertEqual(runner.WORKERS, 2)
 
+    @patch.object(runner, "OWNED_BALANCED_SHARD_ALLOCATION", runner.OWNED_DECODE_SHARD_ALLOCATION)
     @patch.object(runner, "CHECKS", CURRENT_CHECKS)
     @patch.multiple(runner, **LIVE_TOPOLOGY)
     def test_owned_profile_requires_its_actual_complete_cost_under_the_unchanged_guard(self):

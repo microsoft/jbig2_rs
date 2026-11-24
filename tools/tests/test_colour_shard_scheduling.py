@@ -21,6 +21,9 @@ TIMINGS = json.loads(
 OWNED_REJECTED = json.loads(
     (Path(__file__).parent / "fixtures/owned-decode-rejected-shard-timings.json").read_text()
 )
+OWNED_COMPLETE_REJECTED = json.loads(
+    (Path(__file__).parent / "fixtures/owned-decode-complete-rejected-profile.json").read_text()
+)
 EXPECTED_BOUNDS = (
     1037.521383123, 1040.108429994, 1040.703310944, 1030.325156962,
     1037.335416414, 1039.711085949, 1039.446731117, 1043.280104190,
@@ -41,6 +44,14 @@ def maximum_seconds():
     result = {name: max(profile[name] for profile in profiles) for name in profiles[0]}
     result["arithmetic-certainty"] = TIMINGS["certainty"]["budget_seconds"]
     return result
+
+
+def configured_roles():
+    return {
+        "whole": runner.configured_whole_checks(),
+        "collector": runner.configured_collector_checks(),
+        **{f"shard-{index}": shard for index, shard in enumerate(runner.configured_shards())},
+    }
 
 
 class ColourShardSchedulingTests(unittest.TestCase):
@@ -67,7 +78,7 @@ class ColourShardSchedulingTests(unittest.TestCase):
                 self.assertEqual(row["status"], "passed")
                 self.assertEqual(row["counterexamples"], counts[row["id"]])
         with patch.object(runner, "CHECKS", CURRENT_CHECKS):
-            with patch.object(runner, "OWNED_DECODE_SHARD_ALLOCATION", {
+            with patch.object(runner, "OWNED_BALANCED_SHARD_ALLOCATION", {
                 **runner.OWNED_DECODE_SHARD_ALLOCATION, "owned-decode": 0,
             }):
                 original = runner.configured_shards()
@@ -100,7 +111,9 @@ class ColourShardSchedulingTests(unittest.TestCase):
 
     def test_owned_relocation_keeps_complete_historical_maxima_as_planning_not_acceptance(self):
         # No setup-saving deductions or acceptance inferred from different-source runs.
-        with patch.object(runner, "CHECKS", CURRENT_CHECKS):
+        with patch.object(runner, "CHECKS", CURRENT_CHECKS), patch.object(
+            runner, "OWNED_BALANCED_SHARD_ALLOCATION", runner.OWNED_DECODE_SHARD_ALLOCATION,
+        ):
             current = runner.configured_shards()
             historical_sharded = {
                 row[0] for shard in current for row in shard if row[0] != "owned-decode"
@@ -134,7 +147,7 @@ class ColourShardSchedulingTests(unittest.TestCase):
             rows = timing_rows(seconds)
             with self.assertRaisesRegex(ValueError, "1050-second guard"):
                 runner.measured_shard_seconds(rows)
-            with patch.object(runner, "OWNED_DECODE_SHARD_ALLOCATION", {
+            with patch.object(runner, "OWNED_BALANCED_SHARD_ALLOCATION", {
                 **runner.OWNED_DECODE_SHARD_ALLOCATION, "owned-decode": 0,
             }):
                 old_bound = math.fsum(
@@ -143,6 +156,77 @@ class ColourShardSchedulingTests(unittest.TestCase):
                 self.assertGreaterEqual(old_bound, 1075.4300956399998)
                 with self.assertRaisesRegex(ValueError, "1050-second guard"):
                     runner.measured_shard_seconds(rows)
+
+    def test_complete_owned_profile_rejection_requires_only_the_smallest_group_overlay(self):
+        profile = OWNED_COMPLETE_REJECTED
+        self.assertEqual(profile["run_identity"], {
+            "GITHUB_REPOSITORY": "microsoft/jbig2_rs",
+            "GITHUB_RUN_ID": "45289712820",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_SHA": "a8fc8d65fe429fa6374483be0cdfd33ece3a6006",
+        })
+        self.assertTrue(profile["all_groups_passed"])
+        self.assertEqual(profile["counterexamples"], 505)
+        seconds = profile["seconds"]
+        with patch.object(runner, "CHECKS", CURRENT_CHECKS):
+            self.assertEqual(set(seconds), {row[0] for row in runner.configured_checks()})
+            self.assertEqual(len(seconds), 64)
+            self.assertEqual(sum(row[2] for row in runner.configured_checks()), 505)
+            rows = timing_rows(seconds)
+            with patch.object(
+                runner, "OWNED_BALANCED_SHARD_ALLOCATION", runner.OWNED_DECODE_SHARD_ALLOCATION,
+            ):
+                original = configured_roles()
+                self.assertEqual(len(original), 16)
+                self.assertEqual(
+                    {name: [row[0] for row in groups] for name, groups in original.items()},
+                    profile["role_groups"],
+                )
+                observed = {
+                    name: math.fsum(seconds[row[0]] for row in groups)
+                    for name, groups in original.items()
+                }
+                for name, elapsed in profile["role_seconds"].items():
+                    self.assertAlmostEqual(observed[name], elapsed, places=9)
+                self.assertAlmostEqual(max(observed.values()), 1054.647908281, places=9)
+                with self.assertRaisesRegex(ValueError, "1050-second guard"):
+                    runner.measured_shard_seconds(rows)
+            current = configured_roles()
+            moved = "default-limits-3"
+            self.assertEqual(
+                min((row[0] for row in original["shard-12"]), key=seconds.get), moved,
+            )
+            for name in original:
+                self.assertEqual(
+                    [row for row in original[name] if row[0] != moved],
+                    [row for row in current[name] if row[0] != moved],
+                )
+            self.assertIn(moved, [row[0] for row in current["shard-13"]])
+            self.assertNotIn(moved, [row[0] for row in current["shard-12"]])
+            # Frozen-input regrouping is a plan, not a fresh same-run qualification.
+            projection = runner.measured_shard_seconds(rows)
+            self.assertAlmostEqual(projection[12], 963.695956135, places=9)
+            self.assertAlmostEqual(projection[13], 829.459011706, places=9)
+            self.assertAlmostEqual(max(projection), 1029.196259829, places=9)
+            self.assertEqual(current["whole"], original["whole"])
+            self.assertEqual(current["collector"], original["collector"])
+
+    def test_balanced_owned_plan_conservatively_envelopes_all_owned_run_components(self):
+        # Complete 45289712820/1 plus every earlier 45280486638/1 component;
+        # no setup subtraction, discarded adverse case or acceptance credit.
+        seconds = dict(OWNED_COMPLETE_REJECTED["seconds"])
+        for rows in OWNED_REJECTED["shards"].values():
+            for row in rows:
+                self.assertIn(row["id"], seconds)
+                seconds[row["id"]] = max(seconds[row["id"]], row["seconds"])
+        with patch.object(runner, "CHECKS", CURRENT_CHECKS):
+            self.assertEqual(set(seconds), {row[0] for row in runner.configured_checks()})
+            bounds = runner.measured_shard_seconds(timing_rows(seconds))
+            self.assertAlmostEqual(bounds[0], 1006.845207815, places=9)
+            self.assertAlmostEqual(bounds[1], 1002.128138983, places=9)
+            self.assertAlmostEqual(bounds[3], 951.948942690, places=9)
+            self.assertAlmostEqual(max(bounds), 1029.196259829, places=9)
+            self.assertLess(max(bounds), 1050)
 
     def test_current_inventory_requires_owned_costs_without_changing_the_original_guard(self):
         historical_rows = timing_rows(maximum_seconds())
