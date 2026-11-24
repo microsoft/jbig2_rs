@@ -6,14 +6,27 @@ import hashlib
 import json
 from pathlib import Path
 
+from qualify import summarize_rows
+
 BACKENDS = ("cpp", "base_strict", "base_best", "candidate_strict", "candidate_best")
 
 
 def outcome(value):
     result = {k: v for k, v in value.items() if k in (
         "status", "width", "height", "channels", "sha256", "bytes", "p50_us", "p90_us", "runs")}
-    result["diagnostics"] = [line for line in value.get("stderr", "").splitlines()
-                             if line.startswith(("JBIG2_ERROR ", "JBIG2_RECOVERY "))]
+    if "stderr" in value:
+        diagnostics = [line for line in value["stderr"].splitlines()
+                       if line.startswith(("JBIG2_ERROR ", "JBIG2_RECOVERY "))]
+    elif "diagnostics" in value:
+        diagnostics = value["diagnostics"]
+    else:
+        raise ValueError("Outcome has neither original stderr nor projected diagnostics.")
+    if not isinstance(diagnostics, list) or not all(
+        isinstance(line, str) and line.startswith(("JBIG2_ERROR ", "JBIG2_RECOVERY "))
+        for line in diagnostics
+    ):
+        raise ValueError("Invalid projected qualification diagnostics.")
+    result["diagnostics"] = diagnostics
     return result
 
 
@@ -23,7 +36,11 @@ def main():
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
+    (args.output / "receipt.json").unlink(missing_ok=True)
     load = lambda name: json.loads((args.results / name).read_text())
+    summary = load("renewed-summary.json")
+    if summary != summarize_rows(load("renewed-performance.json"), summary["rounds"]):
+        raise ValueError("Summary differs from the complete frozen measurements; no receipt exported.")
 
     def save(name, value):
         (args.output / name).write_text(json.dumps(value, indent=2) + "\n")
@@ -38,7 +55,6 @@ def main():
                 if backend in row:
                     row[backend] = outcome(row[backend])
         save(name, rows)
-    summary = load("renewed-summary.json")
     fields = ("id", "group", "policy", "base_ms", "candidate_ms", "candidate_over_base",
               "ci95_low", "ci95_high", "faster_rounds", "candidate_over_cpp")
     with (args.output / "per-case.tsv").open("w") as file:
@@ -65,7 +81,8 @@ def main():
                         for p in sorted(args.output.iterdir()) if p.is_file() and p.name != "receipt.json"}
     save("receipt.json", receipt)
     print(json.dumps({k: v for k, v in receipt.items() if k != "files"}, indent=2))
+    return 0 if receipt["functional_gate"] == receipt["performance_gate"] == "PASS" else 1
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

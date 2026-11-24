@@ -5,6 +5,7 @@ import collections
 import hashlib
 import importlib.util
 import json
+import math
 import os
 from pathlib import Path
 import platform
@@ -116,6 +117,7 @@ def functional(args, compare):
          dict(result="PASS" if not mismatches else "FAIL", requests=len(records),
               outcomes=len(records) * len(BUILDS), mismatches=mismatches))
     print("Functional differences:", len(mismatches), flush=True)
+    return 1 if mismatches else 0
 
 
 def references(args):
@@ -177,14 +179,67 @@ def performance(args, compare):
             print("round", round_number + 1, ident, "candidate/base", round(row["best_candidate_over_base"], 4), flush=True)
 
 
-def summarize(args):
+def validate_performance_rows(rows, rounds):
+    if type(rounds) is not int or rounds < 9:
+        raise ValueError("Renewed qualification requires at least nine predeclared rounds.")
+    selection = load(BUNDLE / "frozen/benchmark-selection.json")["selected"]
+    historical = {row["id"]: row for row in load(BUNDLE / "frozen/functionality.json")}
+    positions = {ident: index for index, ident in enumerate(selection)}
+    if len(positions) != len(selection):
+        raise ValueError("Frozen timing selection contains duplicate workloads.")
+    seen = set()
+    for row in rows:
+        ident, round_number = row["id"], row["round"]
+        if ident not in positions or type(round_number) is not int or not 1 <= round_number <= rounds:
+            raise ValueError("Unexpected workload or round in qualification measurements.")
+        key = (ident, round_number)
+        if key in seen:
+            raise ValueError(f"Duplicate qualification measurement: {key}")
+        seen.add(key)
+        original = historical[ident]
+        if row["group"] != original["group"]:
+            raise ValueError(f"Workload group differs from the frozen selection: {ident}")
+        names = ["cpp", "base_best", "candidate_best"]
+        if original["cpp"].get("sha256") == original["rust_strict"].get("sha256"):
+            names = ["cpp", "base_strict", "candidate_strict", "base_best", "candidate_best"]
+        if {name for name in BUILDS if name in row} != set(names):
+            raise ValueError(f"Incomplete or unexpected backend coverage: {key}")
+        offset = (round_number - 1 + positions[ident]) % len(names)
+        if row["order"] != names[offset:] + names[:offset]:
+            raise ValueError(f"Backend order differs from the predeclared rotation: {key}")
+        if signature(row["cpp"]) != signature(original["cpp"]):
+            raise ValueError(f"Timed C++ control differs from the frozen output: {key}")
+        for name in names:
+            value = row[name]
+            expected_runs = 11 if row["group"] == "pdf" else 31
+            if value["status"] != "ok" or signature(value) != signature(row["cpp"]):
+                raise ValueError(f"Timed backend output differs: {key}, {name}")
+            median, tail = float(value["p50_us"]), float(value["p90_us"])
+            if (int(value["runs"]) != expected_runs or not math.isfinite(median)
+                    or not math.isfinite(tail) or not 0 < median <= tail):
+                raise ValueError(f"Invalid repetitions or timing samples: {key}, {name}")
+        for policy in ("strict", "best"):
+            if "base_" + policy not in row:
+                continue
+            candidate = float(row["candidate_" + policy]["p50_us"])
+            for denominator, backend in (("base", "base_" + policy), ("cpp", "cpp")):
+                actual = row[policy + "_candidate_over_" + denominator]
+                expected = candidate / float(row[backend]["p50_us"])
+                if not math.isfinite(actual) or not math.isclose(actual, expected, rel_tol=1e-12):
+                    raise ValueError(f"Recorded ratio differs from measured timings: {key}, {policy}")
+    expected = {(ident, number) for ident in selection for number in range(1, rounds + 1)}
+    if seen != expected:
+        raise ValueError(f"Incomplete frozen workload/round coverage: {len(expected - seen)} measurements missing.")
+
+
+def summarize_rows(rows, rounds):
+    validate_performance_rows(rows, rounds)
     groups = collections.defaultdict(list)
-    for row in load(args.results / "renewed-performance.json"):
+    for row in rows:
         groups[row["id"]].append(row)
     randomizer = random.Random(241)
     result = []
     for ident, rows in groups.items():
-        assert sorted(i["round"] for i in rows) == list(range(1, args.rounds + 1))
         value = dict(id=ident, group=rows[0]["group"], policies={})
         for policy in ("strict", "best"):
             field = policy + "_candidate_over_base"
@@ -200,12 +255,20 @@ def summarize(args):
         result.append(value)
     adverse = [dict(id=i["id"], policy=p, **v) for i in result for p, v in i["policies"].items()
                if v["candidate_over_base"] > 1.05]
-    save(args.results / "renewed-summary.json",
-         dict(performance_gate="PASS" if not adverse else "FAIL", rounds=args.rounds,
-              cases=len(result), processes=sum(len(r["order"]) for rows in groups.values() for r in rows),
-              adverse_over_5_percent=adverse, per_case=result,
-              note="All adverse cases retained. Paired percentile bootstrap is descriptive with nine rounds; no universal guarantee."))
-    print("Gate", "PASS" if not adverse else "FAIL", "adverse rows", len(adverse), flush=True)
+    return dict(performance_gate="PASS" if not adverse else "FAIL", rounds=rounds,
+                cases=len(result), processes=sum(len(r["order"]) for rows in groups.values() for r in rows),
+                adverse_over_5_percent=adverse, per_case=result,
+                note="All adverse cases retained. Paired percentile bootstrap is descriptive with nine rounds; no universal guarantee.")
+
+
+def summarize(args):
+    path = args.results / "renewed-summary.json"
+    path.unlink(missing_ok=True)
+    result = summarize_rows(load(args.results / "renewed-performance.json"), args.rounds)
+    save(path, result)
+    print("Gate", result["performance_gate"], "adverse rows",
+          len(result["adverse_over_5_percent"]), flush=True)
+    return 0 if result["performance_gate"] == "PASS" else 1
 
 
 if __name__ == "__main__":
@@ -222,6 +285,6 @@ if __name__ == "__main__":
                       JBIG2_HAYRO_TESTS=str(args.hayro))
     compare = module("compare")
     compare.BUILDS = BUILDS
-    {"audit": lambda: audit(args), "functional": lambda: functional(args, compare),
+    raise SystemExit({"audit": lambda: audit(args), "functional": lambda: functional(args, compare),
      "references": lambda: references(args), "performance": lambda: performance(args, compare),
-     "summarize": lambda: summarize(args)}[args.phase]()
+     "summarize": lambda: summarize(args)}[args.phase]() or 0)

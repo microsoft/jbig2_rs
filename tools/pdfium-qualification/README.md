@@ -16,7 +16,8 @@ machine-local JSON hashes recorded in the historical verification receipt.
 
 ## What is actually supplied
 
-- The original real-PDFium C++ consumer, its complete integration patch
+- A content-addressed public download of the original real-PDFium C++ consumer,
+  its complete integration patch
   against public PDFium, and its exact native-O3/final-ThinLTO-O3 patch.
 - Portable corpus extraction/normalization, comparison and PNG-adjudication
   helpers. Machine-local paths are supplied through environment variables.
@@ -33,7 +34,14 @@ with all frozen source/payload/canvas/global fields, not just matching counts.
 
 Fixtures, oracle images, toolchains and compiled third-party binaries are not
 redistributed. Public fixtures are materialized from their original projects.
-The source/data receipts are now in this repository, not behind a local path.
+The source/data receipts are now publicly available, not behind a local path.
+The native consumer itself is fetched from the immutable public source URL in
+`consumer/source.json`, not vendored in this repository's current tree.
+`configure.py` checks its exact 5,395-byte length and SHA-256 before writing it
+only into the disposable PDFium checkout. This preserves the existing ban on
+committed native/oracle source without an audit exception or renamed source.
+The historical public source commit remains reachable in this branch's history;
+the consumer bytes and original binary/measurement receipts are unchanged.
 
 ## Materialize the exact public inputs on any host
 
@@ -98,7 +106,8 @@ third_party/ninja/ninja -C out/RustBest -j 4 jbig2_eval pdfium_unittests
 ```
 
 `--prepared` is only for a disposable copy of the exact original evaluator.
-It verifies the consumer source before reuse; it is not permission to modify
+It verifies the existing consumer against the same digest without downloading
+it again; it is not permission to modify
 an arbitrary checkout. `--prefix Base` / `--prefix Candidate` permits both
 Rust source revisions in one consumer tree, via per-build core-source roots.
 The C++ consumer/renderer remains identical.
@@ -165,6 +174,11 @@ Declare the round count and full frozen selection before measurement; do not
 repeat favorable subsets or mix runs. The summary retains every case and
 flags each paired median above1.05. Exported receipts remove local paths but
 preserve the complete measured data. A failed gate remains a failed gate.
+The summary and exporter require every frozen workload/round/backend, the
+prescribed rotation and repetition counts, matching outputs and consistent
+ratios. Missing or duplicate measurements fail rather than producing a partial
+PASS. Invalid summaries remove any stale receipt; complete adverse results
+remain exportable as FAIL, with a failing command exit status.
 
 ## Interpretation and licensing
 

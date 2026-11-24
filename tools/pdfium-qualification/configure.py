@@ -1,13 +1,30 @@
 """Configure the original consumer in an explicitly disposable PDFium checkout."""
 
 import argparse
+import hashlib
+import json
 from pathlib import Path
 import platform
 import shutil
 import subprocess
+import urllib.request
 
 BUNDLE = Path(__file__).resolve().parent
 PUBLIC_BASE = "68f43efa71ac66ba843ba286bb76d075aa1c49df"
+
+
+def consumer_source(existing=None):
+    source = json.loads((BUNDLE / "consumer/source.json").read_text())
+    if existing is not None:
+        if not existing.is_file():
+            raise ValueError("--prepared requires the original consumer in the disposable checkout")
+        data = existing.read_bytes()
+    else:
+        with urllib.request.urlopen(source["source_url"], timeout=60) as response:
+            data = response.read(source["size_bytes"] + 1)
+    if len(data) != source["size_bytes"] or hashlib.sha256(data).hexdigest() != source["sha256"]:
+        raise ValueError("consumer source differs from the pinned original; do not build or relabel it")
+    return data
 
 
 def main():
@@ -32,6 +49,7 @@ def main():
         raise SystemExit("Use the original matching LLVM24 compiler/Rust toolchains; do not relabel another toolchain.")
     if "c3223914b508" not in clang_version or "41b321963" not in rust_verbose:
         raise SystemExit("LLVM24 alone is insufficient: use the frozen Clang c3223914 / Chromium Rust41b321963 revisions.")
+    consumer = consumer_source(pdfium / "jbig2_eval.cpp" if args.prepared else None)
     if not args.prepared:
         head = subprocess.check_output(["git", "-C", str(pdfium), "rev-parse", "HEAD"], text=True).strip()
         dirty = subprocess.check_output(["git", "-C", str(pdfium), "status", "--porcelain", "--untracked-files=no"], text=True)
@@ -42,11 +60,7 @@ def main():
         subprocess.run(["git", "-C", str(pdfium), "apply", "--check", str(BUNDLE / "consumer/integration.patch")], check=True)
         subprocess.run(["git", "-C", str(pdfium), "apply", str(BUNDLE / "consumer/integration.patch")], check=True)
         subprocess.run(["git", "-C", str(pdfium), "apply", str(BUNDLE / "consumer/compiler.patch")], check=True)
-    else:
-        existing = pdfium / "jbig2_eval.cpp"
-        if not existing.exists() or existing.read_bytes() != (BUNDLE / "consumer/jbig2_eval.cpp").read_bytes():
-            raise SystemExit("--prepared requires an exact disposable copy of the original consumer.")
-    shutil.copy2(BUNDLE / "consumer/jbig2_eval.cpp", pdfium / "jbig2_eval.cpp")
+    (pdfium / "jbig2_eval.cpp").write_bytes(consumer)
     shutil.copy2(BUNDLE / "consumer/jbig2_eval_sources.py", pdfium / "jbig2_eval_sources.py")
     shutil.copy2(BUNDLE / "consumer/jbig2_decoder.BUILD.gn", pdfium / "third_party/jbig2_decoder/BUILD.gn")
     rust_version = subprocess.check_output([str(rust / "bin/rustc"), "--version"], text=True).strip()
