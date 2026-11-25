@@ -34,10 +34,12 @@ OFFICIAL_TRUST = (
 RELEASE_VALIDATE = (
     "github.repository == 'microsoft/jbig2_rs' && (github.event_name == 'release'"
     " || (github.event_name == 'workflow_dispatch'"
-    " && (github.ref == 'refs/heads/release/0.1' || github.ref == 'refs/heads/release/0.2')))"
+    " && (github.ref == 'refs/heads/release/0.1' || github.ref == 'refs/heads/release/0.2'"
+    " || github.ref == 'refs/heads/release/0.3')))"
 )
 RELEASE_POLICY_REF = (
-    "${{ startsWith(github.event.release.tag_name || inputs.tag, 'v0.2.')"
+    "${{ startsWith(github.event.release.tag_name || inputs.tag, 'v0.3.')"
+    " && 'release/0.3' || startsWith(github.event.release.tag_name || inputs.tag, 'v0.2.')"
     " && 'release/0.2' || 'release/0.1' }}"
 )
 RELEASE_PUBLISH = (
@@ -599,9 +601,9 @@ def check_workflow(document, name):
         not isinstance(events, dict) or "pull_request" not in events
         or events.get("pull_request") not in ("", None, {})
         or "workflow_dispatch" not in events
-        or events.get("push") != {"branches": ["main", "release/0.1", "release/0.2"], "tags": ["**"]}
+        or events.get("push") != {"branches": ["main", "release/0.1", "release/0.2", "release/0.3"], "tags": ["**"]}
     ):
-        raise ValueError("validation runs on every PR, main/release/0.1/release/0.2/tag pushes and manual dispatch")
+        raise ValueError("validation runs on every PR, main/release/0.1/release/0.2/release/0.3/tag pushes and manual dispatch")
     jobs = document.get("jobs")
     if not isinstance(jobs, dict) or not jobs:
         raise ValueError(f"{name}: workflow must contain jobs")

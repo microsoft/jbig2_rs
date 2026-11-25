@@ -199,6 +199,65 @@ class OwnerReviewConfirmationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "owner"):
             checker.check_v01_scope(self.root, self.ledger, self.scoped_report())
 
+    def test_04_development_scope_preserves_exact_line_and_disabled_publication(self):
+        ledger = copy.deepcopy(self.development)
+        ledger["development_scope"].update(
+            profile="0.4-development", crate_version="0.4.0-dev",
+            maintenance_branch="release/0.3",
+        )
+        (self.development_root / "Cargo.toml").write_text(
+            '[package]\nversion = "0.4.0-dev"\npublish = false\n',
+        )
+        validate(ledger, "traceability")
+        scoped = checker.check_current_scope(self.development_root, ledger, self.scoped_report())
+        self.assertEqual(scoped["maintenance_branch"], "release/0.3")
+        self.assertFalse(scoped["complete_functional_proof"])
+        for field, value in (("maintenance_branch", "release/0.2"),
+                             ("publication_enabled", True), ("crate_version", "0.4.0")):
+            altered = copy.deepcopy(ledger)
+            altered["development_scope"][field] = value
+            with self.subTest(field=field), self.assertRaises(ValidationError):
+                validate(altered, "traceability")
+
+    def test_03_publication_scope_preserves_branch_proof_and_partial_claims(self):
+        ledger = copy.deepcopy(self.ledger)
+        ledger.pop("development_scope", None)
+        ledger["publication_scope"] = {
+            "profile": "0.3-partial-verus", "crate_version": "0.3.0",
+            "release_branch": "release/0.3", "authority": "repository_owner_release_scope",
+            "approved_at": "2026-11-25T20:19:47.302+00:00",
+            "instruction": "Prepare 0.3.0 with the existing partial coverage boundaries.",
+            "decision_reference": "agent-host-session://ahp-session/26f37efd-6438-4b64-9529-cf251ed02717",
+            "exhaustive_requirement_coverage_required": False,
+            "complete_functional_proof_required": False,
+            "existing_proof_and_quality_gates_required": True,
+            "full_spec_conformance_claim": False,
+        }
+        manifest = self.development_root / "Cargo.toml"
+        manifest.write_text('[package]\nversion = "0.3.0"\npublish = ["crates-io"]\n')
+        validate(ledger, "traceability")
+        scoped = checker.check_current_scope(self.development_root, ledger, self.scoped_report())
+        self.assertEqual(scoped["release_branch"], "release/0.3")
+        self.assertFalse(scoped["complete_functional_proof"])
+        self.assertFalse(scoped["publication_performed"])
+        for field in ("verifier_report_checked", "cargo_test_discovery_checked"):
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "evidence"):
+                checker.check_current_scope(
+                    self.development_root, ledger, {**self.scoped_report(), field: False},
+                )
+        for field, value in (("release_branch", "release/0.2"),
+                             ("profile", "0.2-partial-verus"),
+                             ("crate_version", "0.4.0"),
+                             ("existing_proof_and_quality_gates_required", False),
+                             ("full_spec_conformance_claim", True)):
+            altered = copy.deepcopy(ledger)
+            altered["publication_scope"][field] = value
+            with self.subTest(field=field), self.assertRaises(ValidationError):
+                validate(altered, "traceability")
+            if field in {"release_branch", "profile", "crate_version"}:
+                with self.assertRaisesRegex(ValueError, "approved scope"):
+                    checker.check_current_scope(self.development_root, altered, self.scoped_report())
+
     def test_publication_scope_is_explicit_and_retains_all_quality_requirements(self):
         ledger = copy.deepcopy(self.ledger)
         ledger.pop("development_scope", None)

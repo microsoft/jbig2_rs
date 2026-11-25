@@ -1,5 +1,32 @@
 # Release validation
 
+## 0.3.0 candidate scope
+
+The [0.3.0 candidate](release-0.3.0.md) includes strict decoder corrections,
+explicit byte-slice standalone compatibility, a limited separate generic RGB8
+profile and the retained owned-halftone/identity-export improvements. Existing
+bi-level entry points remain strict. Rust 1.88 and the dependency-free runtime
+are unchanged. The image companion remains separate and unpublished.
+
+The executing runtime, models and proofs are unchanged from accepted main
+`e763d7ab394fd5d1c16719352d038ab19c910af7`; release preparation changes metadata,
+documentation and release-line validation, not decoder behavior. The inherited
+proof baseline is 1,532 obligations, 750 directly verified functions and the
+same 20 reviewed limitations. These historical figures do not substitute for
+fresh exact-candidate CI, native tests, package checks or release provenance.
+
+All existing quality gates, 65 semantic groups / 510 contrasts, coverage floors
+and the 1,050-second guard remain required. Issue #135 remains open: exhaustive
+statement coverage, consistent contract/domain qualification and external
+validation readiness are not claimed. Neither complete colour support, full
+JBIG2/Annex F conformance nor suitability for untrusted production documents
+is asserted.
+
+Preparation does not create a version tag, publish a GitHub Release or upload
+to crates.io. The final source must be the exact normally merged `release/0.3`
+PR integration commit, with matching reviewed tree and successful PR/integrated
+checks, before the protected publication workflow can accept a future tag.
+
 ## 0.2.0 scope
 
 The 0.2.0 release includes the fixed-width Huffman aggregate-dictionary

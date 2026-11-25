@@ -1,4 +1,4 @@
-# Standalone compatibility (0.3 development)
+# Standalone compatibility (0.3)
 
 `Decoder::decode_with_policy(bytes, DecodePolicy::Compatibility)` is an explicit
 policy selection, not a retry after strict failure. The same operation

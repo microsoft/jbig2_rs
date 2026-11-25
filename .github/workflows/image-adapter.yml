@@ -3,7 +3,7 @@ name: Image adapter
 on:
   pull_request:
   push:
-    branches: [main, release/0.2]
+    branches: [main, release/0.2, release/0.3]
   workflow_dispatch:
 
 permissions:

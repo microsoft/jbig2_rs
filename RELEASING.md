@@ -1,9 +1,9 @@
 # Releasing jbig2-decoder
 
-`main` is the unpublished `0.3.0-dev` development line with Cargo publication
-disabled. The 0.2.x release line lives on `release/0.2`; the 0.1.x maintenance
-line remains on `release/0.1`. Their version metadata and approval scopes are
-independent. Current CI checks actual proof/test evidence under
+The 0.3.0 candidate is prepared for `release/0.3`. After that branch is cut,
+`main` advances to unpublished `0.4.0-dev` with Cargo publication disabled.
+The 0.2.x and 0.1.x maintenance lines remain on `release/0.2` and `release/0.1`.
+Their version metadata and approval scopes are independent. Current CI checks actual proof/test evidence under
 `--require-current-scope`, selecting either the unpublished development scope
 or the explicitly approved partial-Verus `publication_scope`. The historical
 0.1 scope remains separate; no complete functional-proof claim is inferred.
@@ -12,7 +12,7 @@ Assess runtime/API correctness fixes for a minimal maintenance backport with
 its own branch-specific tests and source-bound evidence. Proof-only, tooling
 and development-version changes are not automatic 0.1 backports.
 
-The package publishes only to crates.io. The 0.1 series has partial Verus
+The package publishes only to crates.io. All configured release lines have partial Verus
 coverage: existing proofs and quality checks are mandatory, while exhaustive
 requirement enumeration and complete functional proofs remain
 [future work](https://github.com/microsoft/jbig2_rs/issues/135).
@@ -101,10 +101,12 @@ credentials, require publishing-environment approval or upload a crate.
 
 ### Branch policy
 
-`release/0.1` maintains 0.1.x, `release/0.2` maintains 0.2.x, and `main` carries
-ongoing 0.3 development. All three branches require the same 30 checks, strict
+`release/0.1` maintains 0.1.x, `release/0.2` maintains 0.2.x, `release/0.3`
+maintains 0.3.x, and `main` carries ongoing 0.4 development.
+All four branches require the same 30 core checks, strict
 up-to-date status checks, and no bypass, force pushes or deletion. CI also runs
-on all three branch heads. Publishing requires a tag reachable from the matching
+on all four branch heads. The separate image-companion lanes additionally run
+where that unpublished companion is present. Publishing requires a tag reachable from the matching
 release branch and the exact integration commit of a merged PR targeting that
 branch, with a matching reviewed tree. A version merged only to `main` is not
 a release candidate.
@@ -114,7 +116,7 @@ selected changes; do not routinely merge future development from `main` into
 the maintenance line. Port applicable maintenance fixes to `main` separately.
 Keep package metadata, all local decoder lockfile entries, versioned release
 scope/schema and their source-bound provenance consistent on each branch.
-Only 0.1.x and 0.2.x are configured for publication; publication of another
+Only 0.1.x, 0.2.x and 0.3.x are configured for publication; publication of another
 version line requires an explicit workflow/policy update.
 
 The immutable, already-published `v0.1.0` and `v0.1.1` retain their original
@@ -126,8 +128,8 @@ republished. New versions have no `main` exception.
 
 1. Create the GitHub environment `crates-io` in the repository settings.
    Require a release maintainer's approval, disable administrator bypass, and
-   allow deployments only from `release/0.1`, `release/0.2`, and tags matching
-   `v0.1.*` or `v0.2.*`.
+   allow deployments only from `release/0.1`, `release/0.2`, `release/0.3`, and
+   tags matching `v0.1.*`, `v0.2.*` or `v0.3.*`.
    Allow self-review if the same maintainer creates and approves releases.
    Merely naming an environment in a workflow does not configure these rules.
 2. On crates.io, open **jbig2-decoder → Settings → Trusted Publishing → Add**,
@@ -147,7 +149,7 @@ republished. New versions have no `main` exception.
 ### Each release
 
 1. Prepare and merge the final versioned release PR into the matching release branch
-   (`release/0.2` for 0.2.0). Its integrated tree must
+   (`release/0.3` for 0.3.0). Its integrated tree must
    equal the PR head tree; update and retest the PR if integration changes it.
 2. Create `vVERSION` at that exact integration commit on the release branch. Wait for all
    required checks on the PR and integrated/tagged source to pass.
@@ -156,6 +158,10 @@ republished. New versions have no `main` exception.
 4. Publish a GitHub Release using that existing tag, then approve the `crates-io`
    environment deployment. Alternatively, run the workflow manually from the release
    branch with **dry_run** disabled and approve the same environment.
+
+Creating a candidate branch or advancing the development version does not
+authorize a tag, GitHub Release or registry upload. A prepared 0.3.0 candidate
+can remain untagged and unpublished while main develops 0.4.
 
 The read-only validation job checks tag/version/registry policy, merged PR and
 tree identity, all 30 PR checks and 29 final-commit native checks. It verifies
