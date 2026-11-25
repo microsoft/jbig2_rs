@@ -102,6 +102,11 @@ def measure(build, fixture, output):
         "fixture_producer_sha256": sha(ROOT / "tools/prepared_globals_replication.py"),
         "fixture_sha256": bindings, "cpu_affinity": cpu, "rounds": 9,
         "architecture": platform.machine(),
+        "shared_host": True,
+        "platform": platform.platform(),
+        "runner_environment": {key: os.environ.get(key) for key in (
+            "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT", "RUNNER_NAME", "RUNNER_ARCH",
+        )},
         "cpu_identity": {
             key: sorted({line.split(":", 1)[1].strip()
                          for line in Path("/proc/cpuinfo").read_text().splitlines()
