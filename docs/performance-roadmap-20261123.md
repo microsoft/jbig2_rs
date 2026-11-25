@@ -177,10 +177,16 @@ JBIG2_PREPARED_MODE=warm JBIG2_PREPARED_ITERATIONS=1001 \
 all three page decodes per document sequence; `warm` keeps one owner across
 sequences after explicit untimed warmup. File reads and parsed-global preparation
 are outside all three modes. Timed outputs are consumed and dropped.
-Cold counters are aggregated uniformly in all modes and checked only after the
-timer stops; cold preparation, copies, owner destruction and page/output
-destruction remain inside the measured call. The functional control executes
-that same sequence loop in all modes without a timer.
+The sample vector is preallocated before sampling. Each raw `samples_ns` entry
+covers one complete three-page sequence, including cold owner construction,
+preparation, copies, all full decodes/output drops and explicit cold-owner
+destruction. Sample pushes and uniform counter aggregation occur after the
+sample timer stops; assertions and printing occur after all sampling.
+`elapsed_ns` is exactly the sum of those samples, not an enclosing wall time.
+Per-process medians and tails must be computed from the raw array, not inferred
+from the aggregate or a 1001-sequence mean. Warm preparation stays outside warm
+samples by definition; cold is the primary comparison. The functional control
+executes the same sequence body in all modes without a timer.
 Exact candidate/baseline outputs and original standalone pixels are checked outside
 timing. Correctness controls also compare all fifteen logical-limit frontiers
 and their neighbours, truncations, subsequent reuse and the refused global EOP.

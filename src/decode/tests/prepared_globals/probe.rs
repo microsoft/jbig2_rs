@@ -161,33 +161,27 @@ fn prepared_globals_fixture_controls() {
     );
 }
 
-fn run_sequences(
+fn run_sequence(
     decoder: &Decoder,
     fixtures: &Fixtures,
     mode: &str,
-    iterations: usize,
     warm: &mut PreparedOwner<'_>,
 ) -> [usize; 3] {
-    let mut cold_totals = [0; 3];
-    for _ in 0..iterations {
-        let mut cold = PreparedOwner::new(decoder, &fixtures.globals, 65_536);
-        for page in &fixtures.pages {
-            let output = match mode {
-                "baseline" => decoder
-                    .decode_embedded_with_globals(page, &fixtures.globals)
-                    .unwrap(),
-                "cold" => cold.decode(page).unwrap(),
-                "warm" => warm.decode(page).unwrap(),
-                _ => unreachable!(),
-            };
-            std::hint::black_box(output);
-        }
-        cold_totals[0] += cold.preparations;
-        cold_totals[1] += cold.hits;
-        cold_totals[2] += cold.fallbacks;
-        // Destruction of every cold owner remains inside the measured call.
+    let mut cold = PreparedOwner::new(decoder, &fixtures.globals, 65_536);
+    for page in &fixtures.pages {
+        let output = match mode {
+            "baseline" => decoder
+                .decode_embedded_with_globals(page, &fixtures.globals)
+                .unwrap(),
+            "cold" => cold.decode(page).unwrap(),
+            "warm" => warm.decode(page).unwrap(),
+            _ => unreachable!(),
+        };
+        std::hint::black_box(output);
     }
-    cold_totals
+    let counters = [cold.preparations, cold.hits, cold.fallbacks];
+    drop(cold);
+    counters
 }
 
 fn check_sequence_totals(
@@ -222,7 +216,13 @@ fn prepared_globals_probe_functional_controls() {
                 assert_eq!(warm.decode(page).unwrap(), *expected);
             }
         }
-        let cold_totals = run_sequences(&decoder, &fixtures, mode, 2, &mut warm);
+        let mut cold_totals = [0; 3];
+        for _ in 0..2 {
+            let counters = run_sequence(&decoder, &fixtures, mode, &mut warm);
+            for (total, count) in cold_totals.iter_mut().zip(counters) {
+                *total += count;
+            }
+        }
         check_sequence_totals(mode, 2, cold_totals, &warm);
         for (page, expected) in fixtures.pages.iter().zip(&expected) {
             assert_eq!(warm.decode(page).unwrap(), *expected);
@@ -249,9 +249,21 @@ fn prepared_globals_sequence_probe() {
             assert_eq!(warm.decode(page).unwrap(), *expected);
         }
     }
-    let start = std::time::Instant::now();
-    let cold_totals = run_sequences(&decoder, &fixtures, &mode, iterations, &mut warm);
-    let elapsed = start.elapsed().as_nanos();
+    let mut samples_ns = Vec::new();
+    samples_ns
+        .try_reserve_exact(iterations)
+        .expect("preallocate sequence samples");
+    let mut cold_totals = [0; 3];
+    for _ in 0..iterations {
+        let start = std::time::Instant::now();
+        let counters = run_sequence(&decoder, &fixtures, &mode, &mut warm);
+        let sample_ns = start.elapsed().as_nanos();
+        samples_ns.push(sample_ns);
+        for (total, count) in cold_totals.iter_mut().zip(counters) {
+            *total += count;
+        }
+    }
+    let elapsed: u128 = samples_ns.iter().sum();
     check_sequence_totals(&mode, iterations, cold_totals, &warm);
     // Validate the same candidate outside the timed interval, not a skip-decode
     // surrogate. Baseline/candidate output equality is a separate hard control.
@@ -264,4 +276,5 @@ fn prepared_globals_sequence_probe() {
         "prepared-sequence mode={mode} iterations={iterations} pages={} elapsed_ns={elapsed} exact=true resident_bytes={} peak_owner_plus_copy_bytes={}",
         iterations * 3, checked.resident_bytes, checked.peak_copy_bytes
     );
+    println!("samples_ns={samples_ns:?}");
 }
