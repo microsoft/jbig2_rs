@@ -1,0 +1,53 @@
+Traceback (most recent call last):
+  File "/workspace/jbig2-portable-performance-20261125/tools/portable-performance/diagnostic.py", line 241, in <module>
+    main()
+  File "/workspace/jbig2-portable-performance-20261125/tools/portable-performance/diagnostic.py", line 228, in main
+    setup(args.candidate)
+  File "/workspace/jbig2-portable-performance-20261125/tools/portable-performance/diagnostic.py", line 91, in setup
+    cases = materialize()
+            ^^^^^^^^^^^^^
+  File "/workspace/jbig2-portable-performance-20261125/tools/portable-performance/fixtures.py", line 136, in materialize
+    ready = list(pool.map(lambda value: prepare_pdf(value, tool), sources.values()))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 619, in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 317, in _result_or_cancel
+    return fut.result(timeout)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 456, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/usr/lib/python3.12/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/jbig2-portable-performance-20261125/tools/portable-performance/fixtures.py", line 136, in <lambda>
+    ready = list(pool.map(lambda value: prepare_pdf(value, tool), sources.values()))
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/jbig2-portable-performance-20261125/tools/portable-performance/fixtures.py", line 82, in prepare_pdf
+    origin = fetch(repository, revision, remote, pdf)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/jbig2-portable-performance-20261125/tools/portable-performance/fixtures.py", line 53, in fetch
+    with urllib.request.urlopen(url, timeout=60) as response:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 429: Too Many Requests
+Immutable source: https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-halftone-grid.pdf?format=TEXT

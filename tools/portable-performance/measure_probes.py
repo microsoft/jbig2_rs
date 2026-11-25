@@ -1,0 +1,148 @@
+import argparse
+import hashlib
+import json
+import math
+import os
+from pathlib import Path
+import random
+import statistics
+import subprocess
+
+ROOT = Path(os.environ["PERF_DIAGNOSTIC_ROOT"]).resolve()
+COMPARISONS = [
+    ("baseline-check", "issue-baseline", "current-main"),
+    ("225", "current-main", "halftone-owned"),
+    ("227", "halftone-owned", "packed-rows"),
+    ("231", "packed-rows", "pattern-rows"),
+    ("226", "current-main", "symbol-move"),
+    ("237", "symbol-move", "symbol-split"),
+    ("232", "current-main", "huffman-word"),
+    ("235", "huffman-word", "reader-bytes"),
+    ("234", "reader-bytes", "huffman-buckets"),
+    ("229", "current-main", "refinement-bank"),
+    ("228", "refinement-bank", "refinement-rows"),
+]
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--rounds", type=int, default=5)
+    parser.add_argument("--target-ms", type=int, default=100)
+    parser.add_argument("--comparison", action="append")
+    parser.add_argument("--label", default="screening")
+    args = parser.parse_args()
+    if not 5 <= args.rounds <= 15 or not 10 <= args.target_ms <= 5000:
+        raise ValueError("measurement settings outside the declared range")
+    if not args.label.replace("-", "").isalnum():
+        raise ValueError("invalid result label")
+    cohort = json.loads((ROOT / "expanded-cohort.json").read_text())
+    manifest = Path(cohort["manifest"])
+    cases = json.loads(manifest.read_text())
+    for name, row in cohort["files"].items():
+        if sha(Path(name)) != row["sha256"]:
+            raise ValueError("frozen fixture changed: " + name)
+    comparisons = [row for row in COMPARISONS if not args.comparison or row[0] in args.comparison]
+    if args.comparison and set(args.comparison) != {row[0] for row in comparisons}:
+        raise ValueError("unknown comparison")
+    labels = sorted({name for row in comparisons for name in row[1:]})
+    builds = {}
+    for name in labels:
+        binary = ROOT / "binaries" / name
+        record = json.loads(binary.with_suffix(".json").read_text())
+        if record["instrumented_allocations"] or sha(binary) != record["binary_sha256"]:
+            raise ValueError("latency requires the recorded uninstrumented binary: " + name)
+        builds[name] = record
+    tasks = [(i, "fresh" if case["policy"] == "strict" else "best-effort")
+             for i, case in enumerate(cases)]
+    for i, case in enumerate(cases):
+        if case["id"] in {"bitmap-mmr", "generated-transitions-64",
+                          "generated-transitions-512", "generated-white-2048"}:
+            tasks.append((i, "context"))
+    report = {
+        "scope": "Local paired Rust screening, not adoption or native ARM/PDFium qualification.",
+        "rounds": args.rounds, "samples": 15, "target_ms": args.target_ms,
+        "cpu_affinity": 2, "shared_host": True,
+        "initial_load_average": os.getloadavg(),
+        "cohort_sha256": sha(ROOT / "expanded-cohort.json"),
+        "protocol_sha256": sha(Path(__file__)),
+        "builds": builds, "comparisons": comparisons, "tasks": len(tasks),
+        "measurements": [],
+        "decision_rule": (
+            "Screening only. Confirm promising latency changes with9 rotated paired rounds "
+            "and350ms records; review every per-case median regression above5%, retain "
+            "all adverse records, and investigate placement sensitivity before adoption. "
+            "Memory benefits require measured allocator counts plus latency controls. "
+            "Preserve exact outputs/errors/limits and complete proof/package/CI gates. "
+            "External matched ARM/PDFium qualification remains open."
+        ),
+    }
+    rng = random.Random(20261123)
+    output = ROOT / (args.label + ".json")
+    if output.exists():
+        raise FileExistsError("preserve the existing measurement: " + str(output))
+    output.write_text(json.dumps(report, indent=2) + "\n")
+    for round_index in range(args.rounds):
+        shuffled = comparisons.copy()
+        rng.shuffle(shuffled)
+        for comparison, before, after in shuffled:
+            selected = tasks.copy()
+            rng.shuffle(selected)
+            for index, mode in selected:
+                case = cases[index]
+                order = ["before", "after"] if (index + round_index) % 2 == 0 else ["after", "before"]
+                pair = {"comparison": comparison, "id": case["id"], "family": case["family"],
+                        "mode": mode, "round": round_index, "order": order}
+                for side in order:
+                    name = before if side == "before" else after
+                    action = "once" if case["id"] == "bitmap-symbol-manysyms" else "measure"
+                    process = subprocess.run(
+                        ["taskset", "-c", "2", str(ROOT / "binaries" / name),
+                         action, str(manifest), str(index), mode, "15", str(args.target_ms)],
+                        check=True, capture_output=True, text=True, timeout=180,
+                    )
+                    row = json.loads(process.stdout)
+                    if not row["exact_output_checked"] or row["id"] != case["id"] or row["median_ns"] <= 0:
+                        raise ValueError("measurement did not validate the requested output")
+                    pair[side] = row
+                for field in ("width", "height", "pages", "policy", "recoveries"):
+                    if pair["before"][field] != pair["after"][field]:
+                        raise ValueError("paired correctness descriptor differs: " + field)
+                pair["ratio"] = pair["after"]["median_ns"] / pair["before"]["median_ns"]
+                report["measurements"].append(pair)
+            print(f"round{round_index + 1}/{args.rounds} comparison{comparison}: {len(selected)} cases", flush=True)
+            output.write_text(json.dumps(report, indent=2) + "\n")
+    groups = {}
+    for row in report["measurements"]:
+        groups.setdefault((row["comparison"], row["id"], row["mode"]), []).append(row)
+    summary = []
+    for (comparison, name, mode), pairs in sorted(groups.items()):
+        ratios = [row["ratio"] for row in pairs]
+        if len(pairs) != args.rounds:
+            raise ValueError("incomplete paired measurement")
+        resampled = sorted(
+            statistics.median(rng.choices(ratios, k=len(ratios))) for _ in range(5000)
+        )
+        summary.append({
+            "comparison": comparison, "id": name, "mode": mode,
+            "paired_median_ratio": statistics.median(ratios),
+            "paired_bootstrap95": [resampled[125], resampled[4874]],
+            "before_median_ns": statistics.median(row["before"]["median_ns"] for row in pairs),
+            "after_median_ns": statistics.median(row["after"]["median_ns"] for row in pairs),
+            "faster_pairs": sum(value < 1 for value in ratios),
+            "over_5pct_slower_pairs": sum(value > 1.05 for value in ratios),
+        })
+    for name, build in builds.items():
+        if sha(ROOT / "binaries" / name) != build["binary_sha256"]:
+            raise ValueError("binary changed during measurement")
+    if sha(Path(__file__)) != report["protocol_sha256"]:
+        raise ValueError("measurement protocol changed during the run")
+    report.update(summary=summary, final_load_average=os.getloadavg(), status="completed-screening")
+    output.write_text(json.dumps(report, indent=2) + "\n")
+
+
+if __name__ == "__main__":
+    main()

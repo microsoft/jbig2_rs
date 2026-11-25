@@ -1,0 +1,685 @@
+{
+  "status": "inputs-verified",
+  "inputs": 129,
+  "public_inputs": 110,
+  "public_sources": {
+    "corpus/pdfium/bug_880920.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/pdfium/bug_880920.pdf?format=TEXT",
+      "sha256": "577da10930607fbd9d52a6839b78b7825f9d8adc25d49d22b176e472ad6b6129",
+      "bytes": 9745,
+      "pdf_sha256": "577da10930607fbd9d52a6839b78b7825f9d8adc25d49d22b176e472ad6b6129"
+    },
+    "corpus/third_party/jbig2/bitmap-composite-and-xnor-halftone.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-composite-and-xnor-halftone.pdf?format=TEXT",
+      "sha256": "a88d42b10bd7c860abd3bf16432378d23a9fcf267a7008be047b608e1a332f4e",
+      "bytes": 1537,
+      "pdf_sha256": "a88d42b10bd7c860abd3bf16432378d23a9fcf267a7008be047b608e1a332f4e"
+    },
+    "corpus/third_party/jbig2/bitmap-composite-and-xnor-refine.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-composite-and-xnor-refine.pdf?format=TEXT",
+      "sha256": "c2046037b2617ffdde875d523bf56a428339d7a6f753c25f4f957317bc9ecc9a",
+      "bytes": 1891,
+      "pdf_sha256": "c2046037b2617ffdde875d523bf56a428339d7a6f753c25f4f957317bc9ecc9a"
+    },
+    "corpus/third_party/jbig2/bitmap-composite-and-xnor-text.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-composite-and-xnor-text.pdf?format=TEXT",
+      "sha256": "aba6249b83158532ad87ccf47ba69737c9ba2b787c2f815767d239e910564235",
+      "bytes": 1243,
+      "pdf_sha256": "aba6249b83158532ad87ccf47ba69737c9ba2b787c2f815767d239e910564235"
+    },
+    "corpus/third_party/jbig2/bitmap-composite-and-xnor.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-composite-and-xnor.pdf?format=TEXT",
+      "sha256": "4432b73b7efcae8eb960b409de37af218f366bd548709d74773dae4ac7c257ef",
+      "bytes": 1314,
+      "pdf_sha256": "4432b73b7efcae8eb960b409de37af218f366bd548709d74773dae4ac7c257ef"
+    },
+    "corpus/third_party/jbig2/bitmap-composite-or-xor-replace-halftone.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-composite-or-xor-replace-halftone.pdf?format=TEXT",
+      "sha256": "3ffb92c8a77140d06ea628514a1d44c116a5067d40e3cd3887455b8d40918202",
+      "bytes": 1849,
+      "pdf_sha256": "3ffb92c8a77140d06ea628514a1d44c116a5067d40e3cd3887455b8d40918202"
+    },
+    "corpus/third_party/jbig2/bitmap-composite-or-xor-replace-refine.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-composite-or-xor-replace-refine.pdf?format=TEXT",
+      "sha256": "cc9510f5b113c8a2053fbc3891e0c8275bf0f59e1ca44522832e77d6a26cc145",
+      "bytes": 2343,
+      "pdf_sha256": "cc9510f5b113c8a2053fbc3891e0c8275bf0f59e1ca44522832e77d6a26cc145"
+    },
+    "corpus/third_party/jbig2/bitmap-composite-or-xor-replace-text.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-composite-or-xor-replace-text.pdf?format=TEXT",
+      "sha256": "f4fb077e7e541f01ce21983f7822bd2b43d98f8554bf9cb421a03c7daa6442a5",
+      "bytes": 1578,
+      "pdf_sha256": "f4fb077e7e541f01ce21983f7822bd2b43d98f8554bf9cb421a03c7daa6442a5"
+    },
+    "corpus/third_party/jbig2/bitmap-composite-or-xor-replace.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-composite-or-xor-replace.pdf?format=TEXT",
+      "sha256": "ba8dfa7f3879d2c851287769c0503cf84441e871a93e312e46253e9238dca737",
+      "bytes": 1630,
+      "pdf_sha256": "ba8dfa7f3879d2c851287769c0503cf84441e871a93e312e46253e9238dca737"
+    },
+    "corpus/third_party/jbig2/bitmap-customat-tpgdon.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-customat-tpgdon.pdf?format=TEXT",
+      "sha256": "91b35c6963b8135dde1f509b424d3cfe5b02d9cc023c802c412916c6b76cc938",
+      "bytes": 1057,
+      "pdf_sha256": "91b35c6963b8135dde1f509b424d3cfe5b02d9cc023c802c412916c6b76cc938"
+    },
+    "corpus/third_party/jbig2/bitmap-customat.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-customat.pdf?format=TEXT",
+      "sha256": "9be6eb11af2e4078eb209cbf680bb415960f2275f7e120660d22e7edc09e2ede",
+      "bytes": 1051,
+      "pdf_sha256": "9be6eb11af2e4078eb209cbf680bb415960f2275f7e120660d22e7edc09e2ede"
+    },
+    "corpus/third_party/jbig2/bitmap-halftone-10bpp-mmr.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-halftone-10bpp-mmr.pdf?format=TEXT",
+      "sha256": "c164623c7745aa431f59fa4a088e5adf3ff640687469576c64c5b044102ddae0",
+      "bytes": 1710,
+      "pdf_sha256": "c164623c7745aa431f59fa4a088e5adf3ff640687469576c64c5b044102ddae0"
+    },
+    "corpus/third_party/jbig2/bitmap-halftone-10bpp.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-halftone-10bpp.pdf?format=TEXT",
+      "sha256": "8a4577a1cdbdf342e2a61e18a239423452355c13733075af76fcd008f12eac5f",
+      "bytes": 1311,
+      "pdf_sha256": "8a4577a1cdbdf342e2a61e18a239423452355c13733075af76fcd008f12eac5f"
+    },
+    "corpus/third_party/jbig2/bitmap-halftone-composite.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-halftone-composite.pdf?format=TEXT",
+      "sha256": "e52ea26a9cadf0a1fbcd58c3ae411cf2bf14b05f172966283a6254296c4825a0",
+      "bytes": 1599,
+      "pdf_sha256": "e52ea26a9cadf0a1fbcd58c3ae411cf2bf14b05f172966283a6254296c4825a0"
+    },
+    "corpus/third_party/jbig2/bitmap-halftone-global.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-halftone-global.pdf?format=TEXT",
+      "sha256": "e7ac0e5e502eb8970434f5c5eaf67c0d344949df3d1b0f474bd6292ea489ad9f",
+      "bytes": 1396,
+      "pdf_sha256": "e7ac0e5e502eb8970434f5c5eaf67c0d344949df3d1b0f474bd6292ea489ad9f"
+    },
+    "corpus/third_party/jbig2/bitmap-halftone-grid.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-halftone-grid.pdf?format=TEXT",
+      "sha256": "5ba3f0ca836c6df256415b2ddd61286b819f5b6a3f5598e146601839302c0158",
+      "bytes": 1622,
+      "pdf_sha256": "5ba3f0ca836c6df256415b2ddd61286b819f5b6a3f5598e146601839302c0158"
+    },
+    "corpus/third_party/jbig2/bitmap-halftone-refine.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-halftone-refine.pdf?format=TEXT",
+      "sha256": "f2efff25bcf1ee5d8ee87e3b7c54c7b75e8a1ad33c9e5be22386ed35648dfd7d",
+      "bytes": 1399,
+      "pdf_sha256": "f2efff25bcf1ee5d8ee87e3b7c54c7b75e8a1ad33c9e5be22386ed35648dfd7d"
+    },
+    "corpus/third_party/jbig2/bitmap-halftone-skip-dummy.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-halftone-skip-dummy.pdf?format=TEXT",
+      "sha256": "6cdcfefd9200ddfbd37a15ce66ef50421d2fbcc9b396b2a9714b316f7c0a0ff4",
+      "bytes": 1287,
+      "pdf_sha256": "6cdcfefd9200ddfbd37a15ce66ef50421d2fbcc9b396b2a9714b316f7c0a0ff4"
+    },
+    "corpus/third_party/jbig2/bitmap-halftone-skip-grid-template1.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-halftone-skip-grid-template1.pdf?format=TEXT",
+      "sha256": "bafb6edc883b156dbc337b74b0230fbcc5c45f48e08123f3040872edb1c1ec69",
+      "bytes": 1606,
+      "pdf_sha256": "bafb6edc883b156dbc337b74b0230fbcc5c45f48e08123f3040872edb1c1ec69"
+    },
+    "corpus/third_party/jbig2/bitmap-halftone-skip-grid-template2.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-halftone-skip-grid-template2.pdf?format=TEXT",
+      "sha256": "4aedf60701a9b35e17766e4c26a7326adb0b618c87fb487e7cdde8c909efdd11",
+      "bytes": 1597,
+      "pdf_sha256": "4aedf60701a9b35e17766e4c26a7326adb0b618c87fb487e7cdde8c909efdd11"
+    },
+    "corpus/third_party/jbig2/bitmap-halftone-skip-grid-template3.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-halftone-skip-grid-template3.pdf?format=TEXT",
+      "sha256": "ad156587b727404d16794dafcc738319b8a2a601374895634b0d5ee8d8b34f1b",
+      "bytes": 1600,
+      "pdf_sha256": "ad156587b727404d16794dafcc738319b8a2a601374895634b0d5ee8d8b34f1b"
+    },
+    "corpus/third_party/jbig2/bitmap-halftone-skip-grid.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-halftone-skip-grid.pdf?format=TEXT",
+      "sha256": "cfd77f057c98bb1af01fc108c5a9e0b09b438e0e4f1a31aa8b07ce7b275cc348",
+      "bytes": 1624,
+      "pdf_sha256": "cfd77f057c98bb1af01fc108c5a9e0b09b438e0e4f1a31aa8b07ce7b275cc348"
+    },
+    "corpus/third_party/jbig2/bitmap-halftone-template1.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-halftone-template1.pdf?format=TEXT",
+      "sha256": "f509758d869cc08a1b45b0fcee33794ae1f45887105ba6fa5a2c8f52598518fc",
+      "bytes": 1265,
+      "pdf_sha256": "f509758d869cc08a1b45b0fcee33794ae1f45887105ba6fa5a2c8f52598518fc"
+    },
+    "corpus/third_party/jbig2/bitmap-halftone-template2.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-halftone-template2.pdf?format=TEXT",
+      "sha256": "6c3d7bdc9e1012cce3c80b27592fdcc7864734c628184e1b55245b678d0ec47f",
+      "bytes": 1299,
+      "pdf_sha256": "6c3d7bdc9e1012cce3c80b27592fdcc7864734c628184e1b55245b678d0ec47f"
+    },
+    "corpus/third_party/jbig2/bitmap-halftone-template3.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-halftone-template3.pdf?format=TEXT",
+      "sha256": "4f249e0d12ad232b96de05592c250498dd3fc661607a8fcbd721bdb5a79eb425",
+      "bytes": 1300,
+      "pdf_sha256": "4f249e0d12ad232b96de05592c250498dd3fc661607a8fcbd721bdb5a79eb425"
+    },
+    "corpus/third_party/jbig2/bitmap-halftone.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-halftone.pdf?format=TEXT",
+      "sha256": "c276d6cbc7d0709af448b532232c9f8b92424859974b38feaef0d8983bd6d7c0",
+      "bytes": 1287,
+      "pdf_sha256": "c276d6cbc7d0709af448b532232c9f8b92424859974b38feaef0d8983bd6d7c0"
+    },
+    "corpus/third_party/jbig2/bitmap-initially-unknown-size.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-initially-unknown-size.pdf?format=TEXT",
+      "sha256": "97c0fe6757d24bc2469a8b3a1fab346550ae5e7289f6855e21ebc2ce421dbe6f",
+      "bytes": 1030,
+      "pdf_sha256": "97c0fe6757d24bc2469a8b3a1fab346550ae5e7289f6855e21ebc2ce421dbe6f"
+    },
+    "corpus/third_party/jbig2/bitmap-mmr.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-mmr.pdf?format=TEXT",
+      "sha256": "32b70aeb63ca60f60c25c2d797b8f5af16043d66dce1bcb0b0f08a78acee95ed",
+      "bytes": 1122,
+      "pdf_sha256": "32b70aeb63ca60f60c25c2d797b8f5af16043d66dce1bcb0b0f08a78acee95ed"
+    },
+    "corpus/third_party/jbig2/bitmap-p32-eof.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-p32-eof.pdf?format=TEXT",
+      "sha256": "6c959401b0a43e94b4abc580d95b8373adcea87cb13612a3b9eece18767de576",
+      "bytes": 1490,
+      "pdf_sha256": "6c959401b0a43e94b4abc580d95b8373adcea87cb13612a3b9eece18767de576"
+    },
+    "corpus/third_party/jbig2/bitmap-randomaccess.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-randomaccess.pdf?format=TEXT",
+      "sha256": "82079253a8c5af9683e5dc341e7416d8eb5901c48d6af850a79413e6f11711ec",
+      "bytes": 1026,
+      "pdf_sha256": "82079253a8c5af9683e5dc341e7416d8eb5901c48d6af850a79413e6f11711ec"
+    },
+    "corpus/third_party/jbig2/bitmap-refine-customat-tpgron.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-refine-customat-tpgron.pdf?format=TEXT",
+      "sha256": "7a17d8f6d26061f3110efd54f297a7e0e8d4652e3086cc99e3c171d31fd0810f",
+      "bytes": 1146,
+      "pdf_sha256": "7a17d8f6d26061f3110efd54f297a7e0e8d4652e3086cc99e3c171d31fd0810f"
+    },
+    "corpus/third_party/jbig2/bitmap-refine-customat.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-refine-customat.pdf?format=TEXT",
+      "sha256": "161d25d77c9bf788515dd0fc1aaaf6e35e1c23495acffe9cf99a98d567d1c5de",
+      "bytes": 1146,
+      "pdf_sha256": "161d25d77c9bf788515dd0fc1aaaf6e35e1c23495acffe9cf99a98d567d1c5de"
+    },
+    "corpus/third_party/jbig2/bitmap-refine-lossless.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-refine-lossless.pdf?format=TEXT",
+      "sha256": "f30056cb8e30203e3c16f00ffe28bc90bdb6af8aa72d58c14f19e71ec9c7cecf",
+      "bytes": 1128,
+      "pdf_sha256": "f30056cb8e30203e3c16f00ffe28bc90bdb6af8aa72d58c14f19e71ec9c7cecf"
+    },
+    "corpus/third_party/jbig2/bitmap-refine-page-subrect.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-refine-page-subrect.pdf?format=TEXT",
+      "sha256": "74114e6f3925faf7145c0738168ecd3041c45c0ea69b2a91e7f105cdf7045bd0",
+      "bytes": 1110,
+      "pdf_sha256": "74114e6f3925faf7145c0738168ecd3041c45c0ea69b2a91e7f105cdf7045bd0"
+    },
+    "corpus/third_party/jbig2/bitmap-refine-page.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-refine-page.pdf?format=TEXT",
+      "sha256": "7dbeb64018e183c77333996eeb5c2b9bcc90caaca8381ad42fb98a64c14025eb",
+      "bytes": 1127,
+      "pdf_sha256": "7dbeb64018e183c77333996eeb5c2b9bcc90caaca8381ad42fb98a64c14025eb"
+    },
+    "corpus/third_party/jbig2/bitmap-refine-refine.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-refine-refine.pdf?format=TEXT",
+      "sha256": "2ebb942ac5be0e066ab4ce204384a39b61692ca75fab0a4df4f36dae925e1f4d",
+      "bytes": 1203,
+      "pdf_sha256": "2ebb942ac5be0e066ab4ce204384a39b61692ca75fab0a4df4f36dae925e1f4d"
+    },
+    "corpus/third_party/jbig2/bitmap-refine-template1-tpgron.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-refine-template1-tpgron.pdf?format=TEXT",
+      "sha256": "921c1eab4ece655029bb524eb22136d21f305d13779f86fbe81086b62a22d4b3",
+      "bytes": 1230,
+      "pdf_sha256": "921c1eab4ece655029bb524eb22136d21f305d13779f86fbe81086b62a22d4b3"
+    },
+    "corpus/third_party/jbig2/bitmap-refine-template1.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-refine-template1.pdf?format=TEXT",
+      "sha256": "019b26e3de36cbdd829e2faef67866f4140abb17040cd0b626e5bceab272b68c",
+      "bytes": 1116,
+      "pdf_sha256": "019b26e3de36cbdd829e2faef67866f4140abb17040cd0b626e5bceab272b68c"
+    },
+    "corpus/third_party/jbig2/bitmap-refine-tpgron.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-refine-tpgron.pdf?format=TEXT",
+      "sha256": "6b17840d81375faafbe48e2150706f1a70271865ec18b9f2e6700e06dadbe86c",
+      "bytes": 1251,
+      "pdf_sha256": "6b17840d81375faafbe48e2150706f1a70271865ec18b9f2e6700e06dadbe86c"
+    },
+    "corpus/third_party/jbig2/bitmap-refine.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-refine.pdf?format=TEXT",
+      "sha256": "ec9e2f9601167ccb00f961e33dec5cc46a23bf08e132f9dce5d3aecb3f1cd9f9",
+      "bytes": 1128,
+      "pdf_sha256": "ec9e2f9601167ccb00f961e33dec5cc46a23bf08e132f9dce5d3aecb3f1cd9f9"
+    },
+    "corpus/third_party/jbig2/bitmap-stripe-initially-unknown-height.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-stripe-initially-unknown-height.pdf?format=TEXT",
+      "sha256": "fc2a20fc1cb5b4fd780e68be7b7ed95e63aa9b58ef290d7501b97212c206ff0f",
+      "bytes": 1271,
+      "pdf_sha256": "fc2a20fc1cb5b4fd780e68be7b7ed95e63aa9b58ef290d7501b97212c206ff0f"
+    },
+    "corpus/third_party/jbig2/bitmap-stripe-last-implicit.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-stripe-last-implicit.pdf?format=TEXT",
+      "sha256": "ff3b3a2465c764fd1705db05edfb3f11336e6a93535bad956e5d5aaebaecf4ae",
+      "bytes": 1256,
+      "pdf_sha256": "ff3b3a2465c764fd1705db05edfb3f11336e6a93535bad956e5d5aaebaecf4ae"
+    },
+    "corpus/third_party/jbig2/bitmap-stripe-single-no-end-of-stripe.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-stripe-single-no-end-of-stripe.pdf?format=TEXT",
+      "sha256": "8bf3bbb2a48b0bc689b920fece52080582b15415eef3615e811ffb2cc8932966",
+      "bytes": 1026,
+      "pdf_sha256": "8bf3bbb2a48b0bc689b920fece52080582b15415eef3615e811ffb2cc8932966"
+    },
+    "corpus/third_party/jbig2/bitmap-stripe-single.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-stripe-single.pdf?format=TEXT",
+      "sha256": "b6d9b0b9348e9f4c33ba192a32c913ecc446d212dc3df0108ed732cc399b5482",
+      "bytes": 1041,
+      "pdf_sha256": "b6d9b0b9348e9f4c33ba192a32c913ecc446d212dc3df0108ed732cc399b5482"
+    },
+    "corpus/third_party/jbig2/bitmap-stripe.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-stripe.pdf?format=TEXT",
+      "sha256": "b1e3c558a34537aeace4334cbcea6c42f82f4b815c8232df462ee8956e6faf82",
+      "bytes": 1271,
+      "pdf_sha256": "b1e3c558a34537aeace4334cbcea6c42f82f4b815c8232df462ee8956e6faf82"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-32bit-arithint.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-32bit-arithint.pdf?format=TEXT",
+      "sha256": "58f80225756669e8106e42cab2d7d0f4582330db2cd04ebcae81ce52dbf803d6",
+      "bytes": 1069,
+      "pdf_sha256": "58f80225756669e8106e42cab2d7d0f4582330db2cd04ebcae81ce52dbf803d6"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-big-segmentid.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-big-segmentid.pdf?format=TEXT",
+      "sha256": "2fb59d0fbb8396bc812d5ed9af8bc6b2b8a69051519b8449b360cb304ea4e0b8",
+      "bytes": 1176,
+      "pdf_sha256": "2fb59d0fbb8396bc812d5ed9af8bc6b2b8a69051519b8449b360cb304ea4e0b8"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-context-reuse-huffman-refagg.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-context-reuse-huffman-refagg.pdf?format=TEXT",
+      "sha256": "473901d82edb6169cb3100e97024a3e3aaceaa08224230b5ceed1bec4433bfb0",
+      "bytes": 1280,
+      "pdf_sha256": "473901d82edb6169cb3100e97024a3e3aaceaa08224230b5ceed1bec4433bfb0"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-context-reuse-refagg.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-context-reuse-refagg.pdf?format=TEXT",
+      "sha256": "57bccf657e3e5cdb561d9f58b89c8baca45fe4e4e7bd224b6ad0bd79e472adef",
+      "bytes": 1287,
+      "pdf_sha256": "57bccf657e3e5cdb561d9f58b89c8baca45fe4e4e7bd224b6ad0bd79e472adef"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-context-reuse.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-context-reuse.pdf?format=TEXT",
+      "sha256": "a6f05b48046b132054efe967c68ad5292b6835f78cce14bf2a613c9bce39b2c1",
+      "bytes": 1192,
+      "pdf_sha256": "a6f05b48046b132054efe967c68ad5292b6835f78cce14bf2a613c9bce39b2c1"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-empty.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-empty.pdf?format=TEXT",
+      "sha256": "adf661486871b31773fc85750372dbd3051db664b17128791e1bf667becde7e2",
+      "bytes": 1133,
+      "pdf_sha256": "adf661486871b31773fc85750372dbd3051db664b17128791e1bf667becde7e2"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-global.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-global.pdf?format=TEXT",
+      "sha256": "a9f565d57271834c427194d855315a91d56397bde7b433ab2811b73518d9f37c",
+      "bytes": 1218,
+      "pdf_sha256": "a9f565d57271834c427194d855315a91d56397bde7b433ab2811b73518d9f37c"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-manyrefs.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-manyrefs.pdf?format=TEXT",
+      "sha256": "83141bcca434c38c3ae8f634b9f06fe17847b2380cdd64168949077f88c79f85",
+      "bytes": 1300,
+      "pdf_sha256": "83141bcca434c38c3ae8f634b9f06fe17847b2380cdd64168949077f88c79f85"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-manysyms.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-manysyms.pdf?format=TEXT",
+      "sha256": "4f475ca228c76f8ee93fa1ad9a6062df0e49befd2aeb42f12f3b109a274bb707",
+      "bytes": 384975,
+      "pdf_sha256": "4f475ca228c76f8ee93fa1ad9a6062df0e49befd2aeb42f12f3b109a274bb707"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-negative-sbdsoffset.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-negative-sbdsoffset.pdf?format=TEXT",
+      "sha256": "5aa48933bc980565e1c0ea93d91c4fe5370e96d4a461198481aa86af908793e5",
+      "bytes": 1077,
+      "pdf_sha256": "5aa48933bc980565e1c0ea93d91c4fe5370e96d4a461198481aa86af908793e5"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-refine.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-refine.pdf?format=TEXT",
+      "sha256": "5e2ae6875ea8d0f1d2aecfaeff6aeac6acb8ff76eadef42e5f0fa7fc76c818b0",
+      "bytes": 1185,
+      "pdf_sha256": "5e2ae6875ea8d0f1d2aecfaeff6aeac6acb8ff76eadef42e5f0fa7fc76c818b0"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-symbolrefine-textrefine-export.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-symbolrefine-textrefine-export.pdf?format=TEXT",
+      "sha256": "1caae6b1f44d8ef343718cf7b94cd14d533c258c540c5676c2caa32f737f0a13",
+      "bytes": 1302,
+      "pdf_sha256": "1caae6b1f44d8ef343718cf7b94cd14d533c258c540c5676c2caa32f737f0a13"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-symbolrefine-textrefine.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-symbolrefine-textrefine.pdf?format=TEXT",
+      "sha256": "2902534243c382770456f958fe7ba835f1916ea85f6219a3ba2b122f63db34c6",
+      "bytes": 1301,
+      "pdf_sha256": "2902534243c382770456f958fe7ba835f1916ea85f6219a3ba2b122f63db34c6"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-symbolrefineone-customat.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-symbolrefineone-customat.pdf?format=TEXT",
+      "sha256": "cd8792e011e41f56b07dd0ba14df10b89c36d4492937032c60656177f5d27da5",
+      "bytes": 1167,
+      "pdf_sha256": "cd8792e011e41f56b07dd0ba14df10b89c36d4492937032c60656177f5d27da5"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-symbolrefineone-template1.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-symbolrefineone-template1.pdf?format=TEXT",
+      "sha256": "f175b6edddc6d40cbacc447b46a628c164a9a5ea0185b20f09f48bedbe7516c3",
+      "bytes": 1155,
+      "pdf_sha256": "f175b6edddc6d40cbacc447b46a628c164a9a5ea0185b20f09f48bedbe7516c3"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-symbolrefineone.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-symbolrefineone.pdf?format=TEXT",
+      "sha256": "670053e1dbd980602b44f052bc9c0ffa7e7835521fc0ee324261a4143b52f66c",
+      "bytes": 1164,
+      "pdf_sha256": "670053e1dbd980602b44f052bc9c0ffa7e7835521fc0ee324261a4143b52f66c"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-symbolrefineseveral.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-symbolrefineseveral.pdf?format=TEXT",
+      "sha256": "705133ec80d7e755ca206be508ad92840f11555520a5c117a3fe2886c30e2435",
+      "bytes": 1129,
+      "pdf_sha256": "705133ec80d7e755ca206be508ad92840f11555520a5c117a3fe2886c30e2435"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-symhuff-texthuff.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-symhuff-texthuff.pdf?format=TEXT",
+      "sha256": "af8f3c70dbe1c0f0da090c829cea6da5015ed9978dd13fd2d0b9b44ac715db2b",
+      "bytes": 1209,
+      "pdf_sha256": "af8f3c70dbe1c0f0da090c829cea6da5015ed9978dd13fd2d0b9b44ac715db2b"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-symhuff-texthuffB10B13.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-symhuff-texthuffB10B13.pdf?format=TEXT",
+      "sha256": "1e0ad39f563c79b7e650347265dafebb1ccbfb20c9fbce62fc64575af9a13aa9",
+      "bytes": 1209,
+      "pdf_sha256": "1e0ad39f563c79b7e650347265dafebb1ccbfb20c9fbce62fc64575af9a13aa9"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-symhuffB5B3-texthuffB7B9B12.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-symhuffB5B3-texthuffB7B9B12.pdf?format=TEXT",
+      "sha256": "7777647082ccdde57b94bbdbcf1e0a743537adb02faabd662414634c92815d57",
+      "bytes": 1213,
+      "pdf_sha256": "7777647082ccdde57b94bbdbcf1e0a743537adb02faabd662414634c92815d57"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-symhuffrefine-textrefine-export.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-symhuffrefine-textrefine-export.pdf?format=TEXT",
+      "sha256": "0be94ca1678ef6449963aab5029fb3467184b002f5cf8bfdbc531b068da3d97b",
+      "bytes": 1418,
+      "pdf_sha256": "0be94ca1678ef6449963aab5029fb3467184b002f5cf8bfdbc531b068da3d97b"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-symhuffrefine-textrefine.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-symhuffrefine-textrefine.pdf?format=TEXT",
+      "sha256": "3e4eecb287e59b630d9799bf00d2085f890d23bbc6ae2bebfb86b10c00b8a6a3",
+      "bytes": 1417,
+      "pdf_sha256": "3e4eecb287e59b630d9799bf00d2085f890d23bbc6ae2bebfb86b10c00b8a6a3"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-symhuffrefineone.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-symhuffrefineone.pdf?format=TEXT",
+      "sha256": "a38677054cb800d0a8b1bac32d21f9ad9e6102bcd650fc3735015d05e1778cc9",
+      "bytes": 1298,
+      "pdf_sha256": "a38677054cb800d0a8b1bac32d21f9ad9e6102bcd650fc3735015d05e1778cc9"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-symhuffrefineseveral.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-symhuffrefineseveral.pdf?format=TEXT",
+      "sha256": "6d3050b223ce7bda0c948635c9bf67c04eac6c21b6e214d988cda9e1599e257a",
+      "bytes": 1244,
+      "pdf_sha256": "6d3050b223ce7bda0c948635c9bf67c04eac6c21b6e214d988cda9e1599e257a"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-symhuffuncompressed-texthuff.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-symhuffuncompressed-texthuff.pdf?format=TEXT",
+      "sha256": "347a83cce9504ff8414fe028d8db2b311ebe800cab0116469c90456dd889218b",
+      "bytes": 6177,
+      "pdf_sha256": "347a83cce9504ff8414fe028d8db2b311ebe800cab0116469c90456dd889218b"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-textbottomleft.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-textbottomleft.pdf?format=TEXT",
+      "sha256": "0bc02085b750d0413fa3360825cc23b5e5a449b2e3f08fa084c3b00b64e03683",
+      "bytes": 1112,
+      "pdf_sha256": "0bc02085b750d0413fa3360825cc23b5e5a449b2e3f08fa084c3b00b64e03683"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-textbottomlefttranspose.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-textbottomlefttranspose.pdf?format=TEXT",
+      "sha256": "a9c552ce38b76935843861f8491bcb2df3af3833baa354e035e2026c286b7f98",
+      "bytes": 1097,
+      "pdf_sha256": "a9c552ce38b76935843861f8491bcb2df3af3833baa354e035e2026c286b7f98"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-textbottomright.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-textbottomright.pdf?format=TEXT",
+      "sha256": "e50632eb44e2dc3dc411e4265844ccf6fdd146b496b8c84e3d81a5c9adf858a5",
+      "bytes": 1112,
+      "pdf_sha256": "e50632eb44e2dc3dc411e4265844ccf6fdd146b496b8c84e3d81a5c9adf858a5"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-textbottomrighttranspose.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-textbottomrighttranspose.pdf?format=TEXT",
+      "sha256": "27b036ccba3f9e068677ef8bf203cf66bc6fef1eb091188119a1b7f474344d26",
+      "bytes": 1097,
+      "pdf_sha256": "27b036ccba3f9e068677ef8bf203cf66bc6fef1eb091188119a1b7f474344d26"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-textcomposite.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-textcomposite.pdf?format=TEXT",
+      "sha256": "a3f3985d4adcff6f5fbd2df7fad5382f43ac1dd2f4f868cb854a7a067bdeaf86",
+      "bytes": 1319,
+      "pdf_sha256": "a3f3985d4adcff6f5fbd2df7fad5382f43ac1dd2f4f868cb854a7a067bdeaf86"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-texthuff-runcodes32-34.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-texthuff-runcodes32-34.pdf?format=TEXT",
+      "sha256": "a04ed689fadee2c68462bbd908b4e8e4b6c4561ea422d9fd070c7857abdc621e",
+      "bytes": 8218,
+      "pdf_sha256": "a04ed689fadee2c68462bbd908b4e8e4b6c4561ea422d9fd070c7857abdc621e"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-texthuff-trailingsymbols.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-texthuff-trailingsymbols.pdf?format=TEXT",
+      "sha256": "23394bd4bb379a971b67a04c93abeb3f0778c4a790fdbb3c31f1e0f309fa0e25",
+      "bytes": 1314,
+      "pdf_sha256": "23394bd4bb379a971b67a04c93abeb3f0778c4a790fdbb3c31f1e0f309fa0e25"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-texthuffrefine.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-texthuffrefine.pdf?format=TEXT",
+      "sha256": "945dc0c5ad52ff055c857baa35bfb83e1283ec5ac8f9a031d81e320d41f47a89",
+      "bytes": 1270,
+      "pdf_sha256": "945dc0c5ad52ff055c857baa35bfb83e1283ec5ac8f9a031d81e320d41f47a89"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-texthuffrefineB15.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-texthuffrefineB15.pdf?format=TEXT",
+      "sha256": "0668b10ff9061f028185a8b2c014184ceaa3c23cddaf058c91f2d068b2e20def",
+      "bytes": 1270,
+      "pdf_sha256": "0668b10ff9061f028185a8b2c014184ceaa3c23cddaf058c91f2d068b2e20def"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-texthuffrefinecustom.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-texthuffrefinecustom.pdf?format=TEXT",
+      "sha256": "d150d22c02ae175c031e77aea704813cce57c33c4dd6ed3f22fa7494bb29e453",
+      "bytes": 1396,
+      "pdf_sha256": "d150d22c02ae175c031e77aea704813cce57c33c4dd6ed3f22fa7494bb29e453"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-texthuffrefinecustomdims.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-texthuffrefinecustomdims.pdf?format=TEXT",
+      "sha256": "fef10e63ce72c3285a804767499a0a814a75d24f919659e8e69596cd2095114f",
+      "bytes": 1318,
+      "pdf_sha256": "fef10e63ce72c3285a804767499a0a814a75d24f919659e8e69596cd2095114f"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-texthuffrefinecustompos-global.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-texthuffrefinecustompos-global.pdf?format=TEXT",
+      "sha256": "e0afe48f329461ad237ad3f6c345e34314812a21364a68c9bf441a7fac4d8490",
+      "bytes": 1426,
+      "pdf_sha256": "e0afe48f329461ad237ad3f6c345e34314812a21364a68c9bf441a7fac4d8490"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-texthuffrefinecustompos.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-texthuffrefinecustompos.pdf?format=TEXT",
+      "sha256": "03b17dfc51931f8f9f35a2fabfe98e36bb61fc7e604e455c6c6d6fca3d6e6603",
+      "bytes": 1318,
+      "pdf_sha256": "03b17dfc51931f8f9f35a2fabfe98e36bb61fc7e604e455c6c6d6fca3d6e6603"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-texthuffrefinecustomposdims.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-texthuffrefinecustomposdims.pdf?format=TEXT",
+      "sha256": "342d06ad5f3d6843ea77d9a03117f5a3df663d22375a68e50a71109eaea6c4c1",
+      "bytes": 1371,
+      "pdf_sha256": "342d06ad5f3d6843ea77d9a03117f5a3df663d22375a68e50a71109eaea6c4c1"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-texthuffrefinecustomsize.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-texthuffrefinecustomsize.pdf?format=TEXT",
+      "sha256": "1a2a7861127869e6c779b65b898ec41e5045f1107242923aa8109c8c412cdec1",
+      "bytes": 1295,
+      "pdf_sha256": "1a2a7861127869e6c779b65b898ec41e5045f1107242923aa8109c8c412cdec1"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-textrefine-customat.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-textrefine-customat.pdf?format=TEXT",
+      "sha256": "2c86c9cde4e623f2ba3c94d6b9e067298b25adeebd96ab704cbe908c22de5c8b",
+      "bytes": 1132,
+      "pdf_sha256": "2c86c9cde4e623f2ba3c94d6b9e067298b25adeebd96ab704cbe908c22de5c8b"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-textrefine-negative-delta-width.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-textrefine-negative-delta-width.pdf?format=TEXT",
+      "sha256": "53fa2b3ccef2999986369ea19c245dbada17c17f959e0c0d98f926e2fdf2fb1a",
+      "bytes": 1130,
+      "pdf_sha256": "53fa2b3ccef2999986369ea19c245dbada17c17f959e0c0d98f926e2fdf2fb1a"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-textrefine.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-textrefine.pdf?format=TEXT",
+      "sha256": "c6dc6a57d164c86c8aa59e6136f8b166a4697213ef6d5669bed6a7f6227bed0b",
+      "bytes": 1128,
+      "pdf_sha256": "c6dc6a57d164c86c8aa59e6136f8b166a4697213ef6d5669bed6a7f6227bed0b"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-texttopright.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-texttopright.pdf?format=TEXT",
+      "sha256": "e5b6eb678be01e99db7a6316fa99070bebf29489ae61054bdde04c9c26c6b9dd",
+      "bytes": 1109,
+      "pdf_sha256": "e5b6eb678be01e99db7a6316fa99070bebf29489ae61054bdde04c9c26c6b9dd"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-texttoprighttranspose.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-texttoprighttranspose.pdf?format=TEXT",
+      "sha256": "2e6522bf6fbbf01fbd8c05b00915b9f5c2783cbdf1815b53b027f49fb91cdad7",
+      "bytes": 1097,
+      "pdf_sha256": "2e6522bf6fbbf01fbd8c05b00915b9f5c2783cbdf1815b53b027f49fb91cdad7"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol-texttranspose.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol-texttranspose.pdf?format=TEXT",
+      "sha256": "926887bcb2397304842c777a703219296d9b396d924922d492103327ab99a661",
+      "bytes": 1097,
+      "pdf_sha256": "926887bcb2397304842c777a703219296d9b396d924922d492103327ab99a661"
+    },
+    "corpus/third_party/jbig2/bitmap-symbol.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-symbol.pdf?format=TEXT",
+      "sha256": "39bf73b128947979f9a6080791ad03e206ea5756f4b4d37b6609e154d4f875b2",
+      "bytes": 1109,
+      "pdf_sha256": "39bf73b128947979f9a6080791ad03e206ea5756f4b4d37b6609e154d4f875b2"
+    },
+    "corpus/third_party/jbig2/bitmap-template1-customat-tpgdon.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-template1-customat-tpgdon.pdf?format=TEXT",
+      "sha256": "071fd70fdad79ea30a2bfbaafcee63f7da0e2b723ffeef5949d583bae39ffd58",
+      "bytes": 1020,
+      "pdf_sha256": "071fd70fdad79ea30a2bfbaafcee63f7da0e2b723ffeef5949d583bae39ffd58"
+    },
+    "corpus/third_party/jbig2/bitmap-template1-customat.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-template1-customat.pdf?format=TEXT",
+      "sha256": "9fbdff065b72818b2e8cef051586b4807afefc3f68773117a0d7fca217c7eb42",
+      "bytes": 1015,
+      "pdf_sha256": "9fbdff065b72818b2e8cef051586b4807afefc3f68773117a0d7fca217c7eb42"
+    },
+    "corpus/third_party/jbig2/bitmap-template1-tpgdon.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-template1-tpgdon.pdf?format=TEXT",
+      "sha256": "e8e715223bceac2b95b186e7220594793a57333c8d0da64cde2060027b9e91d4",
+      "bytes": 1206,
+      "pdf_sha256": "e8e715223bceac2b95b186e7220594793a57333c8d0da64cde2060027b9e91d4"
+    },
+    "corpus/third_party/jbig2/bitmap-template1.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-template1.pdf?format=TEXT",
+      "sha256": "25ab482ef6ba07335fd4927ac3ab22b231044345b48e024b5ed2399b048bc677",
+      "bytes": 1015,
+      "pdf_sha256": "25ab482ef6ba07335fd4927ac3ab22b231044345b48e024b5ed2399b048bc677"
+    },
+    "corpus/third_party/jbig2/bitmap-template2-customat-tpgdon.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-template2-customat-tpgdon.pdf?format=TEXT",
+      "sha256": "f062d3e4f6bed408216ed042a113aca71ff30cb859b314c26b3d7259cfa5ca07",
+      "bytes": 1065,
+      "pdf_sha256": "f062d3e4f6bed408216ed042a113aca71ff30cb859b314c26b3d7259cfa5ca07"
+    },
+    "corpus/third_party/jbig2/bitmap-template2-customat.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-template2-customat.pdf?format=TEXT",
+      "sha256": "389e2719d8432f7a4d0a579e49f2fba3a6e085a007c046023666e66432105554",
+      "bytes": 1055,
+      "pdf_sha256": "389e2719d8432f7a4d0a579e49f2fba3a6e085a007c046023666e66432105554"
+    },
+    "corpus/third_party/jbig2/bitmap-template2-tpgdon.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-template2-tpgdon.pdf?format=TEXT",
+      "sha256": "f54b9f8a913f7f9389ea3fbe6ff3afd148753be651d5f6ed8caebd67acbc6271",
+      "bytes": 1176,
+      "pdf_sha256": "f54b9f8a913f7f9389ea3fbe6ff3afd148753be651d5f6ed8caebd67acbc6271"
+    },
+    "corpus/third_party/jbig2/bitmap-template2.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-template2.pdf?format=TEXT",
+      "sha256": "f37d525a05dfbfc5936b56c0fb7b7af382d0fa2da56a1a305c99850d5982912b",
+      "bytes": 1018,
+      "pdf_sha256": "f37d525a05dfbfc5936b56c0fb7b7af382d0fa2da56a1a305c99850d5982912b"
+    },
+    "corpus/third_party/jbig2/bitmap-template3-customat-tpgdon.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-template3-customat-tpgdon.pdf?format=TEXT",
+      "sha256": "a536e4f1dbe09f27f5e355bfad252e96d223cce761a9f58cf47fcfb507133f4d",
+      "bytes": 1079,
+      "pdf_sha256": "a536e4f1dbe09f27f5e355bfad252e96d223cce761a9f58cf47fcfb507133f4d"
+    },
+    "corpus/third_party/jbig2/bitmap-template3-customat.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-template3-customat.pdf?format=TEXT",
+      "sha256": "8db3cd4ebd4d75a0a45c685ce243af13855bb6a3642b3a3810b0e7ce29786389",
+      "bytes": 1070,
+      "pdf_sha256": "8db3cd4ebd4d75a0a45c685ce243af13855bb6a3642b3a3810b0e7ce29786389"
+    },
+    "corpus/third_party/jbig2/bitmap-template3-tpgdon.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-template3-tpgdon.pdf?format=TEXT",
+      "sha256": "1d8514a3c8664ac84b1434ccac539f30fec3a02dccbd1da612a7925394cb2a48",
+      "bytes": 1197,
+      "pdf_sha256": "1d8514a3c8664ac84b1434ccac539f30fec3a02dccbd1da612a7925394cb2a48"
+    },
+    "corpus/third_party/jbig2/bitmap-template3.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-template3.pdf?format=TEXT",
+      "sha256": "98b5e78016e3415990e9f3c99b5ed2940ed869826d9ddf04385f8abdf543cf13",
+      "bytes": 1033,
+      "pdf_sha256": "98b5e78016e3415990e9f3c99b5ed2940ed869826d9ddf04385f8abdf543cf13"
+    },
+    "corpus/third_party/jbig2/bitmap-tpgdon.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-tpgdon.pdf?format=TEXT",
+      "sha256": "7d9c22dcee6a357e6290de04b57a19ffc42a6fd5d802d62a4cbd75a59b078924",
+      "bytes": 1211,
+      "pdf_sha256": "7d9c22dcee6a357e6290de04b57a19ffc42a6fd5d802d62a4cbd75a59b078924"
+    },
+    "corpus/third_party/jbig2/bitmap-trailing-7fff-stripped-harder-refine.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-trailing-7fff-stripped-harder-refine.pdf?format=TEXT",
+      "sha256": "17e08dc35c1fe2c6a9ce5db25ee53805248ccb9a8ae528a339d37d764f29dc9a",
+      "bytes": 1887,
+      "pdf_sha256": "17e08dc35c1fe2c6a9ce5db25ee53805248ccb9a8ae528a339d37d764f29dc9a"
+    },
+    "corpus/third_party/jbig2/bitmap-trailing-7fff-stripped-harder.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-trailing-7fff-stripped-harder.pdf?format=TEXT",
+      "sha256": "47fa9873c6250a75552b60771fed2494f14eb4a20bdacf558ee00f9136835be9",
+      "bytes": 15181,
+      "pdf_sha256": "47fa9873c6250a75552b60771fed2494f14eb4a20bdacf558ee00f9136835be9"
+    },
+    "corpus/third_party/jbig2/bitmap-trailing-7fff-stripped.pdf": {
+      "url": "https://pdfium.googlesource.com/pdfium_tests/+/2bcc4fdc9abe4c4c115c82c486ac4c46f1d474c5/third_party/jbig2/bitmap-trailing-7fff-stripped.pdf?format=TEXT",
+      "sha256": "1fb303a7eaa11933f3f1e5c3b554375649ea4a5f1226efa97a7534cac768b8fb",
+      "bytes": 1049,
+      "pdf_sha256": "1fb303a7eaa11933f3f1e5c3b554375649ea4a5f1226efa97a7534cac768b8fb"
+    }
+  },
+  "first_party_generated_inputs": [
+    "controlled-halftone-grid-1024x1024-depth1",
+    "controlled-halftone-grid-1024x1024-depth10",
+    "controlled-halftone-grid-1024x1024-depth8",
+    "controlled-halftone-grid-1024x1024-depth9",
+    "controlled-halftone-grid-1025x1023-depth8",
+    "controlled-halftone-grid-43x41-depth0",
+    "generated-many-pages-32",
+    "generated-transitions-512",
+    "generated-transitions-64",
+    "generated-white-2048",
+    "generated-white-512",
+    "generated-white-64",
+    "symbol-aggregate-128",
+    "symbol-aggregate-16",
+    "symbol-aggregate-2",
+    "symbol-identity-1",
+    "symbol-identity-16",
+    "symbol-identity-256",
+    "symbol-identity-4096"
+  ],
+  "fixup_tool": {
+    "url": "https://pdfium.googlesource.com/pdfium/+/68f43efa71ac66ba843ba286bb76d075aa1c49df/testing/tools/fixup_pdf_template.py?format=TEXT",
+    "sha256": "0a05d1e213a3c72fbddeed263e8e08f4a51de35515a906e286d4c1bd2fa11d52",
+    "bytes": 8232
+  },
+  "pypdf": "7.1.1",
+  "frozen_cohort_sha256": "cfff3f5a8343970e8ede6c6257af474f8c88a1170107a8cc13dcb294b3731c9d",
+  "qualification_cohort_sha256": "a7c9c89940b90afd9d8232365b435c53f99728df7cde084f3de79fe4a7c66516",
+  "helpers_sha256": "f34bf7b0b6d8c86451b6304832f4750a60fb4729e3c372e7ee087bf5e8c80575"
+}

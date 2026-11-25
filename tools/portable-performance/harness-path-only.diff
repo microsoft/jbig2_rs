@@ -1,0 +1,5 @@
+--- original/harness.rs
++++ probe/src/main.rs
+@@ -12 +12 @@
+-#[path = "/workspace/jbig2/benchmarks/cases.rs"]
++#[path = "../../../../benchmarks/cases.rs"]

@@ -1,0 +1,173 @@
+--- original/build_probe.py
++++ build.py
+@@ -1 +1,2 @@
+-import argparse
++"""Same-path, explicitly cleaned builds; latency never runs in this module."""
++
+@@ -3 +3,0 @@
+-import json
+@@ -5,0 +6 @@
++import re
+@@ -7,0 +9 @@
++import sys
+@@ -9,6 +11,5 @@
+-ROOT = Path(__file__).resolve().parent
+-MATCHED = Path("/workspace/jbig2-perf-issue-baseline-20261123")
+-MANIFEST = ROOT / "probe/Cargo.toml"
+-HARNESS = ROOT.parent / "jbig2-benchmark-20261119/src/main.rs"
+-GENERATED = Path("/workspace/jbig2/benchmarks/cases.rs")
+-CORPUS = ROOT.parent / "jbig2-benchmark-20261119/cases.json"
++from fixtures import HERE, PRIVATE, REPO, RESULTS, save, sha
++
++MANIFEST = HERE / "probe/Cargo.toml"
++MATCHED = PRIVATE / "matched"
++BASE = "14aeac451f6491aa3e413fcbc60aafb11fa75b7c"
+@@ -17,2 +18,7 @@
+-def command(arguments, **kwargs):
+-    return subprocess.run(arguments, check=True, text=True, **kwargs)
++def command(args, **kwargs):
++    try:
++        return subprocess.run(args, check=True, text=True, **kwargs)
++    except subprocess.CalledProcessError as error:
++        if error.stderr:
++            print(error.stderr, file=sys.stderr)
++        raise
+@@ -21,2 +27,13 @@
+-def digest(path):
+-    return hashlib.sha256(path.read_bytes()).hexdigest()
++def revision(value):
++    if not re.fullmatch(r"[0-9a-f]{40}", value):
++        raise ValueError("Require one immutable, full lowercase candidate SHA")
++    try:
++        actual = command(["git", "rev-parse", "--verify", value + "^{commit}"],
++                         cwd=REPO, capture_output=True).stdout.strip()
++    except subprocess.CalledProcessError:
++        command(["git", "fetch", "--no-tags", "origin", value], cwd=REPO)
++        actual = command(["git", "rev-parse", "--verify", value + "^{commit}"],
++                         cwd=REPO, capture_output=True).stdout.strip()
++    if actual != value:
++        raise ValueError("Revision did not resolve exactly")
++    return actual
+@@ -25,17 +42,2 @@
+-def main():
+-    parser = argparse.ArgumentParser()
+-    parser.add_argument("--source", required=True)
+-    parser.add_argument("--label", required=True)
+-    parser.add_argument("--allocations", action="store_true")
+-    args = parser.parse_args()
+-    if not args.label.replace("-", "").isalnum():
+-        raise ValueError("unsafe benchmark label")
+-    if command(["git", "status", "--porcelain"], cwd=MATCHED, capture_output=True).stdout:
+-        raise ValueError("matched benchmark worktree is dirty")
+-    source = command(
+-        ["git", "rev-parse", "--verify", args.source + "^{commit}"],
+-        cwd=MATCHED, capture_output=True,
+-    ).stdout.strip()
+-    hashes = {str(path): digest(path) for path in (HARNESS, GENERATED, CORPUS, MANIFEST)}
+-    command(["git", "switch", "--detach", source], cwd=MATCHED)
+-    environment = {
++def environment():
++    env = {
+@@ -50,2 +52,2 @@
+-    environment.update({
+-        "CARGO_TARGET_DIR": str(ROOT / "build-target"),
++    env.update({
++        "CARGO_TARGET_DIR": str(PRIVATE / "build-target"),
+@@ -56,7 +58,20 @@
+-    cargo = ["cargo", "+1.98.1"]
+-    lock = MANIFEST.parent / "Cargo.lock"
+-    if not lock.exists():
+-        command(cargo + ["generate-lockfile", "--offline", "--manifest-path", str(MANIFEST)],
+-                env=environment)
+-    command(cargo + [
+-        "clean", "--release", "--manifest-path", str(MANIFEST),
++    return env
++
++
++def build(source, label, materializer=False):
++    if materializer and (source != BASE or label != "baseline"):
++        raise ValueError("Only BASE may build the golden materializer")
++    if not MATCHED.exists():
++        command(["git", "clone", "--shared", str(REPO), str(MATCHED)])
++    if command(["git", "status", "--porcelain"], cwd=MATCHED, capture_output=True).stdout:
++        raise ValueError("Disposable matched worktree is dirty")
++    command(["git", "switch", "--detach", source], cwd=MATCHED)
++    env = environment()
++    inputs = {str(path.relative_to(REPO)): sha(path) for path in (
++        HERE / "probe/src/main.rs", REPO / "benchmarks/cases.rs", MANIFEST,
++        HERE / "probe/Cargo.lock", HERE / "probe/src/api.rs",
++        HERE / "probe/src/validate.rs", HERE / "probe/src/materialize.rs",
++    )}
++    command(["cargo", "+1.98.1", "fetch", "--locked", "--manifest-path", str(MANIFEST)], env=env)
++    command([
++        "cargo", "+1.98.1", "clean", "--release", "--manifest-path", str(MANIFEST),
+@@ -64,7 +79,9 @@
+-    ], env=environment)
+-    (ROOT / "build-logs").mkdir(exist_ok=True)
+-    log = ROOT / "build-logs" / (args.label + ".log")
+-    build = cargo + ["build", "--release", "--locked", "--offline", "-vv",
+-                     "--manifest-path", str(MANIFEST)]
+-    if args.allocations:
+-        build += ["--features", "allocations"]
++    ], env=env)
++    binaries = ["jbig2-roadmap-perf-probe", "jbig2-api-validation"]
++    if materializer:
++        binaries.append("jbig2-golden-materializer")
++    log = RESULTS / (label + "-build.log")
++    args = ["cargo", "+1.98.1", "build", "--release", "--locked", "--offline", "-vv",
++            "--manifest-path", str(MANIFEST)]
++    for binary in binaries:
++        args += ["--bin", binary]
+@@ -72,8 +89,4 @@
+-        command(build, env=environment, stdout=stream, stderr=subprocess.STDOUT)
+-    for path, expected in hashes.items():
+-        if digest(Path(path)) != expected:
+-            raise ValueError("benchmark inputs changed during build: " + path)
+-    (ROOT / "binaries").mkdir(exist_ok=True)
+-    binary = ROOT / "binaries" / args.label
+-    shutil.copyfile(ROOT / "build-target/release/jbig2-roadmap-perf-probe", binary)
+-    binary.chmod(0o755)
++        command(args, env=env, stdout=stream, stderr=subprocess.STDOUT)
++    for path, digest in inputs.items():
++        if sha(REPO / path) != digest:
++            raise ValueError("Harness input changed during build")
+@@ -81 +94 @@
+-    for path in sorted(MATCHED.joinpath("src").rglob("*.rs")):
++    for path in sorted((MATCHED / "src").rglob("*.rs")):
+@@ -83,0 +97,9 @@
++    paths = {}
++    (PRIVATE / "binaries").mkdir(exist_ok=True)
++    for binary in binaries:
++        destination = PRIVATE / "binaries" / (
++            label if binary == "jbig2-roadmap-perf-probe" else label + "-" + binary
++        )
++        shutil.copyfile(PRIVATE / "build-target/release" / binary, destination)
++        destination.chmod(0o755)
++        paths[binary] = {"path": str(destination), "sha256": sha(destination)}
+@@ -85,3 +107,6 @@
+-        "source_revision": source, "runtime_sha256": runtime.hexdigest(),
+-        "binary_sha256": digest(binary), "cargo_lock_sha256": digest(lock),
+-        "harness_sha256": hashes, "same_build_directory": str(MATCHED),
++        "source_revision": source, "source_tree": command(
++            ["git", "rev-parse", "HEAD^{tree}"], cwd=MATCHED, capture_output=True).stdout.strip(),
++        "runtime_sha256": runtime.hexdigest(),
++        "binary_sha256": paths["jbig2-roadmap-perf-probe"]["sha256"],
++        "cargo_lock_sha256": sha(HERE / "probe/Cargo.lock"), "harness_sha256": inputs,
++        "same_build_directory": str(MATCHED), "binaries": paths,
+@@ -89,3 +114,3 @@
+-        "rustflags": environment["RUSTFLAGS"], "profile": MANIFEST.read_text(),
+-        "instrumented_allocations": args.allocations, "build_log": str(log),
+-        "qualification": "Local native x86-64 Rust comparison, not matched ARM/PDFium qualification.",
++        "rustflags": env["RUSTFLAGS"], "profile": MANIFEST.read_text(),
++        "instrumented_allocations": False, "build_log": str(log),
++        "qualification": "Hosted/local native diagnostic; not N2/LLVM24/PDFium qualification.",
+@@ -93,6 +118,3 @@
+-    binary.with_suffix(".json").write_text(json.dumps(record, indent=2) + "\n")
+-    print(json.dumps(record, indent=2))
+-
+-
+-if __name__ == "__main__":
+-    main()
++    save(PRIVATE / "binaries" / (label + ".json"), record)
++    save(RESULTS / (label + "-build.json"), record)
++    return record

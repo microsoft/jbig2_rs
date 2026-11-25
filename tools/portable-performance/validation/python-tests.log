@@ -1,0 +1,14 @@
+test_candidate_cannot_build_a_golden_materializer (test_diagnostic.SafetyTests.test_candidate_cannot_build_a_golden_materializer) ... ok
+test_http_throttling_respects_retry_after_without_weakening_hashes (test_diagnostic.SafetyTests.test_http_throttling_respects_retry_after_without_weakening_hashes) ... Retry pinned source: https://pdfium.googlesource.com/pdfium/+/68f43efa71ac66ba843ba286bb76d075aa1c49df/control.pdf?format=TEXT; HTTP 429; delay 60s
+ok
+test_only_immutable_candidate_and_explicit_latency_authorization (test_diagnostic.SafetyTests.test_only_immutable_candidate_and_explicit_latency_authorization) ... ok
+test_packed_hash_mismatch_never_regenerates_expected (test_diagnostic.SafetyTests.test_packed_hash_mismatch_never_regenerates_expected) ... ok
+test_partial_journal_is_preserved_without_copying_private_payloads (test_diagnostic.SafetyTests.test_partial_journal_is_preserved_without_copying_private_payloads) ... ok
+test_self_consistent_metadata_cannot_authorize_unmapped_generated_input (test_diagnostic.SafetyTests.test_self_consistent_metadata_cannot_authorize_unmapped_generated_input) ... ok
+test_template_tool_must_match_frozen_executable_hash (test_diagnostic.SafetyTests.test_template_tool_must_match_frozen_executable_hash) ... ok
+test_timing_source_must_remain_path_only_port (test_diagnostic.SafetyTests.test_timing_source_must_remain_path_only_port) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.054s
+
+OK

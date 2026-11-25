@@ -1,0 +1,5 @@
+--- original/measure_probes.py
++++ measure_probes.py
+@@ -11 +11 @@
+-ROOT = Path(__file__).resolve().parent
++ROOT = Path(os.environ["PERF_DIAGNOSTIC_ROOT"]).resolve()

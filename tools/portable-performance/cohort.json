@@ -1,0 +1,3850 @@
+{
+  "baseline": "14aeac451f6491aa3e413fcbc60aafb11fa75b7c",
+  "default_candidate": "d66db50bca76c8650b29346592151d81427f8323",
+  "cases": [
+    {
+      "id": "bitmap-composite-and-xnor-halftone",
+      "family": "page-composition",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "375ad99d94369cc697b5c836e2a84709c258fcfa9ecf67716b36542ad138bb79",
+        "bytes": 799
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-composite-and-xnor-halftone.pdf",
+        "pdf_sha256": "a88d42b10bd7c860abd3bf16432378d23a9fcf267a7008be047b608e1a332f4e",
+        "pdf_bytes": 1537,
+        "image_id": "embedded/19d2f799615eda71"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-composite-and-xnor-halftone.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-composite-and-xnor-halftone.packed"
+      }
+    },
+    {
+      "id": "bitmap-composite-and-xnor-refine",
+      "family": "page-composition",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "best-effort",
+      "standalone": false,
+      "input": {
+        "sha256": "983b5cdd98c693ac20c89b48fa6b57173f31124db5348310a5bd828c6fbd5866",
+        "bytes": 1152
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-composite-and-xnor-refine.pdf",
+        "pdf_sha256": "c2046037b2617ffdde875d523bf56a428339d7a6f753c25f4f957317bc9ecc9a",
+        "pdf_bytes": 1891,
+        "image_id": "embedded/4dd852dc801e55e7"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-composite-and-xnor-refine.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-composite-and-xnor-refine.packed"
+      }
+    },
+    {
+      "id": "bitmap-composite-and-xnor-text",
+      "family": "page-composition",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "4d92046f07c1ee5ae0b4b4300e667ab15e256214e4ab65927de6dd9a67b70581",
+        "bytes": 505
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-composite-and-xnor-text.pdf",
+        "pdf_sha256": "aba6249b83158532ad87ccf47ba69737c9ba2b787c2f815767d239e910564235",
+        "pdf_bytes": 1243,
+        "image_id": "embedded/431bbb6ee9244e41"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-composite-and-xnor-text.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-composite-and-xnor-text.packed"
+      }
+    },
+    {
+      "id": "bitmap-composite-and-xnor",
+      "family": "page-composition",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "0c984ac753750c7fde402c41bb189b331236cfb224971e76da7f3fcf42ea213b",
+        "bytes": 576
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-composite-and-xnor.pdf",
+        "pdf_sha256": "4432b73b7efcae8eb960b409de37af218f366bd548709d74773dae4ac7c257ef",
+        "pdf_bytes": 1314,
+        "image_id": "embedded/9552a1f00f162690"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-composite-and-xnor.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-composite-and-xnor.packed"
+      }
+    },
+    {
+      "id": "bitmap-composite-or-xor-replace-halftone",
+      "family": "page-composition",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "57b30a323e13c24184d3a1791b389630112c8d977c3520f8de8152107276850a",
+        "bytes": 1110
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-composite-or-xor-replace-halftone.pdf",
+        "pdf_sha256": "3ffb92c8a77140d06ea628514a1d44c116a5067d40e3cd3887455b8d40918202",
+        "pdf_bytes": 1849,
+        "image_id": "embedded/9c43bc75b23cda25"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-composite-or-xor-replace-halftone.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-composite-or-xor-replace-halftone.packed"
+      }
+    },
+    {
+      "id": "bitmap-composite-or-xor-replace-refine",
+      "family": "page-composition",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "best-effort",
+      "standalone": false,
+      "input": {
+        "sha256": "d1eb998b6d0fa0cf1396718dc3bec4bdd2a6787d48e933bd09aea2b8662883ef",
+        "bytes": 1604
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-composite-or-xor-replace-refine.pdf",
+        "pdf_sha256": "cc9510f5b113c8a2053fbc3891e0c8275bf0f59e1ca44522832e77d6a26cc145",
+        "pdf_bytes": 2343,
+        "image_id": "embedded/a6f7768707d2e8fa"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-composite-or-xor-replace-refine.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-composite-or-xor-replace-refine.packed"
+      }
+    },
+    {
+      "id": "bitmap-composite-or-xor-replace-text",
+      "family": "page-composition",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "0f48ddc08236e60cfd2d2d2ac1ba9b70118f4c2ce197e07cd94abf97cab94b07",
+        "bytes": 840
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-composite-or-xor-replace-text.pdf",
+        "pdf_sha256": "f4fb077e7e541f01ce21983f7822bd2b43d98f8554bf9cb421a03c7daa6442a5",
+        "pdf_bytes": 1578,
+        "image_id": "embedded/e0f8ecb9620a91d4"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-composite-or-xor-replace-text.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-composite-or-xor-replace-text.packed"
+      }
+    },
+    {
+      "id": "bitmap-composite-or-xor-replace",
+      "family": "page-composition",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "fa473713f3b137b055a913c2ba3d1a2bcd3a2f857056b613eef5277938c67f6f",
+        "bytes": 892
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-composite-or-xor-replace.pdf",
+        "pdf_sha256": "ba8dfa7f3879d2c851287769c0503cf84441e871a93e312e46253e9238dca737",
+        "pdf_bytes": 1630,
+        "image_id": "embedded/f680579c2ad2d143"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-composite-or-xor-replace.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-composite-or-xor-replace.packed"
+      }
+    },
+    {
+      "id": "bitmap-customat-tpgdon",
+      "family": "generic-arithmetic-t0",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "91b0f5143737b9b562f535fff71c29c00c997ceb74e9755ad5801ef5e75caedb",
+        "bytes": 320
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-customat-tpgdon.pdf",
+        "pdf_sha256": "91b35c6963b8135dde1f509b424d3cfe5b02d9cc023c802c412916c6b76cc938",
+        "pdf_bytes": 1057,
+        "image_id": "embedded/6770504d35d352e9"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-customat-tpgdon.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-customat-tpgdon.packed"
+      }
+    },
+    {
+      "id": "bitmap-customat",
+      "family": "generic-arithmetic-t0",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "86a8e67bc914c273aa2dda07ed02043292a2cb48ed542d518865ad3152751e96",
+        "bytes": 314
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-customat.pdf",
+        "pdf_sha256": "9be6eb11af2e4078eb209cbf680bb415960f2275f7e120660d22e7edc09e2ede",
+        "pdf_bytes": 1051,
+        "image_id": "embedded/15cc88c4decd13e3"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-customat.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-customat.packed"
+      }
+    },
+    {
+      "id": "bitmap-halftone-10bpp-mmr",
+      "family": "halftone-mmr",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "0fc4b2f6347ee2ae6fba0b89f2bfe577c250ea0d0ff2d314634a935b37ede530",
+        "bytes": 972
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-halftone-10bpp-mmr.pdf",
+        "pdf_sha256": "c164623c7745aa431f59fa4a088e5adf3ff640687469576c64c5b044102ddae0",
+        "pdf_bytes": 1710,
+        "image_id": "embedded/936bd477e4943205"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-halftone-10bpp-mmr.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-halftone-10bpp-mmr.packed"
+      }
+    },
+    {
+      "id": "bitmap-halftone-10bpp",
+      "family": "halftone-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "3db0fcbdcfd8b6b57a06eb53939d764702173a02b37ca03cecb0fadb25aecf37",
+        "bytes": 573
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-halftone-10bpp.pdf",
+        "pdf_sha256": "8a4577a1cdbdf342e2a61e18a239423452355c13733075af76fcd008f12eac5f",
+        "pdf_bytes": 1311,
+        "image_id": "embedded/47cbd066ba46eb06"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-halftone-10bpp.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-halftone-10bpp.packed"
+      }
+    },
+    {
+      "id": "bitmap-halftone-composite",
+      "family": "halftone-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "1a245f012c802aa64d11079a035999080b5a892cbdf48a4a77679eb43d08fa8f",
+        "bytes": 861
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-halftone-composite.pdf",
+        "pdf_sha256": "e52ea26a9cadf0a1fbcd58c3ae411cf2bf14b05f172966283a6254296c4825a0",
+        "pdf_bytes": 1599,
+        "image_id": "embedded/bbeb633a03b3ca28"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-halftone-composite.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-halftone-composite.packed"
+      }
+    },
+    {
+      "id": "bitmap-halftone-global",
+      "family": "halftone-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "4f6681e6471aa6a4ae3432487296bf4cb34342b264f5a76e63352c3db52c3150",
+        "bytes": 236
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": {
+        "sha256": "3a73b1dc185a048fb64d1f2f9620c978de6f733d9fac8af67222ddeb95cf5d89",
+        "bytes": 313
+      },
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-halftone-global.pdf",
+        "pdf_sha256": "e7ac0e5e502eb8970434f5c5eaf67c0d344949df3d1b0f474bd6292ea489ad9f",
+        "pdf_bytes": 1396,
+        "image_id": "embedded/3d41a83fd9b66f22"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-halftone-global.0.Im.jb2",
+        "globals": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-halftone-global.0.Im.globals",
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-halftone-global.packed"
+      }
+    },
+    {
+      "id": "bitmap-halftone-grid",
+      "family": "halftone-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "3a34b6e6773b8bd3b96e451459d64a1b59b0518b0241414799899c11fd018f35",
+        "bytes": 884
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-halftone-grid.pdf",
+        "pdf_sha256": "5ba3f0ca836c6df256415b2ddd61286b819f5b6a3f5598e146601839302c0158",
+        "pdf_bytes": 1622,
+        "image_id": "embedded/b05b82e7d69eabb5"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-halftone-grid.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-halftone-grid.packed"
+      }
+    },
+    {
+      "id": "bitmap-halftone-refine",
+      "family": "halftone-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "best-effort",
+      "standalone": false,
+      "input": {
+        "sha256": "5abedf1119fc7ff9734d356e0bd46c2ee08be2aefa701763a64bbec34f88e2db",
+        "bytes": 661
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-halftone-refine.pdf",
+        "pdf_sha256": "f2efff25bcf1ee5d8ee87e3b7c54c7b75e8a1ad33c9e5be22386ed35648dfd7d",
+        "pdf_bytes": 1399,
+        "image_id": "embedded/fc320c8c4ea2f283"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-halftone-refine.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-halftone-refine.packed"
+      }
+    },
+    {
+      "id": "bitmap-halftone-skip-dummy",
+      "family": "halftone-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "f9b7925438449b47f2a73b4eca6addaee11e59af727a23fa31530791a423559a",
+        "bytes": 549
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-halftone-skip-dummy.pdf",
+        "pdf_sha256": "6cdcfefd9200ddfbd37a15ce66ef50421d2fbcc9b396b2a9714b316f7c0a0ff4",
+        "pdf_bytes": 1287,
+        "image_id": "embedded/2917a067d3144df1"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-halftone-skip-dummy.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-halftone-skip-dummy.packed"
+      }
+    },
+    {
+      "id": "bitmap-halftone-skip-grid-template1",
+      "family": "halftone-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "bba951b23a21e3ede79ace6ec718be5860524805d7dde314af740dae1b705e4b",
+        "bytes": 868
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-halftone-skip-grid-template1.pdf",
+        "pdf_sha256": "bafb6edc883b156dbc337b74b0230fbcc5c45f48e08123f3040872edb1c1ec69",
+        "pdf_bytes": 1606,
+        "image_id": "embedded/8024d04611c0c037"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-halftone-skip-grid-template1.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-halftone-skip-grid-template1.packed"
+      }
+    },
+    {
+      "id": "bitmap-halftone-skip-grid-template2",
+      "family": "halftone-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "654ff65e2ee4601f1945480c79c1892a12beae9e77db2d418e94df5a15d6b281",
+        "bytes": 859
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-halftone-skip-grid-template2.pdf",
+        "pdf_sha256": "4aedf60701a9b35e17766e4c26a7326adb0b618c87fb487e7cdde8c909efdd11",
+        "pdf_bytes": 1597,
+        "image_id": "embedded/ebd35a0a0d7466f4"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-halftone-skip-grid-template2.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-halftone-skip-grid-template2.packed"
+      }
+    },
+    {
+      "id": "bitmap-halftone-skip-grid-template3",
+      "family": "halftone-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "83e24f893f260b33fdc5530f96c2a63d46c62cec375a880728dd5369ee173389",
+        "bytes": 862
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-halftone-skip-grid-template3.pdf",
+        "pdf_sha256": "ad156587b727404d16794dafcc738319b8a2a601374895634b0d5ee8d8b34f1b",
+        "pdf_bytes": 1600,
+        "image_id": "embedded/9e8fae7d90a5e4be"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-halftone-skip-grid-template3.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-halftone-skip-grid-template3.packed"
+      }
+    },
+    {
+      "id": "bitmap-halftone-skip-grid",
+      "family": "halftone-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "61b263ee4e1b73710332b0fa773c524e9bb1baef46a22c63a700c17e031424f9",
+        "bytes": 886
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-halftone-skip-grid.pdf",
+        "pdf_sha256": "cfd77f057c98bb1af01fc108c5a9e0b09b438e0e4f1a31aa8b07ce7b275cc348",
+        "pdf_bytes": 1624,
+        "image_id": "embedded/b3c11eb2748669cf"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-halftone-skip-grid.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-halftone-skip-grid.packed"
+      }
+    },
+    {
+      "id": "bitmap-halftone-template1",
+      "family": "halftone-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "cfb001dad7b555be4e75199a960c367aacd9aa6fa8135a09dbbdbedea1d84b64",
+        "bytes": 527
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-halftone-template1.pdf",
+        "pdf_sha256": "f509758d869cc08a1b45b0fcee33794ae1f45887105ba6fa5a2c8f52598518fc",
+        "pdf_bytes": 1265,
+        "image_id": "embedded/8b2119c44e347314"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-halftone-template1.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-halftone-template1.packed"
+      }
+    },
+    {
+      "id": "bitmap-halftone-template2",
+      "family": "halftone-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "b9236c7270a7a781e11860ee074c3f7e0969c9333667de1eb74ab877f464b237",
+        "bytes": 561
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-halftone-template2.pdf",
+        "pdf_sha256": "6c3d7bdc9e1012cce3c80b27592fdcc7864734c628184e1b55245b678d0ec47f",
+        "pdf_bytes": 1299,
+        "image_id": "embedded/ad4f129165eb26db"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-halftone-template2.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-halftone-template2.packed"
+      }
+    },
+    {
+      "id": "bitmap-halftone-template3",
+      "family": "halftone-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "50c53eb6af2edfd203953765182d832c274b463c7d7a389f99e98c50c48b7ef7",
+        "bytes": 562
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-halftone-template3.pdf",
+        "pdf_sha256": "4f249e0d12ad232b96de05592c250498dd3fc661607a8fcbd721bdb5a79eb425",
+        "pdf_bytes": 1300,
+        "image_id": "embedded/82c35f6158e887ea"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-halftone-template3.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-halftone-template3.packed"
+      }
+    },
+    {
+      "id": "bitmap-halftone",
+      "family": "halftone-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "42200fff240a792e21f7d4bd3d495c20bf229aa127c65ce434cfbea67f970b94",
+        "bytes": 549
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-halftone.pdf",
+        "pdf_sha256": "c276d6cbc7d0709af448b532232c9f8b92424859974b38feaef0d8983bd6d7c0",
+        "pdf_bytes": 1287,
+        "image_id": "embedded/403fb8c6c1d83ac5"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-halftone.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-halftone.packed"
+      }
+    },
+    {
+      "id": "bitmap-initially-unknown-size",
+      "family": "generic-arithmetic-t0",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "65134ba801ba178cca18e62fc92f14752ef24e0bd3d3b555164fb2ea7d4602b6",
+        "bytes": 293
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-initially-unknown-size.pdf",
+        "pdf_sha256": "97c0fe6757d24bc2469a8b3a1fab346550ae5e7289f6855e21ebc2ce421dbe6f",
+        "pdf_bytes": 1030,
+        "image_id": "embedded/998c81edd352e92c"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-initially-unknown-size.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-initially-unknown-size.packed"
+      }
+    },
+    {
+      "id": "bitmap-mmr",
+      "family": "generic-mmr",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "979c75a8059ecdd8dc4691c5b9d17128f9848230fa545a7e5f0f740c3a516922",
+        "bytes": 385
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-mmr.pdf",
+        "pdf_sha256": "32b70aeb63ca60f60c25c2d797b8f5af16043d66dce1bcb0b0f08a78acee95ed",
+        "pdf_bytes": 1122,
+        "image_id": "embedded/f30ca6de0a53bb41"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-mmr.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-mmr.packed"
+      }
+    },
+    {
+      "id": "bitmap-p32-eof",
+      "family": "generic-arithmetic-t0",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "980f4dc9eb41300cc3c3dc790c7df472b675d2b59ab4781712b4566d0b4b79e5",
+        "bytes": 512
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": {
+        "sha256": "2190977a877c7c329a6d7ba00f1c6a9a6a1ce0abe59c580750fb5f88055b8817",
+        "bytes": 131
+      },
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-p32-eof.pdf",
+        "pdf_sha256": "6c959401b0a43e94b4abc580d95b8373adcea87cb13612a3b9eece18767de576",
+        "pdf_bytes": 1490,
+        "image_id": "embedded/ae003b8bc41bd3bb"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-p32-eof.0.Im.jb2",
+        "globals": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-p32-eof.0.Im.globals",
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-p32-eof.packed"
+      }
+    },
+    {
+      "id": "bitmap-randomaccess",
+      "family": "generic-arithmetic-t0",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "c6e5cbddfb03e9557cac07d03dcbd42e7da4224e8fee616b2e901ca73637b2a5",
+        "bytes": 289
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-randomaccess.pdf",
+        "pdf_sha256": "82079253a8c5af9683e5dc341e7416d8eb5901c48d6af850a79413e6f11711ec",
+        "pdf_bytes": 1026,
+        "image_id": "embedded/79583e13f319a704"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-randomaccess.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-randomaccess.packed"
+      }
+    },
+    {
+      "id": "bitmap-refine-customat-tpgron",
+      "family": "page-refinement",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "best-effort",
+      "standalone": false,
+      "input": {
+        "sha256": "15e2a066700245e4cf18b1ef6b0d9112d58fa93ab7d8efc0738e155e574b76a7",
+        "bytes": 409
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-refine-customat-tpgron.pdf",
+        "pdf_sha256": "7a17d8f6d26061f3110efd54f297a7e0e8d4652e3086cc99e3c171d31fd0810f",
+        "pdf_bytes": 1146,
+        "image_id": "embedded/b631bf58599eda24"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-refine-customat-tpgron.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-refine-customat-tpgron.packed"
+      }
+    },
+    {
+      "id": "bitmap-refine-customat",
+      "family": "page-refinement",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "best-effort",
+      "standalone": false,
+      "input": {
+        "sha256": "c4ceef46617a09e2eebf7d8d176f12930bd8d33e6c570b2ec392303bcdceb2ca",
+        "bytes": 409
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-refine-customat.pdf",
+        "pdf_sha256": "161d25d77c9bf788515dd0fc1aaaf6e35e1c23495acffe9cf99a98d567d1c5de",
+        "pdf_bytes": 1146,
+        "image_id": "embedded/f51aa6cf426e2d62"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-refine-customat.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-refine-customat.packed"
+      }
+    },
+    {
+      "id": "bitmap-refine-lossless",
+      "family": "page-refinement",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "best-effort",
+      "standalone": false,
+      "input": {
+        "sha256": "a9b3dc102e9de2a6aad8fc4cd1f58113217bc4c0a65129bdd04b09555bc66c7b",
+        "bytes": 391
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-refine-lossless.pdf",
+        "pdf_sha256": "f30056cb8e30203e3c16f00ffe28bc90bdb6af8aa72d58c14f19e71ec9c7cecf",
+        "pdf_bytes": 1128,
+        "image_id": "embedded/b6cc5034c6f079c9"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-refine-lossless.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-refine-lossless.packed"
+      }
+    },
+    {
+      "id": "bitmap-refine-page-subrect",
+      "family": "page-refinement",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "best-effort",
+      "standalone": false,
+      "input": {
+        "sha256": "cc1c1ceefa266a9fef1003bd7ebbbc896256407505150d3a481933a07dc31429",
+        "bytes": 373
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-refine-page-subrect.pdf",
+        "pdf_sha256": "74114e6f3925faf7145c0738168ecd3041c45c0ea69b2a91e7f105cdf7045bd0",
+        "pdf_bytes": 1110,
+        "image_id": "embedded/ef1602156083ca1a"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-refine-page-subrect.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-refine-page-subrect.packed"
+      }
+    },
+    {
+      "id": "bitmap-refine-page",
+      "family": "page-refinement",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "best-effort",
+      "standalone": false,
+      "input": {
+        "sha256": "1ff4a7c5f0e56099c95ef264ff99163e1e5830dc6168f8e8dcdfe7b3a777940c",
+        "bytes": 390
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-refine-page.pdf",
+        "pdf_sha256": "7dbeb64018e183c77333996eeb5c2b9bcc90caaca8381ad42fb98a64c14025eb",
+        "pdf_bytes": 1127,
+        "image_id": "embedded/8ad61bc7b7afacc7"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-refine-page.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-refine-page.packed"
+      }
+    },
+    {
+      "id": "bitmap-refine-refine",
+      "family": "page-refinement",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "best-effort",
+      "standalone": false,
+      "input": {
+        "sha256": "ebdf2d8a955049a4b41e0a74082891854f5de768c4c30dd63f478d800800c839",
+        "bytes": 465
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-refine-refine.pdf",
+        "pdf_sha256": "2ebb942ac5be0e066ab4ce204384a39b61692ca75fab0a4df4f36dae925e1f4d",
+        "pdf_bytes": 1203,
+        "image_id": "embedded/fcdca0a4fae7c9cc"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-refine-refine.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-refine-refine.packed"
+      }
+    },
+    {
+      "id": "bitmap-refine-template1-tpgron",
+      "family": "page-refinement",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "best-effort",
+      "standalone": false,
+      "input": {
+        "sha256": "ec056619a3e5ab8cf32d358e10576ab9d64b1c19807b0738674d6c9d2913de00",
+        "bytes": 492
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-refine-template1-tpgron.pdf",
+        "pdf_sha256": "921c1eab4ece655029bb524eb22136d21f305d13779f86fbe81086b62a22d4b3",
+        "pdf_bytes": 1230,
+        "image_id": "embedded/a8775441976392b3"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-refine-template1-tpgron.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-refine-template1-tpgron.packed"
+      }
+    },
+    {
+      "id": "bitmap-refine-template1",
+      "family": "page-refinement",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "best-effort",
+      "standalone": false,
+      "input": {
+        "sha256": "d8f4e00b788ced9b4209f26e8ecea754af6f31fc54a6a2007fc381a6875f78c6",
+        "bytes": 379
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-refine-template1.pdf",
+        "pdf_sha256": "019b26e3de36cbdd829e2faef67866f4140abb17040cd0b626e5bceab272b68c",
+        "pdf_bytes": 1116,
+        "image_id": "embedded/899b72905c321e74"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-refine-template1.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-refine-template1.packed"
+      }
+    },
+    {
+      "id": "bitmap-refine-tpgron",
+      "family": "page-refinement",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "best-effort",
+      "standalone": false,
+      "input": {
+        "sha256": "9d5afb870ac83af314e44c337e35d3c1f04733dcf23faa7d8ad75c5a3d9dad3f",
+        "bytes": 513
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-refine-tpgron.pdf",
+        "pdf_sha256": "6b17840d81375faafbe48e2150706f1a70271865ec18b9f2e6700e06dadbe86c",
+        "pdf_bytes": 1251,
+        "image_id": "embedded/acc40610ef05604d"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-refine-tpgron.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-refine-tpgron.packed"
+      }
+    },
+    {
+      "id": "bitmap-refine",
+      "family": "page-refinement",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "best-effort",
+      "standalone": false,
+      "input": {
+        "sha256": "0acb00661f2fd942335d0233e090c3158d2bf60bffe99486561381759120b942",
+        "bytes": 391
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-refine.pdf",
+        "pdf_sha256": "ec9e2f9601167ccb00f961e33dec5cc46a23bf08e132f9dce5d3aecb3f1cd9f9",
+        "pdf_bytes": 1128,
+        "image_id": "embedded/aa4b839b73821449"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-refine.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-refine.packed"
+      }
+    },
+    {
+      "id": "bitmap-stripe-initially-unknown-height",
+      "family": "striped-pages",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "968b0ad508f76d7c296be15a9cbb98ec97222da2cfbd761409207a9d8e7fe6b7",
+        "bytes": 533
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-stripe-initially-unknown-height.pdf",
+        "pdf_sha256": "fc2a20fc1cb5b4fd780e68be7b7ed95e63aa9b58ef290d7501b97212c206ff0f",
+        "pdf_bytes": 1271,
+        "image_id": "embedded/2e55a0225d655250"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-stripe-initially-unknown-height.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-stripe-initially-unknown-height.packed"
+      }
+    },
+    {
+      "id": "bitmap-stripe-last-implicit",
+      "family": "striped-pages",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "f52d08fad6f6d5862210ea8ccc41dcf5f2f6149ce1516de6affe28b0bc3ea11e",
+        "bytes": 518
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-stripe-last-implicit.pdf",
+        "pdf_sha256": "ff3b3a2465c764fd1705db05edfb3f11336e6a93535bad956e5d5aaebaecf4ae",
+        "pdf_bytes": 1256,
+        "image_id": "embedded/7fdfb251dbe08b1f"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-stripe-last-implicit.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-stripe-last-implicit.packed"
+      }
+    },
+    {
+      "id": "bitmap-stripe-single-no-end-of-stripe",
+      "family": "striped-pages",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "ec36358e9a2c4e6fc40f011b8835d68a024f432c737aba3b6dd78c12b0062dda",
+        "bytes": 289
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-stripe-single-no-end-of-stripe.pdf",
+        "pdf_sha256": "8bf3bbb2a48b0bc689b920fece52080582b15415eef3615e811ffb2cc8932966",
+        "pdf_bytes": 1026,
+        "image_id": "embedded/64b3be07e964f663"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-stripe-single-no-end-of-stripe.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-stripe-single-no-end-of-stripe.packed"
+      }
+    },
+    {
+      "id": "bitmap-stripe-single",
+      "family": "striped-pages",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "ed293eecb2401f6809679a26f57def0a46d3230ff5429625b832d539e73a4790",
+        "bytes": 304
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-stripe-single.pdf",
+        "pdf_sha256": "b6d9b0b9348e9f4c33ba192a32c913ecc446d212dc3df0108ed732cc399b5482",
+        "pdf_bytes": 1041,
+        "image_id": "embedded/345ff6045f564395"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-stripe-single.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-stripe-single.packed"
+      }
+    },
+    {
+      "id": "bitmap-stripe",
+      "family": "striped-pages",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "f258fbbfb218c09ddf73efaa40aafe3c0bd222351b76c4cb5acaba1289fe3667",
+        "bytes": 533
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-stripe.pdf",
+        "pdf_sha256": "b1e3c558a34537aeace4334cbcea6c42f82f4b815c8232df462ee8956e6faf82",
+        "pdf_bytes": 1271,
+        "image_id": "embedded/827a57ac13da3cb9"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-stripe.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-stripe.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-32bit-arithint",
+      "family": "symbols-arithmetic-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "9201024498171b75b59a96c485744276f08c554ca92e62566373508c132b8346",
+        "bytes": 332
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-32bit-arithint.pdf",
+        "pdf_sha256": "58f80225756669e8106e42cab2d7d0f4582330db2cd04ebcae81ce52dbf803d6",
+        "pdf_bytes": 1069,
+        "image_id": "embedded/ff325014ff252005"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-32bit-arithint.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-32bit-arithint.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-big-segmentid",
+      "family": "symbols-arithmetic-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "b422f1de15458b60948b29463d287049fc52a004c231aaaa02da96949e4394bd",
+        "bytes": 439
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-big-segmentid.pdf",
+        "pdf_sha256": "2fb59d0fbb8396bc812d5ed9af8bc6b2b8a69051519b8449b360cb304ea4e0b8",
+        "pdf_bytes": 1176,
+        "image_id": "embedded/3261c3ecf45e8ce2"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-big-segmentid.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-big-segmentid.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-context-reuse-huffman-refagg",
+      "family": "symbols-huffman-refagg-text-huffman",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "8cf9a3bd6e810b8c406df594920d92a586f0b14c5025b515bd820bcbdce0e152",
+        "bytes": 542
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-context-reuse-huffman-refagg.pdf",
+        "pdf_sha256": "473901d82edb6169cb3100e97024a3e3aaceaa08224230b5ceed1bec4433bfb0",
+        "pdf_bytes": 1280,
+        "image_id": "embedded/fd6a5accc84579e3"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-context-reuse-huffman-refagg.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-context-reuse-huffman-refagg.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-context-reuse-refagg",
+      "family": "symbols-arithmetic-refagg-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "b363e8f0e56c744744067b5e657a4f4f4807a7c62fefbe22e6fdd75619da4212",
+        "bytes": 549
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-context-reuse-refagg.pdf",
+        "pdf_sha256": "57bccf657e3e5cdb561d9f58b89c8baca45fe4e4e7bd224b6ad0bd79e472adef",
+        "pdf_bytes": 1287,
+        "image_id": "embedded/8b982f97a6859a1e"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-context-reuse-refagg.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-context-reuse-refagg.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-context-reuse",
+      "family": "symbols-arithmetic-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "36e94c795089951c116fe874d6326da2364e274611ff3ae77852e5843c952365",
+        "bytes": 454
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-context-reuse.pdf",
+        "pdf_sha256": "a6f05b48046b132054efe967c68ad5292b6835f78cce14bf2a613c9bce39b2c1",
+        "pdf_bytes": 1192,
+        "image_id": "embedded/9c63b3e45e35f234"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-context-reuse.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-context-reuse.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-empty",
+      "family": "symbols-arithmetic-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "d2444c2698200264e574d51457cd1a8f46523a2af9cf594698b9009a10406d3b",
+        "bytes": 396
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-empty.pdf",
+        "pdf_sha256": "adf661486871b31773fc85750372dbd3051db664b17128791e1bf667becde7e2",
+        "pdf_bytes": 1133,
+        "image_id": "embedded/c809ae4b11af5fa2"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-empty.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-empty.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-global",
+      "family": "symbols-arithmetic-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "8bd23d8338d0f5bc5b132af0253241057a0b91d5a3bc4639403c58e6f31f3971",
+        "bytes": 85
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": {
+        "sha256": "ed786e8d3a292469da9a1ff0ade7790213d01958210ebdbf89948253b1737779",
+        "bytes": 287
+      },
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-global.pdf",
+        "pdf_sha256": "a9f565d57271834c427194d855315a91d56397bde7b433ab2811b73518d9f37c",
+        "pdf_bytes": 1218,
+        "image_id": "embedded/4c7fd642926f59eb"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-global.0.Im.jb2",
+        "globals": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-global.0.Im.globals",
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-global.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-manyrefs",
+      "family": "symbols-arithmetic-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "109c92c89c5f00a6ddd63c547556a663b8af5afddd8ce6d78ea1533e18319693",
+        "bytes": 562
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-manyrefs.pdf",
+        "pdf_sha256": "83141bcca434c38c3ae8f634b9f06fe17847b2380cdd64168949077f88c79f85",
+        "pdf_bytes": 1300,
+        "image_id": "embedded/640c37f67be8b89f"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-manyrefs.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-manyrefs.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-manysyms",
+      "family": "symbols-arithmetic-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "f5ccbac93648835f10117d4b22d7341d69fdde6b1254c83da3894e60fa9710a1",
+        "bytes": 384232
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-manysyms.pdf",
+        "pdf_sha256": "4f475ca228c76f8ee93fa1ad9a6062df0e49befd2aeb42f12f3b109a274bb707",
+        "pdf_bytes": 384975,
+        "image_id": "embedded/1491bda86723d3b2"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-manysyms.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-manysyms.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-negative-sbdsoffset",
+      "family": "symbols-arithmetic-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "608ff712efd41aa29dcfd5f5e2713696f42b9c5011ead528283c5bd5e3937935",
+        "bytes": 340
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-negative-sbdsoffset.pdf",
+        "pdf_sha256": "5aa48933bc980565e1c0ea93d91c4fe5370e96d4a461198481aa86af908793e5",
+        "pdf_bytes": 1077,
+        "image_id": "embedded/7a83d5d849a8e3d9"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-negative-sbdsoffset.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-negative-sbdsoffset.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-refine",
+      "family": "symbols-arithmetic-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "best-effort",
+      "standalone": false,
+      "input": {
+        "sha256": "712cc9b0e488724c4cfcb54136b30514cd5326956437a681931011a52232fc73",
+        "bytes": 448
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-refine.pdf",
+        "pdf_sha256": "5e2ae6875ea8d0f1d2aecfaeff6aeac6acb8ff76eadef42e5f0fa7fc76c818b0",
+        "pdf_bytes": 1185,
+        "image_id": "embedded/ac6f13f6a1a816f4"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-refine.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-refine.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-symbolrefine-textrefine-export",
+      "family": "symbols-arithmetic-refagg-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "0fdaf4664226b4d76b1574e45cda7254865d54790dd19ff60dd9d37e35f2ab69",
+        "bytes": 564
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-symbolrefine-textrefine-export.pdf",
+        "pdf_sha256": "1caae6b1f44d8ef343718cf7b94cd14d533c258c540c5676c2caa32f737f0a13",
+        "pdf_bytes": 1302,
+        "image_id": "embedded/3142abd507f194d4"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-symbolrefine-textrefine-export.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-symbolrefine-textrefine-export.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-symbolrefine-textrefine",
+      "family": "symbols-arithmetic-refagg-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "824a126ccd5014edbf73111479e38c59c12ed31571e49ea138c5cbbdd0fb3d87",
+        "bytes": 563
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-symbolrefine-textrefine.pdf",
+        "pdf_sha256": "2902534243c382770456f958fe7ba835f1916ea85f6219a3ba2b122f63db34c6",
+        "pdf_bytes": 1301,
+        "image_id": "embedded/14a05bc08d885cb7"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-symbolrefine-textrefine.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-symbolrefine-textrefine.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-symbolrefineone-customat",
+      "family": "symbols-arithmetic-refagg-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "575817bd43aaa73f5d37d8fdb8b59750c1dd7cad9c61f757b5adf5175695ea00",
+        "bytes": 430
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-symbolrefineone-customat.pdf",
+        "pdf_sha256": "cd8792e011e41f56b07dd0ba14df10b89c36d4492937032c60656177f5d27da5",
+        "pdf_bytes": 1167,
+        "image_id": "embedded/09cdc49a3b9ff595"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-symbolrefineone-customat.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-symbolrefineone-customat.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-symbolrefineone-template1",
+      "family": "symbols-arithmetic-refagg-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "69ee993b2c7064cacc23059d12ca114a706349c6fb9d992007036799641d8d8a",
+        "bytes": 418
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-symbolrefineone-template1.pdf",
+        "pdf_sha256": "f175b6edddc6d40cbacc447b46a628c164a9a5ea0185b20f09f48bedbe7516c3",
+        "pdf_bytes": 1155,
+        "image_id": "embedded/de58cecfffed182b"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-symbolrefineone-template1.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-symbolrefineone-template1.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-symbolrefineone",
+      "family": "symbols-arithmetic-refagg-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "bb108510326445ad5bb843f91a95c660cd3f5feb8e974be26522d1f711c1c30d",
+        "bytes": 427
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-symbolrefineone.pdf",
+        "pdf_sha256": "670053e1dbd980602b44f052bc9c0ffa7e7835521fc0ee324261a4143b52f66c",
+        "pdf_bytes": 1164,
+        "image_id": "embedded/b52d90752018265c"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-symbolrefineone.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-symbolrefineone.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-symbolrefineseveral",
+      "family": "symbols-arithmetic-refagg-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "f8070efa7bcfdb99707f9aaa97d4e696dc2a8de5dfcb71ec8f70343a4ad62e83",
+        "bytes": 392
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-symbolrefineseveral.pdf",
+        "pdf_sha256": "705133ec80d7e755ca206be508ad92840f11555520a5c117a3fe2886c30e2435",
+        "pdf_bytes": 1129,
+        "image_id": "embedded/c638058796f3fc54"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-symbolrefineseveral.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-symbolrefineseveral.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-symhuff-texthuff-runcodes32-34",
+      "family": "symbols-arithmetic-text-huffman",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "bfb3b97d45bc4f048205b8218234e7b50c77d253c5fce26a4c749d8cbf475059",
+        "bytes": 7479
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-texthuff-runcodes32-34.pdf",
+        "pdf_sha256": "a04ed689fadee2c68462bbd908b4e8e4b6c4561ea422d9fd070c7857abdc621e",
+        "pdf_bytes": 8218,
+        "image_id": "embedded/0f5f7e219cf75b9e"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-symhuff-texthuff-runcodes32-34.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-symhuff-texthuff-runcodes32-34.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-symhuff-texthuff",
+      "family": "symbols-huffman-text-huffman",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "6747b2c477ea3cc6845889f0880a0b58c4a1bf95c91808e2663dec5a9b431eef",
+        "bytes": 471
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-symhuff-texthuff.pdf",
+        "pdf_sha256": "af8f3c70dbe1c0f0da090c829cea6da5015ed9978dd13fd2d0b9b44ac715db2b",
+        "pdf_bytes": 1209,
+        "image_id": "embedded/5442c9c525f2c6e3"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-symhuff-texthuff.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-symhuff-texthuff.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-symhuff-texthuffB10B13",
+      "family": "symbols-huffman-text-huffman",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "5629deffbd4d203578073f6221b56eb5a41df2912247a45f6c7785faca6076ca",
+        "bytes": 471
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-symhuff-texthuffB10B13.pdf",
+        "pdf_sha256": "1e0ad39f563c79b7e650347265dafebb1ccbfb20c9fbce62fc64575af9a13aa9",
+        "pdf_bytes": 1209,
+        "image_id": "embedded/0dc5d71bc69b32c8"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-symhuff-texthuffB10B13.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-symhuff-texthuffB10B13.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-symhuffB5B3-texthuffB7B9B12",
+      "family": "symbols-huffman-text-huffman",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "24fc464305c603c9ab68a7f66ce1ceb192d341c34abc3d905b7436183faa801e",
+        "bytes": 475
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-symhuffB5B3-texthuffB7B9B12.pdf",
+        "pdf_sha256": "7777647082ccdde57b94bbdbcf1e0a743537adb02faabd662414634c92815d57",
+        "pdf_bytes": 1213,
+        "image_id": "embedded/06dbd76327adf56a"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-symhuffB5B3-texthuffB7B9B12.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-symhuffB5B3-texthuffB7B9B12.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-symhuffrefine-textrefine-export",
+      "family": "symbols-huffman-refagg-text-huffman",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "26ca3d1dd6ff272897aba92931f9b79c12c2776a8caa488921bf50b9ae2be9b4",
+        "bytes": 680
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-symhuffrefine-textrefine-export.pdf",
+        "pdf_sha256": "0be94ca1678ef6449963aab5029fb3467184b002f5cf8bfdbc531b068da3d97b",
+        "pdf_bytes": 1418,
+        "image_id": "embedded/8b28ce824da80f72"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-symhuffrefine-textrefine-export.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-symhuffrefine-textrefine-export.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-symhuffrefine-textrefine",
+      "family": "symbols-huffman-refagg-text-huffman",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "708a2e5d2b66fdb8f0b634491144be03a6825ed29c59b759cacbd75b3671d854",
+        "bytes": 679
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-symhuffrefine-textrefine.pdf",
+        "pdf_sha256": "3e4eecb287e59b630d9799bf00d2085f890d23bbc6ae2bebfb86b10c00b8a6a3",
+        "pdf_bytes": 1417,
+        "image_id": "embedded/372b999083a186e6"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-symhuffrefine-textrefine.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-symhuffrefine-textrefine.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-symhuffrefineone",
+      "family": "symbols-huffman-refagg-text-huffman",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "0991dca5e2b3b726fb3c3be12c33297b9996fb73e4a84a25df1bc42bbfa38e96",
+        "bytes": 560
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-symhuffrefineone.pdf",
+        "pdf_sha256": "a38677054cb800d0a8b1bac32d21f9ad9e6102bcd650fc3735015d05e1778cc9",
+        "pdf_bytes": 1298,
+        "image_id": "embedded/d7ef3389439b6994"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-symhuffrefineone.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-symhuffrefineone.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-symhuffrefineseveral",
+      "family": "symbols-huffman-refagg-text-huffman",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "859a0b75a7dd279a7824d67b075f8a8d365a901567bbf694e5910820833745e4",
+        "bytes": 506
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-symhuffrefineseveral.pdf",
+        "pdf_sha256": "6d3050b223ce7bda0c948635c9bf67c04eac6c21b6e214d988cda9e1599e257a",
+        "pdf_bytes": 1244,
+        "image_id": "embedded/915e575201187e75"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-symhuffrefineseveral.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-symhuffrefineseveral.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-symhuffuncompressed-texthuff",
+      "family": "symbols-huffman-text-huffman",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "a04ebc5fbd9e2d129b86d42b0ecafc6664528c2218a1a5af93a4c6d05746c4c9",
+        "bytes": 5438
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-symhuffuncompressed-texthuff.pdf",
+        "pdf_sha256": "347a83cce9504ff8414fe028d8db2b311ebe800cab0116469c90456dd889218b",
+        "pdf_bytes": 6177,
+        "image_id": "embedded/908c494da44be986"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-symhuffuncompressed-texthuff.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-symhuffuncompressed-texthuff.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-textbottomleft",
+      "family": "symbols-arithmetic-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "90dee0ec5ba58865d7ef71309b0668c77002604d24021d6cafedba48899d502f",
+        "bytes": 375
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-textbottomleft.pdf",
+        "pdf_sha256": "0bc02085b750d0413fa3360825cc23b5e5a449b2e3f08fa084c3b00b64e03683",
+        "pdf_bytes": 1112,
+        "image_id": "embedded/27dc372b253873b5"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-textbottomleft.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-textbottomleft.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-textbottomlefttranspose",
+      "family": "symbols-arithmetic-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "2505fab1c7fe7ab0becb7778d7aad0824f6a9844e62eeeb49a8bcf693f10f879",
+        "bytes": 360
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-textbottomlefttranspose.pdf",
+        "pdf_sha256": "a9c552ce38b76935843861f8491bcb2df3af3833baa354e035e2026c286b7f98",
+        "pdf_bytes": 1097,
+        "image_id": "embedded/3a30c8a2b161287d"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-textbottomlefttranspose.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-textbottomlefttranspose.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-textbottomright",
+      "family": "symbols-arithmetic-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "38de07be71df23f5286cb88cffa270f1964a0ab512b0fb5bf5e37db61c083b25",
+        "bytes": 375
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-textbottomright.pdf",
+        "pdf_sha256": "e50632eb44e2dc3dc411e4265844ccf6fdd146b496b8c84e3d81a5c9adf858a5",
+        "pdf_bytes": 1112,
+        "image_id": "embedded/f29580bb33ae3284"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-textbottomright.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-textbottomright.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-textbottomrighttranspose",
+      "family": "symbols-arithmetic-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "fd4e5a48bad9f574fb62e659f8a4dbccd3cf870bdcc647ad0fd2feb88dbf54ac",
+        "bytes": 360
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-textbottomrighttranspose.pdf",
+        "pdf_sha256": "27b036ccba3f9e068677ef8bf203cf66bc6fef1eb091188119a1b7f474344d26",
+        "pdf_bytes": 1097,
+        "image_id": "embedded/a9da627c250fd639"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-textbottomrighttranspose.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-textbottomrighttranspose.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-textcomposite",
+      "family": "symbols-arithmetic-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "ea172011affdd8f3e262c2517cf82b4585170a069e6fb69984550fc70b181357",
+        "bytes": 581
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-textcomposite.pdf",
+        "pdf_sha256": "a3f3985d4adcff6f5fbd2df7fad5382f43ac1dd2f4f868cb854a7a067bdeaf86",
+        "pdf_bytes": 1319,
+        "image_id": "embedded/f30782aee235458b"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-textcomposite.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-textcomposite.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-texthuff-runcodes32-34",
+      "family": "symbols-arithmetic-text-huffman",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "bfb3b97d45bc4f048205b8218234e7b50c77d253c5fce26a4c749d8cbf475059",
+        "bytes": 7479
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-texthuff-runcodes32-34.pdf",
+        "pdf_sha256": "a04ed689fadee2c68462bbd908b4e8e4b6c4561ea422d9fd070c7857abdc621e",
+        "pdf_bytes": 8218,
+        "image_id": "embedded/0f5f7e219cf75b9e"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-texthuff-runcodes32-34.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-texthuff-runcodes32-34.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-texthuff-trailingsymbols",
+      "family": "symbols-arithmetic-text-huffman",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "f2022d49ef6f8202390cbf2107910580279a02cf2cc3dab7a282b630144bbaaa",
+        "bytes": 576
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-texthuff-trailingsymbols.pdf",
+        "pdf_sha256": "23394bd4bb379a971b67a04c93abeb3f0778c4a790fdbb3c31f1e0f309fa0e25",
+        "pdf_bytes": 1314,
+        "image_id": "embedded/4a433811afbeb863"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-texthuff-trailingsymbols.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-texthuff-trailingsymbols.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-texthuffrefine",
+      "family": "symbols-huffman-text-huffman",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "ffe2cc37648f1beadae16d05373e2575aabde6be71abfe98b4594eb252e05c25",
+        "bytes": 532
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-texthuffrefine.pdf",
+        "pdf_sha256": "945dc0c5ad52ff055c857baa35bfb83e1283ec5ac8f9a031d81e320d41f47a89",
+        "pdf_bytes": 1270,
+        "image_id": "embedded/14108da72f3eee87"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-texthuffrefine.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-texthuffrefine.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-texthuffrefineB15",
+      "family": "symbols-huffman-text-huffman",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "428d5db7d0df191c2172f015fa033e4b098dd21c6a3045f7cdcc11cf97a11043",
+        "bytes": 532
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-texthuffrefineB15.pdf",
+        "pdf_sha256": "0668b10ff9061f028185a8b2c014184ceaa3c23cddaf058c91f2d068b2e20def",
+        "pdf_bytes": 1270,
+        "image_id": "embedded/cc21cab294f728ee"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-texthuffrefineB15.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-texthuffrefineB15.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-texthuffrefinecustom",
+      "family": "symbols-huffman-text-huffman",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "b33ef3280eb02a84c5e6bce052776c569a2a6c755922f9e8dcc88c3d31753c45",
+        "bytes": 658
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-texthuffrefinecustom.pdf",
+        "pdf_sha256": "d150d22c02ae175c031e77aea704813cce57c33c4dd6ed3f22fa7494bb29e453",
+        "pdf_bytes": 1396,
+        "image_id": "embedded/f03a355f31bc8e68"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-texthuffrefinecustom.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-texthuffrefinecustom.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-texthuffrefinecustomdims",
+      "family": "symbols-huffman-text-huffman",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "193d09af609cfe81a27afac0f574b19bc150df678cb642b8dbd0b4ed9fd6f085",
+        "bytes": 580
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-texthuffrefinecustomdims.pdf",
+        "pdf_sha256": "fef10e63ce72c3285a804767499a0a814a75d24f919659e8e69596cd2095114f",
+        "pdf_bytes": 1318,
+        "image_id": "embedded/62713bb0c5fe1015"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-texthuffrefinecustomdims.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-texthuffrefinecustomdims.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-texthuffrefinecustompos-global",
+      "family": "symbols-huffman-text-huffman",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "74ae47a7ff544e5ed2ad67644fb8667878bdee7b11bdd5c62b3c580e39e4289a",
+        "bytes": 534
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": {
+        "sha256": "0e387e655718a5a4d1a0db68a8251bc86bc08803d22e0343a85356cdfe068519",
+        "bytes": 46
+      },
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-texthuffrefinecustompos-global.pdf",
+        "pdf_sha256": "e0afe48f329461ad237ad3f6c345e34314812a21364a68c9bf441a7fac4d8490",
+        "pdf_bytes": 1426,
+        "image_id": "embedded/0a352f4cc26e6c81"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-texthuffrefinecustompos-global.0.Im.jb2",
+        "globals": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-texthuffrefinecustompos-global.0.Im.globals",
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-texthuffrefinecustompos-global.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-texthuffrefinecustompos",
+      "family": "symbols-huffman-text-huffman",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "4cedec7befa2933b131fba4d3bcf108b0a4d1f50ee78fb5d66cdb0e688b2e045",
+        "bytes": 580
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-texthuffrefinecustompos.pdf",
+        "pdf_sha256": "03b17dfc51931f8f9f35a2fabfe98e36bb61fc7e604e455c6c6d6fca3d6e6603",
+        "pdf_bytes": 1318,
+        "image_id": "embedded/9fbe39a87b37805b"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-texthuffrefinecustompos.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-texthuffrefinecustompos.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-texthuffrefinecustomposdims",
+      "family": "symbols-huffman-text-huffman",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "4f7ff76f534e3062c7a65e16d0422506c34f8a9f7d3aa164f4bfec13542d90f6",
+        "bytes": 633
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-texthuffrefinecustomposdims.pdf",
+        "pdf_sha256": "342d06ad5f3d6843ea77d9a03117f5a3df663d22375a68e50a71109eaea6c4c1",
+        "pdf_bytes": 1371,
+        "image_id": "embedded/831c68c61476ed29"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-texthuffrefinecustomposdims.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-texthuffrefinecustomposdims.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-texthuffrefinecustomsize",
+      "family": "symbols-huffman-text-huffman",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "99d8699a723ec43fcdb1a7706585bd1a9cdae23c1a99c554323b580c8922d707",
+        "bytes": 557
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-texthuffrefinecustomsize.pdf",
+        "pdf_sha256": "1a2a7861127869e6c779b65b898ec41e5045f1107242923aa8109c8c412cdec1",
+        "pdf_bytes": 1295,
+        "image_id": "embedded/d071ee428fbd6818"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-texthuffrefinecustomsize.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-texthuffrefinecustomsize.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-textrefine-customat",
+      "family": "symbols-arithmetic-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "d522b5395a9ca0534ad1ea6d35110fac3d763f1a32228ab58f250b2e0b6e334a",
+        "bytes": 395
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-textrefine-customat.pdf",
+        "pdf_sha256": "2c86c9cde4e623f2ba3c94d6b9e067298b25adeebd96ab704cbe908c22de5c8b",
+        "pdf_bytes": 1132,
+        "image_id": "embedded/75743dc8e2ae0273"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-textrefine-customat.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-textrefine-customat.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-textrefine-negative-delta-width",
+      "family": "symbols-arithmetic-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "d418b89b5d417e8038863b99e8c5b226ebf7a582841b25cef0c40f087317fbe6",
+        "bytes": 393
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-textrefine-negative-delta-width.pdf",
+        "pdf_sha256": "53fa2b3ccef2999986369ea19c245dbada17c17f959e0c0d98f926e2fdf2fb1a",
+        "pdf_bytes": 1130,
+        "image_id": "embedded/2a9e580c7796c3ab"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-textrefine-negative-delta-width.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-textrefine-negative-delta-width.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-textrefine",
+      "family": "symbols-arithmetic-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "0559e64c4da67bd21a57ba289c9878ec403c4cfa6638dd2a62aad7c51f0b4ecc",
+        "bytes": 391
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-textrefine.pdf",
+        "pdf_sha256": "c6dc6a57d164c86c8aa59e6136f8b166a4697213ef6d5669bed6a7f6227bed0b",
+        "pdf_bytes": 1128,
+        "image_id": "embedded/f075ed97b075aa80"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-textrefine.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-textrefine.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-texttopright",
+      "family": "symbols-arithmetic-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "6f77897cd593871058f42eded48b0aab5666544f9901a50a93372569543d9be3",
+        "bytes": 372
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-texttopright.pdf",
+        "pdf_sha256": "e5b6eb678be01e99db7a6316fa99070bebf29489ae61054bdde04c9c26c6b9dd",
+        "pdf_bytes": 1109,
+        "image_id": "embedded/5d7519ff2d383581"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-texttopright.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-texttopright.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-texttoprighttranspose",
+      "family": "symbols-arithmetic-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "9143090327c81ff46db2238ae77583d6a28ff16e660df1e25c49357c110d5316",
+        "bytes": 360
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-texttoprighttranspose.pdf",
+        "pdf_sha256": "2e6522bf6fbbf01fbd8c05b00915b9f5c2783cbdf1815b53b027f49fb91cdad7",
+        "pdf_bytes": 1097,
+        "image_id": "embedded/ae729a625edbf3ab"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-texttoprighttranspose.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-texttoprighttranspose.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol-texttranspose",
+      "family": "symbols-arithmetic-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "0621aef24b975348f321f505b3105485cec97a6356e1dd0a71de9e9dadc5ca86",
+        "bytes": 360
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol-texttranspose.pdf",
+        "pdf_sha256": "926887bcb2397304842c777a703219296d9b396d924922d492103327ab99a661",
+        "pdf_bytes": 1097,
+        "image_id": "embedded/a194e6a18571a3ad"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol-texttranspose.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol-texttranspose.packed"
+      }
+    },
+    {
+      "id": "bitmap-symbol",
+      "family": "symbols-arithmetic-text-arithmetic",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "99e2b32fd66670313b0b795a3ab27162de1f0675cbde4ed34eb8e255d2b9410c",
+        "bytes": 372
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-symbol.pdf",
+        "pdf_sha256": "39bf73b128947979f9a6080791ad03e206ea5756f4b4d37b6609e154d4f875b2",
+        "pdf_bytes": 1109,
+        "image_id": "embedded/d3232ca303f98a8e"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-symbol.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-symbol.packed"
+      }
+    },
+    {
+      "id": "bitmap-template1-customat-tpgdon",
+      "family": "generic-arithmetic-t1",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "2eb1d29e995cf2577b33767297f3db91db81d7f4f6b3ac804ccff67f01b50dfe",
+        "bytes": 283
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-template1-customat-tpgdon.pdf",
+        "pdf_sha256": "071fd70fdad79ea30a2bfbaafcee63f7da0e2b723ffeef5949d583bae39ffd58",
+        "pdf_bytes": 1020,
+        "image_id": "embedded/783ed327e66500e8"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-template1-customat-tpgdon.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-template1-customat-tpgdon.packed"
+      }
+    },
+    {
+      "id": "bitmap-template1-customat",
+      "family": "generic-arithmetic-t1",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "83e743becb8841eb0086e0c82783a2b6465ac4d480350f7ab257bbeb64cfa535",
+        "bytes": 278
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-template1-customat.pdf",
+        "pdf_sha256": "9fbdff065b72818b2e8cef051586b4807afefc3f68773117a0d7fca217c7eb42",
+        "pdf_bytes": 1015,
+        "image_id": "embedded/b439f7d18b02ebf1"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-template1-customat.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-template1-customat.packed"
+      }
+    },
+    {
+      "id": "bitmap-template1-tpgdon",
+      "family": "generic-arithmetic-t0",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "c8aef030e71e933414be0bae2e7a560db22f1147b09557125741ca2722a5389a",
+        "bytes": 468
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-template1-tpgdon.pdf",
+        "pdf_sha256": "e8e715223bceac2b95b186e7220594793a57333c8d0da64cde2060027b9e91d4",
+        "pdf_bytes": 1206,
+        "image_id": "embedded/a4275611aeab39cd"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-template1-tpgdon.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-template1-tpgdon.packed"
+      }
+    },
+    {
+      "id": "bitmap-template1",
+      "family": "generic-arithmetic-t1",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "155d7a1ec2950fdde8facb6c8a157cdb18f0cd3efdc1842e3d2e86c9053edc2b",
+        "bytes": 278
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-template1.pdf",
+        "pdf_sha256": "25ab482ef6ba07335fd4927ac3ab22b231044345b48e024b5ed2399b048bc677",
+        "pdf_bytes": 1015,
+        "image_id": "embedded/dc3ad1c91219bb34"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-template1.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-template1.packed"
+      }
+    },
+    {
+      "id": "bitmap-template2-customat-tpgdon",
+      "family": "generic-arithmetic-t2",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "1f8535355f7f2d9dd22bcd1cd0a2c89332993b8db58dad7442f67643bcad5549",
+        "bytes": 328
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-template2-customat-tpgdon.pdf",
+        "pdf_sha256": "f062d3e4f6bed408216ed042a113aca71ff30cb859b314c26b3d7259cfa5ca07",
+        "pdf_bytes": 1065,
+        "image_id": "embedded/0e21f4922163acb2"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-template2-customat-tpgdon.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-template2-customat-tpgdon.packed"
+      }
+    },
+    {
+      "id": "bitmap-template2-customat",
+      "family": "generic-arithmetic-t2",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "63e5deecd806fbdb9bd1dab3bcf29ba4de173ec350cf328a49198b3c1944dbfe",
+        "bytes": 318
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-template2-customat.pdf",
+        "pdf_sha256": "389e2719d8432f7a4d0a579e49f2fba3a6e085a007c046023666e66432105554",
+        "pdf_bytes": 1055,
+        "image_id": "embedded/45fc094b43ba076b"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-template2-customat.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-template2-customat.packed"
+      }
+    },
+    {
+      "id": "bitmap-template2-tpgdon",
+      "family": "generic-arithmetic-t0",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "63276c82fc4c28bab1b18c8511e72c0ebb126d831c4479dee4f98d74f0d81cf3",
+        "bytes": 439
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-template2-tpgdon.pdf",
+        "pdf_sha256": "f54b9f8a913f7f9389ea3fbe6ff3afd148753be651d5f6ed8caebd67acbc6271",
+        "pdf_bytes": 1176,
+        "image_id": "embedded/5c454f15adb7865a"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-template2-tpgdon.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-template2-tpgdon.packed"
+      }
+    },
+    {
+      "id": "bitmap-template2",
+      "family": "generic-arithmetic-t2",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "0e792bf7fe3cf4b99418873292f10f6f30779edd2e2ae52818db5b9bf8dcb6a9",
+        "bytes": 281
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-template2.pdf",
+        "pdf_sha256": "f37d525a05dfbfc5936b56c0fb7b7af382d0fa2da56a1a305c99850d5982912b",
+        "pdf_bytes": 1018,
+        "image_id": "embedded/be168a9851ca35b7"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-template2.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-template2.packed"
+      }
+    },
+    {
+      "id": "bitmap-template3-customat-tpgdon",
+      "family": "generic-arithmetic-t3",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "8b023207a23776cdedad1d726bba8d592e2182f177b6d0802910af59d684b71a",
+        "bytes": 342
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-template3-customat-tpgdon.pdf",
+        "pdf_sha256": "a536e4f1dbe09f27f5e355bfad252e96d223cce761a9f58cf47fcfb507133f4d",
+        "pdf_bytes": 1079,
+        "image_id": "embedded/758e85ee4e3a9c65"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-template3-customat-tpgdon.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-template3-customat-tpgdon.packed"
+      }
+    },
+    {
+      "id": "bitmap-template3-customat",
+      "family": "generic-arithmetic-t3",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "7f4135a45069882aa98209a92c6384d49183fb33ed6a7146062e7f138c24e1ff",
+        "bytes": 333
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-template3-customat.pdf",
+        "pdf_sha256": "8db3cd4ebd4d75a0a45c685ce243af13855bb6a3642b3a3810b0e7ce29786389",
+        "pdf_bytes": 1070,
+        "image_id": "embedded/932a96e3baed3121"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-template3-customat.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-template3-customat.packed"
+      }
+    },
+    {
+      "id": "bitmap-template3-tpgdon",
+      "family": "generic-arithmetic-t0",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "e07a8d0b02d1112ce28c1ee62a92963a98c8d8137443beb63b9218bd830816ff",
+        "bytes": 459
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-template3-tpgdon.pdf",
+        "pdf_sha256": "1d8514a3c8664ac84b1434ccac539f30fec3a02dccbd1da612a7925394cb2a48",
+        "pdf_bytes": 1197,
+        "image_id": "embedded/e1b80d96ee54a20f"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-template3-tpgdon.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-template3-tpgdon.packed"
+      }
+    },
+    {
+      "id": "bitmap-template3",
+      "family": "generic-arithmetic-t3",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "fdd6093f432f1bd79ad0f38b6445e7a44e72eb19f07bdf6714693830a2e3b37d",
+        "bytes": 296
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-template3.pdf",
+        "pdf_sha256": "98b5e78016e3415990e9f3c99b5ed2940ed869826d9ddf04385f8abdf543cf13",
+        "pdf_bytes": 1033,
+        "image_id": "embedded/b8644f87490efc62"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-template3.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-template3.packed"
+      }
+    },
+    {
+      "id": "bitmap-tpgdon",
+      "family": "generic-arithmetic-t0",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "be48f1058e79f26480e334b44e146f329855e1da07791b3ae8ba868986424b7f",
+        "bytes": 473
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-tpgdon.pdf",
+        "pdf_sha256": "7d9c22dcee6a357e6290de04b57a19ffc42a6fd5d802d62a4cbd75a59b078924",
+        "pdf_bytes": 1211,
+        "image_id": "embedded/3edc16dc0470fef8"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-tpgdon.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-tpgdon.packed"
+      }
+    },
+    {
+      "id": "bitmap-trailing-7fff-stripped-harder-refine",
+      "family": "page-refinement",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "best-effort",
+      "standalone": false,
+      "input": {
+        "sha256": "b0c04c15bd073f7e2fca6b8dd3778d6f9edbb55f32db53f807edd682428cbb6e",
+        "bytes": 1148
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-trailing-7fff-stripped-harder-refine.pdf",
+        "pdf_sha256": "17e08dc35c1fe2c6a9ce5db25ee53805248ccb9a8ae528a339d37d764f29dc9a",
+        "pdf_bytes": 1887,
+        "image_id": "embedded/9b050fbe5efd7fc8"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-trailing-7fff-stripped-harder-refine.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-trailing-7fff-stripped-harder-refine.packed"
+      }
+    },
+    {
+      "id": "bitmap-trailing-7fff-stripped-harder",
+      "family": "generic-arithmetic-t0",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "94bf2eee892fb49f43cd6b4a28d8b20d65f1ae2baa32955da8bd3f3c55a109cc",
+        "bytes": 14440
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-trailing-7fff-stripped-harder.pdf",
+        "pdf_sha256": "47fa9873c6250a75552b60771fed2494f14eb4a20bdacf558ee00f9136835be9",
+        "pdf_bytes": 15181,
+        "image_id": "embedded/4a7b72ef773f4b2c"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-trailing-7fff-stripped-harder.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-trailing-7fff-stripped-harder.packed"
+      }
+    },
+    {
+      "id": "bitmap-trailing-7fff-stripped",
+      "family": "generic-arithmetic-t0",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "a2ecbd0d857f4d9e26a83f582250cd0e3793030eba8f1e95ad6a77893e886b97",
+        "bytes": 312
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-trailing-7fff-stripped.pdf",
+        "pdf_sha256": "1fb303a7eaa11933f3f1e5c3b554375649ea4a5f1226efa97a7534cac768b8fb",
+        "pdf_bytes": 1049,
+        "image_id": "embedded/7ca4dd43bea04763"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap-trailing-7fff-stripped.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap-trailing-7fff-stripped.packed"
+      }
+    },
+    {
+      "id": "bitmap",
+      "family": "generic-arithmetic-t0",
+      "width": 399,
+      "height": 400,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": false,
+      "input": {
+        "sha256": "c6e5cbddfb03e9557cac07d03dcbd42e7da4224e8fee616b2e901ca73637b2a5",
+        "bytes": 289
+      },
+      "expected": {
+        "sha256": "3078164fcd0a780514ab3752428767aa519398c007c13ffadc62cd2ef1a6c50d",
+        "bytes": 20000
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/third_party/jbig2/bitmap-randomaccess.pdf",
+        "pdf_sha256": "82079253a8c5af9683e5dc341e7416d8eb5901c48d6af850a79413e6f11711ec",
+        "pdf_bytes": 1026,
+        "image_id": "embedded/79583e13f319a704"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bitmap.0.Im.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bitmap.packed"
+      }
+    },
+    {
+      "id": "bug_880920",
+      "family": "generic-arithmetic-t0",
+      "width": 3300,
+      "height": 2550,
+      "pages": 1,
+      "policy": "best-effort",
+      "standalone": false,
+      "input": {
+        "sha256": "8e34caa1a7d2ff2a2202283cf5002c2ee4a521438b513a3db85f0854464c143c",
+        "bytes": 2835
+      },
+      "expected": {
+        "sha256": "a938d1a527358ac2b955c67e9b14227c7e0b07023e437759b93a2887f2503629",
+        "bytes": 1053150
+      },
+      "globals": null,
+      "source": {
+        "kind": "pinned-public-pdf",
+        "pdf": "corpus/pdfium/bug_880920.pdf",
+        "pdf_sha256": "577da10930607fbd9d52a6839b78b7825f9d8adc25d49d22b176e472ad6b6129",
+        "pdf_bytes": 9745,
+        "image_id": "embedded/aba211c04ee4dfb4"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-embedded-best-effort-20261118/target/remaining-compat/bug_880920.0.ImagePart_81.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/expected/bug_880920.packed"
+      }
+    },
+    {
+      "id": "generated-white-64",
+      "family": "generated-mmr-white",
+      "width": 64,
+      "height": 64,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": true,
+      "input": {
+        "sha256": "40e3e89e53b243ed3d12885bad796cf5b7eef5f9c9357409aa08dda6cf92f862",
+        "bytes": 102
+      },
+      "expected": {
+        "sha256": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560",
+        "bytes": 512
+      },
+      "globals": null,
+      "source": {
+        "kind": "explicit-first-party-generated"
+      },
+      "original_paths": {
+        "input": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/generated/white-64.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/generated/white-64.packed"
+      }
+    },
+    {
+      "id": "generated-white-512",
+      "family": "generated-mmr-white",
+      "width": 512,
+      "height": 512,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": true,
+      "input": {
+        "sha256": "453121afe70bf4f8541a09b9dcea884d6f1287a7edbcc3e489066ffe9f66f38a",
+        "bytes": 158
+      },
+      "expected": {
+        "sha256": "c35020473aed1b4642cd726cad727b63fff2824ad68cedd7ffb73c7cbd890479",
+        "bytes": 32768
+      },
+      "globals": null,
+      "source": {
+        "kind": "explicit-first-party-generated"
+      },
+      "original_paths": {
+        "input": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/generated/white-512.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/generated/white-512.packed"
+      }
+    },
+    {
+      "id": "generated-white-2048",
+      "family": "generated-mmr-white",
+      "width": 2048,
+      "height": 2048,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": true,
+      "input": {
+        "sha256": "e0f3ade28264b2ca5f56ed63e089576ac74b1bccd78b3f098859cf44736fceb5",
+        "bytes": 350
+      },
+      "expected": {
+        "sha256": "07854d2fef297a06ba81685e660c332de36d5d18d546927d30daad6d7fda1541",
+        "bytes": 524288
+      },
+      "globals": null,
+      "source": {
+        "kind": "explicit-first-party-generated"
+      },
+      "original_paths": {
+        "input": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/generated/white-2048.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/generated/white-2048.packed"
+      }
+    },
+    {
+      "id": "generated-transitions-64",
+      "family": "generated-mmr-transitions",
+      "width": 64,
+      "height": 64,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": true,
+      "input": {
+        "sha256": "d602054ae1edeef2e190540d2be2d4ef74286e8c91a2f18006cdcba5d68ae035",
+        "bytes": 3166
+      },
+      "expected": {
+        "sha256": "f93ac174acd97b23458c571f52c97347dd856ecdb64697e86f71fbe88bdfed19",
+        "bytes": 512
+      },
+      "globals": null,
+      "source": {
+        "kind": "explicit-first-party-generated"
+      },
+      "original_paths": {
+        "input": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/generated/transitions-64.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/generated/transitions-64.packed"
+      }
+    },
+    {
+      "id": "generated-transitions-512",
+      "family": "generated-mmr-transitions",
+      "width": 512,
+      "height": 128,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": true,
+      "input": {
+        "sha256": "faf4c4425daa5c90ba70e80fa338b45b449ccdd79c3670dda9ff56b0fee91a6b",
+        "bytes": 49246
+      },
+      "expected": {
+        "sha256": "20cf7f189f13f05bb7456efe61caccc3b525fdb9002e172eabe8591b649ecabb",
+        "bytes": 8192
+      },
+      "globals": null,
+      "source": {
+        "kind": "explicit-first-party-generated"
+      },
+      "original_paths": {
+        "input": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/generated/transitions-512.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/generated/transitions-512.packed"
+      }
+    },
+    {
+      "id": "generated-many-pages-32",
+      "family": "generated-mmr-white",
+      "width": 64,
+      "height": 64,
+      "pages": 32,
+      "policy": "strict",
+      "standalone": true,
+      "input": {
+        "sha256": "1caf9ef571cebcdcc5a319ff94a41ccf881e30555b17b5c1be107354081b002f",
+        "bytes": 2520
+      },
+      "expected": {
+        "sha256": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560",
+        "bytes": 512
+      },
+      "globals": null,
+      "source": {
+        "kind": "explicit-first-party-generated"
+      },
+      "original_paths": {
+        "input": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/generated/many-pages-32.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/generated/many-pages-32.packed"
+      }
+    },
+    {
+      "id": "symbol-identity-1",
+      "family": "generated-symbol-identity",
+      "width": 8,
+      "height": 1,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": true,
+      "input": {
+        "sha256": "c8d456f9f486ca323ba4c7c0104ec95929ae265b5117c84c45f1dfd69a247d29",
+        "bytes": 149
+      },
+      "expected": {
+        "sha256": "6922e93e3827642ce4b883c756b31abf80036649d3614bf5fcb3adda43b8ea32",
+        "bytes": 1
+      },
+      "globals": null,
+      "source": {
+        "kind": "explicit-first-party-generated"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-perf-symbol-20261123/target/symbol-attribution/generated/symbol-identity-1.jb2",
+        "globals": null,
+        "expected": "/workspace/jbig2-perf-symbol-20261123/target/symbol-attribution/generated/symbol-identity-1.packed"
+      }
+    },
+    {
+      "id": "symbol-identity-16",
+      "family": "generated-symbol-identity",
+      "width": 8,
+      "height": 1,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": true,
+      "input": {
+        "sha256": "3628bc3ce663d637fedefa7e88749ea83f2321bdc29ccb00d26f6cf032cd080a",
+        "bytes": 169
+      },
+      "expected": {
+        "sha256": "6922e93e3827642ce4b883c756b31abf80036649d3614bf5fcb3adda43b8ea32",
+        "bytes": 1
+      },
+      "globals": null,
+      "source": {
+        "kind": "explicit-first-party-generated"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-perf-symbol-20261123/target/symbol-attribution/generated/symbol-identity-16.jb2",
+        "globals": null,
+        "expected": "/workspace/jbig2-perf-symbol-20261123/target/symbol-attribution/generated/symbol-identity-16.packed"
+      }
+    },
+    {
+      "id": "symbol-identity-256",
+      "family": "generated-symbol-identity",
+      "width": 8,
+      "height": 1,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": true,
+      "input": {
+        "sha256": "c0311e9bdd55d0b15866d70f599395be703064ba79c277121efaff67342196a4",
+        "bytes": 469
+      },
+      "expected": {
+        "sha256": "6922e93e3827642ce4b883c756b31abf80036649d3614bf5fcb3adda43b8ea32",
+        "bytes": 1
+      },
+      "globals": null,
+      "source": {
+        "kind": "explicit-first-party-generated"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-perf-symbol-20261123/target/symbol-attribution/generated/symbol-identity-256.jb2",
+        "globals": null,
+        "expected": "/workspace/jbig2-perf-symbol-20261123/target/symbol-attribution/generated/symbol-identity-256.packed"
+      }
+    },
+    {
+      "id": "symbol-identity-4096",
+      "family": "generated-symbol-identity",
+      "width": 8,
+      "height": 1,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": true,
+      "input": {
+        "sha256": "cc855f10c864853acc6dd31c7df92c49879d5210821cfd97fb1c81db3331d928",
+        "bytes": 5271
+      },
+      "expected": {
+        "sha256": "6922e93e3827642ce4b883c756b31abf80036649d3614bf5fcb3adda43b8ea32",
+        "bytes": 1
+      },
+      "globals": null,
+      "source": {
+        "kind": "explicit-first-party-generated"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-perf-symbol-20261123/target/symbol-attribution/generated/symbol-identity-4096.jb2",
+        "globals": null,
+        "expected": "/workspace/jbig2-perf-symbol-20261123/target/symbol-attribution/generated/symbol-identity-4096.packed"
+      }
+    },
+    {
+      "id": "symbol-aggregate-2",
+      "family": "generated-symbol-aggregate",
+      "width": 32,
+      "height": 1,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": true,
+      "input": {
+        "sha256": "e94cdfb793cec4ace95a37cdc9d29a736fd561caaa5a07a170278538a0a4ddaa",
+        "bytes": 183
+      },
+      "expected": {
+        "sha256": "e51245c8418dd3f3629da3001ddfed530dc7b5d85c74ecc4acf507e073938422",
+        "bytes": 4
+      },
+      "globals": null,
+      "source": {
+        "kind": "explicit-first-party-generated"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-perf-symbol-20261123/target/symbol-attribution/generated/symbol-aggregate-2.jb2",
+        "globals": null,
+        "expected": "/workspace/jbig2-perf-symbol-20261123/target/symbol-attribution/generated/symbol-aggregate-2.packed"
+      }
+    },
+    {
+      "id": "symbol-aggregate-16",
+      "family": "generated-symbol-aggregate",
+      "width": 256,
+      "height": 1,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": true,
+      "input": {
+        "sha256": "ed36f552ec4630d95f8bfae7aa1991a6ef7aa06d92d071c0540c0e79f6857e62",
+        "bytes": 265
+      },
+      "expected": {
+        "sha256": "fc8b64001c5fdd0f2f40fb67dae4a865a2c5bd17836676d6d5b58b7917e33717",
+        "bytes": 32
+      },
+      "globals": null,
+      "source": {
+        "kind": "explicit-first-party-generated"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-perf-symbol-20261123/target/symbol-attribution/generated/symbol-aggregate-16.jb2",
+        "globals": null,
+        "expected": "/workspace/jbig2-perf-symbol-20261123/target/symbol-attribution/generated/symbol-aggregate-16.packed"
+      }
+    },
+    {
+      "id": "symbol-aggregate-128",
+      "family": "generated-symbol-aggregate",
+      "width": 2048,
+      "height": 1,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": true,
+      "input": {
+        "sha256": "e5ed95c391693669e1e7e92e9d3ebd8ae9fbd8afd9291837447b7a206a3baac3",
+        "bytes": 991
+      },
+      "expected": {
+        "sha256": "2c41a1dd584e3773b95674841b685f36c76b48ec4db75863372c2fd6e19a61ce",
+        "bytes": 256
+      },
+      "globals": null,
+      "source": {
+        "kind": "explicit-first-party-generated"
+      },
+      "original_paths": {
+        "input": "/workspace/jbig2-perf-symbol-20261123/target/symbol-attribution/generated/symbol-aggregate-128.jb2",
+        "globals": null,
+        "expected": "/workspace/jbig2-perf-symbol-20261123/target/symbol-attribution/generated/symbol-aggregate-128.packed"
+      }
+    },
+    {
+      "id": "controlled-halftone-grid-43x41-depth0",
+      "family": "controlled-scaling-halftone-mmr",
+      "width": 1,
+      "height": 1,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": true,
+      "input": {
+        "sha256": "f35b0a7870b85dc1ed1184ab0c7dda340a1728c2289f1c4ff2685d73948c584a",
+        "bytes": 137
+      },
+      "expected": {
+        "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+        "bytes": 1
+      },
+      "globals": null,
+      "source": {
+        "kind": "explicit-first-party-generated"
+      },
+      "original_paths": {
+        "input": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/perf-resumed-20261125/grid-cohort/controlled-halftone-grid-43x41-depth0.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/perf-resumed-20261125/grid-cohort/controlled-halftone-grid-43x41-depth0.packed"
+      }
+    },
+    {
+      "id": "controlled-halftone-grid-1024x1024-depth1",
+      "family": "controlled-scaling-halftone-mmr",
+      "width": 1,
+      "height": 1,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": true,
+      "input": {
+        "sha256": "947474c892b148b1268af2c8131a5ab502f0bf2c0d62d42f7e8b1d6f04c6ec22",
+        "bytes": 268
+      },
+      "expected": {
+        "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+        "bytes": 1
+      },
+      "globals": null,
+      "source": {
+        "kind": "explicit-first-party-generated"
+      },
+      "original_paths": {
+        "input": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/perf-resumed-20261125/grid-cohort/controlled-halftone-grid-1024x1024-depth1.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/perf-resumed-20261125/grid-cohort/controlled-halftone-grid-1024x1024-depth1.packed"
+      }
+    },
+    {
+      "id": "controlled-halftone-grid-1024x1024-depth8",
+      "family": "controlled-scaling-halftone-mmr",
+      "width": 1,
+      "height": 1,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": true,
+      "input": {
+        "sha256": "7da5f6c37c7906da7bb813e6c83a33ce0ffec39a8c558f5ac0e7fb924e0cf2a6",
+        "bytes": 1185
+      },
+      "expected": {
+        "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+        "bytes": 1
+      },
+      "globals": null,
+      "source": {
+        "kind": "explicit-first-party-generated"
+      },
+      "original_paths": {
+        "input": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/perf-resumed-20261125/grid-cohort/controlled-halftone-grid-1024x1024-depth8.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/perf-resumed-20261125/grid-cohort/controlled-halftone-grid-1024x1024-depth8.packed"
+      }
+    },
+    {
+      "id": "controlled-halftone-grid-1024x1024-depth9",
+      "family": "controlled-scaling-halftone-mmr",
+      "width": 1,
+      "height": 1,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": true,
+      "input": {
+        "sha256": "b23741b7b2c9430453a64da4312cdb61680f7538ef20bafa856e3e19a9f7769e",
+        "bytes": 1316
+      },
+      "expected": {
+        "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+        "bytes": 1
+      },
+      "globals": null,
+      "source": {
+        "kind": "explicit-first-party-generated"
+      },
+      "original_paths": {
+        "input": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/perf-resumed-20261125/grid-cohort/controlled-halftone-grid-1024x1024-depth9.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/perf-resumed-20261125/grid-cohort/controlled-halftone-grid-1024x1024-depth9.packed"
+      }
+    },
+    {
+      "id": "controlled-halftone-grid-1024x1024-depth10",
+      "family": "controlled-scaling-halftone-mmr",
+      "width": 1,
+      "height": 1,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": true,
+      "input": {
+        "sha256": "1c66219e3eab6e12efca22285fa10f74b5434f3257cc78d1e24ba5de69e2be32",
+        "bytes": 1447
+      },
+      "expected": {
+        "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+        "bytes": 1
+      },
+      "globals": null,
+      "source": {
+        "kind": "explicit-first-party-generated"
+      },
+      "original_paths": {
+        "input": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/perf-resumed-20261125/grid-cohort/controlled-halftone-grid-1024x1024-depth10.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/perf-resumed-20261125/grid-cohort/controlled-halftone-grid-1024x1024-depth10.packed"
+      }
+    },
+    {
+      "id": "controlled-halftone-grid-1025x1023-depth8",
+      "family": "controlled-scaling-halftone-mmr",
+      "width": 1,
+      "height": 1,
+      "pages": 1,
+      "policy": "strict",
+      "standalone": true,
+      "input": {
+        "sha256": "2869c72965cb25e11b0030280b1e918766c50609ac5574f0c87ced96cd66654e",
+        "bytes": 1185
+      },
+      "expected": {
+        "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+        "bytes": 1
+      },
+      "globals": null,
+      "source": {
+        "kind": "explicit-first-party-generated"
+      },
+      "original_paths": {
+        "input": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/perf-resumed-20261125/grid-cohort/controlled-halftone-grid-1025x1023-depth8.jb2",
+        "globals": null,
+        "expected": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/perf-resumed-20261125/grid-cohort/controlled-halftone-grid-1025x1023-depth8.packed"
+      }
+    }
+  ],
+  "original_generated_allowlist": [
+    "generated-many-pages-32",
+    "generated-transitions-512",
+    "generated-transitions-64",
+    "generated-white-2048",
+    "generated-white-512",
+    "generated-white-64",
+    "symbol-aggregate-128",
+    "symbol-aggregate-16",
+    "symbol-aggregate-2",
+    "symbol-identity-1",
+    "symbol-identity-16",
+    "symbol-identity-256",
+    "symbol-identity-4096"
+  ],
+  "grid_generated_allowlist": [
+    "controlled-halftone-grid-1024x1024-depth1",
+    "controlled-halftone-grid-1024x1024-depth10",
+    "controlled-halftone-grid-1024x1024-depth8",
+    "controlled-halftone-grid-1024x1024-depth9",
+    "controlled-halftone-grid-1025x1023-depth8",
+    "controlled-halftone-grid-43x41-depth0"
+  ],
+  "public_sources": 108,
+  "context_controls": [
+    "bitmap-mmr",
+    "generated-transitions-64",
+    "generated-transitions-512",
+    "generated-white-2048"
+  ],
+  "calibration_cases": [
+    "bitmap-halftone-10bpp-mmr",
+    "controlled-halftone-grid-1024x1024-depth9",
+    "bitmap-symbol-symhuff-texthuff",
+    "bitmap-mmr",
+    "generated-transitions-512",
+    "bitmap-symbol-manysyms"
+  ]
+}

@@ -1,0 +1,166 @@
+import argparse
+import json
+import os
+import random
+import resource
+import statistics
+import subprocess
+import time
+from pathlib import Path
+
+from measure_probes import ROOT, sha
+
+PAIRS = [
+    ("225-direct", "current-main", "halftone-direct"),
+    ("226-incremental", "halftone-direct", "halftone-symbols"),
+    ("225-226-combined", "current-main", "halftone-symbols"),
+]
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--rounds", type=int, default=9)
+    parser.add_argument("--samples", type=int, default=31)
+    parser.add_argument("--target-ms", type=int, default=350)
+    parser.add_argument("--label", default="confirmation-owned")
+    parser.add_argument("--pair", action="append", help="NAME:BEFORE:AFTER")
+    parser.add_argument("--calibration", action="store_true")
+    parser.add_argument("--case", action="append", default=[])
+    args = parser.parse_args()
+    if not 9 <= args.rounds <= 15 or not 15 <= args.samples <= 100:
+        raise ValueError("confirmation needs at least9 pairs and15 samples")
+    if not 100 <= args.target_ms <= 5000 or not args.label.replace("-", "").isalnum():
+        raise ValueError("invalid confirmation settings")
+    comparisons = [value.split(":") for value in args.pair] if args.pair else PAIRS
+    if any(len(row) != 3 or any(not item.replace("-", "").isalnum() for item in row)
+           for row in comparisons):
+        raise ValueError("invalid comparison declaration")
+    if len({row[0] for row in comparisons}) != len(comparisons):
+        raise ValueError("duplicate comparison")
+    if args.case and not args.calibration:
+        raise ValueError("candidate confirmation must retain the complete cohort")
+    if args.calibration and any(before != after for _, before, after in comparisons):
+        raise ValueError("calibration must compare the identical binary")
+    output = ROOT / (args.label + ".json")
+    if output.exists():
+        raise FileExistsError("preserve the existing result")
+    cohort_file = ROOT / "expanded-cohort.json"
+    cohort = json.loads(cohort_file.read_text())
+    manifest = Path(cohort["manifest"])
+    cases = json.loads(manifest.read_text())
+    for path, row in cohort["files"].items():
+        if sha(Path(path)) != row["sha256"]:
+            raise ValueError("fixture changed: " + path)
+    builds = {}
+    for name in sorted({label for _, *labels in comparisons for label in labels}):
+        binary = ROOT / "binaries" / name
+        record = json.loads(binary.with_suffix(".json").read_text())
+        if record["instrumented_allocations"] or sha(binary) != record["binary_sha256"]:
+            raise ValueError("wrong latency binary: " + name)
+        builds[name] = record
+    tasks = [(index, "fresh" if case["policy"] == "strict" else "best-effort")
+             for index, case in enumerate(cases)]
+    tasks += [(index, "context") for index, case in enumerate(cases) if case["id"] in {
+        "bitmap-mmr", "generated-transitions-64", "generated-transitions-512", "generated-white-2048",
+    }]
+    if args.case:
+        if set(args.case) - {case["id"] for case in cases}:
+            raise ValueError("unknown calibration case")
+        tasks = [(index, mode) for index, mode in tasks if cases[index]["id"] in args.case]
+    report = {
+        "scope": ("Identical-binary measurement calibration; no performance adoption credit."
+                  if args.calibration else "Local confirmation; not a matched ARM/PDFium comparison."),
+        "rounds": args.rounds, "samples": args.samples, "target_ms": args.target_ms,
+        "tasks": len(tasks), "pairs": comparisons, "builds": builds,
+        "calibration": args.calibration, "arguments": vars(args),
+        "protocol_sha256": sha(Path(__file__)),
+        "cohort_sha256": sha(cohort_file),
+        "cpu_affinity": 2, "shared_host": True,
+        "initial_load_average": os.getloadavg(), "measurements": [],
+        "retention_rule": (
+            "Latency candidates need a material target gain, at least8/9 faster pairs "
+            "and paired95% upper ratio below1. Investigate every per-case median "
+            "regression above5%; do not discard adverse cases. Allocation improvements "
+            "need actual measured savings and latency nonregression. Existing complete "
+            "correctness/proof/package/CI checks remain mandatory."
+        ),
+        "cpu_diagnostics_scope": (
+            "Child process user+system CPU includes startup, input parsing, validation "
+            "and output destruction. It is secondary scheduling evidence, not decoder "
+            "latency and never replaces the primary native wall-clock measurements."
+        ),
+    }
+    rng = random.Random(20261124)
+    output.write_text(json.dumps(report, indent=2) + "\n")
+    for round_index in range(args.rounds):
+        ordered_comparisons = comparisons.copy()
+        rng.shuffle(ordered_comparisons)
+        for comparison, before, after in ordered_comparisons:
+            order_cases = tasks.copy()
+            rng.shuffle(order_cases)
+            for index, mode in order_cases:
+                case = cases[index]
+                order = ["before", "after"] if (index + round_index) % 2 == 0 else ["after", "before"]
+                pair = {"comparison": comparison, "id": case["id"], "mode": mode,
+                        "family": case["family"], "round": round_index, "order": order}
+                for side in order:
+                    name = before if side == "before" else after
+                    action = "once" if case["id"] == "bitmap-symbol-manysyms" else "measure"
+                    usage_before = resource.getrusage(resource.RUSAGE_CHILDREN)
+                    start = time.monotonic()
+                    result = subprocess.run(
+                        ["taskset", "-c", "2", str(ROOT / "binaries" / name),
+                         action, str(manifest), str(index), mode, str(args.samples), str(args.target_ms)],
+                        text=True, capture_output=True, check=True, timeout=180,
+                    )
+                    process_wall = time.monotonic() - start
+                    usage_after = resource.getrusage(resource.RUSAGE_CHILDREN)
+                    row = json.loads(result.stdout)
+                    if not row["exact_output_checked"] or row["id"] != case["id"] or row["median_ns"] <= 0:
+                        raise ValueError("invalid measured output")
+                    cpu_seconds = ((usage_after.ru_utime + usage_after.ru_stime)
+                                   - (usage_before.ru_utime + usage_before.ru_stime))
+                    calls = 1 if action == "once" else row["samples"] * row["batch"] + 5
+                    row.update(process_wall_seconds=process_wall, process_cpu_seconds=cpu_seconds,
+                               process_cpu_ns_per_call=cpu_seconds * 1e9 / calls, operation_calls=calls)
+                    pair[side] = row
+                for field in ("width", "height", "pages", "policy", "recoveries"):
+                    if pair["before"][field] != pair["after"][field]:
+                        raise ValueError("paired output descriptor differs")
+                pair["ratio"] = pair["after"]["median_ns"] / pair["before"]["median_ns"]
+                report["measurements"].append(pair)
+            print(f"round{round_index+1}/{args.rounds} {comparison}: {len(order_cases)} cases", flush=True)
+            output.write_text(json.dumps(report, indent=2) + "\n")
+    groups = {}
+    for pair in report["measurements"]:
+        groups.setdefault((pair["comparison"], pair["id"], pair["mode"]), []).append(pair)
+    summary = []
+    for (comparison, name, mode), pairs in sorted(groups.items()):
+        if len(pairs) != args.rounds:
+            raise ValueError("incomplete confirmation pairs")
+        ratios = [pair["ratio"] for pair in pairs]
+        bootstrap = sorted(statistics.median(rng.choices(ratios, k=len(ratios))) for _ in range(5000))
+        summary.append({
+            "comparison": comparison, "id": name, "mode": mode,
+            "paired_median_ratio": statistics.median(ratios),
+            "paired_bootstrap95": [bootstrap[125], bootstrap[4874]],
+            "faster_pairs": sum(value < 1 for value in ratios),
+            "before_median_ns": statistics.median(pair["before"]["median_ns"] for pair in pairs),
+            "after_median_ns": statistics.median(pair["after"]["median_ns"] for pair in pairs),
+            "secondary_process_cpu_ratio": statistics.median(
+                pair["after"]["process_cpu_ns_per_call"] / pair["before"]["process_cpu_ns_per_call"]
+                for pair in pairs
+            ),
+        })
+    for name, build in builds.items():
+        if sha(ROOT / "binaries" / name) != build["binary_sha256"]:
+            raise ValueError("binary changed during confirmation")
+    if sha(Path(__file__)) != report["protocol_sha256"] or sha(cohort_file) != report["cohort_sha256"]:
+        raise ValueError("confirmation inputs changed")
+    report.update(status=("completed-calibration" if args.calibration else "completed-confirmation"),
+                  summary=summary, final_load_average=os.getloadavg())
+    output.write_text(json.dumps(report, indent=2) + "\n")
+
+
+if __name__ == "__main__":
+    main()

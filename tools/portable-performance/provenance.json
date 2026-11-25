@@ -1,0 +1,50 @@
+{
+  "harness.rs": {
+    "original_path": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-benchmark-20261119/src/main.rs",
+    "sha256": "1686e3d7640e69645ed59ebc5d44fbfafda3b7b90060009e8d861f242c4541a3"
+  },
+  "build_probe.py": {
+    "original_path": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-roadmap-20261123/build_probe.py",
+    "sha256": "78180a9abfe57e68302b4b65096cc251a4c8d1d4fe4385e1b6c1ac4a2861d41a"
+  },
+  "confirm_probes.py": {
+    "original_path": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-roadmap-20261123/confirm_probes.py",
+    "sha256": "88fb5ee3e7d9a72026536d16e8e3b247071a91201873e1c59cc57c7c30fc8ad3"
+  },
+  "measure_probes.py": {
+    "original_path": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-roadmap-20261123/measure_probes.py",
+    "sha256": "0ae6e117ee36713aaf76862144e91ab032ba323c8d54389d243aef2d8eeade97"
+  },
+  "probe-Cargo.toml": {
+    "original_path": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-roadmap-20261123/probe/Cargo.toml",
+    "sha256": "7b7ecd13c0f9837f39b5489088b2558d66d50579592800616b25e3dc5c1e0e6d"
+  },
+  "probe-Cargo.lock": {
+    "original_path": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-roadmap-20261123/probe/Cargo.lock",
+    "sha256": "c8a0896762a45db2341e846378b2b377237e349b09e3f12f71c585c5991b4985"
+  },
+  "prepare_grid_cases.py": {
+    "original_path": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/perf-resumed-20261125/prepare_grid_cases.py",
+    "sha256": "4d702ab08e4501ccbe0f3b3964c9a44903ae936944935fddd9426356e1e7297a"
+  },
+  "expanded-cases.json": {
+    "original_path": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-roadmap-20261123/expanded-cases.json",
+    "sha256": "5a38ebb41d92617525801c95c159d894c32a5f7b8015bb16283b5264c2422f6f"
+  },
+  "expanded-cohort.json": {
+    "original_path": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/jbig2-roadmap-20261123/expanded-cohort.json",
+    "sha256": "389759957774c7c2d22eb09cd3b5463202eda0ca07fd701a8f0361b84cded39a"
+  },
+  "grid-expanded-cases.json": {
+    "original_path": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/perf-resumed-20261125/grid-cohort/expanded-cases.json",
+    "sha256": "59b58638449ee50e8306a142d5faa2846b9bdc81fbd8e1eb78dde2b78827ad2f"
+  },
+  "grid-expanded-cohort.json": {
+    "original_path": "/home/sergiog/.copilot/session-state/26f37efd-6438-4b64-9529-cf251ed02717/files/perf-resumed-20261125/grid-cohort/expanded-cohort.json",
+    "sha256": "69a6a8b4314d8ef78c638fa76afdeac2f8f493f7fdbe795c4859a990c824425a"
+  },
+  "frozen_public_cohort": {
+    "path": "tools/pdfium-qualification/frozen/cohort.json",
+    "sha256": "a7c9c89940b90afd9d8232365b435c53f99728df7cde084f3de79fe4a7c66516"
+  }
+}

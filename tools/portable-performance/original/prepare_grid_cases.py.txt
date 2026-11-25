@@ -1,0 +1,90 @@
+import hashlib
+import json
+from pathlib import Path
+import struct
+
+
+ROOT = Path(__file__).resolve().parent
+BENCH = ROOT.parent / "jbig2-roadmap-20261123"
+OUTPUT = ROOT / "grid-cohort"
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def segment(number, kind, page, data, reference=None, retain=False):
+    # Same short-number framing as src/decode/tests.rs's fixture builders.
+    retention = (0 if reference is None else 0x20) | int(retain)
+    prefix = struct.pack(">IBB", number, kind, retention)
+    if reference is not None:
+        prefix += bytes([reference])
+    return prefix + struct.pack(">BI", page, len(data)) + data
+
+
+def white_mmr(rows):
+    bits = "1" * rows + "000000000001000000000001"
+    bits += "0" * (-len(bits) % 8)
+    return bytes(int(bits[index:index + 8], 2) for index in range(0, len(bits), 8))
+
+
+def make_case(width, height, depth):
+    patterns = 1 << depth
+    dictionary = struct.pack(">BBBI", 1, 1, 1, patterns - 1) + white_mmr(1)
+    page = struct.pack(">IIIIBH", 1, 1, 0, 0, 0x40, 0)
+    region = struct.pack(">IIIIBBIIiiHH", 1, 1, 0, 0, 0, 1, width, height, 0, 0, 256, 0)
+    region += white_mmr(height) * depth
+    document = b"\x97JB2\r\n\x1a\n\x01" + struct.pack(">I", 1)
+    document += segment(0, 16, 0, dictionary, retain=True)
+    document += segment(1, 48, 1, page)
+    document += segment(2, 22, 1, region, reference=0)
+    document += segment(3, 49, 1, b"")
+    document += segment(4, 51, 0, b"")
+    return document
+
+
+def main():
+    if OUTPUT.exists():
+        raise FileExistsError("preserve the existing generated cohort")
+    original = json.loads((BENCH / "expanded-cohort.json").read_text())
+    for path, row in original["files"].items():
+        if digest(Path(path)) != row["sha256"]:
+            raise ValueError("original frozen input changed: " + path)
+    cases = json.loads(Path(original["manifest"]).read_text())
+    OUTPUT.mkdir()
+    files = dict(original["files"])
+    added = []
+    for width, height, depth in [
+        (43, 41, 0), (1024, 1024, 1), (1024, 1024, 8),
+        (1024, 1024, 9), (1024, 1024, 10), (1025, 1023, 8),
+    ]:
+        name = f"controlled-halftone-grid-{width}x{height}-depth{depth}"
+        source = OUTPUT / (name + ".jb2")
+        expected = OUTPUT / (name + ".packed")
+        source.write_bytes(make_case(width, height, depth))
+        expected.write_bytes(b"\0")
+        for path in (source, expected):
+            files[str(path)] = {"bytes": path.stat().st_size, "sha256": digest(path)}
+        row = {
+            "id": name, "family": "controlled-scaling-halftone-mmr", "input": str(source),
+            "globals": None, "expected": str(expected), "width": 1, "height": 1,
+            "pages": 1, "policy": "strict", "standalone": True,
+        }
+        cases.append(row)
+        added.append({"id": name, "grid_width": width, "grid_height": height,
+                      "depth": depth, "patterns": 1 << depth})
+    manifest = OUTPUT / "expanded-cases.json"
+    manifest.write_text(json.dumps(cases, indent=2) + "\n")
+    files[str(manifest)] = {"bytes": manifest.stat().st_size, "sha256": digest(manifest)}
+    files[str(Path(__file__))] = {"bytes": Path(__file__).stat().st_size,
+                                "sha256": digest(Path(__file__))}
+    (OUTPUT / "expanded-cohort.json").write_text(json.dumps({
+        "scope": "All original123 cases unchanged plus six explicitly generated scaling controls. White MMR planes produce zero indexes and a white one-pixel canvas; no original large-grid document or full-PDF performance claim.",
+        "manifest": str(manifest), "files": files, "added": added,
+    }, indent=2) + "\n")
+    (OUTPUT / "binaries").symlink_to(BENCH / "binaries", target_is_directory=True)
+    print("Prepared all", len(cases), "cases, including", len(added), "controlled scaling inputs")
+
+
+if __name__ == "__main__":
+    main()

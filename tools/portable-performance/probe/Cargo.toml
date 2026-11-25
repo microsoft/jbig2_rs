@@ -1,0 +1,34 @@
+[package]
+name = "jbig2-roadmap-perf-probe"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[[bin]]
+name = "jbig2-roadmap-perf-probe"
+path = "src/main.rs"
+
+[[bin]]
+name = "jbig2-golden-materializer"
+path = "src/materialize.rs"
+
+[[bin]]
+name = "jbig2-api-validation"
+path = "src/validate.rs"
+
+[dependencies]
+jbig2-decoder = { path = "../../../target/portable-performance/private/matched" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+allocation-counter = { version = "=0.8.1", optional = true }
+
+[features]
+allocations = ["dep:allocation-counter"]
+
+[workspace]
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+debug = 1

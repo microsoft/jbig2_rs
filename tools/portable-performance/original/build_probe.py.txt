@@ -1,0 +1,98 @@
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+
+ROOT = Path(__file__).resolve().parent
+MATCHED = Path("/workspace/jbig2-perf-issue-baseline-20261123")
+MANIFEST = ROOT / "probe/Cargo.toml"
+HARNESS = ROOT.parent / "jbig2-benchmark-20261119/src/main.rs"
+GENERATED = Path("/workspace/jbig2/benchmarks/cases.rs")
+CORPUS = ROOT.parent / "jbig2-benchmark-20261119/cases.json"
+
+
+def command(arguments, **kwargs):
+    return subprocess.run(arguments, check=True, text=True, **kwargs)
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--source", required=True)
+    parser.add_argument("--label", required=True)
+    parser.add_argument("--allocations", action="store_true")
+    args = parser.parse_args()
+    if not args.label.replace("-", "").isalnum():
+        raise ValueError("unsafe benchmark label")
+    if command(["git", "status", "--porcelain"], cwd=MATCHED, capture_output=True).stdout:
+        raise ValueError("matched benchmark worktree is dirty")
+    source = command(
+        ["git", "rev-parse", "--verify", args.source + "^{commit}"],
+        cwd=MATCHED, capture_output=True,
+    ).stdout.strip()
+    hashes = {str(path): digest(path) for path in (HARNESS, GENERATED, CORPUS, MANIFEST)}
+    command(["git", "switch", "--detach", source], cwd=MATCHED)
+    environment = {
+        key: value for key, value in os.environ.items()
+        if key not in {
+            "RUSTFLAGS", "RUSTDOCFLAGS", "CARGO_ENCODED_RUSTFLAGS",
+            "CARGO_ENCODED_RUSTDOCFLAGS", "RUSTC", "RUSTDOC", "RUSTC_WRAPPER",
+            "RUSTC_WORKSPACE_WRAPPER", "CARGO_BUILD_RUSTFLAGS", "CARGO_BUILD_TARGET",
+            "RUSTUP_TOOLCHAIN",
+        } and not key.startswith("CARGO_PROFILE_")
+    }
+    environment.update({
+        "CARGO_TARGET_DIR": str(ROOT / "build-target"),
+        "CARGO_INCREMENTAL": "0",
+        "RUSTFLAGS": "-C target-cpu=native -C embed-bitcode=yes",
+        "CARGO_TERM_COLOR": "never",
+    })
+    cargo = ["cargo", "+1.98.1"]
+    lock = MANIFEST.parent / "Cargo.lock"
+    if not lock.exists():
+        command(cargo + ["generate-lockfile", "--offline", "--manifest-path", str(MANIFEST)],
+                env=environment)
+    command(cargo + [
+        "clean", "--release", "--manifest-path", str(MANIFEST),
+        "--package", "jbig2-decoder", "--package", "jbig2-roadmap-perf-probe",
+    ], env=environment)
+    (ROOT / "build-logs").mkdir(exist_ok=True)
+    log = ROOT / "build-logs" / (args.label + ".log")
+    build = cargo + ["build", "--release", "--locked", "--offline", "-vv",
+                     "--manifest-path", str(MANIFEST)]
+    if args.allocations:
+        build += ["--features", "allocations"]
+    with log.open("w") as stream:
+        command(build, env=environment, stdout=stream, stderr=subprocess.STDOUT)
+    for path, expected in hashes.items():
+        if digest(Path(path)) != expected:
+            raise ValueError("benchmark inputs changed during build: " + path)
+    (ROOT / "binaries").mkdir(exist_ok=True)
+    binary = ROOT / "binaries" / args.label
+    shutil.copyfile(ROOT / "build-target/release/jbig2-roadmap-perf-probe", binary)
+    binary.chmod(0o755)
+    runtime = hashlib.sha256()
+    for path in sorted(MATCHED.joinpath("src").rglob("*.rs")):
+        runtime.update(path.relative_to(MATCHED).as_posix().encode() + b"\0"
+                       + path.read_bytes() + b"\0")
+    record = {
+        "source_revision": source, "runtime_sha256": runtime.hexdigest(),
+        "binary_sha256": digest(binary), "cargo_lock_sha256": digest(lock),
+        "harness_sha256": hashes, "same_build_directory": str(MATCHED),
+        "rustc": command(["rustc", "+1.98.1", "-vV"], capture_output=True).stdout,
+        "rustflags": environment["RUSTFLAGS"], "profile": MANIFEST.read_text(),
+        "instrumented_allocations": args.allocations, "build_log": str(log),
+        "qualification": "Local native x86-64 Rust comparison, not matched ARM/PDFium qualification.",
+    }
+    binary.with_suffix(".json").write_text(json.dumps(record, indent=2) + "\n")
+    print(json.dumps(record, indent=2))
+
+
+if __name__ == "__main__":
+    main()

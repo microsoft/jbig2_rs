@@ -1,0 +1,359 @@
+{
+  "schema_version": 1,
+  "status": "workflow_policy_passed",
+  "workflow_count": 8,
+  "action_count": 64,
+  "actions": [
+    {
+      "workflow": "ci.yml",
+      "job": "cargo",
+      "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "workflow": "ci.yml",
+      "job": "cargo",
+      "uses": "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
+    },
+    {
+      "workflow": "ci.yml",
+      "job": "cargo",
+      "uses": "dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8",
+      "toolchain": "1.89.0"
+    },
+    {
+      "workflow": "ci.yml",
+      "job": "cargo",
+      "uses": "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+    },
+    {
+      "workflow": "ci.yml",
+      "job": "distribution",
+      "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "workflow": "ci.yml",
+      "job": "distribution",
+      "uses": "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
+    },
+    {
+      "workflow": "ci.yml",
+      "job": "distribution",
+      "uses": "dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8",
+      "toolchain": "${{ matrix.toolchain }}"
+    },
+    {
+      "workflow": "ci.yml",
+      "job": "distribution",
+      "uses": "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+    },
+    {
+      "workflow": "conformance.yml",
+      "job": "official",
+      "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "workflow": "conformance.yml",
+      "job": "official",
+      "uses": "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
+    },
+    {
+      "workflow": "conformance.yml",
+      "job": "official",
+      "uses": "dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8",
+      "toolchain": "1.88.0"
+    },
+    {
+      "workflow": "conformance.yml",
+      "job": "official",
+      "uses": "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+    },
+    {
+      "workflow": "coverage.yml",
+      "job": "coverage",
+      "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "workflow": "coverage.yml",
+      "job": "coverage",
+      "uses": "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
+    },
+    {
+      "workflow": "coverage.yml",
+      "job": "coverage",
+      "uses": "dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8",
+      "toolchain": "nightly-2026-10-12"
+    },
+    {
+      "workflow": "coverage.yml",
+      "job": "coverage",
+      "uses": "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+    },
+    {
+      "workflow": "fuzz.yml",
+      "job": "controls",
+      "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "workflow": "fuzz.yml",
+      "job": "controls",
+      "uses": "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
+    },
+    {
+      "workflow": "fuzz.yml",
+      "job": "controls",
+      "uses": "dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8",
+      "toolchain": "nightly-2026-10-12"
+    },
+    {
+      "workflow": "fuzz.yml",
+      "job": "controls",
+      "uses": "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+    },
+    {
+      "workflow": "fuzz.yml",
+      "job": "fuzz",
+      "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "workflow": "fuzz.yml",
+      "job": "fuzz",
+      "uses": "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
+    },
+    {
+      "workflow": "fuzz.yml",
+      "job": "fuzz",
+      "uses": "dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8",
+      "toolchain": "nightly-2026-10-12"
+    },
+    {
+      "workflow": "fuzz.yml",
+      "job": "fuzz",
+      "uses": "actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9"
+    },
+    {
+      "workflow": "fuzz.yml",
+      "job": "fuzz",
+      "uses": "actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9"
+    },
+    {
+      "workflow": "fuzz.yml",
+      "job": "fuzz",
+      "uses": "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+    },
+    {
+      "workflow": "image-adapter.yml",
+      "job": "test",
+      "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "workflow": "image-adapter.yml",
+      "job": "test",
+      "uses": "dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8",
+      "toolchain": "1.88.0"
+    },
+    {
+      "workflow": "image-adapter.yml",
+      "job": "quality",
+      "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "workflow": "image-adapter.yml",
+      "job": "quality",
+      "uses": "dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8",
+      "toolchain": "1.89.0"
+    },
+    {
+      "workflow": "performance.yml",
+      "job": "performance",
+      "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "workflow": "performance.yml",
+      "job": "performance",
+      "uses": "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
+    },
+    {
+      "workflow": "performance.yml",
+      "job": "performance",
+      "uses": "dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8",
+      "toolchain": "1.89.0"
+    },
+    {
+      "workflow": "performance.yml",
+      "job": "performance",
+      "uses": "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+    },
+    {
+      "workflow": "performance.yml",
+      "job": "portable-diagnostic",
+      "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "workflow": "performance.yml",
+      "job": "portable-diagnostic",
+      "uses": "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
+    },
+    {
+      "workflow": "performance.yml",
+      "job": "portable-diagnostic",
+      "uses": "dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8",
+      "toolchain": "1.98.1"
+    },
+    {
+      "workflow": "performance.yml",
+      "job": "portable-diagnostic",
+      "uses": "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+    },
+    {
+      "workflow": "release.yml",
+      "job": "validate",
+      "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "workflow": "release.yml",
+      "job": "validate",
+      "uses": "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
+    },
+    {
+      "workflow": "release.yml",
+      "job": "validate",
+      "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "workflow": "release.yml",
+      "job": "validate",
+      "uses": "dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8",
+      "toolchain": "1.88.0"
+    },
+    {
+      "workflow": "release.yml",
+      "job": "validate",
+      "uses": "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+    },
+    {
+      "workflow": "release.yml",
+      "job": "publish",
+      "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "workflow": "release.yml",
+      "job": "publish",
+      "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "workflow": "release.yml",
+      "job": "publish",
+      "uses": "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
+    },
+    {
+      "workflow": "release.yml",
+      "job": "publish",
+      "uses": "dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8",
+      "toolchain": "1.88.0"
+    },
+    {
+      "workflow": "release.yml",
+      "job": "publish",
+      "uses": "rust-lang/crates-io-auth-action@3268eb413133e2960fa4ae0e963ca76380c54cd9"
+    },
+    {
+      "workflow": "release.yml",
+      "job": "publish",
+      "uses": "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+    },
+    {
+      "workflow": "verus.yml",
+      "job": "whole",
+      "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "workflow": "verus.yml",
+      "job": "whole",
+      "uses": "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
+    },
+    {
+      "workflow": "verus.yml",
+      "job": "whole",
+      "uses": "dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8",
+      "toolchain": "1.98.1"
+    },
+    {
+      "workflow": "verus.yml",
+      "job": "whole",
+      "uses": "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+    },
+    {
+      "workflow": "verus.yml",
+      "job": "semantic",
+      "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "workflow": "verus.yml",
+      "job": "semantic",
+      "uses": "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
+    },
+    {
+      "workflow": "verus.yml",
+      "job": "semantic",
+      "uses": "dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8",
+      "toolchain": "1.98.1"
+    },
+    {
+      "workflow": "verus.yml",
+      "job": "semantic",
+      "uses": "actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333"
+    },
+    {
+      "workflow": "verus.yml",
+      "job": "semantic",
+      "uses": "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+    },
+    {
+      "workflow": "verus.yml",
+      "job": "verify",
+      "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "workflow": "verus.yml",
+      "job": "verify",
+      "uses": "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
+    },
+    {
+      "workflow": "verus.yml",
+      "job": "verify",
+      "uses": "actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333"
+    },
+    {
+      "workflow": "verus.yml",
+      "job": "verify",
+      "uses": "dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8",
+      "toolchain": "1.98.1"
+    },
+    {
+      "workflow": "verus.yml",
+      "job": "verify",
+      "uses": "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+    },
+    {
+      "workflow": "verus.yml",
+      "job": "verify",
+      "uses": "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+    }
+  ],
+  "source_bindings": {
+    ".github/workflows/ci.yml": "1590fecc34845a1b61c29cc366db2e417928eebcf8b493f3590ac0c055fc1aba",
+    ".github/workflows/conformance.yml": "3da7b1553cd8c0661dab3538866712afe5c9b017b2d4e93db36e01a6dec98dc3",
+    ".github/workflows/coverage.yml": "3ad6707f7002046d7356adf6512f9ad2b08587e1ccbc25b9ba2e569613bd0149",
+    ".github/workflows/fuzz.yml": "48f31b588144b3a2e50837d7c19e7c8e9159c73ca10f6e72d4ed2222001c8d40",
+    ".github/workflows/image-adapter.yml": "0e46c73f49e79ba7531956ba2ce08d0166b112f7082d67804fe62e387304a296",
+    ".github/workflows/performance.yml": "0c1a31d534ab053e594aadb2e49c0a41685a892567aed09283d29e4c0954a27d",
+    ".github/workflows/release.yml": "b619f8bed540af24a9d55c3d6bcd98416b4598d7249c555ef8432af6b48a44c3",
+    ".github/workflows/verus.yml": "c11e02302f3c401e0214c233f39234dd27bedea53426ff89a3e1e3502c6a73fc",
+    ".github/dependabot.yml": "5e54c7e473646e7b15345ac8dc7749922495be1cac57135cdf3cde5e4d20911f",
+    ".github/agents/verus-proof-worker.agent.md": "497a0093b3807d5af39dafb73971c20bdf3f58d76998caa9efc7b7b3b3f7c3ba",
+    ".github/agents/specification-auditor.agent.md": "3f8622854c854a3fa69a3e692ee14daa146b3d20110923ff946019b51a7884ef"
+  },
+  "configured_proof_agent_model": "gpt-6.1-sol",
+  "source_revision": "14aeac451f6491aa3e413fcbc60aafb11fa75b7c",
+  "note": "Checks configuration pins, explicit toolchains, read-only permissions, job budgets, bounded complete Verus sharding/fail-closed collection, fuzz producer serialization/isolation, update configuration and requested proof-agent profile. Not serving-model confirmation, upstream code approval, protected-branch enforcement, trigger execution or full readiness evidence."
+}

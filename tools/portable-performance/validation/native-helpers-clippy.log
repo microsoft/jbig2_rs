@@ -1,0 +1,9 @@
+    Checking memchr v2.8.3
+    Checking itoa v1.0.19
+    Checking jbig2-decoder v0.3.0-dev (/workspace/jbig2-portable-performance-20261125/target/portable-performance/private/matched)
+    Checking serde_core v1.0.229
+    Checking zmij v1.0.23
+    Checking serde_json v1.0.154
+    Checking serde v1.0.229
+    Checking jbig2-roadmap-perf-probe v0.0.0 (/workspace/jbig2-portable-performance-20261125/tools/portable-performance/probe)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.34s

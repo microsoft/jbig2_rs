@@ -6,6 +6,17 @@ on:
     branches: [main, release/0.1, release/0.2]
     tags: ["**"]
   workflow_dispatch:
+    inputs:
+      portable_diagnostic:
+        description: "Run the manual exact129/133 native diagnostic after the unchanged performance job"
+        required: false
+        type: boolean
+        default: false
+      candidate_sha:
+        description: "One immutable full candidate SHA; not a branch or expression"
+        required: false
+        type: string
+        default: "d66db50bca76c8650b29346592151d81427f8323"
 
 permissions:
   contents: read
@@ -71,3 +82,60 @@ jobs:
             target/allocation-comparison/*.json
             target/allocation-comparison/*.log
             target/allocation-comparison/phases/*.json
+
+  portable-diagnostic:
+    if: github.event_name == 'workflow_dispatch' && inputs.portable_diagnostic
+    needs: performance
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Reserve artifact finalization within the unchanged20min diagnostic cap
+        run: echo "PORTABLE_DEADLINE=$(( $(date +%s) + 1140 ))" >> "$GITHUB_ENV"
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
+        with:
+          toolchain: 1.98.1
+      - name: Prepare isolated extraction dependencies
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p target/portable-performance/results
+          python -m venv target/portable-performance/venv
+          target/portable-performance/venv/bin/python -m pip install -r tools/pdfium-qualification/requirements.txt \
+            2>&1 | tee target/portable-performance/results/dependencies.log
+      - name: Test diagnostic fail-closed controls without timing
+        run: target/portable-performance/venv/bin/python -B -m unittest discover -s tools/portable-performance -p 'test_*.py' -v
+      - name: Fetch exact inputs, materialize hash-verified BASE goldens, build and validate both revisions
+        env:
+          CANDIDATE_SHA: ${{ inputs.candidate_sha }}
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p target/portable-performance/results
+          remaining=$(( PORTABLE_DEADLINE - $(date +%s) ))
+          if (( remaining <= 0 )); then echo "Diagnostic setup budget exhausted; denominator unchanged"; exit 1; fi
+          timeout --signal=INT --kill-after=15s "$remaining" \
+            target/portable-performance/venv/bin/python -B tools/portable-performance/diagnostic.py setup \
+            --candidate "$CANDIDATE_SHA" 2>&1 | tee target/portable-performance/results/setup.log
+      - name: Measure fixed baseline calibration then complete nine-round129/133 confirmation
+        shell: bash
+        run: |
+          set -o pipefail
+          remaining=$(( PORTABLE_DEADLINE - $(date +%s) ))
+          if (( remaining <= 0 )); then echo "Diagnostic timing budget exhausted by setup; denominator unchanged"; exit 1; fi
+          timeout --signal=INT --kill-after=15s "$remaining" \
+            target/portable-performance/venv/bin/python -B tools/portable-performance/diagnostic.py measure \
+            --authorize-latency 2>&1 | tee target/portable-performance/results/latency.log
+      - name: Preserve incomplete records without lowering denominators
+        if: always()
+        run: python -B tools/portable-performance/diagnostic.py stage-partial
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: portable-exact129-${{ github.run_id }}-${{ github.run_attempt }}
+          path: target/portable-performance/results/

@@ -1,0 +1,7 @@
+Previous HEAD position was d66db50 perf(huffman): prepare immutable descriptors for all standard tables
+HEAD is now at 14aeac4 Merge pull request #243: exact Huffman field contracts and final performance dispositions
+     Removed 23 files, 23.4MiB total
+Previous HEAD position was 14aeac4 Merge pull request #243: exact Huffman field contracts and final performance dispositions
+HEAD is now at d66db50 perf(huffman): prepare immutable descriptors for all standard tables
+     Removed 31 files, 31.6MiB total
+Prepared all129 inputs/133 configurations; both492 API checks pass. No latency executed.

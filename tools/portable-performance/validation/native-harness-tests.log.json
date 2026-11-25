@@ -1,0 +1,6 @@
+{
+  "encoding": "lossless UTF-8 envelope; retains the original log including final blank lines",
+  "sha256": "c94bacc6cde2e9d2e5cebd1ee08e0756c3b6944ea68bd6588a4b6a16b2551fb1",
+  "source_path": "target/portable-performance/native-harness-qualified.log",
+  "text": "   Compiling proc-macro2 v1.0.107\n   Compiling unicode-ident v1.0.27\n   Compiling quote v1.0.47\n   Compiling serde_core v1.0.229\n   Compiling zmij v1.0.23\n   Compiling serde v1.0.229\n   Compiling serde_json v1.0.154\n   Compiling itoa v1.0.19\n   Compiling memchr v2.8.3\n   Compiling jbig2-decoder v0.3.0-dev (/workspace/jbig2-portable-performance-20261125/target/portable-performance/private/matched)\n   Compiling syn v3.0.10\n   Compiling serde_derive v1.0.229\n   Compiling jbig2-roadmap-perf-probe v0.0.0 (/workspace/jbig2-portable-performance-20261125/tools/portable-performance/probe)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.36s\n     Running unittests src/main.rs (target/portable-performance/private/test-target/debug/deps/jbig2_roadmap_perf_probe-02e715d2a4b06001)\n\nrunning 2 tests\ntest tests::output_gate_rejects_one_wrong_pixel_and_wrong_dimensions ... ok\ntest tests::output_gate_rejects_silently_dropped_pages ... ok\n\ntest result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n"
+}

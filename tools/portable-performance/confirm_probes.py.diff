@@ -1,0 +1,16 @@
+--- original/confirm_probes.py
++++ confirm_probes.py
+@@ -45 +45 @@
+-    if output.exists():
++    if output.exists() or output.with_suffix(".sides.jsonl").exists():
+@@ -78 +78 @@
+-        "cpu_affinity": 2, "shared_host": True,
++        "cpu_affinity": int(os.environ["PERF_DIAGNOSTIC_CPU"]), "shared_host": True,
+@@ -112 +112 @@
+-                        ["taskset", "-c", "2", str(ROOT / "binaries" / name),
++                        ["taskset", "-c", os.environ["PERF_DIAGNOSTIC_CPU"], str(ROOT / "binaries" / name),
+@@ -126,0 +127,4 @@
++                    with output.with_suffix(".sides.jsonl").open("a") as journal:
++                        journal.write(json.dumps({"comparison": comparison, "id": case["id"],
++                            "mode": mode, "round": round_index, "order": order, "side": side,
++                            "measurement": row}, separators=(",", ":")) + "\n")
