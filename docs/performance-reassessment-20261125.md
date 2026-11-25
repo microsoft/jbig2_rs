@@ -152,7 +152,8 @@ Important limits:
   separate embedded API requests. The existing standalone `Decoder.decode`
   already shares its resources. This is **not** an existing standalone-API
   improvement, an observed production PDF request trace, or full-PDF/C++ gain.
-- The experiment allows **65,536 extra bytes** for the owner and copies.
+- The experiment allows **65,536 extra bytes** for retained document storage
+  and working copies.
   Separate capacity checks report 22,164 resident bytes / 23,024 peak owner
   plus copy bytes; these are neither RSS nor a same-total-memory-budget claim.
 - Warm repetition is diagnostic, not measured production repaint frequency
