@@ -86,7 +86,7 @@ jobs:
   portable-diagnostic:
     if: github.event_name == 'workflow_dispatch' && inputs.portable_diagnostic
     needs: performance
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -122,6 +122,8 @@ jobs:
           timeout --signal=INT --kill-after=15s "$remaining" \
             target/portable-performance/venv/bin/python -B tools/portable-performance/diagnostic.py setup \
             --candidate "$CANDIDATE_SHA" 2>&1 | tee target/portable-performance/results/setup.log
+      - name: Record actual native loop instructions and ELF sizes outside timing
+        run: target/portable-performance/venv/bin/python -B tools/portable-performance/inspect_native.py
       - name: Measure fixed baseline calibration then complete nine-round129/133 confirmation
         shell: bash
         run: |

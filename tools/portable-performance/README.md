@@ -94,7 +94,7 @@ spacing claimed identical. Sampling inside the native harness is unchanged.
 
 The existing `performance.yml` performance job, permissions, steps,20-minute
 cap,1050 guard and proof/required-CI roles remain unchanged. The added job is
-manual-only, `needs: performance`, on fresh `ubuntu-24.04` hosted x86, with its
+manual-only, `needs: performance`, on fresh `ubuntu-24.04-arm` hosted Arm, with its
 own unchanged **20-minute cap**. It accepts exactly one immutable full
 `candidate_sha` (default `d66db50bca76c8650b29346592151d81427f8323`).
 Other published, full candidate SHAs use the same path; no d66 product edit is
@@ -150,6 +150,22 @@ metadata and timing JSON/JSONL. All corpus/raw pixel files, binaries and
 toolchains remain in ignored disposable directories and are **never uploaded
 or committed**. A setup rerun refuses to overwrite a completed setup; preserve
 it and use a fresh disposable checkout.
+
+## Native Arm adaptation
+
+This branch changes only the extra manual job to `ubuntu-24.04-arm` and adds
+read-only ELF/disassembly collection after setup, before calibration/timing.
+The original performance job still runs unchanged. The native harness,
+inputs, candidate selection, nine rounds, all133 configurations, sampling,
+calibration and20-minute budget remain unchanged from `b19fae9`.
+Actual CPU identity is recorded, not inferred from the runner label.
+
+`inspect_native.py` records exact binary-bound section sizes and selected
+first-party halftone loops. Missing separate symbols are explicit, not treated
+as evidence of vectorization. Inspect actual shifts/masks/ORs when assessing
+vector arithmetic; vector copies or function names alone are insufficient.
+These observations are not hardware instruction counts or a latency waiver.
+Only text/metadata is uploaded, never executable binaries or corpus pixels.
 
 This is **not Native_N2/LLVM24/PDFium qualification**. Actual host/compiler
 identities and all earlier shared-host evidence remain necessary context.
