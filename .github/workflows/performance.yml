@@ -48,6 +48,30 @@ jobs:
           --base-ref "$BASE_REF"
           --measure-phases
           --output-dir target/allocation-comparison
+      - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
+        if: github.event_name == 'workflow_dispatch'
+        with:
+          toolchain: 1.98.1
+      - name: Independently measure the actual public prepared-global API
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          RUSTFLAGS: -C target-cpu=native -C embed-bitcode=yes
+          CARGO_INCREMENTAL: "0"
+          CARGO_PROFILE_RELEASE_LTO: thin
+          CARGO_PROFILE_RELEASE_CODEGEN_UNITS: "1"
+          CARGO_PROFILE_RELEASE_DEBUG: "1"
+          CARGO_TARGET_DIR: target/prepared-native-matched
+        run: |
+          python -m pip install -r tools/pdfium-qualification/requirements.txt
+          mkdir -p target/prepared-public
+          python -B tools/prepared_public_replication.py prepare \
+            --fixtures "$RUNNER_TEMP/prepared-global-fixtures"
+          cargo +1.98.1 test --release --locked --lib --no-run --message-format=json \
+            > target/prepared-public/build.jsons
+          python -B tools/prepared_public_replication.py measure \
+            --fixtures "$RUNNER_TEMP/prepared-global-fixtures" \
+            --build-json target/prepared-public/build.jsons \
+            --output target/prepared-public/report.json
       - name: Summarize deterministic quota gate and informational timings
         if: always()
         shell: bash
@@ -71,3 +95,4 @@ jobs:
             target/allocation-comparison/*.json
             target/allocation-comparison/*.log
             target/allocation-comparison/phases/*.json
+            target/prepared-public/
