@@ -485,19 +485,20 @@ pub(super) fn try_decode(
     decoder: &mut ArithmeticDecoder<'_>,
     contexts: &mut Vec<ArithmeticContext>,
 ) -> Result<bool, GenericRegionError> {
+    if !fits_managed_memory(width, rows, context_bytes, bitmap_bytes, limits)? {
+        return Ok(false);
+    }
     if super::generic_packed::try_decode(
         bitmap,
         rows,
         GenericTemplate::Template0,
         super::GenericContextDescriptor::NominalTemplate0,
         typical_prediction,
+        true,
         decoder,
         contexts,
     )? {
         return Ok(true);
-    }
-    if !fits_managed_memory(width, rows, context_bytes, bitmap_bytes, limits)? {
-        return Ok(false);
     }
     let base_managed = context_bytes
         .checked_add(bitmap_bytes)

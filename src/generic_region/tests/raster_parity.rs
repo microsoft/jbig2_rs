@@ -4,6 +4,58 @@
 use super::*;
 
 #[test]
+fn direct_packed_production_route_keeps_ring_error_commit_boundaries_and_dirty_fallback() {
+    let limits = Limits::default();
+    let mut random = 0x746e_33a0_c6d4_8b57;
+    for width in [1, 7, 8, 9, 31, 32, 33, 129, 3111, 3562] {
+        for prediction in [false, true] {
+            for prefix in [2, 3, 7, usize::MAX] {
+                for dirty in [false, true] {
+                    let mut coded = arithmetic_bytes(&mut random);
+                    coded.truncate(prefix);
+                    let mut decoder = ArithmeticDecoder::new(&coded).unwrap();
+                    let mut oracle_decoder = ArithmeticDecoder::new(&coded).unwrap();
+                    let mut contexts = vec![
+                        ArithmeticContext::new();
+                        generic_context_count(GenericTemplate::Template0)
+                    ];
+                    let mut oracle_contexts = contexts.clone();
+                    let mut actual = Bitmap::filled(width, 5, dirty, &limits).unwrap();
+                    let mut expected = Bitmap::filled(width, 5, dirty, &limits).unwrap();
+                    let mut ring = GenericRowRing::try_new(width, 4, u64::MAX).unwrap();
+                    let result = crate::generic_region::generic_row_ring::try_decode(
+                        &mut actual,
+                        width,
+                        4,
+                        131_072,
+                        bitmap_storage_bytes(width, 5).unwrap(),
+                        &limits,
+                        prediction,
+                        &mut decoder,
+                        &mut contexts,
+                    );
+                    let reference = decode_nominal_template0_row_ring(
+                        &mut ring,
+                        &mut expected,
+                        4,
+                        prediction,
+                        &mut oracle_decoder,
+                        &mut oracle_contexts,
+                    );
+                    assert_eq!(
+                        result.as_ref().err().map(|error| format!("{error:?}")),
+                        reference.as_ref().err().map(|error| format!("{error:?}")),
+                    );
+                    assert_eq!(actual, expected);
+                    assert_eq!(contexts, oracle_contexts);
+                    assert_decoder_state_eq(&decoder, &oracle_decoder);
+                }
+            }
+        }
+    }
+}
+
+#[test]
 fn direct_packed_nominal_rows_preserve_tails_banks_and_partial_failures() {
     let limits = Limits::default();
     let mut random = 0xc471_63aa_58b0_2d19;

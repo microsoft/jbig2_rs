@@ -649,6 +649,7 @@ pub(super) fn decode_generic_with(
             template,
             descriptor,
             typical_prediction,
+            false,
             decoder,
             contexts,
         )?

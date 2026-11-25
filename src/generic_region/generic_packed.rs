@@ -44,6 +44,60 @@ fn store_bits(bitmap: &mut Bitmap, index: usize, bits: u8) -> Result<(), Generic
     Ok(())
 }
 
+#[cold]
+#[inline(never)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    requires
+        crate::spec::bitmap::storage_valid(old(bitmap)),
+        row < old(bitmap).height,
+        committed_width <= old(bitmap).width,
+    ensures
+        crate::spec::bitmap::storage_valid(final(bitmap)),
+        final(bitmap).width == old(bitmap).width,
+        final(bitmap).height == old(bitmap).height,
+        final(bitmap).stride == old(bitmap).stride,
+))]
+fn discard_row(
+    bitmap: &mut Bitmap,
+    row: u32,
+    committed_width: u32,
+) -> Result<(), GenericRegionError> {
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        crate::views::bitmap_fields(bitmap);
+    }
+    let mut column = 0_u32;
+    #[cfg_attr(verus_keep_ghost, verus_spec(
+        invariant
+            column <= committed_width <= bitmap.width,
+            row < bitmap.height,
+            bitmap.width == old(bitmap).width,
+            bitmap.height == old(bitmap).height,
+            bitmap.stride == old(bitmap).stride,
+            bitmap.data@.len() == old(bitmap).data@.len(),
+            crate::spec::bitmap::storage_valid(bitmap),
+        decreases committed_width - column,
+    ))]
+    while column < committed_width {
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            crate::views::bitmap_fields(bitmap);
+            reveal(crate::spec::bitmap::coordinates_in_bounds);
+        }
+        bitmap.set_pixel(column, row, false)?;
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            crate::views::bitmap_fields(bitmap);
+        }
+        column += 1;
+    }
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        crate::views::bitmap_fields(bitmap);
+    }
+    Ok(())
+}
+
 #[allow(clippy::too_many_arguments, clippy::too_many_lines, clippy::ptr_arg)]
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires
@@ -65,6 +119,7 @@ pub(super) fn try_decode(
     template: GenericTemplate,
     descriptor: GenericContextDescriptor,
     typical_prediction: bool,
+    rollback_row_on_error: bool,
     decoder: &mut ArithmeticDecoder<'_>,
     contexts: &mut Vec<ArithmeticContext>,
 ) -> Result<bool, GenericRegionError> {
@@ -79,6 +134,9 @@ pub(super) fn try_decode(
             | GenericContextDescriptor::NominalTemplate2
             | GenericContextDescriptor::NominalTemplate3
     ) {
+        return Ok(false);
+    }
+    if rollback_row_on_error && bitmap.data.iter().any(|byte| *byte != 0) {
         return Ok(false);
     }
     let width = bitmap.width;
@@ -173,7 +231,9 @@ pub(super) fn try_decode(
                 let context = row_context.context_and_advance(bitmap, x + offset, y, history);
                 let signal = decode_probability_signal(decoder, contexts, context);
                 if signal > 1 {
-                    if bits != 0 {
+                    if rollback_row_on_error {
+                        discard_row(bitmap, y, x)?;
+                    } else if bits != 0 {
                         store_bits(bitmap, index, bits)?;
                     }
                     return Err(probability_signal_error(
