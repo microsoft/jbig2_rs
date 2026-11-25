@@ -1,7 +1,7 @@
 # Releasing jbig2-decoder
 
-The 0.3.0 candidate is prepared for `release/0.3`. After that branch is cut,
-`main` advances to unpublished `0.4.0-dev` with Cargo publication disabled.
+The 0.3.0 candidate is maintained on `release/0.3`. `main` develops unpublished
+`0.4.0-dev` with Cargo publication disabled.
 The 0.2.x and 0.1.x maintenance lines remain on `release/0.2` and `release/0.1`.
 Their version metadata and approval scopes are independent. Current CI checks actual proof/test evidence under
 `--require-current-scope`, selecting either the unpublished development scope

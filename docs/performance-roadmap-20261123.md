@@ -1,6 +1,19 @@
 # Performance roadmap evaluation: #225-#240
 
-## Reassessment status (2026-11-25)
+## Final 0.3 release disposition
+
+All sixteen assessments are complete. Only #225/#226 were retained through
+merged #241. The tested #227-#240 proposals are not adopted; measured target
+gains are not denied by that decision. The [complete hosted follow-up](https://github.com/microsoft/jbig2_rs/blob/20abc4dfcee35f9db4e51317a475d89a1bfba48e/docs/performance-hosted-followup-20261125.md)
+preserves subsequent target/control results and raw samples.
+
+The [canonical #238 document assessment](https://github.com/microsoft/jbig2_rs/tree/e0f2031ac6c34a35faade027d5d939367fe1c36d/tools/pdfium-qualification/runs/document-prepared-20261125)
+resolved the final execution prerequisite: 143 PDFs produced no successful
+prepared-resource reuse or material document-level gain. The opt-in component
+remains experimental and unmerged, not an API shipped by 0.3. Calibration
+limitations and the positive controlled-sequence results remain explicit.
+
+## Historical reassessment status (earlier on 2026-11-25)
 
 The initial blanket closure was too broad. Seven assessments were reopened
 to finish implementation and measurement rather than infer value from counts:

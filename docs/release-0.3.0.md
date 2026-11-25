@@ -61,6 +61,9 @@ prototypes. In particular #238's opt-in prepared-global implementation remains
 experimental and unmerged: its controlled repeated-request gains did not
 produce useful reuse or material document-level gain in the actual PDFium
 assessment. No process-global or document cache is added by this release.
+The [canonical document assessment](https://github.com/microsoft/jbig2_rs/tree/e0f2031ac6c34a35faade027d5d939367fe1c36d/tools/pdfium-qualification/runs/document-prepared-20261125)
+traced 143 PDFs with zero productive prepared-resource reuses. Its calibration
+limitations remain explicit; it is not a blanket performance qualification.
 
 ## Compatibility, validation and publication boundary
 

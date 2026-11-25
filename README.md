@@ -9,6 +9,9 @@ Existing bi-level APIs do not decode colour. Version 0.3 additionally
 offers a limited, explicit [generic-region RGB8 profile](docs/generic-colour-0.3.md).
 Encoding remains outside the crate's scope.
 
+`main` is the unpublished `0.4.0-dev` development line. The 0.3.0 candidate is
+maintained separately on `release/0.3`; preparation does not imply publication.
+
 ## Decode a document
 
 The Cargo package is `jbig2-decoder`; the Rust import is `jbig2_decoder`.
