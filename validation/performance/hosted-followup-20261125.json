@@ -1,0 +1,2570 @@
+{
+  "scope": "Four complete hosted native diagnostics; additional evidence, not adopted runtime, originalLLVM24/PDFium renewal or universal gain. Every old shared-host result remains preserved.",
+  "baseline": "14aeac451f6491aa3e413fcbc60aafb11fa75b7c",
+  "new_confirmation_pairs": 4788,
+  "new_configuration_summaries": 532,
+  "new_calibration_pairs": 288,
+  "runs": [
+    {
+      "run": 45627390231,
+      "trial": "descriptors-x86",
+      "url": "https://github.com/microsoft/jbig2_rs/actions/runs/45627390231",
+      "candidate": "d66db50bca76c8650b29346592151d81427f8323",
+      "baseline": "14aeac451f6491aa3e413fcbc60aafb11fa75b7c",
+      "configuration_count": 133,
+      "confirmation_pairs": 1197,
+      "calibration_pairs": 72,
+      "all_eight_calibration_intervals_inside_5pct": true,
+      "maximum_case_median_ratio": 1.0179910044977512,
+      "adverse_over_5pct": [],
+      "host": {
+        "platform": "Linux-7.0.0-1020-azure-x86_64-with-glibc2.39",
+        "machine": "x86_64",
+        "available_cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "selected_cpu": 0,
+        "lscpu": "Architecture:                            x86_64\nCPU op-mode(s):                          32-bit, 64-bit\nAddress sizes:                           48 bits physical, 48 bits virtual\nByte Order:                              Little Endian\nCPU(s):                                  4\nOn-line CPU(s) list:                     0-3\nVendor ID:                               AuthenticAMD\nModel name:                              AMD EPYC 9V45 96-Core Processor\nCPU family:                              26\nModel:                                   2\nThread(s) per core:                      2\nCore(s) per socket:                      2\nSocket(s):                               1\nStepping:                                1\nBogoMIPS:                                5192.24\nFlags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology tsc_reliable nonstop_tsc cpuid extd_apicid aperfmperf tsc_known_freq pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm cmp_legacy svm cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw topoext vmmcall fsgsbase bmi1 avx2 smep bmi2 erms invpcid avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves user_shstk avx_vnni avx512_bf16 clzero xsaveerptr rdpru arat npt nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold v_vmsave_vmload avx512vbmi umip avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid fsrm avx512_vp2intersect\nVirtualization:                          AMD-V\nHypervisor vendor:                       Microsoft\nVirtualization type:                     full\nL1d cache:                               96 KiB (2 instances)\nL1i cache:                               64 KiB (2 instances)\nL2 cache:                                2 MiB (2 instances)\nL3 cache:                                32 MiB (1 instance)\nNUMA node(s):                            1\nNUMA node0 CPU(s):                       0-3\nVulnerability Gather data sampling:      Not affected\nVulnerability Ghostwrite:                Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Old microcode:             Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Vulnerable: Safe RET, no microcode\nVulnerability Spec store bypass:         Vulnerable\nVulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; Retpolines; STIBP disabled; RSB filling; PBRSB-eIBRS Not affected; BHI Not affected\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n",
+        "uname": "Linux runnervm0j63q 7.0.0-1020-azure #21~24.04.2-Ubuntu SMP PREEMPT Tue Nov 10 01:36:36 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux\n",
+        "runner": {
+          "RUNNER_NAME": "GitHub Actions 1080173250",
+          "RUNNER_OS": "Linux",
+          "RUNNER_ARCH": "X64",
+          "ImageOS": "ubuntu24",
+          "ImageVersion": "20261122.23.1",
+          "GITHUB_RUN_ID": "45627390231",
+          "GITHUB_RUN_ATTEMPT": "1",
+          "GITHUB_SHA": "b19fae9f878ee542926679c90136ccd7e6205b0e"
+        }
+      },
+      "source_reports": {
+        "confirmation.json": "2aeb204cae289638a6c1a7cc655f3c9f141a3e39f14350c1e8f37fe8b4c18b2c",
+        "calibration.json": "e5abbdfa6249243a24a8b0599ba8acf27a1e335843f42b67875c35efa9a14663",
+        "setup.json": "b6c43d7fd5aa81d5a8d77590ab52c3d1042582383a2c46bf3b2b22ffa98ff087",
+        "completion.json": "2568a4992076651972ca42b4557fc75b4b4b6352df2002211881de88d42ddede"
+      },
+      "builds": {
+        "baseline": {
+          "source_revision": "14aeac451f6491aa3e413fcbc60aafb11fa75b7c",
+          "source_tree": "bc770069b3ffdb3bb5652b84069d9ea1ac34921f",
+          "runtime_sha256": "286798351f58ced5810692fd2f633512af5ae184da32ebefa95926c2326166e9",
+          "binary_sha256": "11444ed1cc434323037762a9b4529de158bb5eebfc70d9e375aa4834bb1ece99",
+          "cargo_lock_sha256": "c8a0896762a45db2341e846378b2b377237e349b09e3f12f71c585c5991b4985",
+          "harness_sha256": {
+            "tools/portable-performance/probe/src/main.rs": "162db817775ab242b8eaee986852ee532e0e0d42674243d92fc0104232fc193f",
+            "benchmarks/cases.rs": "4e24c58260ecca88b1f953b985119abc833ce8f40f020705f0b0993f78d34af6",
+            "tools/portable-performance/probe/Cargo.toml": "523481f917216494abdefce220ff9b5886fefe8d43362e70732cf2807aa334eb",
+            "tools/portable-performance/probe/Cargo.lock": "c8a0896762a45db2341e846378b2b377237e349b09e3f12f71c585c5991b4985",
+            "tools/portable-performance/probe/src/api.rs": "8cd06c2410be50ac6abfb9bfbbe72afa7fd188c0412c4149d2e52dc03106f1f5",
+            "tools/portable-performance/probe/src/validate.rs": "8fb83de2c41a8926a4349cc603657c22d41fd77f044134b7c0a067b550a19ecd",
+            "tools/portable-performance/probe/src/materialize.rs": "1ab35e97f403118c3a5a85210f4876919e417c16fdf2e5645ac8d2dca548e095"
+          },
+          "same_build_directory": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/matched",
+          "binaries": {
+            "jbig2-roadmap-perf-probe": {
+              "path": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/binaries/baseline",
+              "sha256": "11444ed1cc434323037762a9b4529de158bb5eebfc70d9e375aa4834bb1ece99"
+            },
+            "jbig2-api-validation": {
+              "path": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/binaries/baseline-jbig2-api-validation",
+              "sha256": "d9ce2dee829f673329161c233e25fe6886ebd37df10d8bcbfc839cf397bed3b1"
+            },
+            "jbig2-golden-materializer": {
+              "path": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/binaries/baseline-jbig2-golden-materializer",
+              "sha256": "292970bd0ba1c3466319105afc5c78c1936315ab56ce57035934fe96af66a08a"
+            }
+          },
+          "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: x86_64-unknown-linux-gnu\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
+          "rustflags": "-C target-cpu=native -C embed-bitcode=yes",
+          "profile": "[package]\nname = \"jbig2-roadmap-perf-probe\"\nversion = \"0.0.0\"\nedition = \"2021\"\npublish = false\n\n[[bin]]\nname = \"jbig2-roadmap-perf-probe\"\npath = \"src/main.rs\"\n\n[[bin]]\nname = \"jbig2-golden-materializer\"\npath = \"src/materialize.rs\"\n\n[[bin]]\nname = \"jbig2-api-validation\"\npath = \"src/validate.rs\"\n\n[dependencies]\njbig2-decoder = { path = \"../../../target/portable-performance/private/matched\" }\nserde = { version = \"1\", features = [\"derive\"] }\nserde_json = \"1\"\nallocation-counter = { version = \"=0.8.1\", optional = true }\n\n[features]\nallocations = [\"dep:allocation-counter\"]\n\n[workspace]\n\n[profile.release]\nopt-level = 3\nlto = \"thin\"\ncodegen-units = 1\ndebug = 1\n",
+          "instrumented_allocations": false,
+          "build_log": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/results/baseline-build.log",
+          "qualification": "Hosted/local native diagnostic; not N2/LLVM24/PDFium qualification."
+        },
+        "candidate": {
+          "source_revision": "d66db50bca76c8650b29346592151d81427f8323",
+          "source_tree": "7209658078292c8eb57c5943817b51232f278c6d",
+          "runtime_sha256": "ce83105fddf9412fc9bdb78c4d988712cd0e0a41bd4afb27c6bb50c1d47274b6",
+          "binary_sha256": "8801ef8c8f9078e5e78aaa48b87de6ac88e50f002d8fe2a9fd6c66793f7b2062",
+          "cargo_lock_sha256": "c8a0896762a45db2341e846378b2b377237e349b09e3f12f71c585c5991b4985",
+          "harness_sha256": {
+            "tools/portable-performance/probe/src/main.rs": "162db817775ab242b8eaee986852ee532e0e0d42674243d92fc0104232fc193f",
+            "benchmarks/cases.rs": "4e24c58260ecca88b1f953b985119abc833ce8f40f020705f0b0993f78d34af6",
+            "tools/portable-performance/probe/Cargo.toml": "523481f917216494abdefce220ff9b5886fefe8d43362e70732cf2807aa334eb",
+            "tools/portable-performance/probe/Cargo.lock": "c8a0896762a45db2341e846378b2b377237e349b09e3f12f71c585c5991b4985",
+            "tools/portable-performance/probe/src/api.rs": "8cd06c2410be50ac6abfb9bfbbe72afa7fd188c0412c4149d2e52dc03106f1f5",
+            "tools/portable-performance/probe/src/validate.rs": "8fb83de2c41a8926a4349cc603657c22d41fd77f044134b7c0a067b550a19ecd",
+            "tools/portable-performance/probe/src/materialize.rs": "1ab35e97f403118c3a5a85210f4876919e417c16fdf2e5645ac8d2dca548e095"
+          },
+          "same_build_directory": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/matched",
+          "binaries": {
+            "jbig2-roadmap-perf-probe": {
+              "path": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/binaries/candidate",
+              "sha256": "8801ef8c8f9078e5e78aaa48b87de6ac88e50f002d8fe2a9fd6c66793f7b2062"
+            },
+            "jbig2-api-validation": {
+              "path": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/binaries/candidate-jbig2-api-validation",
+              "sha256": "3dac7acb09379231a852205eff221242e97868bae21e6becf680140726e0fad6"
+            }
+          },
+          "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: x86_64-unknown-linux-gnu\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
+          "rustflags": "-C target-cpu=native -C embed-bitcode=yes",
+          "profile": "[package]\nname = \"jbig2-roadmap-perf-probe\"\nversion = \"0.0.0\"\nedition = \"2021\"\npublish = false\n\n[[bin]]\nname = \"jbig2-roadmap-perf-probe\"\npath = \"src/main.rs\"\n\n[[bin]]\nname = \"jbig2-golden-materializer\"\npath = \"src/materialize.rs\"\n\n[[bin]]\nname = \"jbig2-api-validation\"\npath = \"src/validate.rs\"\n\n[dependencies]\njbig2-decoder = { path = \"../../../target/portable-performance/private/matched\" }\nserde = { version = \"1\", features = [\"derive\"] }\nserde_json = \"1\"\nallocation-counter = { version = \"=0.8.1\", optional = true }\n\n[features]\nallocations = [\"dep:allocation-counter\"]\n\n[workspace]\n\n[profile.release]\nopt-level = 3\nlto = \"thin\"\ncodegen-units = 1\ndebug = 1\n",
+          "instrumented_allocations": false,
+          "build_log": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/results/candidate-build.log",
+          "qualification": "Hosted/local native diagnostic; not N2/LLVM24/PDFium qualification."
+        }
+      }
+    },
+    {
+      "run": 45635188596,
+      "trial": "descriptors-n2",
+      "url": "https://github.com/microsoft/jbig2_rs/actions/runs/45635188596",
+      "candidate": "d66db50bca76c8650b29346592151d81427f8323",
+      "baseline": "14aeac451f6491aa3e413fcbc60aafb11fa75b7c",
+      "configuration_count": 133,
+      "confirmation_pairs": 1197,
+      "calibration_pairs": 72,
+      "all_eight_calibration_intervals_inside_5pct": true,
+      "maximum_case_median_ratio": 1.324996582637865,
+      "adverse_over_5pct": [
+        {
+          "comparison": "candidate",
+          "id": "bitmap-composite-and-xnor-text",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1083834711936569,
+          "paired_bootstrap95": [
+            1.1059116635524142,
+            1.1112667528218847
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 221306,
+          "after_median_ns": 245148,
+          "secondary_process_cpu_ratio": 1.107729433655519,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            226551,
+            223293,
+            222448,
+            221572,
+            222059,
+            222731,
+            222844,
+            223304,
+            222522
+          ],
+          "p95_after_ns": [
+            246863,
+            247737,
+            248469,
+            245459,
+            252588,
+            245459,
+            249579,
+            246093,
+            247873
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-composite-or-xor-replace",
+          "mode": "fresh",
+          "paired_median_ratio": 1.0671524719156729,
+          "paired_bootstrap95": [
+            1.0631746736095016,
+            1.0688026036767266
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 806779,
+          "after_median_ns": 861163,
+          "secondary_process_cpu_ratio": 1.0679690256994974,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            809825,
+            814759,
+            809765,
+            805066,
+            813081,
+            806343,
+            806737,
+            809992,
+            809287
+          ],
+          "p95_after_ns": [
+            861552,
+            866048,
+            865943,
+            858217,
+            859367,
+            865159,
+            859774,
+            867029,
+            867816
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-composite-or-xor-replace-text",
+          "mode": "fresh",
+          "paired_median_ratio": 1.0850429810515725,
+          "paired_bootstrap95": [
+            1.0808571006733811,
+            1.0876852115886833
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 622299,
+          "after_median_ns": 675136,
+          "secondary_process_cpu_ratio": 1.0856688350264345,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            625158,
+            622293,
+            628639,
+            627044,
+            630954,
+            622904,
+            622550,
+            634573,
+            625225
+          ],
+          "p95_after_ns": [
+            675512,
+            675179,
+            679212,
+            689807,
+            677087,
+            679028,
+            676153,
+            679312,
+            678657
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1232200968115218,
+          "paired_bootstrap95": [
+            1.119308989435052,
+            1.1348119168120685
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 184248,
+          "after_median_ns": 206939,
+          "secondary_process_cpu_ratio": 1.1232326602354035,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            185637,
+            184675,
+            184984,
+            185024,
+            185065,
+            184779,
+            185124,
+            184757,
+            185467
+          ],
+          "p95_after_ns": [
+            208172,
+            207210,
+            207298,
+            208689,
+            208194,
+            208107,
+            210848,
+            207504,
+            215024
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-32bit-arithint",
+          "mode": "fresh",
+          "paired_median_ratio": 1.0544283268409147,
+          "paired_bootstrap95": [
+            1.0490354956393755,
+            1.0636385784567988
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 509312,
+          "after_median_ns": 537033,
+          "secondary_process_cpu_ratio": 1.0546521624743517,
+          "over_5pct_slower_pairs": 7,
+          "p95_before_ns": [
+            510849,
+            510734,
+            509906,
+            513295,
+            512539,
+            512250,
+            510086,
+            513565,
+            511830
+          ],
+          "p95_after_ns": [
+            539159,
+            536719,
+            546546,
+            542005,
+            537189,
+            545331,
+            538675,
+            543345,
+            546817
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-global",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1222923675953578,
+          "paired_bootstrap95": [
+            1.1205121128986002,
+            1.1250244029413679
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 184803,
+          "after_median_ns": 207454,
+          "secondary_process_cpu_ratio": 1.1213610594990382,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            185631,
+            185296,
+            188257,
+            185257,
+            185890,
+            187106,
+            184997,
+            185179,
+            185177
+          ],
+          "p95_after_ns": [
+            208199,
+            208223,
+            207648,
+            208155,
+            209446,
+            207993,
+            207925,
+            210508,
+            208823
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-manyrefs",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1116779827277798,
+          "paired_bootstrap95": [
+            1.1068270150183865,
+            1.1153024672438894
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 208981,
+          "after_median_ns": 232159,
+          "secondary_process_cpu_ratio": 1.1108081877208351,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            209868,
+            210314,
+            209020,
+            209321,
+            210239,
+            211275,
+            210233,
+            211044,
+            209595
+          ],
+          "p95_after_ns": [
+            233855,
+            232943,
+            235909,
+            235367,
+            233401,
+            232917,
+            232842,
+            234185,
+            233576
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-negative-sbdsoffset",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1301860616475505,
+          "paired_bootstrap95": [
+            1.1274039964753702,
+            1.135687774665847
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 175571,
+          "after_median_ns": 198319,
+          "secondary_process_cpu_ratio": 1.1294228526256591,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            176039,
+            175732,
+            175620,
+            176411,
+            176148,
+            175527,
+            176225,
+            176296,
+            175602
+          ],
+          "p95_after_ns": [
+            199103,
+            198514,
+            199155,
+            198995,
+            199905,
+            199056,
+            199079,
+            199127,
+            199971
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-symbolrefineone",
+          "mode": "fresh",
+          "paired_median_ratio": 1.103195801267588,
+          "paired_bootstrap95": [
+            1.1003312940793886,
+            1.105944352132408
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 245544,
+          "after_median_ns": 271153,
+          "secondary_process_cpu_ratio": 1.1017785072061324,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            246344,
+            247697,
+            247212,
+            246910,
+            246093,
+            245965,
+            246009,
+            248130,
+            246549
+          ],
+          "p95_after_ns": [
+            272457,
+            272633,
+            273188,
+            272434,
+            272023,
+            274101,
+            271198,
+            272074,
+            271414
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-symbolrefineone-customat",
+          "mode": "fresh",
+          "paired_median_ratio": 1.0975661525399745,
+          "paired_bootstrap95": [
+            1.0943944565918422,
+            1.0998448049032197
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 254412,
+          "after_median_ns": 279146,
+          "secondary_process_cpu_ratio": 1.0955643604187217,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            255475,
+            255743,
+            255257,
+            255438,
+            254888,
+            255638,
+            255626,
+            254659,
+            255502
+          ],
+          "p95_after_ns": [
+            280348,
+            279586,
+            280335,
+            281883,
+            281705,
+            282807,
+            280858,
+            279361,
+            279691
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-symbolrefineone-template1",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1068392714933692,
+          "paired_bootstrap95": [
+            1.1038274513194009,
+            1.1096214272439264
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 231369,
+          "after_median_ns": 256094,
+          "secondary_process_cpu_ratio": 1.1045219334129366,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            231641,
+            232604,
+            232197,
+            232945,
+            233386,
+            232419,
+            231871,
+            232600,
+            232960
+          ],
+          "p95_after_ns": [
+            256480,
+            256623,
+            258467,
+            257203,
+            259971,
+            256888,
+            257561,
+            256843,
+            257802
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-symbolrefineseveral",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1240962409624096,
+          "paired_bootstrap95": [
+            1.1217789214925478,
+            1.1259180425801076
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 199739,
+          "after_median_ns": 224274,
+          "secondary_process_cpu_ratio": 1.1203016133963286,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            200334,
+            200462,
+            200550,
+            201013,
+            200439,
+            200378,
+            200325,
+            199520,
+            199743
+          ],
+          "p95_after_ns": [
+            224987,
+            225773,
+            225029,
+            224886,
+            225531,
+            224787,
+            225342,
+            225198,
+            225475
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-symhuff-texthuff-runcodes32-34",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1541122321794943,
+          "paired_bootstrap95": [
+            1.149030085485051,
+            1.1569032157917072
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 6368892,
+          "after_median_ns": 7349702,
+          "secondary_process_cpu_ratio": 1.1518844280711424,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            6409987,
+            6409957,
+            6391016,
+            6371011,
+            6413982,
+            6409761,
+            6378796,
+            6385459,
+            6378201
+          ],
+          "p95_after_ns": [
+            7394833,
+            7350344,
+            7378251,
+            7389905,
+            7361717,
+            7371640,
+            7376500,
+            7364967,
+            7404196
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-textbottomleft",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1223095801750538,
+          "paired_bootstrap95": [
+            1.1213652165437473,
+            1.125608896121508
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 184172,
+          "after_median_ns": 206698,
+          "secondary_process_cpu_ratio": 1.1223573918848466,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            185642,
+            184058,
+            184682,
+            184547,
+            184585,
+            185057,
+            184702,
+            184792,
+            184730
+          ],
+          "p95_after_ns": [
+            207865,
+            207047,
+            207204,
+            207787,
+            208053,
+            208012,
+            208476,
+            207467,
+            207260
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-textbottomlefttranspose",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1318482025322176,
+          "paired_bootstrap95": [
+            1.1286712109736599,
+            1.135488763504451
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 176886,
+          "after_median_ns": 200378,
+          "secondary_process_cpu_ratio": 1.1310907179568273,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            177370,
+            178668,
+            178828,
+            177625,
+            177753,
+            176912,
+            177370,
+            177406,
+            177181
+          ],
+          "p95_after_ns": [
+            201495,
+            201836,
+            200820,
+            201539,
+            200827,
+            200998,
+            200311,
+            201215,
+            201491
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-textbottomright",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1204425882735802,
+          "paired_bootstrap95": [
+            1.1159468186546464,
+            1.124636027813994
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 184370,
+          "after_median_ns": 206585,
+          "secondary_process_cpu_ratio": 1.1197398447159679,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            184779,
+            184298,
+            184833,
+            185846,
+            184359,
+            185739,
+            185151,
+            184671,
+            187392
+          ],
+          "p95_after_ns": [
+            208463,
+            207046,
+            207348,
+            208484,
+            208182,
+            207709,
+            207063,
+            208507,
+            207939
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-textbottomrighttranspose",
+          "mode": "fresh",
+          "paired_median_ratio": 1.131842596257138,
+          "paired_bootstrap95": [
+            1.1304679724961548,
+            1.1331760098695007
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 176848,
+          "after_median_ns": 200189,
+          "secondary_process_cpu_ratio": 1.1315837909924966,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            177743,
+            177545,
+            177642,
+            177794,
+            177209,
+            177357,
+            177452,
+            177430,
+            177401
+          ],
+          "p95_after_ns": [
+            200547,
+            200938,
+            200998,
+            202263,
+            200860,
+            200882,
+            200679,
+            200889,
+            201904
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-textcomposite",
+          "mode": "fresh",
+          "paired_median_ratio": 1.0862224248988201,
+          "paired_bootstrap95": [
+            1.0845955057455172,
+            1.0887178687320964
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 263145,
+          "after_median_ns": 285953,
+          "secondary_process_cpu_ratio": 1.085292044523617,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            266566,
+            265624,
+            264400,
+            263771,
+            267653,
+            263743,
+            263696,
+            264116,
+            265572
+          ],
+          "p95_after_ns": [
+            288314,
+            286322,
+            286816,
+            287097,
+            286251,
+            287451,
+            287890,
+            287505,
+            287630
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-texthuff-runcodes32-34",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1529142291387555,
+          "paired_bootstrap95": [
+            1.148484474894989,
+            1.1569782210390371
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 6364992,
+          "after_median_ns": 7348271,
+          "secondary_process_cpu_ratio": 1.1515525537837972,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            6402286,
+            6413485,
+            6384366,
+            6405641,
+            6376200,
+            6385156,
+            6382696,
+            6390309,
+            6382207
+          ],
+          "p95_after_ns": [
+            7358061,
+            7360063,
+            7362346,
+            7353831,
+            7384756,
+            7367659,
+            7408619,
+            7431480,
+            7364048
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-texthuff-trailingsymbols",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1210128103840207,
+          "paired_bootstrap95": [
+            1.1154233469293129,
+            1.1239824959057934
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 413389,
+          "after_median_ns": 463007,
+          "secondary_process_cpu_ratio": 1.1218856787658673,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            413146,
+            415284,
+            418855,
+            415255,
+            417424,
+            415851,
+            413889,
+            416195,
+            412865
+          ],
+          "p95_after_ns": [
+            465674,
+            463910,
+            472355,
+            467684,
+            464201,
+            465618,
+            468489,
+            471029,
+            464350
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-textrefine",
+          "mode": "fresh",
+          "paired_median_ratio": 1.109917181390224,
+          "paired_bootstrap95": [
+            1.109189009786421,
+            1.111355673344713
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 222950,
+          "after_median_ns": 247410,
+          "secondary_process_cpu_ratio": 1.109380588204746,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            223655,
+            223791,
+            223256,
+            224002,
+            223497,
+            223214,
+            223370,
+            224127,
+            223755
+          ],
+          "p95_after_ns": [
+            247951,
+            249024,
+            248639,
+            248355,
+            248685,
+            249466,
+            248333,
+            249181,
+            248895
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-textrefine-customat",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1060310821729005,
+          "paired_bootstrap95": [
+            1.1047857986533205,
+            1.1104078883746633
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 231665,
+          "after_median_ns": 256280,
+          "secondary_process_cpu_ratio": 1.1060934651253882,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            232541,
+            232059,
+            231742,
+            232261,
+            232399,
+            232277,
+            232384,
+            232632,
+            232309
+          ],
+          "p95_after_ns": [
+            267678,
+            257799,
+            256616,
+            258070,
+            257138,
+            257346,
+            256795,
+            257087,
+            257918
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-textrefine-negative-delta-width",
+          "mode": "fresh",
+          "paired_median_ratio": 1.11228845792427,
+          "paired_bootstrap95": [
+            1.1111116084416892,
+            1.1141948345765293
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 223415,
+          "after_median_ns": 248705,
+          "secondary_process_cpu_ratio": 1.1119392378706539,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            226185,
+            223841,
+            226357,
+            224069,
+            226445,
+            224009,
+            224823,
+            224660,
+            224588
+          ],
+          "p95_after_ns": [
+            249630,
+            249253,
+            249473,
+            248943,
+            249778,
+            248629,
+            251050,
+            249596,
+            249630
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-texttopright",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1209995925573815,
+          "paired_bootstrap95": [
+            1.1180514548537561,
+            1.1227546858729607
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 184589,
+          "after_median_ns": 207018,
+          "secondary_process_cpu_ratio": 1.1208082693042136,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            185494,
+            185637,
+            186185,
+            185089,
+            185211,
+            185389,
+            185493,
+            184530,
+            185090
+          ],
+          "p95_after_ns": [
+            208444,
+            207333,
+            207587,
+            207918,
+            207972,
+            208485,
+            207601,
+            207844,
+            207376
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-texttoprighttranspose",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1330741677559544,
+          "paired_bootstrap95": [
+            1.1309196136390611,
+            1.134245491038616
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 176857,
+          "after_median_ns": 200280,
+          "secondary_process_cpu_ratio": 1.1324249743394892,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            177139,
+            177692,
+            177057,
+            177444,
+            177178,
+            178674,
+            177323,
+            177384,
+            177169
+          ],
+          "p95_after_ns": [
+            201051,
+            201283,
+            201135,
+            201312,
+            201069,
+            201098,
+            201084,
+            200880,
+            201729
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-symbol-texttranspose",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1300767454496061,
+          "paired_bootstrap95": [
+            1.1242795024775003,
+            1.132845046187285
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 176973,
+          "after_median_ns": 200142,
+          "secondary_process_cpu_ratio": 1.1300601133859582,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            177240,
+            178230,
+            178251,
+            176971,
+            176964,
+            178279,
+            177099,
+            177622,
+            178442
+          ],
+          "p95_after_ns": [
+            201048,
+            200548,
+            200873,
+            200891,
+            200618,
+            200831,
+            201344,
+            201273,
+            201007
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-template1-tpgdon",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1172840481101611,
+          "paired_bootstrap95": [
+            1.1089883452616767,
+            1.1193475404433666
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 949737,
+          "after_median_ns": 1060957,
+          "secondary_process_cpu_ratio": 1.116516278894713,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            951124,
+            950496,
+            960540,
+            1006621,
+            952496,
+            954198,
+            955336,
+            954903,
+            951352
+          ],
+          "p95_after_ns": [
+            1062955,
+            1066423,
+            1062744,
+            1069597,
+            1065520,
+            1065888,
+            1065296,
+            1070657,
+            1071048
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-template2-tpgdon",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1048963901380737,
+          "paired_bootstrap95": [
+            1.1024367634276206,
+            1.107470211404593
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 778318,
+          "after_median_ns": 859679,
+          "secondary_process_cpu_ratio": 1.104267260689838,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            780595,
+            785472,
+            781021,
+            779880,
+            780318,
+            781338,
+            781350,
+            780154,
+            780719
+          ],
+          "p95_after_ns": [
+            866861,
+            867749,
+            865101,
+            863220,
+            864466,
+            856991,
+            864489,
+            866558,
+            861917
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-template3-tpgdon",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1059850190572895,
+          "paired_bootstrap95": [
+            1.0988452961826332,
+            1.1142702241498836
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 678440,
+          "after_median_ns": 751550,
+          "secondary_process_cpu_ratio": 1.1039405003401253,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            679748,
+            680716,
+            685486,
+            677071,
+            677696,
+            682965,
+            676038,
+            685624,
+            681654
+          ],
+          "p95_after_ns": [
+            753102,
+            756597,
+            748102,
+            755483,
+            758941,
+            752943,
+            746860,
+            757870,
+            750650
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-tpgdon",
+          "mode": "fresh",
+          "paired_median_ratio": 1.324996582637865,
+          "paired_bootstrap95": [
+            1.3184182226765944,
+            1.327145259571494
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 825973,
+          "after_median_ns": 1093674,
+          "secondary_process_cpu_ratio": 1.322490255531288,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            827259,
+            825340,
+            833503,
+            828038,
+            831557,
+            829878,
+            827851,
+            826706,
+            831567
+          ],
+          "p95_after_ns": [
+            1101950,
+            1096148,
+            1095991,
+            1097499,
+            1098775,
+            1099113,
+            1096084,
+            1100255,
+            1097016
+          ]
+        }
+      ],
+      "host": {
+        "platform": "Linux-7.0.0-1020-azure-aarch64-with-glibc2.39",
+        "machine": "aarch64",
+        "available_cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "selected_cpu": 0,
+        "lscpu": "Architecture:                            aarch64\nCPU op-mode(s):                          32-bit, 64-bit\nByte Order:                              Little Endian\nCPU(s):                                  4\nOn-line CPU(s) list:                     0-3\nVendor ID:                               ARM\nModel name:                              Neoverse-N2\nModel:                                   0\nThread(s) per core:                      1\nCore(s) per socket:                      4\nSocket(s):                               1\nStepping:                                r0p0\nBogoMIPS:                                2000.00\nFlags:                                   fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm jscvt fcma lrcpc dcpop sha3 sm3 sm4 asimddp sha512 sve asimdfhm uscat ilrcpc flagm sb paca pacg dcpodp sve2 sveaes svebitperm svesha3 svesm4 flagm2 frint svei8mm svebf16 i8mm bf16\nL1d cache:                               256 KiB (4 instances)\nL1i cache:                               256 KiB (4 instances)\nL2 cache:                                4 MiB (4 instances)\nL3 cache:                                128 MiB (1 instance)\nNUMA node(s):                            1\nNUMA node0 CPU(s):                       0-3\nVulnerability Gather data sampling:      Not affected\nVulnerability Ghostwrite:                Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Old microcode:             Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; CSV2, BHB\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n",
+        "uname": "Linux runnervmu7lcj 7.0.0-1020-azure #21~24.04.2-Ubuntu SMP PREEMPT Tue Nov 10 01:19:17 UTC 2026 aarch64 aarch64 aarch64 GNU/Linux\n",
+        "runner": {
+          "RUNNER_NAME": "GitHub Actions 1080181189",
+          "RUNNER_OS": "Linux",
+          "RUNNER_ARCH": "ARM64",
+          "ImageOS": "ubuntu24-arm64",
+          "ImageVersion": "20261122.193.1",
+          "GITHUB_RUN_ID": "45635188596",
+          "GITHUB_RUN_ATTEMPT": "1",
+          "GITHUB_SHA": "44a3288739d4e770d23d8426c73e262f6e79e792"
+        }
+      },
+      "source_reports": {
+        "confirmation.json": "056315007ab8c4c258308a635cf2a6422c32c29043ee5d8906402365f4cc3044",
+        "calibration.json": "0e81591a090909a62234bf4dacac91948516872fad42720dd9e843eb781e7239",
+        "setup.json": "6b7aa3e9d8cb71e7c0e9c0f8308f015779d127ed07456c597c00c409fd370c9e",
+        "completion.json": "2edd51f7ccae2635ed60b43428b17ea3924125ce62f4e4c88274fe9c704ca75f"
+      },
+      "builds": {
+        "baseline": {
+          "source_revision": "14aeac451f6491aa3e413fcbc60aafb11fa75b7c",
+          "source_tree": "bc770069b3ffdb3bb5652b84069d9ea1ac34921f",
+          "runtime_sha256": "286798351f58ced5810692fd2f633512af5ae184da32ebefa95926c2326166e9",
+          "binary_sha256": "f79f897128a44b1fb1a0eceeeb8851202959bcd09066adda8e238d12d52c46de",
+          "cargo_lock_sha256": "c8a0896762a45db2341e846378b2b377237e349b09e3f12f71c585c5991b4985",
+          "harness_sha256": {
+            "tools/portable-performance/probe/src/main.rs": "162db817775ab242b8eaee986852ee532e0e0d42674243d92fc0104232fc193f",
+            "benchmarks/cases.rs": "4e24c58260ecca88b1f953b985119abc833ce8f40f020705f0b0993f78d34af6",
+            "tools/portable-performance/probe/Cargo.toml": "523481f917216494abdefce220ff9b5886fefe8d43362e70732cf2807aa334eb",
+            "tools/portable-performance/probe/Cargo.lock": "c8a0896762a45db2341e846378b2b377237e349b09e3f12f71c585c5991b4985",
+            "tools/portable-performance/probe/src/api.rs": "8cd06c2410be50ac6abfb9bfbbe72afa7fd188c0412c4149d2e52dc03106f1f5",
+            "tools/portable-performance/probe/src/validate.rs": "8fb83de2c41a8926a4349cc603657c22d41fd77f044134b7c0a067b550a19ecd",
+            "tools/portable-performance/probe/src/materialize.rs": "1ab35e97f403118c3a5a85210f4876919e417c16fdf2e5645ac8d2dca548e095"
+          },
+          "same_build_directory": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/matched",
+          "binaries": {
+            "jbig2-roadmap-perf-probe": {
+              "path": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/binaries/baseline",
+              "sha256": "f79f897128a44b1fb1a0eceeeb8851202959bcd09066adda8e238d12d52c46de"
+            },
+            "jbig2-api-validation": {
+              "path": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/binaries/baseline-jbig2-api-validation",
+              "sha256": "4b27f35224fd0154827332c776f44437bbe6644a9c79b9e5582008505d25ab73"
+            },
+            "jbig2-golden-materializer": {
+              "path": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/binaries/baseline-jbig2-golden-materializer",
+              "sha256": "bdde698cdd867eb579637eecb121ab5c0bd82a00987e30a1c6db15432375002a"
+            }
+          },
+          "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: aarch64-unknown-linux-gnu\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
+          "rustflags": "-C target-cpu=native -C embed-bitcode=yes",
+          "profile": "[package]\nname = \"jbig2-roadmap-perf-probe\"\nversion = \"0.0.0\"\nedition = \"2021\"\npublish = false\n\n[[bin]]\nname = \"jbig2-roadmap-perf-probe\"\npath = \"src/main.rs\"\n\n[[bin]]\nname = \"jbig2-golden-materializer\"\npath = \"src/materialize.rs\"\n\n[[bin]]\nname = \"jbig2-api-validation\"\npath = \"src/validate.rs\"\n\n[dependencies]\njbig2-decoder = { path = \"../../../target/portable-performance/private/matched\" }\nserde = { version = \"1\", features = [\"derive\"] }\nserde_json = \"1\"\nallocation-counter = { version = \"=0.8.1\", optional = true }\n\n[features]\nallocations = [\"dep:allocation-counter\"]\n\n[workspace]\n\n[profile.release]\nopt-level = 3\nlto = \"thin\"\ncodegen-units = 1\ndebug = 1\n",
+          "instrumented_allocations": false,
+          "build_log": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/results/baseline-build.log",
+          "qualification": "Hosted/local native diagnostic; not N2/LLVM24/PDFium qualification."
+        },
+        "candidate": {
+          "source_revision": "d66db50bca76c8650b29346592151d81427f8323",
+          "source_tree": "7209658078292c8eb57c5943817b51232f278c6d",
+          "runtime_sha256": "ce83105fddf9412fc9bdb78c4d988712cd0e0a41bd4afb27c6bb50c1d47274b6",
+          "binary_sha256": "3565b36d53592e39242cf5eab0f59dcb2ac5473cfced7876c491e93ed961222e",
+          "cargo_lock_sha256": "c8a0896762a45db2341e846378b2b377237e349b09e3f12f71c585c5991b4985",
+          "harness_sha256": {
+            "tools/portable-performance/probe/src/main.rs": "162db817775ab242b8eaee986852ee532e0e0d42674243d92fc0104232fc193f",
+            "benchmarks/cases.rs": "4e24c58260ecca88b1f953b985119abc833ce8f40f020705f0b0993f78d34af6",
+            "tools/portable-performance/probe/Cargo.toml": "523481f917216494abdefce220ff9b5886fefe8d43362e70732cf2807aa334eb",
+            "tools/portable-performance/probe/Cargo.lock": "c8a0896762a45db2341e846378b2b377237e349b09e3f12f71c585c5991b4985",
+            "tools/portable-performance/probe/src/api.rs": "8cd06c2410be50ac6abfb9bfbbe72afa7fd188c0412c4149d2e52dc03106f1f5",
+            "tools/portable-performance/probe/src/validate.rs": "8fb83de2c41a8926a4349cc603657c22d41fd77f044134b7c0a067b550a19ecd",
+            "tools/portable-performance/probe/src/materialize.rs": "1ab35e97f403118c3a5a85210f4876919e417c16fdf2e5645ac8d2dca548e095"
+          },
+          "same_build_directory": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/matched",
+          "binaries": {
+            "jbig2-roadmap-perf-probe": {
+              "path": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/binaries/candidate",
+              "sha256": "3565b36d53592e39242cf5eab0f59dcb2ac5473cfced7876c491e93ed961222e"
+            },
+            "jbig2-api-validation": {
+              "path": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/binaries/candidate-jbig2-api-validation",
+              "sha256": "b28378b4ab12f5cab72403414b9aabbcdb1f33c3b75f68124184ac6e62af6a8d"
+            }
+          },
+          "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: aarch64-unknown-linux-gnu\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
+          "rustflags": "-C target-cpu=native -C embed-bitcode=yes",
+          "profile": "[package]\nname = \"jbig2-roadmap-perf-probe\"\nversion = \"0.0.0\"\nedition = \"2021\"\npublish = false\n\n[[bin]]\nname = \"jbig2-roadmap-perf-probe\"\npath = \"src/main.rs\"\n\n[[bin]]\nname = \"jbig2-golden-materializer\"\npath = \"src/materialize.rs\"\n\n[[bin]]\nname = \"jbig2-api-validation\"\npath = \"src/validate.rs\"\n\n[dependencies]\njbig2-decoder = { path = \"../../../target/portable-performance/private/matched\" }\nserde = { version = \"1\", features = [\"derive\"] }\nserde_json = \"1\"\nallocation-counter = { version = \"=0.8.1\", optional = true }\n\n[features]\nallocations = [\"dep:allocation-counter\"]\n\n[workspace]\n\n[profile.release]\nopt-level = 3\nlto = \"thin\"\ncodegen-units = 1\ndebug = 1\n",
+          "instrumented_allocations": false,
+          "build_log": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/results/candidate-build.log",
+          "qualification": "Hosted/local native diagnostic; not N2/LLVM24/PDFium qualification."
+        }
+      }
+    },
+    {
+      "run": 45628320647,
+      "trial": "narrowing-x86",
+      "url": "https://github.com/microsoft/jbig2_rs/actions/runs/45628320647",
+      "candidate": "e97332cc37c53fd022cd56ecbe2ef488636831cd",
+      "baseline": "14aeac451f6491aa3e413fcbc60aafb11fa75b7c",
+      "configuration_count": 133,
+      "confirmation_pairs": 1197,
+      "calibration_pairs": 72,
+      "all_eight_calibration_intervals_inside_5pct": true,
+      "maximum_case_median_ratio": 3.8981999052531635,
+      "adverse_over_5pct": [
+        {
+          "comparison": "candidate",
+          "id": "bitmap-composite-and-xnor-halftone",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1154300581032186,
+          "paired_bootstrap95": [
+            1.1108850010980162,
+            1.129698230947316
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 678792,
+          "after_median_ns": 757814,
+          "secondary_process_cpu_ratio": 1.1156214886740632,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            693767,
+            691839,
+            697263,
+            689097,
+            731653,
+            741120,
+            687233,
+            690491,
+            697575
+          ],
+          "p95_after_ns": [
+            778414,
+            773196,
+            777987,
+            780040,
+            796064,
+            769074,
+            772314,
+            780231,
+            788902
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-halftone",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1105985706766641,
+          "paired_bootstrap95": [
+            1.0909771195061813,
+            1.1173563788191923
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 581785,
+          "after_median_ns": 642478,
+          "secondary_process_cpu_ratio": 1.1079834636610602,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            591450,
+            592133,
+            593308,
+            602715,
+            582757,
+            588355,
+            593320,
+            612991,
+            664625
+          ],
+          "p95_after_ns": [
+            659733,
+            664147,
+            657964,
+            658175,
+            646880,
+            648945,
+            662967,
+            659572,
+            651135
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-halftone-10bpp-mmr",
+          "mode": "fresh",
+          "paired_median_ratio": 1.295589882790384,
+          "paired_bootstrap95": [
+            1.2708858317558687,
+            1.304976339861854
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 248817,
+          "after_median_ns": 319855,
+          "secondary_process_cpu_ratio": 1.2991367251755224,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            265484,
+            263118,
+            254504,
+            253902,
+            250503,
+            256442,
+            253365,
+            251699,
+            249159
+          ],
+          "p95_after_ns": [
+            327309,
+            330059,
+            326616,
+            325260,
+            321902,
+            326135,
+            511372,
+            328357,
+            327427
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-halftone-global",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1028531589279413,
+          "paired_bootstrap95": [
+            1.0917406524362123,
+            1.1160711667658447
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 580447,
+          "after_median_ns": 641521,
+          "secondary_process_cpu_ratio": 1.1002853487731237,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            598657,
+            593721,
+            590191,
+            598275,
+            591501,
+            593797,
+            596343,
+            982131,
+            653413
+          ],
+          "p95_after_ns": [
+            656936,
+            648017,
+            654606,
+            651995,
+            705960,
+            681927,
+            656337,
+            658025,
+            654402
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-halftone-grid",
+          "mode": "fresh",
+          "paired_median_ratio": 1.0867830065202775,
+          "paired_bootstrap95": [
+            1.0829237653907742,
+            1.0926102426205597
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 915957,
+          "after_median_ns": 994829,
+          "secondary_process_cpu_ratio": 1.0885481910816235,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            943195,
+            927770,
+            942328,
+            942328,
+            935457,
+            952282,
+            926389,
+            926161,
+            929818
+          ],
+          "p95_after_ns": [
+            1015594,
+            1105403,
+            1031084,
+            1015199,
+            1007896,
+            1006868,
+            1012794,
+            1024323,
+            1034847
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-halftone-skip-dummy",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1424065958117835,
+          "paired_bootstrap95": [
+            1.1347310953455105,
+            1.1664531226746087
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 584579,
+          "after_median_ns": 665615,
+          "secondary_process_cpu_ratio": 1.1375318012527043,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            595281,
+            593537,
+            597745,
+            598889,
+            666399,
+            599311,
+            594300,
+            598951,
+            599944
+          ],
+          "p95_after_ns": [
+            669113,
+            685224,
+            680877,
+            700008,
+            710840,
+            677333,
+            683622,
+            685065,
+            679080
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-halftone-skip-grid",
+          "mode": "fresh",
+          "paired_median_ratio": 1.157258237400047,
+          "paired_bootstrap95": [
+            1.1334234392673208,
+            1.1625941718100505
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 1118847,
+          "after_median_ns": 1288589,
+          "secondary_process_cpu_ratio": 1.155023206578057,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            1146318,
+            1136530,
+            1114208,
+            1118441,
+            1191740,
+            1182824,
+            1142338,
+            1138361,
+            1111869
+          ],
+          "p95_after_ns": [
+            1315191,
+            1311696,
+            1315373,
+            1298818,
+            1292296,
+            1324495,
+            1338033,
+            1312546,
+            1317938
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-halftone-skip-grid-template1",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1687376310503033,
+          "paired_bootstrap95": [
+            1.1483999690243114,
+            1.1782681524501846
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 1082347,
+          "after_median_ns": 1260524,
+          "secondary_process_cpu_ratio": 1.1613415282184811,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            1182118,
+            1095059,
+            1113258,
+            1087573,
+            1113942,
+            1106994,
+            1781042,
+            1118928,
+            1094847
+          ],
+          "p95_after_ns": [
+            1290356,
+            1304709,
+            1296191,
+            1276582,
+            1267327,
+            1269499,
+            1295443,
+            1306700,
+            1273957
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-halftone-skip-grid-template2",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1755657464801164,
+          "paired_bootstrap95": [
+            1.1453462268248633,
+            1.186952837917784
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 1087596,
+          "after_median_ns": 1268368,
+          "secondary_process_cpu_ratio": 1.1753756547854424,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            1098321,
+            1755476,
+            1108948,
+            1097373,
+            1087705,
+            1107600,
+            1109234,
+            1105008,
+            1091455
+          ],
+          "p95_after_ns": [
+            1282544,
+            1278629,
+            1299955,
+            1302444,
+            1288187,
+            1280545,
+            1277880,
+            1312887,
+            1281060
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-halftone-skip-grid-template3",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1728915371763546,
+          "paired_bootstrap95": [
+            1.164609742071849,
+            1.1780920720409311
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 1036432,
+          "after_median_ns": 1216364,
+          "secondary_process_cpu_ratio": 1.1736674449713311,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            1071083,
+            1120206,
+            1067558,
+            1056190,
+            1046011,
+            1151274,
+            1049850,
+            1052603,
+            1085350
+          ],
+          "p95_after_ns": [
+            1251124,
+            1239399,
+            1243459,
+            1234327,
+            1318604,
+            1234227,
+            1246050,
+            1243676,
+            1255515
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-halftone-template1",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1242843574253676,
+          "paired_bootstrap95": [
+            1.1025345157307813,
+            1.1372854722679173
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 495716,
+          "after_median_ns": 555413,
+          "secondary_process_cpu_ratio": 1.1168549157550776,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            500045,
+            503390,
+            508322,
+            504565,
+            506107,
+            496741,
+            512370,
+            514449,
+            507228
+          ],
+          "p95_after_ns": [
+            607186,
+            561909,
+            558914,
+            558682,
+            559198,
+            567601,
+            569264,
+            560565,
+            566112
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-halftone-template2",
+          "mode": "fresh",
+          "paired_median_ratio": 1.120454787473685,
+          "paired_bootstrap95": [
+            1.095886490517363,
+            1.1327655955829294
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 491277,
+          "after_median_ns": 552420,
+          "secondary_process_cpu_ratio": 1.120099201503019,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            495918,
+            498882,
+            500770,
+            499905,
+            510600,
+            501596,
+            494214,
+            499634,
+            508337
+          ],
+          "p95_after_ns": [
+            558119,
+            555476,
+            554261,
+            559766,
+            562974,
+            557448,
+            562538,
+            549924,
+            561535
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-halftone-template3",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1257256779744922,
+          "paired_bootstrap95": [
+            1.1132391186463186,
+            1.136370417587783
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 447057,
+          "after_median_ns": 502967,
+          "secondary_process_cpu_ratio": 1.1263022998839376,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            474502,
+            453686,
+            457994,
+            450742,
+            451686,
+            477325,
+            447390,
+            450218,
+            458304
+          ],
+          "p95_after_ns": [
+            538913,
+            515918,
+            549133,
+            510938,
+            515728,
+            508920,
+            510274,
+            508381,
+            508952
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "bitmap-template1",
+          "mode": "fresh",
+          "paired_median_ratio": 1.1978461643607292,
+          "paired_bootstrap95": [
+            0.9964843208022436,
+            1.2026045344881044
+          ],
+          "faster_pairs": 3,
+          "before_median_ns": 1430540,
+          "after_median_ns": 1717600,
+          "secondary_process_cpu_ratio": 1.1964585806650156,
+          "over_5pct_slower_pairs": 5,
+          "p95_before_ns": [
+            1498675,
+            1458248,
+            1450465,
+            1447037,
+            1444979,
+            1444213,
+            1732660,
+            1763043,
+            1442114
+          ],
+          "p95_after_ns": [
+            1735233,
+            1732873,
+            1745948,
+            1444276,
+            1728335,
+            1750738,
+            1730479,
+            1446078,
+            1448465
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "controlled-halftone-grid-1024x1024-depth1",
+          "mode": "fresh",
+          "paired_median_ratio": 1.7694506020469476,
+          "paired_bootstrap95": [
+            1.7557373186709189,
+            1.7729842355152945
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 5022698,
+          "after_median_ns": 8887416,
+          "secondary_process_cpu_ratio": 1.7471333746360953,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            5095924,
+            5158617,
+            5080020,
+            5140623,
+            5161927,
+            5068188,
+            5156623,
+            5146289,
+            5653731
+          ],
+          "p95_after_ns": [
+            8947679,
+            8979947,
+            9004654,
+            8986460,
+            9045931,
+            8937719,
+            8956825,
+            9013771,
+            9222260
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "controlled-halftone-grid-1024x1024-depth10",
+          "mode": "fresh",
+          "paired_median_ratio": 1.5483891128054528,
+          "paired_bootstrap95": [
+            1.544138685081496,
+            1.5568484670273368
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 10777793,
+          "after_median_ns": 16688332,
+          "secondary_process_cpu_ratio": 1.535440634648453,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            10929966,
+            10897407,
+            10985089,
+            10916953,
+            10935317,
+            10958259,
+            10906293,
+            11063486,
+            10893188
+          ],
+          "p95_after_ns": [
+            16963066,
+            16865163,
+            16958938,
+            16890800,
+            16837811,
+            16781274,
+            16911540,
+            16857228,
+            16923582
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "controlled-halftone-grid-1024x1024-depth8",
+          "mode": "fresh",
+          "paired_median_ratio": 3.8981999052531635,
+          "paired_bootstrap95": [
+            3.8942735742433015,
+            3.9219668809866692
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 9458501,
+          "after_median_ns": 36872648,
+          "secondary_process_cpu_ratio": 3.828298635582935,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            9578795,
+            9559018,
+            9640390,
+            9650018,
+            9558316,
+            9587712,
+            9657994,
+            9595687,
+            9702276
+          ],
+          "p95_after_ns": [
+            37097799,
+            37163040,
+            37232369,
+            36971543,
+            37264369,
+            37125193,
+            37031588,
+            37094965,
+            37185034
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "controlled-halftone-grid-1024x1024-depth9",
+          "mode": "fresh",
+          "paired_median_ratio": 1.5137272327728108,
+          "paired_bootstrap95": [
+            1.5082064912999655,
+            1.5197385412695208
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 10109907,
+          "after_median_ns": 15285707,
+          "secondary_process_cpu_ratio": 1.5034250260978783,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            10299381,
+            10275375,
+            10270896,
+            10211907,
+            10243395,
+            10230112,
+            10296196,
+            10216435,
+            10282028
+          ],
+          "p95_after_ns": [
+            15470952,
+            15456946,
+            15442658,
+            15446324,
+            15399507,
+            15428693,
+            15517570,
+            15422101,
+            15366907
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "controlled-halftone-grid-1025x1023-depth8",
+          "mode": "fresh",
+          "paired_median_ratio": 3.8876158896358337,
+          "paired_bootstrap95": [
+            3.883070069914376,
+            3.892607143937109
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 9500971,
+          "after_median_ns": 36923791,
+          "secondary_process_cpu_ratio": 3.80896132091662,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            9680024,
+            9712785,
+            9746859,
+            9551374,
+            9601597,
+            9676378,
+            9650811,
+            9691155,
+            9635902
+          ],
+          "p95_after_ns": [
+            37223225,
+            37174572,
+            37228843,
+            37216441,
+            37226508,
+            37100334,
+            37280648,
+            37183801,
+            37456699
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "controlled-halftone-grid-43x41-depth0",
+          "mode": "fresh",
+          "paired_median_ratio": 1.106776180698152,
+          "paired_bootstrap95": [
+            1.101494462960972,
+            1.1093073593073592
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 9255,
+          "after_median_ns": 10245,
+          "secondary_process_cpu_ratio": 1.1058672303818478,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            9432,
+            9377,
+            9447,
+            9420,
+            9332,
+            9352,
+            9349,
+            9401,
+            9455
+          ],
+          "p95_after_ns": [
+            10442,
+            10573,
+            10444,
+            10405,
+            10365,
+            10347,
+            10333,
+            10411,
+            10348
+          ]
+        }
+      ],
+      "host": {
+        "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.39",
+        "machine": "x86_64",
+        "available_cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "selected_cpu": 0,
+        "lscpu": "Architecture:                            x86_64\nCPU op-mode(s):                          32-bit, 64-bit\nAddress sizes:                           48 bits physical, 48 bits virtual\nByte Order:                              Little Endian\nCPU(s):                                  4\nOn-line CPU(s) list:                     0-3\nVendor ID:                               AuthenticAMD\nModel name:                              AMD EPYC 7763 64-Core Processor\nCPU family:                              25\nModel:                                   1\nThread(s) per core:                      2\nCore(s) per socket:                      2\nSocket(s):                               1\nStepping:                                1\nBogoMIPS:                                4890.84\nFlags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl tsc_reliable nonstop_tsc cpuid extd_apicid aperfmperf tsc_known_freq pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm cmp_legacy svm cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw topoext vmmcall fsgsbase bmi1 avx2 smep bmi2 erms invpcid rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 xsaves user_shstk clzero xsaveerptr rdpru arat npt nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold v_vmsave_vmload umip vaes vpclmulqdq rdpid fsrm\nVirtualization:                          AMD-V\nHypervisor vendor:                       Microsoft\nVirtualization type:                     full\nL1d cache:                               64 KiB (2 instances)\nL1i cache:                               64 KiB (2 instances)\nL2 cache:                                1 MiB (2 instances)\nL3 cache:                                32 MiB (1 instance)\nNUMA node(s):                            1\nNUMA node0 CPU(s):                       0-3\nVulnerability Gather data sampling:      Not affected\nVulnerability Ghostwrite:                Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Old microcode:             Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Vulnerable: Safe RET, no microcode\nVulnerability Spec store bypass:         Vulnerable\nVulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; Retpolines; STIBP disabled; RSB filling; PBRSB-eIBRS Not affected; BHI Not affected\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Vulnerable: No microcode\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n",
+        "uname": "Linux runnervmeozm8 7.0.0-1017-azure #17~24.04.1-Ubuntu SMP PREEMPT Thu Sep 24 18:46:57 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux\n",
+        "runner": {
+          "RUNNER_NAME": "GitHub Actions 1080174665",
+          "RUNNER_OS": "Linux",
+          "RUNNER_ARCH": "X64",
+          "ImageOS": "ubuntu24",
+          "ImageVersion": "20261116.376.1",
+          "GITHUB_RUN_ID": "45628320647",
+          "GITHUB_RUN_ATTEMPT": "1",
+          "GITHUB_SHA": "b19fae9f878ee542926679c90136ccd7e6205b0e"
+        }
+      },
+      "source_reports": {
+        "confirmation.json": "01bbe4a94749ed5fa482d37a1ef8f5e5403164cd82c750f82c789ba2b35b364a",
+        "calibration.json": "783f6de32f48df259efcb0cd8c589b958fce251320bfb516a93384c7675e74ee",
+        "setup.json": "00752ed7099836fd4821a23194f31d00b7957b835c07eb1813c22f0396b56b0a",
+        "completion.json": "9899d2de8cd5c8d3dc317b8c661bde3d86b81fa7312411dac2527aba0c574d75"
+      },
+      "builds": {
+        "baseline": {
+          "source_revision": "14aeac451f6491aa3e413fcbc60aafb11fa75b7c",
+          "source_tree": "bc770069b3ffdb3bb5652b84069d9ea1ac34921f",
+          "runtime_sha256": "286798351f58ced5810692fd2f633512af5ae184da32ebefa95926c2326166e9",
+          "binary_sha256": "d733b6a03144737293ea864ac267043713e72e008f715ea3048b62b277c40078",
+          "cargo_lock_sha256": "c8a0896762a45db2341e846378b2b377237e349b09e3f12f71c585c5991b4985",
+          "harness_sha256": {
+            "tools/portable-performance/probe/src/main.rs": "162db817775ab242b8eaee986852ee532e0e0d42674243d92fc0104232fc193f",
+            "benchmarks/cases.rs": "4e24c58260ecca88b1f953b985119abc833ce8f40f020705f0b0993f78d34af6",
+            "tools/portable-performance/probe/Cargo.toml": "523481f917216494abdefce220ff9b5886fefe8d43362e70732cf2807aa334eb",
+            "tools/portable-performance/probe/Cargo.lock": "c8a0896762a45db2341e846378b2b377237e349b09e3f12f71c585c5991b4985",
+            "tools/portable-performance/probe/src/api.rs": "8cd06c2410be50ac6abfb9bfbbe72afa7fd188c0412c4149d2e52dc03106f1f5",
+            "tools/portable-performance/probe/src/validate.rs": "8fb83de2c41a8926a4349cc603657c22d41fd77f044134b7c0a067b550a19ecd",
+            "tools/portable-performance/probe/src/materialize.rs": "1ab35e97f403118c3a5a85210f4876919e417c16fdf2e5645ac8d2dca548e095"
+          },
+          "same_build_directory": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/matched",
+          "binaries": {
+            "jbig2-roadmap-perf-probe": {
+              "path": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/binaries/baseline",
+              "sha256": "d733b6a03144737293ea864ac267043713e72e008f715ea3048b62b277c40078"
+            },
+            "jbig2-api-validation": {
+              "path": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/binaries/baseline-jbig2-api-validation",
+              "sha256": "8c318f22b57b2d615e3b7324248e3e07cc229c2e7a85e5444654092141bd314e"
+            },
+            "jbig2-golden-materializer": {
+              "path": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/binaries/baseline-jbig2-golden-materializer",
+              "sha256": "178a0f2d0ab4dec831e0bda0e03df0d5141667188344da45a85742de38fc2e2d"
+            }
+          },
+          "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: x86_64-unknown-linux-gnu\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
+          "rustflags": "-C target-cpu=native -C embed-bitcode=yes",
+          "profile": "[package]\nname = \"jbig2-roadmap-perf-probe\"\nversion = \"0.0.0\"\nedition = \"2021\"\npublish = false\n\n[[bin]]\nname = \"jbig2-roadmap-perf-probe\"\npath = \"src/main.rs\"\n\n[[bin]]\nname = \"jbig2-golden-materializer\"\npath = \"src/materialize.rs\"\n\n[[bin]]\nname = \"jbig2-api-validation\"\npath = \"src/validate.rs\"\n\n[dependencies]\njbig2-decoder = { path = \"../../../target/portable-performance/private/matched\" }\nserde = { version = \"1\", features = [\"derive\"] }\nserde_json = \"1\"\nallocation-counter = { version = \"=0.8.1\", optional = true }\n\n[features]\nallocations = [\"dep:allocation-counter\"]\n\n[workspace]\n\n[profile.release]\nopt-level = 3\nlto = \"thin\"\ncodegen-units = 1\ndebug = 1\n",
+          "instrumented_allocations": false,
+          "build_log": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/results/baseline-build.log",
+          "qualification": "Hosted/local native diagnostic; not N2/LLVM24/PDFium qualification."
+        },
+        "candidate": {
+          "source_revision": "e97332cc37c53fd022cd56ecbe2ef488636831cd",
+          "source_tree": "c32aacbbedeb831f2277cd9c9cc3083d256520df",
+          "runtime_sha256": "a5561c690a7e5ad3185b90eaa6084a1da627fcce335948e79d591feca3f529c8",
+          "binary_sha256": "52c038db287e5be95f965f97c034f94cfb92df081a5f5684e99f57658403d844",
+          "cargo_lock_sha256": "c8a0896762a45db2341e846378b2b377237e349b09e3f12f71c585c5991b4985",
+          "harness_sha256": {
+            "tools/portable-performance/probe/src/main.rs": "162db817775ab242b8eaee986852ee532e0e0d42674243d92fc0104232fc193f",
+            "benchmarks/cases.rs": "4e24c58260ecca88b1f953b985119abc833ce8f40f020705f0b0993f78d34af6",
+            "tools/portable-performance/probe/Cargo.toml": "523481f917216494abdefce220ff9b5886fefe8d43362e70732cf2807aa334eb",
+            "tools/portable-performance/probe/Cargo.lock": "c8a0896762a45db2341e846378b2b377237e349b09e3f12f71c585c5991b4985",
+            "tools/portable-performance/probe/src/api.rs": "8cd06c2410be50ac6abfb9bfbbe72afa7fd188c0412c4149d2e52dc03106f1f5",
+            "tools/portable-performance/probe/src/validate.rs": "8fb83de2c41a8926a4349cc603657c22d41fd77f044134b7c0a067b550a19ecd",
+            "tools/portable-performance/probe/src/materialize.rs": "1ab35e97f403118c3a5a85210f4876919e417c16fdf2e5645ac8d2dca548e095"
+          },
+          "same_build_directory": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/matched",
+          "binaries": {
+            "jbig2-roadmap-perf-probe": {
+              "path": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/binaries/candidate",
+              "sha256": "52c038db287e5be95f965f97c034f94cfb92df081a5f5684e99f57658403d844"
+            },
+            "jbig2-api-validation": {
+              "path": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/binaries/candidate-jbig2-api-validation",
+              "sha256": "ad9b40c5d3615fef7145421ff126b31803a4d6400e81bf60f713ac5eb0883ea8"
+            }
+          },
+          "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: x86_64-unknown-linux-gnu\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
+          "rustflags": "-C target-cpu=native -C embed-bitcode=yes",
+          "profile": "[package]\nname = \"jbig2-roadmap-perf-probe\"\nversion = \"0.0.0\"\nedition = \"2021\"\npublish = false\n\n[[bin]]\nname = \"jbig2-roadmap-perf-probe\"\npath = \"src/main.rs\"\n\n[[bin]]\nname = \"jbig2-golden-materializer\"\npath = \"src/materialize.rs\"\n\n[[bin]]\nname = \"jbig2-api-validation\"\npath = \"src/validate.rs\"\n\n[dependencies]\njbig2-decoder = { path = \"../../../target/portable-performance/private/matched\" }\nserde = { version = \"1\", features = [\"derive\"] }\nserde_json = \"1\"\nallocation-counter = { version = \"=0.8.1\", optional = true }\n\n[features]\nallocations = [\"dep:allocation-counter\"]\n\n[workspace]\n\n[profile.release]\nopt-level = 3\nlto = \"thin\"\ncodegen-units = 1\ndebug = 1\n",
+          "instrumented_allocations": false,
+          "build_log": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/results/candidate-build.log",
+          "qualification": "Hosted/local native diagnostic; not N2/LLVM24/PDFium qualification."
+        }
+      }
+    },
+    {
+      "run": 45635182696,
+      "trial": "pattern-x86",
+      "url": "https://github.com/microsoft/jbig2_rs/actions/runs/45635182696",
+      "candidate": "ab8e8becd9d35e67204b4d5b588884b699328533",
+      "baseline": "14aeac451f6491aa3e413fcbc60aafb11fa75b7c",
+      "configuration_count": 133,
+      "confirmation_pairs": 1197,
+      "calibration_pairs": 72,
+      "all_eight_calibration_intervals_inside_5pct": true,
+      "maximum_case_median_ratio": 1.0742899366980467,
+      "adverse_over_5pct": [
+        {
+          "comparison": "candidate",
+          "id": "controlled-halftone-grid-1024x1024-depth1",
+          "mode": "fresh",
+          "paired_median_ratio": 1.0742899366980467,
+          "paired_bootstrap95": [
+            1.0740464970971857,
+            1.0752408417799304
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 3836957,
+          "after_median_ns": 4124603,
+          "secondary_process_cpu_ratio": 1.0724741218141078,
+          "over_5pct_slower_pairs": 9,
+          "p95_before_ns": [
+            3874106,
+            4161193,
+            3860798,
+            3875206,
+            3860649,
+            3876889,
+            3890068,
+            3882837,
+            3875589
+          ],
+          "p95_after_ns": [
+            4139908,
+            4154999,
+            4152610,
+            4182837,
+            4157448,
+            4281787,
+            4161784,
+            4206452,
+            4167010
+          ]
+        },
+        {
+          "comparison": "candidate",
+          "id": "controlled-halftone-grid-43x41-depth0",
+          "mode": "fresh",
+          "paired_median_ratio": 1.0678666666666667,
+          "paired_bootstrap95": [
+            1.0617940199335547,
+            1.0842091080571274
+          ],
+          "faster_pairs": 0,
+          "before_median_ns": 7500,
+          "after_median_ns": 7998,
+          "secondary_process_cpu_ratio": 1.0649691947210886,
+          "over_5pct_slower_pairs": 8,
+          "p95_before_ns": [
+            7778,
+            7555,
+            7573,
+            7583,
+            7552,
+            7729,
+            7587,
+            7532,
+            7582
+          ],
+          "p95_after_ns": [
+            8056,
+            8030,
+            8090,
+            8070,
+            8058,
+            8044,
+            8085,
+            8054,
+            8069
+          ]
+        }
+      ],
+      "host": {
+        "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.39",
+        "machine": "x86_64",
+        "available_cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "selected_cpu": 0,
+        "lscpu": "Architecture:                            x86_64\nCPU op-mode(s):                          32-bit, 64-bit\nAddress sizes:                           48 bits physical, 48 bits virtual\nByte Order:                              Little Endian\nCPU(s):                                  4\nOn-line CPU(s) list:                     0-3\nVendor ID:                               AuthenticAMD\nModel name:                              AMD EPYC 9V74 80-Core Processor\nCPU family:                              25\nModel:                                   17\nThread(s) per core:                      2\nCore(s) per socket:                      2\nSocket(s):                               1\nStepping:                                1\nBogoMIPS:                                5192.27\nFlags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology tsc_reliable nonstop_tsc cpuid extd_apicid aperfmperf tsc_known_freq pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm cmp_legacy svm cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw topoext vmmcall fsgsbase bmi1 avx2 smep bmi2 erms invpcid avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves user_shstk avx512_bf16 clzero xsaveerptr rdpru arat npt nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold v_vmsave_vmload avx512vbmi umip avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid fsrm\nVirtualization:                          AMD-V\nHypervisor vendor:                       Microsoft\nVirtualization type:                     full\nL1d cache:                               64 KiB (2 instances)\nL1i cache:                               64 KiB (2 instances)\nL2 cache:                                2 MiB (2 instances)\nL3 cache:                                32 MiB (1 instance)\nNUMA node(s):                            1\nNUMA node0 CPU(s):                       0-3\nVulnerability Gather data sampling:      Not affected\nVulnerability Ghostwrite:                Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Old microcode:             Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Vulnerable: Safe RET, no microcode\nVulnerability Spec store bypass:         Vulnerable\nVulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; Retpolines; STIBP disabled; RSB filling; PBRSB-eIBRS Not affected; BHI Not affected\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Vulnerable: No microcode\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n",
+        "uname": "Linux runnervmeozm8 7.0.0-1017-azure #17~24.04.1-Ubuntu SMP PREEMPT Thu Sep 24 18:46:57 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux\n",
+        "runner": {
+          "RUNNER_NAME": "GitHub Actions 1080181186",
+          "RUNNER_OS": "Linux",
+          "RUNNER_ARCH": "X64",
+          "ImageOS": "ubuntu24",
+          "ImageVersion": "20261116.376.1",
+          "GITHUB_RUN_ID": "45635182696",
+          "GITHUB_RUN_ATTEMPT": "1",
+          "GITHUB_SHA": "b19fae9f878ee542926679c90136ccd7e6205b0e"
+        }
+      },
+      "source_reports": {
+        "confirmation.json": "740a7b35182643bd8034611bcb251532e7746459fedaaec6145fd5243524c51d",
+        "calibration.json": "0acd0c6dd5a4abce7207e4523c26389d360e19faa4713d0392d88f2c204d54b8",
+        "setup.json": "1aff38855aa147deec5a844ccca74671e890562f2924d7820d72f4e097ff7ebc",
+        "completion.json": "7b0050ffbdb11bc3e754a17e20b620c702f88b05efbd8e04268ede827544f2fc"
+      },
+      "builds": {
+        "baseline": {
+          "source_revision": "14aeac451f6491aa3e413fcbc60aafb11fa75b7c",
+          "source_tree": "bc770069b3ffdb3bb5652b84069d9ea1ac34921f",
+          "runtime_sha256": "286798351f58ced5810692fd2f633512af5ae184da32ebefa95926c2326166e9",
+          "binary_sha256": "813edf4a3f7d04cccf4ddc8ca4ca13d076fe4793090171e2e595c82816e32a87",
+          "cargo_lock_sha256": "c8a0896762a45db2341e846378b2b377237e349b09e3f12f71c585c5991b4985",
+          "harness_sha256": {
+            "tools/portable-performance/probe/src/main.rs": "162db817775ab242b8eaee986852ee532e0e0d42674243d92fc0104232fc193f",
+            "benchmarks/cases.rs": "4e24c58260ecca88b1f953b985119abc833ce8f40f020705f0b0993f78d34af6",
+            "tools/portable-performance/probe/Cargo.toml": "523481f917216494abdefce220ff9b5886fefe8d43362e70732cf2807aa334eb",
+            "tools/portable-performance/probe/Cargo.lock": "c8a0896762a45db2341e846378b2b377237e349b09e3f12f71c585c5991b4985",
+            "tools/portable-performance/probe/src/api.rs": "8cd06c2410be50ac6abfb9bfbbe72afa7fd188c0412c4149d2e52dc03106f1f5",
+            "tools/portable-performance/probe/src/validate.rs": "8fb83de2c41a8926a4349cc603657c22d41fd77f044134b7c0a067b550a19ecd",
+            "tools/portable-performance/probe/src/materialize.rs": "1ab35e97f403118c3a5a85210f4876919e417c16fdf2e5645ac8d2dca548e095"
+          },
+          "same_build_directory": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/matched",
+          "binaries": {
+            "jbig2-roadmap-perf-probe": {
+              "path": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/binaries/baseline",
+              "sha256": "813edf4a3f7d04cccf4ddc8ca4ca13d076fe4793090171e2e595c82816e32a87"
+            },
+            "jbig2-api-validation": {
+              "path": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/binaries/baseline-jbig2-api-validation",
+              "sha256": "e97f4c0bdfd2df10321dfa871372194f0e4f92a8274d982b8bebebcfc2b358c2"
+            },
+            "jbig2-golden-materializer": {
+              "path": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/binaries/baseline-jbig2-golden-materializer",
+              "sha256": "3aa03c3352ce97d0ae33cbefbda87088e11455388580bfbc345b1c02886391e1"
+            }
+          },
+          "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: x86_64-unknown-linux-gnu\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
+          "rustflags": "-C target-cpu=native -C embed-bitcode=yes",
+          "profile": "[package]\nname = \"jbig2-roadmap-perf-probe\"\nversion = \"0.0.0\"\nedition = \"2021\"\npublish = false\n\n[[bin]]\nname = \"jbig2-roadmap-perf-probe\"\npath = \"src/main.rs\"\n\n[[bin]]\nname = \"jbig2-golden-materializer\"\npath = \"src/materialize.rs\"\n\n[[bin]]\nname = \"jbig2-api-validation\"\npath = \"src/validate.rs\"\n\n[dependencies]\njbig2-decoder = { path = \"../../../target/portable-performance/private/matched\" }\nserde = { version = \"1\", features = [\"derive\"] }\nserde_json = \"1\"\nallocation-counter = { version = \"=0.8.1\", optional = true }\n\n[features]\nallocations = [\"dep:allocation-counter\"]\n\n[workspace]\n\n[profile.release]\nopt-level = 3\nlto = \"thin\"\ncodegen-units = 1\ndebug = 1\n",
+          "instrumented_allocations": false,
+          "build_log": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/results/baseline-build.log",
+          "qualification": "Hosted/local native diagnostic; not N2/LLVM24/PDFium qualification."
+        },
+        "candidate": {
+          "source_revision": "ab8e8becd9d35e67204b4d5b588884b699328533",
+          "source_tree": "9d4fe971fc972cde6ae1ac13ef6be8b9c312fa04",
+          "runtime_sha256": "5890716bf3445057298f119c32733c774c5eb738547403eec98c61ed31a326df",
+          "binary_sha256": "b5cb8072f7cd0cde6d753c9c229f04a8bd3e2ddc334e4500dc4b9e1d55107379",
+          "cargo_lock_sha256": "c8a0896762a45db2341e846378b2b377237e349b09e3f12f71c585c5991b4985",
+          "harness_sha256": {
+            "tools/portable-performance/probe/src/main.rs": "162db817775ab242b8eaee986852ee532e0e0d42674243d92fc0104232fc193f",
+            "benchmarks/cases.rs": "4e24c58260ecca88b1f953b985119abc833ce8f40f020705f0b0993f78d34af6",
+            "tools/portable-performance/probe/Cargo.toml": "523481f917216494abdefce220ff9b5886fefe8d43362e70732cf2807aa334eb",
+            "tools/portable-performance/probe/Cargo.lock": "c8a0896762a45db2341e846378b2b377237e349b09e3f12f71c585c5991b4985",
+            "tools/portable-performance/probe/src/api.rs": "8cd06c2410be50ac6abfb9bfbbe72afa7fd188c0412c4149d2e52dc03106f1f5",
+            "tools/portable-performance/probe/src/validate.rs": "8fb83de2c41a8926a4349cc603657c22d41fd77f044134b7c0a067b550a19ecd",
+            "tools/portable-performance/probe/src/materialize.rs": "1ab35e97f403118c3a5a85210f4876919e417c16fdf2e5645ac8d2dca548e095"
+          },
+          "same_build_directory": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/matched",
+          "binaries": {
+            "jbig2-roadmap-perf-probe": {
+              "path": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/binaries/candidate",
+              "sha256": "b5cb8072f7cd0cde6d753c9c229f04a8bd3e2ddc334e4500dc4b9e1d55107379"
+            },
+            "jbig2-api-validation": {
+              "path": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/private/binaries/candidate-jbig2-api-validation",
+              "sha256": "246791f66449b85c5b536bd7b1dc61c06796cb71df8ff40b18113f3c2d6dae0b"
+            }
+          },
+          "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: x86_64-unknown-linux-gnu\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
+          "rustflags": "-C target-cpu=native -C embed-bitcode=yes",
+          "profile": "[package]\nname = \"jbig2-roadmap-perf-probe\"\nversion = \"0.0.0\"\nedition = \"2021\"\npublish = false\n\n[[bin]]\nname = \"jbig2-roadmap-perf-probe\"\npath = \"src/main.rs\"\n\n[[bin]]\nname = \"jbig2-golden-materializer\"\npath = \"src/materialize.rs\"\n\n[[bin]]\nname = \"jbig2-api-validation\"\npath = \"src/validate.rs\"\n\n[dependencies]\njbig2-decoder = { path = \"../../../target/portable-performance/private/matched\" }\nserde = { version = \"1\", features = [\"derive\"] }\nserde_json = \"1\"\nallocation-counter = { version = \"=0.8.1\", optional = true }\n\n[features]\nallocations = [\"dep:allocation-counter\"]\n\n[workspace]\n\n[profile.release]\nopt-level = 3\nlto = \"thin\"\ncodegen-units = 1\ndebug = 1\n",
+          "instrumented_allocations": false,
+          "build_log": "/home/runner/work/jbig2_rs/jbig2_rs/target/portable-performance/results/candidate-build.log",
+          "qualification": "Hosted/local native diagnostic; not N2/LLVM24/PDFium qualification."
+        }
+      }
+    }
+  ],
+  "public_api_replications": [
+    {
+      "architecture": "x86_64",
+      "status": "all54054rawsamples-and27pairs-independently-verified",
+      "source_report_sha256": "f1a547cc146fd371f7a4c6fb8f5511619fb5d8b8f47e9877b2be12254a4bcbf5",
+      "source_revision": "413f1d3d0ae3cbb918503758d34a7dcc92cdb37c",
+      "binary_sha256": "0031e74c743afe98f42cdb394fbfe38181c3faabf9e8dff6d0b35e92e836d016",
+      "cpu_identity": {
+        "model name": [
+          "AMD EPYC 7763 64-Core Processor"
+        ],
+        "CPU implementer": [],
+        "CPU architecture": [],
+        "CPU part": [],
+        "CPU variant": [],
+        "CPU revision": []
+      },
+      "summary": [
+        {
+          "comparison": "cold",
+          "paired_median_ratio": 0.8706994553050222,
+          "paired_bootstrap95": [
+            0.8599579213707182,
+            0.8774572332209195
+          ],
+          "faster_pairs": 9,
+          "paired_p95_ratio": 0.8746978455070941
+        },
+        {
+          "comparison": "warm",
+          "paired_median_ratio": 0.7476713908742988,
+          "paired_bootstrap95": [
+            0.7435771076769311,
+            0.7515846516912857
+          ],
+          "faster_pairs": 9,
+          "paired_p95_ratio": 0.7496036596238576
+        },
+        {
+          "comparison": "calibration",
+          "paired_median_ratio": 0.9989864569681084,
+          "paired_bootstrap95": [
+            0.996494481081743,
+            1.0024927877209198
+          ],
+          "faster_pairs": 5,
+          "paired_p95_ratio": 1.0042177701315278
+        }
+      ],
+      "calibration_interval_inside_5pct": true,
+      "observed_resident_capacity_bytes": 22164,
+      "scope": "Actual opt-in public API and normalized original three-page source, not existing standalone/default speedup, observed production PDF reuse, full-PDF gain, same-total-memory budget or original LLVM24/PDFium qualification.",
+      "raw_file": "prepared-public-x86-20261125.json.gz",
+      "compressed_sha256": "be7326418b0b327feb4736436a097cf25bf7f8e360a80f85cfc5031e2683cffb"
+    },
+    {
+      "architecture": "aarch64",
+      "status": "all54054rawsamples-and27pairs-independently-verified",
+      "source_report_sha256": "121e0e024b10a59788af05de4f86c3466c1bcd3ecac6e93ee45ec50d4f221f25",
+      "source_revision": "cf1a693ecbb97993d804e024e414cbf78e53d019",
+      "binary_sha256": "c536aa00cbe7b16ce923114d91cd3adb47e7c21b9f40e36d49522517a90e37d0",
+      "cpu_identity": {
+        "model name": [],
+        "CPU implementer": [
+          "0x41"
+        ],
+        "CPU architecture": [
+          "8"
+        ],
+        "CPU part": [
+          "0xd49"
+        ],
+        "CPU variant": [
+          "0x0"
+        ],
+        "CPU revision": [
+          "0"
+        ]
+      },
+      "summary": [
+        {
+          "comparison": "cold",
+          "paired_median_ratio": 0.8594843041445495,
+          "paired_bootstrap95": [
+            0.8574581320556864,
+            0.8617296783059089
+          ],
+          "faster_pairs": 9,
+          "paired_p95_ratio": 0.861864278451987
+        },
+        {
+          "comparison": "warm",
+          "paired_median_ratio": 0.7535540426132356,
+          "paired_bootstrap95": [
+            0.7510872627390217,
+            0.7540606526182876
+          ],
+          "faster_pairs": 9,
+          "paired_p95_ratio": 0.7581665893130566
+        },
+        {
+          "comparison": "calibration",
+          "paired_median_ratio": 0.9996792167615833,
+          "paired_bootstrap95": [
+            0.997536772468154,
+            1.000916271304409
+          ],
+          "faster_pairs": 5,
+          "paired_p95_ratio": 0.9997916151131139
+        }
+      ],
+      "calibration_interval_inside_5pct": true,
+      "observed_resident_capacity_bytes": 22164,
+      "scope": "Actual opt-in public API and normalized original three-page source, not existing standalone/default speedup, observed production PDF reuse, full-PDF gain, same-total-memory budget or original LLVM24/PDFium qualification.",
+      "raw_file": "prepared-public-n2-20261125.json.gz",
+      "compressed_sha256": "284dda73ec1c8fbd6c494c130bb4247a551222aef1944cb5e0c394317ae268ae"
+    }
+  ],
+  "public_api_local_unresolved": {
+    "status": "all54054rawsamples-and27pairs-independently-verified",
+    "source_report_sha256": "75a3bdafcbcb483a37a8f4a0d3c0cc6b8d70913c3d146f14019bfdb4119d9d15",
+    "production_proof_source_bindings_unchanged": true,
+    "public_production_source": "6d1bac13480af4eb08916d685013ef1e00b71fac",
+    "protocol_source": "413f1d3d0ae3cbb918503758d34a7dcc92cdb37c",
+    "summary": [
+      {
+        "comparison": "cold",
+        "paired_median_ratio": 0.8470821364383477,
+        "paired_bootstrap95": [
+          0.8257459676766237,
+          0.904106671485643
+        ],
+        "faster_pairs": 8,
+        "paired_p95_ratio": 0.8614951162450379
+      },
+      {
+        "comparison": "warm",
+        "paired_median_ratio": 0.7360393645820918,
+        "paired_bootstrap95": [
+          0.7124747977272132,
+          0.7711228588211014
+        ],
+        "faster_pairs": 9,
+        "paired_p95_ratio": 0.7446949534153533
+      },
+      {
+        "comparison": "calibration",
+        "paired_median_ratio": 1.0174119691653445,
+        "paired_bootstrap95": [
+          0.9677611241073437,
+          1.1659239135491195
+        ],
+        "faster_pairs": 3,
+        "paired_p95_ratio": 1.0113235059192212
+      }
+    ],
+    "runner_uncertainty_resolved": false,
+    "qualification": "Positive actual public-API local results, but predeclared identical-operation calibration interval fails\u00b15%; no hosted/public/fullPDF/LLVM24/merge qualification. Do not rerun unchanged source to hunt a passing interval."
+  },
+  "native_raw": {
+    "file": "hosted-raw-pairs-20261125.jsonl.gz",
+    "pairs": 5076,
+    "sha256": "15dd97ec5b167c37d904ffa2ce03ce8bad56529e497ebd84683bc7b66df6190c"
+  },
+  "decisions": {
+    "descriptors": "Real latency/allocation gains, but30nativeN2adverse controls up1.325; reject d66, preserve positive9V45result.",
+    "narrowing": "Actual3MiB allocation saving, but20stable adverse controls up3.8982; reject both tested designs.",
+    "pattern": "Real36\u201346%target gains, but2predeclared generated MMR controls regress6.8/7.4%; existing rejection remains.",
+    "public_owner": "Actual public-API cold gain13%Zen3/14%N2, stable calibration, extra65536-byte allowance; retain as unmerged candidate pending actual caller/domain and required complete qualification. Not an existing standalone/default/fullPDF gain."
+  },
+  "ordinary_api_preservation": {
+    "source": "f4f5bcd133927f177f37a8f18f16f414251c89ae",
+    "url": "https://github.com/microsoft/jbig2_rs/blob/f4f5bcd133927f177f37a8f18f16f414251c89ae/tools/ordinary-cohort-check/evidence/receipt.json",
+    "requests": 321,
+    "outcomes_each_revision": 642,
+    "mismatches": 0,
+    "packed_bytes_each_revision": 9480096
+  }
+}

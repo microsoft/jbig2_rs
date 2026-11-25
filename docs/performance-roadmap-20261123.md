@@ -9,15 +9,19 @@ to finish implementation and measurement rather than infer value from counts:
   normally merged as `30a1bd9825556441edf38f84c14d95173fd478d4`.
 - #228/#229/#230/#232/#234/#237/#239 retain their earlier measured negative
   dispositions.
-- #227/#231/#235/#240 have now received new actual implementation trials and
+- #227/#231/#233/#235/#236/#240 have now received new actual implementation trials and
   nine-round confirmations. Those designs are not retained, with measured
   target gains and adverse controls explicitly reported; this is not a claim
   that every optimization in those families is futile.
-- #233/#236/#238 remain open. All-standard descriptors have real target
-  latency/allocation gains but unresolved controls; narrowing has real
-  allocator savings and a hot-loop correction awaiting timing; bounded global
-  reuse has confirmed private-sequence gains on hosted x86 and native N2, but
-  production/API/domain qualification remains unfinished.
+- #238 remains open. Actual public-API bounded global reuse has confirmed
+  conditional sequence gains on hosted x86 and native N2, but caller/domain
+  and required complete qualification remain unfinished.
+- The [independent hosted follow-up](performance-hosted-followup-20261125.md)
+  preserves all four additional 129-input/133-configuration diagnostics.
+  All-standard descriptors have real gains but fail 30 native N2 controls;
+  corrected narrowing fails 20 controls despite real memory savings; the
+  pattern kernel retains two adverse scaling controls despite 36-46% target
+  gains. These tested designs are discarded based on actual measurements.
 - The [new reassessment report](performance-reassessment-20261125.md) preserves
   **9,306 native paired measurements / 1,034 summaries**, including every
   adverse case, corrected-source identities and separate private reuse results.
