@@ -6,6 +6,7 @@ mod container_routes;
 mod direct_and_reuse;
 mod dispatch_and_resources;
 mod error_adapters;
+mod prepared_globals;
 mod symbol_resources;
 
 use super::dispatch::{

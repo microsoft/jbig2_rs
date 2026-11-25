@@ -100,7 +100,7 @@ They are workload-specific and do not establish portable speedups.
 | #235 | Aligned fixed-width reads; other reads unchanged. No convincing broad target gain. A reservoir would be a separate state/error-sensitive change. | Do not retain this variant; reservoir not justified by these data. |
 | #236 | Actual31 halftone grids contain14,841 cells; largest1,763 cells/7,052 index bytes. Potential narrow-index savings total40,773 bytes across the replay, not live memory. | Defer representation/fusion redesign until a real large-grid bandwidth target exists. |
 | #237 | Borrow split aggregate codebooks instead of flattening references. Generated128-aggregate ratio0.9521 and66,096 fewer requested bytes; only82 references in six actual public cases, plus adverse controls. | Scaling opportunity, not locally qualified for retention. |
-| #238 | Four external-global requests have four distinct exact identities and one use each: zero observed warm-reuse opportunities. | Defer document-cache/API redesign pending representative repeated-document ownership/lifetime traces. |
+| #238 | The original 123-case subset had four distinct external-global identities. A later complete 321-request qualification replay finds a real three-page shared-global document; see the private experiment below. | Reopened for a bounded clone/reuse experiment; no shipping cache or measured speedup yet. |
 | #239 | Checked pristine-zero XOR admission, then a vectorizable zero reduction. Both remove one20,000-byte request on six actual targets. Reduction latency remains mixed, with11 adverse control medians; five measured peaks are unchanged. | Do not retain yet; transient bytes removed are not peak/RSS savings. |
 | #240 | Actual29,111,339 arithmetic decisions:89.56% require no normalization;79.49% of normalizing decisions shift once. | Keep the shared engine unchanged pending actual cycle/state-traffic evidence. Counts alone do not justify a rewrite. |
 
@@ -108,6 +108,92 @@ Rejecting one implementation does not prove that an entire optimization family
 cannot help. The initial evaluation left deferred investigations open; the final
 dispositions above now supersede those provisional statuses without presenting
 unretained experiments as completed improvements or weakening qualification.
+
+## Private prepared-global experiment (#238, 2026-11-25)
+
+The complete portable qualification replay contains 321 image requests,
+18 nonempty globals and 14 exact global identities. The pinned Hayro
+`file_pages.jbig2` has three normalized pages sharing 143 global bytes.
+Its source SHA-256 is
+`036b0c61419ff2c31c0ee41483d9d539fd79b2a48b55ac127ca75c0a2aabd866`.
+The other apparent three-page group,
+`lenient_end_of_page_of_previous_page`, is **not** an admitted reuse opportunity:
+metadata parsing accepts its global EOP, but actual embedded decoding rejects
+`InvalidPageAssociation { segment: 2, page: 0 }`.
+
+Five separately instrumented 1001-sequence runs attribute about 23.96% of the
+three-page sequence to global-resource decoding. Removing only its two later
+invocations gives a 15.98% optimistic opportunity, **not an observed cache speedup
+or hardware-cycle measurement**.
+
+`src/decode/tests/prepared_globals/` provides a private experiment only.
+No public API, default, runtime decoder body, proof contract, dependency or
+verification configuration changes. The test owner borrows one exact immutable
+`Decoder` and `GlobalSegments`; it cannot accept another identity, policy or set
+of limits. It admits patterns and symbol resources without retained probability
+contexts. Custom tables and other unsupported states use the original path
+before page mutation. Page parsing still precedes global preparation on every
+call. The ready resources remain immutable; each image receives independently
+owned, fallibly allocated packed-bitmap copies. Normal page retention/release
+and all existing logical global/page checks retain their original ordering.
+A successful original global decode at the owner's exact limits is reused, not
+replaced by weaker logical work or decoded-byte checks.
+
+There is an **explicit additional 65,536-byte experimental owner/copy allowance**,
+capped by the image memory and retained-state limits. Resident vector/bitmap
+capacities and simultaneous copy capacities count against this allowance;
+allocation/copy failure drops the optional cache and takes the original path
+before page mutation. Reported capacity bytes are neither RSS nor allocator
+usable size. The allowance is additional to the unchanged image limits, not
+zero-cost shared ownership or proof of a combined shipping memory bound.
+Integrating such an owner into a public aggregate memory contract would require
+separate implementation and proof; this experiment deliberately does not do so.
+
+With the already materialized, hash-checked fixtures (never downloaded or
+rewritten by this probe):
+
+```sh
+export JBIG2_PREPARED_FIXTURE_DIR=/path/to/materialized/globals
+cargo test --lib prepared_globals_fixture_controls -- --ignored --nocapture
+cargo +1.98.1 test --release --lib prepared_globals_sequence_probe --no-run
+# Use the executable printed by the build; do not invoke compilers during timing.
+PROBE=/path/to/target/release/deps/jbig2_decoder-REPORTED_HASH
+# Parent-owned quiet timing only; alternate baseline/cold/warm process order.
+JBIG2_PREPARED_MODE=baseline JBIG2_PREPARED_ITERATIONS=1001 \
+  "$PROBE" --exact decode::tests::prepared_globals::probe::prepared_globals_sequence_probe \
+  --ignored --nocapture --test-threads=1
+JBIG2_PREPARED_MODE=cold JBIG2_PREPARED_ITERATIONS=1001 \
+  "$PROBE" --exact decode::tests::prepared_globals::probe::prepared_globals_sequence_probe \
+  --ignored --nocapture --test-threads=1
+JBIG2_PREPARED_MODE=warm JBIG2_PREPARED_ITERATIONS=1001 \
+  "$PROBE" --exact decode::tests::prepared_globals::probe::prepared_globals_sequence_probe \
+  --ignored --nocapture --test-threads=1
+```
+
+`cold` includes one original preparation plus three checked physical copies and
+all three page decodes per document sequence; `warm` keeps one owner across
+sequences after explicit untimed warmup. File reads and parsed-global preparation
+are outside all three modes. Timed outputs are consumed and dropped. Exact
+candidate/baseline outputs and original standalone pixels are checked outside
+timing. Correctness controls also compare all fifteen logical-limit frontiers
+and their neighbours, truncations, subsequent reuse and the refused global EOP.
+The probe reports elapsed nanoseconds and resident/owner-plus-copy capacity
+bytes; it does not itself qualify performance or permit a shipping cache.
+
+Seven focused native controls pass on Rust 1.88.0 and 1.98.1; the actual fixture
+and fifteen-limit controls pass on MSRV and in a Rust 1.98.1 release build.
+MSRV all-target strict Clippy and the runtime/800-line audit pass.
+The original symbol-only subset correctly fell back on the actual document:
+its globals also contain a pattern dictionary. The completed experiment copies
+both context-free symbols and patterns. Its measured allocation capacities are
+22,164 resident bytes and 23,024 simultaneous owner-plus-copy bytes, not a latency
+or process-memory result. All 770 existing production function files remain
+source-identical to their source-bound proof coverage; the private helper itself
+is test-only and does not acquire a new Verus or public-memory-contract claim.
+Fresh pinned Verus whole-crate verification succeeds with 1,532 obligations,
+zero errors, and exact coverage of 750 directly verified functions plus the
+unchanged 20 reviewed limitations. It uses Rust 1.98.1, two verification threads,
+`--rlimit 30`, and the unchanged 1,050-second guard/settings.
 
 ## Actual allocation measurements
 
