@@ -293,3 +293,185 @@ fn prepared_globals_sequence_probe() {
     );
     println!("samples_ns={samples_ns:?}");
 }
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum PublicProbeMode {
+    Baseline,
+    Cold,
+    Warm,
+}
+
+impl PublicProbeMode {
+    fn parse(value: &str) -> Self {
+        match value {
+            "baseline" => Self::Baseline,
+            "cold" => Self::Cold,
+            "warm" => Self::Warm,
+            _ => panic!("public probe mode must be baseline, cold or warm"),
+        }
+    }
+
+    fn label(self) -> &'static str {
+        match self {
+            Self::Baseline => "baseline",
+            Self::Cold => "cold",
+            Self::Warm => "warm",
+        }
+    }
+}
+
+fn run_public_sequence(
+    decoder: &Decoder,
+    fixtures: &Fixtures,
+    mode: PublicProbeMode,
+    warm: &mut crate::PreparedGlobals<'_>,
+    mut consume: impl FnMut(usize, DecodedDocument),
+) -> Option<crate::PreparedGlobalsInfo> {
+    match mode {
+        PublicProbeMode::Baseline => {
+            for (index, page) in fixtures.pages.iter().enumerate() {
+                consume(
+                    index,
+                    decoder
+                        .decode_embedded_with_globals(page, &fixtures.globals)
+                        .unwrap(),
+                );
+            }
+            None
+        }
+        PublicProbeMode::Cold => {
+            let mut cold = decoder.prepared_globals(&fixtures.globals, 65_536);
+            for (index, page) in fixtures.pages.iter().enumerate() {
+                consume(index, cold.decode_embedded(page).unwrap());
+            }
+            let info = cold.info();
+            drop(cold);
+            Some(info)
+        }
+        PublicProbeMode::Warm => {
+            for (index, page) in fixtures.pages.iter().enumerate() {
+                consume(index, warm.decode_embedded(page).unwrap());
+            }
+            Some(warm.info())
+        }
+    }
+}
+
+fn public_expected_info(
+    decoder: &Decoder,
+    fixtures: &Fixtures,
+    expected: &[DecodedDocument; 3],
+) -> crate::PreparedGlobalsInfo {
+    let mut prepared = decoder.prepared_globals(&fixtures.globals, 65_536);
+    for (page, expected) in fixtures.pages.iter().zip(expected) {
+        assert_eq!(prepared.decode_embedded(page).unwrap(), *expected);
+    }
+    prepared.info()
+}
+
+fn check_public_probe_info(
+    mode: PublicProbeMode,
+    observed: Option<crate::PreparedGlobalsInfo>,
+    expected: crate::PreparedGlobalsInfo,
+) {
+    match mode {
+        PublicProbeMode::Baseline => assert!(observed.is_none()),
+        PublicProbeMode::Cold | PublicProbeMode::Warm => {
+            let info = observed.expect("actual public preparation snapshot");
+            assert_eq!(info.state, crate::PreparedGlobalsState::Ready);
+            assert_eq!(info.additional_storage_bytes, 65_536);
+            assert!(info.resident_bytes > 0);
+            assert!(info.resident_bytes <= info.additional_storage_bytes);
+            assert_eq!(info, expected);
+        }
+    }
+}
+
+#[test]
+#[ignore = "external pinned fixtures; all public modes and exact outputs without a clock"]
+fn prepared_globals_public_probe_functional_controls() {
+    let decoder = Decoder::default();
+    let fixtures = Fixtures::read(&decoder);
+    let expected = fixtures.expected(&decoder);
+    let reference = public_expected_info(&decoder, &fixtures, &expected);
+    for mode in [
+        PublicProbeMode::Baseline,
+        PublicProbeMode::Cold,
+        PublicProbeMode::Warm,
+    ] {
+        assert_eq!(PublicProbeMode::parse(mode.label()), mode);
+        let mut warm = decoder.prepared_globals(&fixtures.globals, 65_536);
+        if mode == PublicProbeMode::Warm {
+            for (page, expected) in fixtures.pages.iter().zip(&expected) {
+                assert_eq!(warm.decode_embedded(page).unwrap(), *expected);
+            }
+        }
+        for _ in 0..2 {
+            let mut seen = [false; 3];
+            let info =
+                run_public_sequence(&decoder, &fixtures, mode, &mut warm, |index, output| {
+                    assert!(!seen[index]);
+                    seen[index] = true;
+                    assert_eq!(output, expected[index]);
+                    std::hint::black_box(output);
+                });
+            assert_eq!(seen, [true; 3]);
+            check_public_probe_info(mode, info, reference);
+        }
+    }
+    println!(
+        "prepared-public-controls exact=true modes=baseline,cold,warm public_info={reference:?}"
+    );
+}
+
+#[test]
+#[ignore = "public-production latency probe; execution belongs to the benchmark operator"]
+fn prepared_globals_public_sequence_probe() {
+    let decoder = Decoder::default();
+    let fixtures = Fixtures::read(&decoder);
+    let expected = fixtures.expected(&decoder);
+    let reference = public_expected_info(&decoder, &fixtures, &expected);
+    let mode = PublicProbeMode::parse(
+        &std::env::var("JBIG2_PREPARED_MODE").expect("baseline, cold or warm"),
+    );
+    let iterations: usize = std::env::var("JBIG2_PREPARED_ITERATIONS")
+        .unwrap_or_else(|_| "1001".into())
+        .parse()
+        .unwrap();
+    assert!(iterations > 0);
+    let mut warm = decoder.prepared_globals(&fixtures.globals, 65_536);
+    if mode == PublicProbeMode::Warm {
+        for (page, expected) in fixtures.pages.iter().zip(&expected) {
+            assert_eq!(warm.decode_embedded(page).unwrap(), *expected);
+        }
+    }
+    let mut durations = Vec::new();
+    durations
+        .try_reserve_exact(iterations)
+        .expect("preallocate public sequence samples");
+    let mut observations = Vec::new();
+    observations
+        .try_reserve_exact(iterations)
+        .expect("preallocate public info snapshots");
+    for _ in 0..iterations {
+        let start = std::time::Instant::now();
+        let info = run_public_sequence(&decoder, &fixtures, mode, &mut warm, |_, output| {
+            std::hint::black_box(output);
+        });
+        let duration_ns = start.elapsed().as_nanos();
+        durations.push(duration_ns);
+        observations.push(info);
+    }
+    let elapsed_ns: u128 = durations.iter().sum();
+    for info in &observations {
+        check_public_probe_info(mode, *info, reference);
+    }
+    let checked = public_expected_info(&decoder, &fixtures, &expected);
+    assert_eq!(checked, reference);
+    let actual_info = observations.last().copied().flatten();
+    println!(
+        "prepared-public-sequence mode={} iterations={iterations} pages={} elapsed_ns={elapsed_ns} exact=true public_info={actual_info:?} owner_info_snapshot_cost_included={}",
+        mode.label(), iterations * 3, mode != PublicProbeMode::Baseline
+    );
+    println!("samples_ns={durations:?}");
+}

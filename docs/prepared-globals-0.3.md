@@ -154,6 +154,23 @@ the test does not download, rewrite, redistribute or pretend to time the PDF.
 Any future latency comparison must include cold preparation and visible bypass
 reasons, not fabricate repeated requests for that object.
 
+The separate ignored `prepared_globals_public_sequence_probe` exercises the
+production API, never the private prototype. It uses typed `baseline`/`cold`/`warm`
+values from `JBIG2_PREPARED_MODE`, the existing `JBIG2_PREPARED_FIXTURE_DIR`, and
+`JBIG2_PREPARED_ITERATIONS` (default 1001 three-page samples). Baseline calls only
+ordinary embedded-with-globals decoding; cold constructs a real 65,536-byte
+public preparation per sequence and explicitly destroys it inside the sample;
+warm is a prewarmed public preparation used diagnostically. Real output drops
+and cold/warm public `info()` snapshot costs are inside each sample. Preallocated
+duration/snapshot vectors are filled, checked and printed outside sample timers;
+`elapsed_ns` is the sum of raw `samples_ns`. Actual Ready/allowance/resident
+snapshots must match untimed public preparation; there are no private counters
+or invented peak-copy figures. `prepared_globals_public_probe_functional_controls`
+checks all three modes and every original-page output without a clock. The
+private probe names, bodies and protocol are unchanged and their measurements
+remain private-experiment evidence. This normalized standalone-source workload
+still is not a production PDF trace, full-PDF gain or same-memory-budget result.
+
 ## Local validation and remaining integration
 
 The [source-bound local receipt](../validation/performance/prepared-globals-local-20261125.json)
