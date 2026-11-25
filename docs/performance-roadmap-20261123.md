@@ -1,25 +1,47 @@
 # Performance roadmap evaluation: #225-#240
 
-## Status and qualification boundary
+## Final status (2026-11-25)
 
-All sixteen reports have been investigated. Only the owned-halftone and
-identity-export changes (#225/#226) are proposed in this branch. Other prototypes
-are experiments, not retained production improvements. The proposal is not
-qualified for merging merely because its component proofs pass.
+All sixteen reported investigations have a final disposition:
 
-The issue baseline is `f8774dd4d09bec588f88cd4750334b398030057b`;
-the current-main baseline is `3cfff21b3bc157a5908e32199c1e94b2811ad806`.
-The proposed runtime is `f2ded09787e983edf76ed05a7487fabcbedfe728`.
-Later checker, documentation and evidence commits do not change that runtime.
-This document preserves the preliminary experiments. Subsequent local confirmation
-and exact-head CI receipts are recorded on the proposal's pull request; they do not
-relabel earlier screening runs or waive missing external qualification.
+- #225/#226 are completed through [#241](https://github.com/microsoft/jbig2_rs/pull/241),
+  normally merged as `30a1bd9825556441edf38f84c14d95173fd478d4`.
+- #227-#240 are closed **not planned**, with individual evidence and concrete
+  reopen criteria. No unqualified prototype is retained. These are decisions
+  about the evaluated proposals, not proofs that every future design is futile.
+- The original N2 / LLVM24 / PDFium availability blocker is resolved.
+  [#242](https://github.com/microsoft/jbig2_rs/pull/242), normally merged as
+  `775e57f2f99d1dbad386e51e094f2994f817ceaf`, publishes the portable harness,
+  manifests and original qualification receipts. All 2,305 outcomes, 183 reference
+  decisions and 88 targeted tests pass/preserve behavior. Nine rounds over 68
+  workloads and 2,934 processes have no per-case median regression above 5%;
+  the worst is +4.33%. See the [frozen receipt](../tools/pdfium-qualification/runs/pr241-121bee27-n2/receipt.json).
 
-**Still required:** the original matched Neoverse-N2 / LLVM24 / PDFium consumer,
-the frozen 321-image / 140-PDF qualification, and the original independent-output
-and refusal decisions. Those assets are unavailable here. Local extracted-stream
-Rust comparisons do not substitute for them or establish a win over C++.
-No issue is closed on that basis.
+The later independent current-main follow-up covers five variants, 5,724 paired
+measurements and 636 complete case/variant summaries. Each misses the unchanged
+control gate. Sources, raw summaries, proofs and adverse records remain public:
+
+- [#230: three aligned-composition variants](https://github.com/microsoft/jbig2_rs/blob/4771da8888a698314bebaec72a101560bef780d7/docs/composition-followup-20261124.md).
+- [#233: isolated standard-A ownership](https://github.com/microsoft/jbig2_rs/blob/3a4219d3c44c1e78c446a3bca6f0c4fbd3f78ac4/docs/huffman-standard-a-followup-20261124.md).
+- [#239: original wide XOR target](https://github.com/microsoft/jbig2_rs/blob/232aec09d44cb70e74c17a7d876aa7a4b27f1630/docs/xor-wide-followup-20261124.md),
+  including the explicit template-0 classification erratum. The real 41.5%
+  tracked-peak-payload reduction is not RSS and does not waive four adverse
+  latency controls.
+
+No additional implementation or repeated confirmation is scheduled for the
+closed investigations. Reopening requires a materially different isolated
+mechanism or representative workload/phase attribution addressing the recorded
+retention failure; speculative alternatives alone are not unfinished deliverables.
+
+## Historical screening boundary
+
+The remaining measurements preserve the preliminary evaluation unchanged. Its
+issue baseline is `f8774dd4d09bec588f88cd4750334b398030057b`, its then-main
+baseline is `3cfff21b3bc157a5908e32199c1e94b2811ad806`, and its proposed runtime
+is `f2ded09787e983edf76ed05a7487fabcbedfe728`. Original qualification assets were
+unavailable during that screen; their later availability and accepted results
+above supersede that blocker, not the historical observations. Local x86 Rust
+comparisons are not relabelled as N2 results or a win over C++.
 
 ## Experiment discipline
 
@@ -63,7 +85,7 @@ performance improvement, and does not excuse adverse candidate measurements.
 Ratios below are candidate/baseline decode time from the preliminary screens.
 They are workload-specific and do not establish portable speedups.
 
-| Report | Experiment and observed evidence | Current disposition |
+| Report | Experiment and observed evidence | Preliminary disposition (historical) |
 |---|---|---|
 | #225 | Carry full bank validity across privately owned arithmetic halftone planes. The direct-call variant gives about0.30/0.36/0.63 on three halftone targets, all five pairs faster. | Proposed with #226; complete control confirmation and external qualification remain required. |
 | #226 | Move the existing all-new, identity-order export vector. Many-symbol incremental ratio0.733, all five pairs faster; actual allocation and peak-payload savings below. | Proposed with #225; no general shared-bitmap or sparse-export redesign. |
@@ -83,8 +105,9 @@ They are workload-specific and do not establish portable speedups.
 | #240 | Actual29,111,339 arithmetic decisions:89.56% require no normalization;79.49% of normalizing decisions shift once. | Keep the shared engine unchanged pending actual cycle/state-traffic evidence. Counts alone do not justify a rewrite. |
 
 Rejecting one implementation does not prove that an entire optimization family
-cannot help. Deferred reports remain open rather than being presented as completed
-improvements or silently losing the original qualification requirements.
+cannot help. The initial evaluation left deferred investigations open; the final
+dispositions above now supersede those provisional statuses without presenting
+unretained experiments as completed improvements or weakening qualification.
 
 ## Actual allocation measurements
 
