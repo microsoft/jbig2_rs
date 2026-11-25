@@ -1,14 +1,27 @@
 # Performance roadmap evaluation: #225-#240
 
-## Final status (2026-11-25)
+## Reassessment status (2026-11-25)
 
-All sixteen reported investigations have a final disposition:
+The initial blanket closure was too broad. Seven assessments were reopened
+to finish implementation and measurement rather than infer value from counts:
 
 - #225/#226 are completed through [#241](https://github.com/microsoft/jbig2_rs/pull/241),
   normally merged as `30a1bd9825556441edf38f84c14d95173fd478d4`.
-- #227-#240 are closed **not planned**, with individual evidence and concrete
-  reopen criteria. No unqualified prototype is retained. These are decisions
-  about the evaluated proposals, not proofs that every future design is futile.
+- #228/#229/#230/#232/#234/#237/#239 retain their earlier measured negative
+  dispositions.
+- #227/#231/#235/#240 have now received new actual implementation trials and
+  nine-round confirmations. Those designs are not retained, with measured
+  target gains and adverse controls explicitly reported; this is not a claim
+  that every optimization in those families is futile.
+- #233/#236/#238 remain open. All-standard descriptors have real target
+  latency/allocation gains but unresolved controls; narrowing has real
+  allocator savings and a hot-loop correction awaiting timing; bounded global
+  reuse has confirmed private-sequence gains on hosted x86 and native N2, but
+  production/API/domain qualification remains unfinished.
+- The [new reassessment report](performance-reassessment-20261125.md) preserves
+  **9,306 native paired measurements / 1,034 summaries**, including every
+  adverse case, corrected-source identities and separate private reuse results.
+  No new runtime has been adopted by that report.
 - The original N2 / LLVM24 / PDFium availability blocker is resolved.
   [#242](https://github.com/microsoft/jbig2_rs/pull/242), normally merged as
   `775e57f2f99d1dbad386e51e094f2994f817ceaf`, publishes the portable harness,
@@ -17,7 +30,7 @@ All sixteen reported investigations have a final disposition:
   workloads and 2,934 processes have no per-case median regression above 5%;
   the worst is +4.33%. See the [frozen receipt](../tools/pdfium-qualification/runs/pr241-121bee27-n2/receipt.json).
 
-The later independent current-main follow-up covers five variants, 5,724 paired
+An earlier independent current-main follow-up covers five variants, 5,724 paired
 measurements and 636 complete case/variant summaries. Each misses the unchanged
 control gate. Sources, raw summaries, proofs and adverse records remain public:
 
@@ -28,10 +41,9 @@ control gate. Sources, raw summaries, proofs and adverse records remain public:
   tracked-peak-payload reduction is not RSS and does not waive four adverse
   latency controls.
 
-No additional implementation or repeated confirmation is scheduled for the
-closed investigations. Reopening requires a materially different isolated
-mechanism or representative workload/phase attribution addressing the recorded
-retention failure; speculative alternatives alone are not unfinished deliverables.
+The historical screens below remain unchanged. Current implementation,
+independent-runner investigation and final issue dispositions are tracked in the
+reassessment report; they must not be inferred from this earlier closure list.
 
 ## Historical screening boundary
 
