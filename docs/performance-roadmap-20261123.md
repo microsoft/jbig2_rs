@@ -146,6 +146,8 @@ allocation/copy failure drops the optional cache and takes the original path
 before page mutation. Reported capacity bytes are neither RSS nor allocator
 usable size. The allowance is additional to the unchanged image limits, not
 zero-cost shared ownership or proof of a combined shipping memory bound.
+This is an additional bounded storage tradeoff, **not** a proved
+same-total-memory-budget public cache or an observed speedup.
 Integrating such an owner into a public aggregate memory contract would require
 separate implementation and proof; this experiment deliberately does not do so.
 
@@ -155,6 +157,7 @@ rewritten by this probe):
 ```sh
 export JBIG2_PREPARED_FIXTURE_DIR=/path/to/materialized/globals
 cargo test --lib prepared_globals_fixture_controls -- --ignored --nocapture
+cargo test --lib prepared_globals_probe_functional_controls -- --ignored --nocapture
 cargo +1.98.1 test --release --lib prepared_globals_sequence_probe --no-run
 # Use the executable printed by the build; do not invoke compilers during timing.
 PROBE=/path/to/target/release/deps/jbig2_decoder-REPORTED_HASH
@@ -173,8 +176,12 @@ JBIG2_PREPARED_MODE=warm JBIG2_PREPARED_ITERATIONS=1001 \
 `cold` includes one original preparation plus three checked physical copies and
 all three page decodes per document sequence; `warm` keeps one owner across
 sequences after explicit untimed warmup. File reads and parsed-global preparation
-are outside all three modes. Timed outputs are consumed and dropped. Exact
-candidate/baseline outputs and original standalone pixels are checked outside
+are outside all three modes. Timed outputs are consumed and dropped.
+Cold counters are aggregated uniformly in all modes and checked only after the
+timer stops; cold preparation, copies, owner destruction and page/output
+destruction remain inside the measured call. The functional control executes
+that same sequence loop in all modes without a timer.
+Exact candidate/baseline outputs and original standalone pixels are checked outside
 timing. Correctness controls also compare all fifteen logical-limit frontiers
 and their neighbours, truncations, subsequent reuse and the refused global EOP.
 The probe reports elapsed nanoseconds and resident/owner-plus-copy capacity
@@ -194,6 +201,9 @@ Fresh pinned Verus whole-crate verification succeeds with 1,532 obligations,
 zero errors, and exact coverage of 750 directly verified functions plus the
 unchanged 20 reviewed limitations. It uses Rust 1.98.1, two verification threads,
 `--rlimit 30`, and the unchanged 1,050-second guard/settings.
+That receipt covers the existing unchanged production proof surface, not a new
+proof of this test-only cache experiment. A proved public owner remains a
+separate decision after parent-owned measurement of a material cold gain.
 
 ## Actual allocation measurements
 

@@ -161,6 +161,75 @@ fn prepared_globals_fixture_controls() {
     );
 }
 
+fn run_sequences(
+    decoder: &Decoder,
+    fixtures: &Fixtures,
+    mode: &str,
+    iterations: usize,
+    warm: &mut PreparedOwner<'_>,
+) -> [usize; 3] {
+    let mut cold_totals = [0; 3];
+    for _ in 0..iterations {
+        let mut cold = PreparedOwner::new(decoder, &fixtures.globals, 65_536);
+        for page in &fixtures.pages {
+            let output = match mode {
+                "baseline" => decoder
+                    .decode_embedded_with_globals(page, &fixtures.globals)
+                    .unwrap(),
+                "cold" => cold.decode(page).unwrap(),
+                "warm" => warm.decode(page).unwrap(),
+                _ => unreachable!(),
+            };
+            std::hint::black_box(output);
+        }
+        cold_totals[0] += cold.preparations;
+        cold_totals[1] += cold.hits;
+        cold_totals[2] += cold.fallbacks;
+        // Destruction of every cold owner remains inside the measured call.
+    }
+    cold_totals
+}
+
+fn check_sequence_totals(
+    mode: &str,
+    iterations: usize,
+    cold_totals: [usize; 3],
+    warm: &PreparedOwner<'_>,
+) {
+    let expected = if mode == "cold" {
+        [iterations, iterations * 3, 0]
+    } else {
+        [0; 3]
+    };
+    assert_eq!(cold_totals, expected);
+    if mode == "warm" {
+        assert_eq!(warm.preparations, 1);
+        assert_eq!(warm.hits, (iterations + 1) * 3);
+        assert_eq!(warm.fallbacks, 0);
+    }
+}
+
+#[test]
+#[ignore = "external pinned fixtures; exercises all probe modes without a timer"]
+fn prepared_globals_probe_functional_controls() {
+    let decoder = Decoder::default();
+    let fixtures = Fixtures::read(&decoder);
+    let expected = fixtures.expected(&decoder);
+    for mode in ["baseline", "cold", "warm"] {
+        let mut warm = PreparedOwner::new(&decoder, &fixtures.globals, 65_536);
+        if mode == "warm" {
+            for (page, expected) in fixtures.pages.iter().zip(&expected) {
+                assert_eq!(warm.decode(page).unwrap(), *expected);
+            }
+        }
+        let cold_totals = run_sequences(&decoder, &fixtures, mode, 2, &mut warm);
+        check_sequence_totals(mode, 2, cold_totals, &warm);
+        for (page, expected) in fixtures.pages.iter().zip(&expected) {
+            assert_eq!(warm.decode(page).unwrap(), *expected);
+        }
+    }
+}
+
 #[test]
 #[ignore = "parent-owned timing probe; never run as part of correctness validation"]
 fn prepared_globals_sequence_probe() {
@@ -181,31 +250,9 @@ fn prepared_globals_sequence_probe() {
         }
     }
     let start = std::time::Instant::now();
-    for _ in 0..iterations {
-        let mut cold = PreparedOwner::new(&decoder, &fixtures.globals, 65_536);
-        for page in &fixtures.pages {
-            let output = match mode.as_str() {
-                "baseline" => decoder
-                    .decode_embedded_with_globals(page, &fixtures.globals)
-                    .unwrap(),
-                "cold" => cold.decode(page).unwrap(),
-                "warm" => warm.decode(page).unwrap(),
-                _ => unreachable!(),
-            };
-            std::hint::black_box(output);
-        }
-        if mode == "cold" {
-            assert_eq!(cold.preparations, 1);
-            assert_eq!(cold.hits, 3);
-            assert_eq!(cold.fallbacks, 0);
-        }
-    }
+    let cold_totals = run_sequences(&decoder, &fixtures, &mode, iterations, &mut warm);
     let elapsed = start.elapsed().as_nanos();
-    if mode == "warm" {
-        assert_eq!(warm.preparations, 1);
-        assert_eq!(warm.hits, (iterations + 1) * 3);
-        assert_eq!(warm.fallbacks, 0);
-    }
+    check_sequence_totals(&mode, iterations, cold_totals, &warm);
     // Validate the same candidate outside the timed interval, not a skip-decode
     // surrogate. Baseline/candidate output equality is a separate hard control.
     let mut checked = PreparedOwner::new(&decoder, &fixtures.globals, 65_536);
