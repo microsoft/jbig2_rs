@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
   "status": "verified_exact_project_scope_with_reviewed_limits",
-  "source_revision": "3e275d1a2bfddb95a25c801ae37a277500849ce8",
-  "scope": "Fresh pinned whole verification of exact supplied Huffman cache/field lookup and concrete/enum integer-adapter composition. Each supplied custom/standard/absent field binding yields its exact signed integer, OOB or converted error and complete consumed cursor, with unchanged reader bytes and all table/strip/ID/refinement metadata. Missing bindings consume no input. Existing arithmetic/literal contracts and all770 native production declaration bodies are unchanged from accepted main775e57f; no stronger precondition, assumption, trusted body, runtime/proof substitution or reviewed limitation is added. Prior owned-halftone/export and strict/Compatibility/RGB behavior, limits, bi-level matrix, host-build profiles and1050-second CI guard remain. These project-result contracts do not derive normative header selectors, approve Annex B entries, complete statement enumeration, establish full rendered streams or grant external-validation readiness.",
+  "source_revision": "6d1bac13480af4eb08916d685013ef1e00b71fac",
+  "scope": "Fresh local exact verification of the explicit opt-in prepared-global owner and immutable decoder/global/allowance frames, conservative admission and reset/transfer lifecycle, exact fallible bitmap/resource copies, valid stores, checked additional observed-capacity budgets and allocation-only optional bypass classification. All 770 original declaration bodies remain unchanged, all original 750 verified functions are retained with 19 new directly verified functions and the same 20 reviewed limitations. Extra bounded storage is not a same-total-memory-budget cache. Separate embedded-stream callers only; normalized standalone file_pages is not an observed production PDF trace, and standalone decoding already shares resources. No full-stream/raster, independent normative, N2/PDFium, shipping performance or external-readiness theorem is granted.",
   "toolchain": {
     "manifest": "config/toolchain.json",
     "verus_version": "0.2026.10.04.426d8b0",
     "verus_commit": "426d8b01e7ffb910a36c15e1f870ff985bb61eef",
     "archive_sha256": "624018662868563a7bec0dd07be5e4dd0c3d61124b4b55105765884bf2d4d1a0"
   },
-  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-issue135-fields CARGO_INCREMENTAL=0 cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/issue135-20261125/final/expanded\" --output-json",
+  "command": "timeout 1050s env PATH=/workspace/jbig2-pinned-verus:$PATH TMPDIR=\"$PWD/target/prepared-public-20261125/scratch\" CARGO_TARGET_DIR=\"$PWD/target/verus-prepared-public-whole-20261125\" CARGO_INCREMENTAL=0 cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --num-threads 2 --rlimit 30 --triggers-mode silent --log vir --log-dir \"$PWD/target/prepared-public-20261125/expanded-final\" --output-json",
   "result": {
-    "verified_obligations": 1532,
-    "verified_production_functions": 750,
+    "verified_obligations": 1567,
+    "verified_production_functions": 769,
     "errors": 0,
     "proof_build_compiles": true,
     "exact_production_source_compiles": true,
@@ -24,8 +24,8 @@
     "runtime_proof_divergences": 0,
     "incomplete_functions": 0
   },
-  "production_proof_coverage_sha256": "8e751e8122f8d8d1a17d40fe37ca1b0132748e5a793361d8f655d8e47dbce98a",
-  "proof_dispositions_sha256": "0743e3eba8f677f1d891f669cee2929238ae73613896d4f0f0a3ef7329bb7faa",
+  "production_proof_coverage_sha256": "8f9c1bf5a578e5bd88629a93adb294206156388548d23685926a06a00f94e428",
+  "proof_dispositions_sha256": "7c2e9ff16850c078a091f2aa86d90f7fc0ff2336f6d6693c40b6a251f7d7b868",
   "standard_library_boundary": {
     "manifest": "verification/stdlib/review.json",
     "manifest_sha256": "5f007f853c6caad16d6d318bde996373c6a6f886e8949cd0df62612e5408a92c",
@@ -33,7 +33,7 @@
     "review_kind": "delegated_engineering_review",
     "normative_approval": false
   },
-  "current_evidence_note": "Exact750 direct verified functions and unchanged20 reviewed limitations retain whole1532/0 with stronger field-result contracts and refreshed source-bound coverage. All770 production declaration bodies match accepted main775e57f; MSRV643 native tests plus one doctest pass, with16 existing ignored tests. Five new contrasts form a separate complete huffman-field-selection group, preserving the original64-group/505-contrast historical scopes and all prior queries as current65/510. Selective literal negative controls retain the new table guarantees; table controls retain literal/arithmetic semantics, reader validity, metadata frames and the other result/cursor component. Actual Cargo profiles, root invalidation, roles, concurrency, pinned tools/resource settings and1050-second guard remain. Require complete same-run protected CI on the final head; local diagnostics are not canonical acceptance. Original N2/LLVM24/PDFium qualification remains the prior published measurement, not a new binary/timing claim. No backport, publication, normative approval or readiness grant.",
+  "current_evidence_note": "Local source/API validation: fresh whole1567/0, exact769 direct/20 reviewed, all original750 retained and all original770 bodies unchanged. Full native suites pass on Rust1.88.0 and1.98.1 (658 tests plus one doctest); strict MSRV lint/runtime checks pass. Eight independent native/strong/selectively-weaker contrasts pass without new assumptions or weaker production contracts. All321 hash-exact portable image requests match baseline pixels/errors at extra allowances0/65536, twice each; one unchanged metadata refusal occurs before owner construction. Fifteen actual logical-limit frontiers/neighbours and the refused global EOP are preserved. Single-use pikepdf object17 succeeds at4000x2864 and uses its first already-decoded resources under storage bypass, not a warm target. Actual compiler inventory, derived74-entry API profile and native/Verus reconciliation pass locally with readiness false. Existing65-group/510-contrast historical profiles and all build/resource/1050-second guards are unchanged; the eight-case local assessment is separate, not retrospectively added to historical timing credit. Public-owner latency has not been run. Require complete same-run protected CI and opt-in qualification on the final integrated head; prior private x86 gains and original N2/PDFium results do not qualify this new API. All870 audit-tool tests pass using an exact frozen source input and unchanged outside-input isolation guards, with every generated file inside the owned worktree.",
   "host_build_dependency_ci_repair": {
     "baseline_source": "470aaa6e556443872a77784dece82ebab0bafb4f",
     "preserved_rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/45410252328",
@@ -129,7 +129,7 @@
     "destination_shard": 4,
     "measured_group_seconds": 92.39983617400003,
     "projected_source_shard_seconds": 1034.037577418,
-    "projected_destination_shard_seconds": 875.938735740,
+    "projected_destination_shard_seconds": 875.93873574,
     "complete_owned_profile_envelope_maximum_seconds": 1045.988282866,
     "conservative_destination_shard_seconds": 1021.836501295,
     "guard_seconds_unchanged": 1050,
@@ -1011,5 +1011,23 @@
     },
     "production_proof_coverage_sha256": "c62ec8c016b1e117e41af44b98eb6ad5cf5c2e2f28674f24e76f98eb3a05b781",
     "scope": "Historical baseline, not a current execution or renewed normative approval."
+  },
+  "prepared_globals_local_assessment": {
+    "source_revision": "6d1bac13480af4eb08916d685013ef1e00b71fac",
+    "assessment_tool": "tools/assess_prepared_globals.py",
+    "case_count": 8,
+    "whole_verified_obligations": 1567,
+    "retained_original_verified_functions": 750,
+    "new_verified_functions": 19,
+    "additional_storage_tradeoff": true,
+    "same_total_memory_budget_claim": false,
+    "public_owner_latency_measured": false,
+    "protected_ci_qualification": "pending",
+    "existing_semantic_profile_groups": 65,
+    "existing_semantic_profile_contrasts": 510,
+    "guard_seconds_unchanged": 1050,
+    "normative_approval": false,
+    "ready_for_external_validation": false,
+    "audit_tool_tests_passed": 870
   }
 }

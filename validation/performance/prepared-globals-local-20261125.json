@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "status": "locally_validated_project_scope_not_shipping_qualification",
+  "source_revision": "6d1bac13480af4eb08916d685013ef1e00b71fac",
+  "proof": {
+    "whole_obligations": 1567,
+    "errors": 0,
+    "direct_functions": 769,
+    "original_direct_functions_retained": 750,
+    "reviewed_limits": 20,
+    "native_assumptions": [],
+    "runtime_proof_divergences": 0
+  },
+  "native": {
+    "toolchains": [
+      "1.88.0",
+      "1.98.1"
+    ],
+    "tests_passed_each": 658,
+    "doctests_passed_each": 1,
+    "strict_msrv_lint": true,
+    "actual_frozen_requests": 321,
+    "unchanged_metadata_refusals_before_owner_creation": 1,
+    "allowances": [
+      0,
+      65536
+    ],
+    "repetitions_per_request_and_allowance": 2,
+    "actual_limit_frontiers": 15,
+    "pikepdf_single_use_success_dimensions": [
+      4000,
+      2864
+    ],
+    "pikepdf_global_bytes": 47864,
+    "pikepdf_result": "exact_pixels_and_visible_storage_bypass"
+  },
+  "selective_contrasts": [
+    {
+      "id": "constructor_discards_requested_extra_allowance",
+      "target": "Decoder::prepared_globals",
+      "native_test": "decode::prepared::tests::public_prepared_owner_is_lazy_bound_and_resettable",
+      "strong_errors": 1,
+      "weaker_errors": 0,
+      "native_fault_rejected": true
+    },
+    {
+      "id": "reset_keeps_resident_resources",
+      "target": "PreparedGlobals::reset",
+      "native_test": "decode::prepared::tests::public_prepared_owner_is_lazy_bound_and_resettable",
+      "strong_errors": 1,
+      "weaker_errors": 0,
+      "native_fault_rejected": true
+    },
+    {
+      "id": "copy_budget_rejects_inclusive_equality",
+      "target": "CopyBudget::check",
+      "native_test": "decode::prepared::tests::prepared_budget_is_inclusive_and_never_suppresses_internal_errors",
+      "strong_errors": 1,
+      "weaker_errors": 0,
+      "native_fault_rejected": true
+    },
+    {
+      "id": "bitmap_copy_corrupts_one_pixel_but_keeps_layout",
+      "target": "copy_bitmap",
+      "native_test": "decode::prepared::tests::production_prepared_copies_exact_packed_frames_and_ids",
+      "strong_errors": 1,
+      "weaker_errors": 0,
+      "native_fault_rejected": true
+    },
+    {
+      "id": "symbol_copy_discards_resource_identity",
+      "target": "copy_resources",
+      "native_test": "decode::prepared::tests::production_prepared_copies_exact_packed_frames_and_ids",
+      "strong_errors": 1,
+      "weaker_errors": 0,
+      "native_fault_rejected": true
+    },
+    {
+      "id": "internal_overflow_is_suppressed_as_optional_allocation",
+      "target": "copy_failure",
+      "native_test": "decode::prepared::tests::prepared_budget_is_inclusive_and_never_suppresses_internal_errors",
+      "strong_errors": 1,
+      "weaker_errors": 0,
+      "native_fault_rejected": true
+    },
+    {
+      "id": "uncached_transfer_changes_the_consumed_original",
+      "target": "PreparedGlobals::transfer_uncached",
+      "native_test": "decode::prepared::tests::prepared_copy_refusal_transfers_the_original_cache_before_page_mutation",
+      "strong_errors": 1,
+      "weaker_errors": 0,
+      "native_fault_rejected": true
+    },
+    {
+      "id": "retained_contexts_are_admitted",
+      "target": "admission",
+      "native_test": "decode::prepared::tests::prepared_admission_checks_contexts_tables_and_real_empty_resources",
+      "strong_errors": 1,
+      "weaker_errors": 0,
+      "native_fault_rejected": true
+    }
+  ],
+  "source_bindings": {
+    "src/lib.rs": "b9990fedb21554c2c60ff8911c73100de1432b96d2fd9c2cd42d919eeb33ac89",
+    "src/decode.rs": "bf541daff17620dd652edfd11716605d177c26b09b1e8a95e99f0e8c9d8eb421",
+    "src/decode/prepared.rs": "3f028bd20ca3b2f377168bf0ec6a28e0a717c87d61d588f1af4601ee0dfdc693",
+    "src/decode/prepared/copying.rs": "19ce8dea3207ee5c1c81a16c428eb04001a120e9336f0c96f07a6c6aff94886e",
+    "specs/prepared.rs": "8ada376b93a45e964cebb6484b69b91758f7cc3d828b750bffd2966261803bc4",
+    "src/decode/prepared/tests.rs": "fc6236d49f988c545c45d9580b3ab025fd0e0a405017420f243eeb69838882cb",
+    "src/document.rs": "b98e7c7bf8ed0ddcc476082bda564e2f5ebda0a65925f86313deba3bf1067d77",
+    "src/symbol_text.rs": "32512e90ada8bed2d1d598a5eb5c21f05a4a1319946e7e82069f44db78a303b2",
+    "src/symbol_text/bitmap.rs": "fe71b9283fb724e678690699210a70f0b6115a1f8ff17f6a9976c87f46943556",
+    "verification/Cargo.toml": "be67ee3fa5a0accb90082c430272d24c429b425056f3b7674828a67a6a0c1431",
+    "verification/Cargo.lock": "c6e61d15cd297d992b07c2561b87e0fcbf216fbfb36a699dc0dfb63960b31aa5",
+    "config/toolchain.json": "4fdfe715d7f019c6c6288474c2e44b1442d6a235b89947b3d84c189893b9b8b0",
+    "tools/assess_prepared_globals.py": "4031028df1ee8d1f9a42e2f7093a083c7ba44f3631b5c0b6ffbf3a6c27e99495"
+  },
+  "receipts": {
+    "target/prepared-public-20261125/verus-production-final.json": "3137967d10b6d970b1990ca6f59e3923ff35e19b742f35e65f2489727dae46c1",
+    "target/prepared-public-20261125/contrasts-3/report.json": "d774f2bac11c167c045c0b85eb06e2cee5a4417b71f6cb600d887d9104e82a30",
+    "target/prepared-public-20261125/original-source-identity.json": "81a542c2bb61115c04865db1adf8fd93cb7f64c56a089dd2da6300e910604bea",
+    "target/prepared-public-20261125/compiler-inventory/report.json": "d004b9f762acda69dfac02207700e3ae10de5a995247161d180193f2dbedd489",
+    "target/prepared-public-20261125/internal-profile.json": "474b57080aef905fe7903b98b856bffa4b5d7b084876f11353957567c42fd1de",
+    "target/prepared-public-20261125/materialized/complete-report.json": "98bd287d4d2ce597be55f5a4a5a428cced72387b7a12a08d6bd29188d77c1c78",
+    "target/prepared-public-20261125/requests-all321.log": "bb9bfb38e78f80bdef58251f8df5de00997fc0b7f50b365b314e2711d6ccadea",
+    "target/prepared-public-20261125/pike-positive-control.log": "64f516645a62cb145707ef74c63739042f54d09567aa2846d5a32dbd6df92758",
+    "target/prepared-public-20261125/tool-tests-final.log": "502672e5afbec1ac17f8dac2b0aa6870e3e5e704179ce6231c3826ce9d5547d6"
+  },
+  "capacity_interface_review_unchanged": true,
+  "additional_storage_tradeoff": true,
+  "same_total_memory_budget_claim": false,
+  "public_owner_latency_measured": false,
+  "production_pdf_reuse_trace_qualified": false,
+  "normative_approval": false,
+  "ready_for_external_validation": false,
+  "protected_ci_qualification": "pending",
+  "audit_tool_tests": {
+    "passed": 870,
+    "failed": 0,
+    "exact_frozen_input": true,
+    "existing_isolation_guards_unchanged": true
+  }
+}

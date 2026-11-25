@@ -1,8 +1,9 @@
 # Opt-in prepared globals on unpublished 0.3
 
-**Implementation/qualification work in progress.** The new public owner must
-receive fresh native/MSRV, exact Verus, contrast and inventory qualification.
-The earlier private-experiment proof receipt does not prove this new API.
+**Locally validated implementation, not shipping qualification.** Fresh
+native/MSRV, exact Verus, selective contrasts and compiler inventories have
+been checked for this source. Complete protected CI and opt-in measurements
+remain separate. The earlier private-experiment receipt does not prove this API.
 No release, normative approval, external-readiness or same-memory-budget claim
 is made. Ordinary decoder defaults and existing function bodies are unchanged.
 The optimization domain is callers already providing **separate embedded
@@ -153,10 +154,42 @@ the test does not download, rewrite, redistribute or pretend to time the PDF.
 Any future latency comparison must include cold preparation and visible bypass
 reasons, not fabricate repeated requests for that object.
 
-## Qualification and integration still required
+## Local validation and remaining integration
 
-Do not run compilers during a parent-owned quiet timing window. After explicit
-authorization:
+The [source-bound local receipt](../validation/performance/prepared-globals-local-20261125.json)
+records:
+
+- Fresh whole-crate pinned Verus: **1,567 obligations, zero errors, 769 directly
+  verified functions and the same 20 reviewed limitations**. All original 750
+  directly verified functions are retained; all 770 original declaration bodies
+  are unchanged. The additional 19 results concern the new project API/helpers.
+- Complete Rust 1.88.0 and 1.98.1 native suites: **658 tests and one doctest**
+  pass on each; strict MSRV all-target lint, formatting and runtime audits pass.
+  All **870 audit-tool tests** pass with an exact frozen input and unchanged
+  isolation requirements. The proof-free MSRV package and downstream API
+  consumer checks pass separately.
+- Eight source-bound native/strong/selectively-weaker contrasts pass, including
+  admission, identity, exact copied pixels/IDs, budget equality, reset, original
+  resource transfer and non-suppression of internal overflow.
+- **All 321 frozen requests** have exact payload/global identities and match
+  baseline pixels or typed errors at additional allowances zero/65,536, twice
+  each. One unchanged metadata refusal occurs before owner construction. The
+  three-page normalization and all fifteen logical-limit frontiers/neighbours
+  retain their separate exact controls.
+- The single-use pikepdf object succeeds at **4000×2864** with complete pixels
+  equal to baseline and visible storage bypass, without global redecoding.
+- Actual native compiler artifacts, a derived **74-entry** API profile and
+  native/expanded-Verus reconciliation pass. Collection used a byte-identical
+  frozen input snapshot with unchanged isolation guards; generated files stayed
+  in the task's worktree. External-readiness remains false.
+
+These are local project-source results, not a protected-CI acceptance,
+public-owner speedup, whole-PDF result or independent normative approval.
+Original official-case execution revisions/outcomes are not rerun or relabelled:
+only unchanged-default source inventory/hash bindings are renewed.
+
+Run compiler/source checks separately from latency measurements. Reproduce
+these local checks and complete protected integration:
 
 1. Run focused public-owner and actual-fixture controls, then all native/MSRV,
    formatting, strict lint, documentation and distribution checks.
@@ -183,9 +216,10 @@ authorization:
    source-review/provenance packets through their existing reviewed process,
    rather than flipping approval/fidelity/readiness flags.
 
-Parent owns complete protected CI, any profile/ledger review, public opt-in
-measurement and final disposition. No experimental workflow override belongs
-in the product.
+Complete protected CI, public opt-in measurement, source-review disposition and
+any additional semantic-profile integration remain integration requirements.
+The eight-case assessment is separate from unchanged historical group membership
+and timing credit. No experimental workflow override belongs in the product.
 
 ## Evidence motivating, not qualifying, the public owner
 

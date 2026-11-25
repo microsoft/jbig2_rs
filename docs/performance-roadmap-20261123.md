@@ -214,11 +214,12 @@ zero errors, and exact coverage of 750 directly verified functions plus the
 unchanged 20 reviewed limitations. It uses Rust 1.98.1, two verification threads,
 `--rlimit 30`, and the unchanged 1,050-second guard/settings.
 That receipt covers the existing unchanged production proof surface, not a new
-proof of this test-only cache experiment. A proved public owner remains a
-separate decision after parent-owned measurement of a material cold gain.
+proof of this test-only cache experiment. Public design/proof and its eventual
+integration remained separate subsequent work.
 
 The later independent hosted replication motivates an explicit opt-in public
-owner, now being implemented and separately qualified. Its interface, evidence,
+owner, now implemented and locally source-validated, with protected integration
+and opt-in measurements still pending. Its interface, evidence,
 additional-storage tradeoff, proof boundaries and required inventory/ledger
 renewal are tracked in [prepared globals on unpublished 0.3](prepared-globals-0.3.md).
 The historical private receipts above are not relabelled as public-cache proofs.
