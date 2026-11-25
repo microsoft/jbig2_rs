@@ -20,7 +20,7 @@ mod document_spec;
 #[cfg(verus_keep_ghost)]
 pub(crate) use document_spec::{
     declared_count_matches_pages, decoder_context_fields, decoder_context_finished,
-    decoder_context_state, embedded_metadata, standalone_metadata,
+    decoder_context_state, decoder_limits, embedded_metadata, standalone_metadata,
 };
 
 #[cfg(verus_keep_ghost)]

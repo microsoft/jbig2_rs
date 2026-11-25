@@ -36,6 +36,8 @@
 //!   storage explicitly when reuse is no longer needed.
 //! - [`GlobalSegments`] supports embedded JBIG2 streams with reusable globals,
 //!   as used by PDF containers. This crate does not parse PDF documents.
+//! - [`PreparedGlobals`] explicitly opts into document-owned prepared resources
+//!   with an additional storage allowance. Ordinary embedded APIs stay unchanged.
 //! - [`PageSink`] receives completed pages without requiring the caller to
 //!   collect every decoded page in one [`DecodedDocument`]. Internal reference
 //!   retention still follows the stream and configured limits.
@@ -126,7 +128,10 @@ mod symbol_text;
 
 pub use bitmap::Bitmap;
 pub use colour::{ColourPage, DecodedColourDocument, RgbBitmap};
-pub use decode::{DecodedDocument, Page, PageSink};
+pub use decode::{
+    DecodedDocument, Page, PageSink, PreparedGlobals, PreparedGlobalsBypass, PreparedGlobalsInfo,
+    PreparedGlobalsState,
+};
 pub use document::embedded::{
     EmbeddedPolicy, EmbeddedRecovery, EmbeddedRecoveryKind, EmbeddedResult,
 };

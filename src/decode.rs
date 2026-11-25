@@ -48,6 +48,7 @@ mod decode_shared;
 mod api;
 mod dispatch;
 mod orchestration;
+mod prepared;
 mod rendering;
 mod resources;
 
@@ -56,6 +57,9 @@ use dispatch::{
     decode_refinement_segment, decode_symbol_dictionary_segment, decode_text_segment,
 };
 use orchestration::{decode_global_resources, decode_segments, decode_segments_collected};
+pub use prepared::{
+    PreparedGlobals, PreparedGlobalsBypass, PreparedGlobalsInfo, PreparedGlobalsState,
+};
 pub(crate) use rendering::check_combination_operator;
 use rendering::{
     compose_immediate, find_page_info, note_page_write, require_auxiliary_page,

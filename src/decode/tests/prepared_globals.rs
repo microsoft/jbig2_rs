@@ -35,6 +35,7 @@ macro_rules! assert_outcome_eq {
 
 mod controls;
 mod probe;
+mod requests;
 
 enum Preparation {
     Cold,

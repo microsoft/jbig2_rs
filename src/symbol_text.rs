@@ -774,6 +774,7 @@ use numbers::{widen_bool_i64, widen_u32_i64, widen_u8_i32, widen_u8_i64};
 use validation::{check_dimensions, checked_unsigned_delta, enforce_limit, required_integer};
 
 mod bitmap;
+pub(crate) use bitmap::clone_bitmap;
 mod codec;
 mod dictionary;
 mod headers;

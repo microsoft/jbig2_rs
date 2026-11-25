@@ -24,7 +24,7 @@
   "model_classifications": {
     "review": "author-navigation-only-not-independent-normative-approval",
     "registry_sha256": "0cfdfb077ac4bb7a7fd4abfb8cb7c482a7f9bd87fbd84a77d3b2bcf6711a6de2",
-    "project_source_sha256": "ca998a158763cb9097570ceac5b6261fd578582cc72dd3f5da47ea246c384af5",
+    "project_source_sha256": "86bdf7df9e090521a805f0d5b56b3b6312c05269a4ff0239794de117ee8c2b81",
     "families": [
       {
         "file": "specs/huffman_lookup.rs",
@@ -1601,6 +1601,63 @@
         "justification": "Initialized immutable real decision traces, numeric terminal-prefix/fill enclosures, context agreement and pre-final-DS saved provenance.",
         "ambiguity": "",
         "caveats": "Author navigation only; no independent normative approval or full decoded-output proof."
+      },
+      {
+        "file": "specs/prepared.rs",
+        "members": [
+          "spec::allowance",
+          "spec::admission",
+          "spec::budget_check",
+          "spec::copy_failure"
+        ],
+        "classification": "project-policy",
+        "justification": "Exact additional-storage clamping, conservative resource admission, inclusive checked budget outcomes and allocation-only optional bypass classification in the new opt-in owner.",
+        "ambiguity": "",
+        "caveats": "Project opt-in ownership/copy policy only. Separate embedded-stream callers with extra bounded storage; not same-total-memory-budget, full-stream/raster correctness, observed production PDF reuse, independent normative fidelity or readiness approval."
+      },
+      {
+        "file": "specs/prepared.rs",
+        "members": [
+          "spec::valid_fields",
+          "spec::valid"
+        ],
+        "classification": "representation-invariant",
+        "justification": "Constructor-established sealed owner state, decoder-limit bounds, Ready/resource agreement and valid bitmap stores without retained contexts or custom tables.",
+        "ambiguity": "",
+        "caveats": "Project opt-in ownership/copy policy only. Separate embedded-stream callers with extra bounded storage; not same-total-memory-budget, full-stream/raster correctness, observed production PDF reuse, independent normative fidelity or readiness approval."
+      },
+      {
+        "file": "specs/prepared.rs",
+        "members": [
+          "spec::info_fields",
+          "spec::info",
+          "spec::same_owner_fields",
+          "spec::same_owner",
+          "spec::fresh_fields",
+          "spec::fresh"
+        ],
+        "classification": "project-result-model",
+        "justification": "Actual lazy construction, immutable borrowed decoder/global/allowance frames, allocation-free public state snapshots and reset/return lifecycle results.",
+        "ambiguity": "",
+        "caveats": "Project opt-in ownership/copy policy only. Separate embedded-stream callers with extra bounded storage; not same-total-memory-budget, full-stream/raster correctness, observed production PDF reuse, independent normative fidelity or readiness approval."
+      },
+      {
+        "file": "specs/prepared.rs",
+        "members": [
+          "spec::budget_frame",
+          "spec::same_bitmap",
+          "spec::bitmap_prefix",
+          "spec::same_bitmaps",
+          "spec::same_symbol",
+          "spec::symbol_prefix",
+          "spec::same_pattern",
+          "spec::pattern_prefix",
+          "spec::same_resources"
+        ],
+        "classification": "project-result-model",
+        "justification": "Exact fallible-copy dimensions, stride, every packed byte, resource IDs/order/context absence and valid source/copy frames; monotone bounded observed-allocation metadata.",
+        "ambiguity": "",
+        "caveats": "Project opt-in ownership/copy policy only. Separate embedded-stream callers with extra bounded storage; not same-total-memory-budget, full-stream/raster correctness, observed production PDF reuse, independent normative fidelity or readiness approval."
       }
     ]
   },
@@ -2292,7 +2349,7 @@
     "src/bitmap/storage.rs": "8f6ce10586869f2b0ec85214156dcd6ead236b88f7465f107f54df90698524e4",
     "src/bitmap/tests/composition.rs": "6e1643c277251306450aa427f99a143a82be3e1d32cb81ef037d6b527c92a9ba",
     "src/bitmap/tests/layout_and_access.rs": "794454828d33bf94749c93ec3091be8d216a05375088d42e68aafe44effad84a",
-    "src/decode.rs": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
+    "src/decode.rs": "bf541daff17620dd652edfd11716605d177c26b09b1e8a95e99f0e8c9d8eb421",
     "src/decode/api.rs": "49d45b828fd56924b7176ac54283e1fadc70f93bec1d45945095db975ee6082c",
     "src/decode/dispatch/references.rs": "52e7500e0cef622729c3b19f535c8d0824644b5a954dd373ffeadeb34e649c67",
     "src/decode/rendering.rs": "5e53e7f0f966dde5c300ea4c1402bdfe7f3e875e12a675a20e3bfbeef8bd64e3",
@@ -2300,7 +2357,7 @@
     "src/decode/tests/container_routes.rs": "d84b63cd8fa430c1adec78535df904cf3521f33212cdefe8ee28241bc4c56b39",
     "src/decode/tests/direct_and_reuse.rs": "d46a5cbd0ee0791141d8b6115f090faa7a0315dc51437dcfb643dce6b58e116c",
     "src/decode/tests/symbol_resources.rs": "8b1f5260bcf7b6d300895b700ecbb10748742d0d124a563872710938fba26256",
-    "src/document.rs": "e9ac0a112e6e6b195c7c7a22af5f3da1e685a5f19380109ea906770dd7aca6a5",
+    "src/document.rs": "b98e7c7bf8ed0ddcc476082bda564e2f5ebda0a65925f86313deba3bf1067d77",
     "src/document/pages.rs": "3a10ba252984750ca7fbf6add8445eaf785c6fdaabb7594b7cb1112c689679b6",
     "src/document/parsing.rs": "27f627f0a93a08f9927c9515947be0a7fad019525b95ebff3f2cce1e71c750bc",
     "src/document/references.rs": "69acd07c8e2da002936fa8826f054dd254aecaec34c6904514daaf760841b9e4",
@@ -2337,7 +2394,7 @@
     "src/huffman/tests/wide_arithmetic.rs": "251462094b4817ff83394bb62072184b63796988e9606d75f29200eb1a1d8ca9",
     "src/huffman/validation.rs": "4d8612ef0cba9f16a12ae61886d225ab07766d74b21d727660405021a4f807ca",
     "src/huffman/wide.rs": "4f37abac40efc66f0c3eaa2637d211eaca5a5ea4fa7a14d7aadb07fbe2a8f0b0",
-    "src/lib.rs": "dfc6fc903517de7b5dbb685d73b49b43333dec4d44af7e2f00c7cf3ca9e4bb6f",
+    "src/lib.rs": "b9990fedb21554c2c60ff8911c73100de1432b96d2fd9c2cd42d919eeb33ac89",
     "src/mmr.rs": "939bdd232275bf07a8d776bacd891001dacdd49c828cfbb0abcbd40fa4adf5bb",
     "src/mmr/codes.rs": "06ad7fc805a4da335db691d5b1ada86f5f88d293ea2b8e33588326057fea5176",
     "src/mmr/raster.rs": "bd03d34f4154e629fce76707fae6dc06c12d2077a3e56fafd0198b6ae8176e4b",
@@ -2354,8 +2411,8 @@
     "src/segment_data/tests.rs": "7b082bcee501bd86382474823db6af59afb56842b7d053c3de8b77d2e5edfc15",
     "src/segment_header.rs": "ec5047080fa67fd0a8dd28e8101b972aeb23e3d10939906e1c059674ebaa528d",
     "src/segment_header/tests.rs": "41f4c9c942b49bc2d4d7c8588ac99ab655475803849836854afd349eee0d463c",
-    "src/symbol_text.rs": "3bdf11ab2da830a6cbcb53d97972cc93030258947679b347dbbea0b817d587d4",
-    "src/symbol_text/bitmap.rs": "d872783ab5e9768ba4064ca309700f089e31b3ca799425edc6a5d7471efc40b2",
+    "src/symbol_text.rs": "32512e90ada8bed2d1d598a5eb5c21f05a4a1319946e7e82069f44db78a303b2",
+    "src/symbol_text/bitmap.rs": "fe71b9283fb724e678690699210a70f0b6115a1f8ff17f6a9976c87f46943556",
     "src/symbol_text/codebook.rs": "3ad3dd4131dbb7343a3267f32718d4c5278f029c1b90937f45d06363b8defbcc",
     "src/symbol_text/codec.rs": "d6da4c1b3b7c33b057029976d43691ca3666ba72a04e4f5cbcc52339d9d4805a",
     "src/symbol_text/codec/arithmetic.rs": "041f67c8c84b3387a1b2e5dec0d3ae7d8754abf060e036013d2780e43d37c284",

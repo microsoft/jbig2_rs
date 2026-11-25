@@ -86,6 +86,7 @@ allocation failure and I/O failure have distinct typed errors.
 | Receive completed pages | `decode_with_sink` / `decode_reader_with_sink` transfer each `Page` to a `PageSink`; closures can serve as sinks. Earlier callback effects are not rolled back after a later error. |
 | Decode embedded streams | `decode_embedded`, or `parse_globals` followed by `decode_embedded_with_globals`. Callers supply the extracted JBIG2 streams. |
 | Reuse scratch storage | `Decoder::context` returns a `DecoderContext`; reuse does not retain previous document semantics. |
+| Opt into prepared globals on unpublished 0.3 | `Decoder::prepared_globals` borrows one decoder/global identity and an explicit additional storage allowance; see the [ownership, bypass and qualification contract](docs/prepared-globals-0.3.md). Existing defaults stay unchanged. |
 | Decode the 0.3 generic RGB8 profile | Byte-only `decode_rgb` / `decode_rgb_with_policy`; see the [profile contract](docs/generic-colour-0.3.md). Existing reader/context/sink APIs and the image companion remain bi-level. |
 
 Reader methods buffer bounded compressed input through EOF before parsing or

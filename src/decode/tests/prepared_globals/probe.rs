@@ -81,23 +81,31 @@ fn prepared_globals_fixture_controls() {
     let fixtures = Fixtures::read(&decoder);
     let expected = fixtures.expected(&decoder);
     let mut owner = PreparedOwner::new(&decoder, &fixtures.globals, 65_536);
+    let mut public = decoder.prepared_globals(&fixtures.globals, 65_536);
     for _ in 0..2 {
         for (page, expected) in fixtures.pages.iter().zip(&expected) {
             assert_eq!(owner.decode(page).unwrap(), *expected);
+            assert_eq!(public.decode_embedded(page).unwrap(), *expected);
         }
     }
     assert_eq!(owner.preparations, 1);
     assert_eq!(owner.hits, 6);
     assert_eq!(owner.fallbacks, 0);
+    assert_eq!(public.info().state, crate::PreparedGlobalsState::Ready);
     for page in &fixtures.pages {
         for cut in [0, 1, page.len() / 2, page.len() - 1] {
             assert_outcome_eq!(
                 owner.decode(&page[..cut]),
                 decoder.decode_embedded_with_globals(&page[..cut], &fixtures.globals)
             );
+            assert_outcome_eq!(
+                public.decode_embedded(&page[..cut]),
+                decoder.decode_embedded_with_globals(&page[..cut], &fixtures.globals)
+            );
         }
     }
     let mut refused = PreparedOwner::new(&decoder, &fixtures.refused_globals, 65_536);
+    let mut public_refused = decoder.prepared_globals(&fixtures.refused_globals, 65_536);
     for _ in 0..2 {
         for page in &fixtures.refused_pages {
             let expected = decoder.decode_embedded_with_globals(page, &fixtures.refused_globals);
@@ -111,6 +119,7 @@ fn prepared_globals_fixture_controls() {
                 ))
             );
             assert_outcome_eq!(refused.decode(page), expected);
+            assert_outcome_eq!(public_refused.decode_embedded(page), expected);
         }
     }
     assert_eq!(refused.hits, 0);
@@ -143,12 +152,18 @@ fn prepared_globals_fixture_controls() {
             set_limit(&mut limits, index, value);
             let limited = Decoder::new(limits);
             let mut owner = PreparedOwner::new(&limited, &fixtures.globals, 65_536);
+            let mut public = limited.prepared_globals(&fixtures.globals, 65_536);
             for _ in 0..2 {
                 for page in &fixtures.pages {
                     assert_outcome_eq!(
                         owner.decode(page),
                         limited.decode_embedded_with_globals(page, &fixtures.globals),
                         "limit field {index}, value {value}"
+                    );
+                    assert_outcome_eq!(
+                        public.decode_embedded(page),
+                        limited.decode_embedded_with_globals(page, &fixtures.globals),
+                        "public limit field {index}, value {value}"
                     );
                 }
             }
@@ -257,8 +272,8 @@ fn prepared_globals_sequence_probe() {
     for _ in 0..iterations {
         let start = std::time::Instant::now();
         let counters = run_sequence(&decoder, &fixtures, &mode, &mut warm);
-        let sample_ns = start.elapsed().as_nanos();
-        samples_ns.push(sample_ns);
+        let duration_ns = start.elapsed().as_nanos();
+        samples_ns.push(duration_ns);
         for (total, count) in cold_totals.iter_mut().zip(counters) {
             *total += count;
         }

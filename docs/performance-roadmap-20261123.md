@@ -100,7 +100,7 @@ They are workload-specific and do not establish portable speedups.
 | #235 | Aligned fixed-width reads; other reads unchanged. No convincing broad target gain. A reservoir would be a separate state/error-sensitive change. | Do not retain this variant; reservoir not justified by these data. |
 | #236 | Actual31 halftone grids contain14,841 cells; largest1,763 cells/7,052 index bytes. Potential narrow-index savings total40,773 bytes across the replay, not live memory. | Defer representation/fusion redesign until a real large-grid bandwidth target exists. |
 | #237 | Borrow split aggregate codebooks instead of flattening references. Generated128-aggregate ratio0.9521 and66,096 fewer requested bytes; only82 references in six actual public cases, plus adverse controls. | Scaling opportunity, not locally qualified for retention. |
-| #238 | The original 123-case subset had four distinct external-global identities. A later complete 321-request qualification replay finds a real three-page shared-global document; see the private experiment below. | Reopened for a bounded clone/reuse experiment; no shipping cache or measured speedup yet. |
+| #238 | The original 123-case subset had four distinct external-global identities. A later complete 321-request qualification replay finds a three-page standalone source normalized into separate shared-global requests; see below. | Reopened for explicit opt-in ownership; independent private replication motivates, but does not qualify, the new public owner or establish a production PDF reuse trace. |
 | #239 | Checked pristine-zero XOR admission, then a vectorizable zero reduction. Both remove one20,000-byte request on six actual targets. Reduction latency remains mixed, with11 adverse control medians; five measured peaks are unchanged. | Do not retain yet; transient bytes removed are not peak/RSS savings. |
 | #240 | Actual29,111,339 arithmetic decisions:89.56% require no normalization;79.49% of normalizing decisions shift once. | Keep the shared engine unchanged pending actual cycle/state-traffic evidence. Counts alone do not justify a rewrite. |
 
@@ -113,7 +113,12 @@ unretained experiments as completed improvements or weakening qualification.
 
 The complete portable qualification replay contains 321 image requests,
 18 nonempty globals and 14 exact global identities. The pinned Hayro
-`file_pages.jbig2` has three normalized pages sharing 143 global bytes.
+`file_pages.jbig2` is a three-page standalone source normalized into three
+embedded requests sharing 143 global bytes. `Decoder::decode(original)` already
+shares resources across its pages; this normalization is not an observed
+production PDF request trace or a full-PDF gain. The original seven PDF global
+groups each contained only one unique image, leaving production reuse as a
+qualification caveat.
 Its source SHA-256 is
 `036b0c61419ff2c31c0ee41483d9d539fd79b2a48b55ac127ca75c0a2aabd866`.
 The other apparent three-page group,
@@ -136,7 +141,7 @@ before page mutation. Page parsing still precedes global preparation on every
 call. The ready resources remain immutable; each image receives independently
 owned, fallibly allocated packed-bitmap copies. Normal page retention/release
 and all existing logical global/page checks retain their original ordering.
-A successful original global decode at the owner's exact limits is reused, not
+A successful original global decode at the borrowed decoder's exact limits is reused, not
 replaced by weaker logical work or decoded-byte checks.
 
 There is an **explicit additional 65,536-byte experimental owner/copy allowance**,
@@ -200,9 +205,10 @@ The original symbol-only subset correctly fell back on the actual document:
 its globals also contain a pattern dictionary. The completed experiment copies
 both context-free symbols and patterns. Its measured allocation capacities are
 22,164 resident bytes and 23,024 simultaneous owner-plus-copy bytes, not a latency
-or process-memory result. All 770 existing production function files remain
-source-identical to their source-bound proof coverage; the private helper itself
-is test-only and does not acquire a new Verus or public-memory-contract claim.
+or process-memory result. At that private-experiment revision, all 770 existing
+production function files remained source-identical to their source-bound proof
+coverage. The private helper itself is test-only and does not acquire a new
+Verus or public-memory-contract claim.
 Fresh pinned Verus whole-crate verification succeeds with 1,532 obligations,
 zero errors, and exact coverage of 750 directly verified functions plus the
 unchanged 20 reviewed limitations. It uses Rust 1.98.1, two verification threads,
@@ -210,6 +216,12 @@ unchanged 20 reviewed limitations. It uses Rust 1.98.1, two verification threads
 That receipt covers the existing unchanged production proof surface, not a new
 proof of this test-only cache experiment. A proved public owner remains a
 separate decision after parent-owned measurement of a material cold gain.
+
+The later independent hosted replication motivates an explicit opt-in public
+owner, now being implemented and separately qualified. Its interface, evidence,
+additional-storage tradeoff, proof boundaries and required inventory/ledger
+renewal are tracked in [prepared globals on unpublished 0.3](prepared-globals-0.3.md).
+The historical private receipts above are not relabelled as public-cache proofs.
 
 ## Actual allocation measurements
 

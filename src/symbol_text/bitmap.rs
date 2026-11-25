@@ -249,7 +249,7 @@ pub(super) fn crop_bitmap_columns(
         Err(_) => true,
     },
 ))]
-pub(super) fn clone_bitmap(source: &Bitmap, limits: &Limits) -> Result<Bitmap, SymbolTextError> {
+pub(crate) fn clone_bitmap(source: &Bitmap, limits: &Limits) -> Result<Bitmap, SymbolTextError> {
     let Ok(requested_bytes) = u64::try_from(source.data.len()) else {
         return Err(MalformedError::IntegerOverflow.into());
     };
