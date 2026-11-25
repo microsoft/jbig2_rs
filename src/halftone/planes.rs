@@ -404,6 +404,154 @@ pub(super) fn accumulate_gray_byte(
     Ok(())
 }
 
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    requires plane_index < 8,
+    ensures
+        final(values)@.len() == old(values)@.len(),
+        match out {
+            Ok(()) => offset as nat + 8 <= old(values)@.len(),
+            Err(_) => true,
+        },
+))]
+fn accumulate_narrow_gray_byte(
+    values: &mut [u8],
+    offset: usize,
+    byte: u8,
+    plane_index: u8,
+) -> Result<(), HalftoneError> {
+    let end = offset
+        .checked_add(8)
+        .ok_or(MalformedError::IntegerOverflow)?;
+    let chunk = values
+        .get_mut(offset..end)
+        .ok_or(MalformedError::IntegerOverflow)?;
+    chunk[0] |= ((byte >> 7) & 1) << plane_index;
+    chunk[1] |= ((byte >> 6) & 1) << plane_index;
+    chunk[2] |= ((byte >> 5) & 1) << plane_index;
+    chunk[3] |= ((byte >> 4) & 1) << plane_index;
+    chunk[4] |= ((byte >> 3) & 1) << plane_index;
+    chunk[5] |= ((byte >> 2) & 1) << plane_index;
+    chunk[6] |= ((byte >> 1) & 1) << plane_index;
+    chunk[7] |= (byte & 1) << plane_index;
+    Ok(())
+}
+
+macro_rules! accumulate_plane_body {
+    ($values:ident, $plane:ident, $plane_index:ident, $word:ty, $bits:literal, $accumulate:ident) => {{
+        let width = $plane.width;
+        let height = $plane.height;
+        let width_usize =
+            usize::try_from(width).map_err(|_error| MalformedError::IntegerOverflow)?;
+        let full_bytes = width_usize / 8;
+        let tail_start = width
+            .checked_sub(width % 8)
+            .ok_or(MalformedError::IntegerOverflow)?;
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            vstd::arithmetic::div_mod::lemma_mod_bound(width as int, 8);
+            assert(tail_start <= width);
+        }
+        #[cfg_attr(verus_keep_ghost, verus_spec(
+                invariant
+                    y <= height,
+                    $plane_index < $bits,
+                    tail_start <= width,
+                    crate::spec::bitmap::storage_valid($plane),
+                    $values@.len() == old($values)@.len(),
+                decreases height - y,
+            ))]
+        for y in 0..height {
+            let y_usize = usize::try_from(y).map_err(|_error| MalformedError::IntegerOverflow)?;
+            let row_start = y_usize
+                .checked_mul($plane.stride)
+                .ok_or(MalformedError::IntegerOverflow)?;
+            let value_row = y_usize
+                .checked_mul(width_usize)
+                .ok_or(MalformedError::IntegerOverflow)?;
+            let mut byte_index = 0_usize;
+            #[cfg_attr(verus_keep_ghost, verus_spec(
+                    invariant
+                        byte_index <= full_bytes,
+                        $plane_index < $bits,
+                        $values@.len() == old($values)@.len(),
+                    decreases full_bytes - byte_index,
+                ))]
+            while byte_index < full_bytes {
+                let source_index = row_start
+                    .checked_add(byte_index)
+                    .ok_or(MalformedError::IntegerOverflow)?;
+                let byte = *$plane
+                    .data
+                    .get(source_index)
+                    .ok_or(MalformedError::IntegerOverflow)?;
+                let value_offset = value_row
+                    .checked_add(
+                        byte_index
+                            .checked_mul(8)
+                            .ok_or(MalformedError::IntegerOverflow)?,
+                    )
+                    .ok_or(MalformedError::IntegerOverflow)?;
+                $accumulate($values, value_offset, byte, $plane_index)?;
+                byte_index += 1;
+            }
+            let mut x = tail_start;
+            #[cfg_attr(verus_keep_ghost, verus_spec(
+                    invariant
+                        x <= width,
+                        y < height,
+                        crate::spec::bitmap::storage_valid($plane),
+                        $plane_index < $bits,
+                        $values@.len() == old($values)@.len(),
+                    decreases width - x,
+                ))]
+            while x < width {
+                let true_value = $plane.pixel(x, y).ok_or(MalformedError::IntegerOverflow)?;
+                if true_value {
+                    let offset = pixel_offset(width, x, y)?;
+                    let value = $values
+                        .get_mut(offset)
+                        .ok_or(MalformedError::IntegerOverflow)?;
+                    let bit: $word = 1;
+                    *value |= bit << $plane_index;
+                }
+                x += 1;
+            }
+        }
+        Ok(())
+    }};
+}
+
+#[cfg_attr(verus_keep_ghost, verus_spec(
+    requires crate::spec::bitmap::storage_valid(plane), plane_index < 8,
+    ensures final(values)@.len() == old(values)@.len(),
+))]
+fn accumulate_narrow_plane(
+    values: &mut [u8],
+    plane: &Bitmap,
+    plane_index: u8,
+) -> Result<(), HalftoneError> {
+    accumulate_plane_body!(
+        values,
+        plane,
+        plane_index,
+        u8,
+        8,
+        accumulate_narrow_gray_byte
+    )
+}
+
+#[cfg_attr(verus_keep_ghost, verus_spec(
+    requires crate::spec::bitmap::storage_valid(plane), plane_index < 32,
+    ensures final(values)@.len() == old(values)@.len(),
+))]
+fn accumulate_wide_plane(
+    values: &mut [u32],
+    plane: &Bitmap,
+    plane_index: u8,
+) -> Result<(), HalftoneError> {
+    accumulate_plane_body!(values, plane, plane_index, u32, 32, accumulate_gray_byte)
+}
+
 /// Decodes Gray-coded planes and reconstructs unsigned pattern indexes.
 #[allow(
     clippy::cast_lossless,
@@ -536,88 +684,14 @@ pub(crate) fn decode_gray_planes(
         proof! {
             assert(plane_index < 32);
         }
-        let width_usize =
-            usize::try_from(width).map_err(|_error| MalformedError::IntegerOverflow)?;
-        let full_bytes = width_usize / 8;
-        let tail_start = width
-            .checked_sub(width % 8)
-            .ok_or(MalformedError::IntegerOverflow)?;
-        #[cfg(verus_keep_ghost)]
-        proof! {
-            vstd::arithmetic::div_mod::lemma_mod_bound(width as int, 8);
-            assert(tail_start <= width);
-        }
-        #[cfg_attr(verus_keep_ghost, verus_spec(
-            invariant
-                y <= height,
-                plane_index < 32,
-                tail_start <= width,
-                crate::spec::bitmap::storage_valid(&plane),
-                halftone_spec::index_values(&values).len() == pixel_count,
-                match more_significant {
-                    Some(ref bitmap) => crate::spec::bitmap::storage_valid(bitmap),
-                    None => true,
-                },
-            decreases height - y,
-        ))]
-        for y in 0..height {
-            let y_usize = usize::try_from(y).map_err(|_error| MalformedError::IntegerOverflow)?;
-            let row_start = y_usize
-                .checked_mul(plane.stride)
-                .ok_or(MalformedError::IntegerOverflow)?;
-            let value_row = y_usize
-                .checked_mul(width_usize)
-                .ok_or(MalformedError::IntegerOverflow)?;
-            let mut byte_index = 0_usize;
-            #[cfg_attr(verus_keep_ghost, verus_spec(
-                invariant
-                    byte_index <= full_bytes,
-                    y < height,
-                    plane_index < 32,
-                    crate::spec::bitmap::storage_valid(&plane),
-                    halftone_spec::index_values(&values).len() == pixel_count,
-                    match more_significant {
-                        Some(ref bitmap) => crate::spec::bitmap::storage_valid(bitmap),
-                        None => true,
-                    },
-                decreases full_bytes - byte_index,
-            ))]
-            while byte_index < full_bytes {
-                let source_index = row_start
-                    .checked_add(byte_index)
-                    .ok_or(MalformedError::IntegerOverflow)?;
-                let byte = *plane
-                    .data
-                    .get(source_index)
-                    .ok_or(MalformedError::IntegerOverflow)?;
-                let value_offset = value_row
-                    .checked_add(
-                        byte_index
-                            .checked_mul(8)
-                            .ok_or(MalformedError::IntegerOverflow)?,
-                    )
-                    .ok_or(MalformedError::IntegerOverflow)?;
-                values.accumulate_byte(value_offset, byte, plane_index)?;
-                byte_index += 1;
-            }
-            let mut x = tail_start;
-            #[cfg_attr(verus_keep_ghost, verus_spec(
-                invariant
-                    x <= width,
-                    y < height,
-                    plane_index < 32,
-                    crate::spec::bitmap::storage_valid(&plane),
-                    halftone_spec::index_values(&values).len() == pixel_count,
-                decreases width - x,
-            ))]
-            while x < width {
-                let true_value = plane.pixel(x, y).ok_or(MalformedError::IntegerOverflow)?;
-                if true_value {
-                    let offset = pixel_offset(width, x, y)?;
-                    values.insert_bit(offset, plane_index)?;
+        match &mut values {
+            GrayIndexes::Narrow(narrow) => {
+                if plane_index >= 8 {
+                    return Err(HalftoneError::InvalidGrayBitDepth(plane_index));
                 }
-                x += 1;
+                accumulate_narrow_plane(narrow, &plane, plane_index)?;
             }
+            GrayIndexes::Wide(wide) => accumulate_wide_plane(wide, &plane, plane_index)?,
         }
         more_significant = Some(plane);
     }
