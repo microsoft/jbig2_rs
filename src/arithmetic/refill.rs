@@ -96,6 +96,36 @@ impl ArithmeticDecoder<'_> {
                 let ghost previous_interval = self.interval;
                 let ghost before = *self;
             }
+            if self.interval < MIN_INTERVAL / 2 && self.bit_count >= 2 && self.code <= u32::MAX / 4
+            {
+                #[cfg(verus_keep_ghost)]
+                proof_decl! {
+                    let ghost middle = ArithmeticDecoder {
+                        bytes: before.bytes,
+                        byte_position: before.byte_position,
+                        current_byte: before.current_byte,
+                        code: (before.code * 2) as u32,
+                        interval: (before.interval * 2) as u32,
+                        bit_count: (before.bit_count - 1) as u8,
+                        marker: before.marker,
+                    };
+                }
+                self.interval *= 4;
+                self.code *= 4;
+                self.bit_count -= 2;
+                #[cfg(verus_keep_ghost)]
+                proof! {
+                    reveal_with_fuel(arithmetic_spec::normalized_state, 2);
+                    assert(arithmetic_spec::normalized_state(&before)
+                        == arithmetic_spec::normalized_state(&middle));
+                    assert(arithmetic_spec::normalized_state(&middle)
+                        == arithmetic_spec::normalized_state(self));
+                    reveal_with_fuel(arithmetic_spec::renormalization_steps, 2);
+                    assert(arithmetic_spec::renormalization_steps(self.interval as nat)
+                        < arithmetic_spec::renormalization_steps(before.interval as nat));
+                }
+                continue;
+            }
             if self.bit_count == 0 {
                 let signal = self.byte_in_signal();
                 if signal != 0 {
