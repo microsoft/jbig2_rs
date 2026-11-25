@@ -27,11 +27,20 @@ use vstd::prelude::*;
         },
 ))]
 fn store_bits(bitmap: &mut Bitmap, index: usize, bits: u8) -> Result<(), GenericRegionError> {
-    let byte = bitmap
-        .data
-        .get_mut(index)
-        .ok_or(MalformedError::IntegerOverflow)?;
-    *byte |= bits;
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        crate::views::bitmap_fields(bitmap);
+        reveal(crate::spec::bitmap::storage_valid);
+    }
+    if index >= bitmap.data.len() {
+        return Err(MalformedError::IntegerOverflow.into());
+    }
+    bitmap.data[index] |= bits;
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        crate::views::bitmap_fields(bitmap);
+        reveal(crate::spec::bitmap::storage_valid);
+    }
     Ok(())
 }
 
@@ -59,6 +68,10 @@ pub(super) fn try_decode(
     decoder: &mut ArithmeticDecoder<'_>,
     contexts: &mut Vec<ArithmeticContext>,
 ) -> Result<bool, GenericRegionError> {
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        crate::views::bitmap_fields(bitmap);
+    }
     if !matches!(
         descriptor,
         GenericContextDescriptor::NominalTemplate0
@@ -81,6 +94,9 @@ pub(super) fn try_decode(
             bitmap.width == width,
             bitmap.height == height,
             bitmap.stride == stride,
+            width == old(bitmap).width,
+            height == old(bitmap).height,
+            stride == old(bitmap).stride,
             crate::spec::bitmap::storage_valid(bitmap),
             crate::arithmetic::arithmetic_spec::decoder_valid(decoder),
             generic_region_spec::contexts_valid(contexts@),
@@ -121,6 +137,9 @@ pub(super) fn try_decode(
                 bitmap.width == width,
                 bitmap.height == height,
                 bitmap.stride == stride,
+                width == old(bitmap).width,
+                height == old(bitmap).height,
+                stride == old(bitmap).stride,
                 crate::spec::bitmap::storage_valid(bitmap),
                 crate::arithmetic::arithmetic_spec::decoder_valid(decoder),
                 generic_region_spec::contexts_valid(contexts@),
@@ -142,6 +161,9 @@ pub(super) fn try_decode(
                     bitmap.width == width,
                     bitmap.height == height,
                     bitmap.stride == stride,
+                    width == old(bitmap).width,
+                    height == old(bitmap).height,
+                    stride == old(bitmap).stride,
                     crate::spec::bitmap::storage_valid(bitmap),
                     crate::arithmetic::arithmetic_spec::decoder_valid(decoder),
                     generic_region_spec::contexts_valid(contexts@),

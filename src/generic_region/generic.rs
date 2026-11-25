@@ -655,6 +655,10 @@ pub(super) fn decode_generic_with(
     {
         return Ok(());
     }
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        crate::views::bitmap_fields(bitmap);
+    }
     let mut ltp = false;
     let mut y = 0_u32;
     #[cfg_attr(verus_keep_ghost, verus_spec(
