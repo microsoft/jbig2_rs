@@ -176,6 +176,11 @@ pub(super) fn try_decode(
             }
             history = ((history << 1) | usize::from(signal)) & 15;
             if signal != 0 {
+                #[cfg(verus_keep_ghost)]
+                proof! {
+                    crate::views::bitmap_fields(bitmap);
+                    reveal(crate::spec::bitmap::coordinates_in_bounds);
+                }
                 bitmap.set_pixel(x, y, true)?;
                 #[cfg(verus_keep_ghost)]
                 proof! {
