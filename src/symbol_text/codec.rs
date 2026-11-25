@@ -21,6 +21,7 @@ impl<'a> SymbolCodec<'a> {
         requires symbol_text_spec::codec_valid(old(self)),
         ensures
             symbol_text_spec::arithmetic_integer_transition(old(self), final(self), field, out),
+            symbol_text_spec::huffman_integer_transition(old(self), final(self), field, out),
             match out {
                 Ok(_) => symbol_text_spec::codec_valid(final(self)),
                 Err(_) => true,

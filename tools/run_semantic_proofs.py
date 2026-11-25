@@ -144,12 +144,14 @@ PORTABLE_ROBUST_SHARD_ALLOCATION = {
     "public-decode-results": 5,
     "black-span": 4,
     "error-wrappers-basic": 3,
+    "huffman-field-selection": 6,
 }
 RECEIPT_SCHEMA = 3
 CHECKS = (
     ("arithmetic-certainty", "check_arithmetic_certainty_proofs.py", 4, "strong_contract", "weaker_control"),
     ("arithmetic-codec", "check_arithmetic_codec_proofs.py", 27, "strong_contract", "weaker_control"),
     ("huffman-codec", "check_arithmetic_codec_proofs.py", 13, "strong_contract", "weaker_control"),
+    ("huffman-field-selection", "check_arithmetic_codec_proofs.py", 5, "strong_contract", "weaker_control"),
     ("context-lifecycle", "check_context_lifecycle_proofs.py", 12, "strong_contract", "weaker_control"),
     ("session-framing", "check_session_framing_proofs.py", 12, "strong_contract", "weaker_control"),
     ("clone-results", "check_clone_result_proofs.py", 10, "strong_contract", "weaker_control"),

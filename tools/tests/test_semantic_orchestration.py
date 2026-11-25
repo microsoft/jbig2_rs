@@ -33,7 +33,8 @@ collector-sink public-decode-results public-global-results reference-accounting
 reference-catalog reference-type-lookup reference-type-classes
 """.split())
 CURRENT_CHECKS = runner.CHECKS
-PRE_OWNED_CHECKS = tuple(row for row in CURRENT_CHECKS if row[0] != "owned-decode")
+PORTABLE_CHECKS = tuple(row for row in CURRENT_CHECKS if row[0] != "huffman-field-selection")
+PRE_OWNED_CHECKS = tuple(row for row in PORTABLE_CHECKS if row[0] != "owned-decode")
 LIVE_CHECKS = tuple(row for row in CURRENT_CHECKS if row[0] in ORIGINAL_CHECK_IDS)
 RGB_CHECKS = tuple(row for row in PRE_OWNED_CHECKS if row[0] != "arithmetic-certainty")
 PRE_REFERENCE_TYPE_CHECKS = tuple(
@@ -271,7 +272,7 @@ def evidence():
 
 class SemanticOrchestrationTests(unittest.TestCase):
     @patch.object(runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", runner.OWNED_BALANCED_SHARD_ALLOCATION)
-    @patch.object(runner, "CHECKS", CURRENT_CHECKS)
+    @patch.object(runner, "CHECKS", PORTABLE_CHECKS)
     @patch.multiple(runner, **LIVE_TOPOLOGY)
     def test_current_owned_balance_moves_only_one_complete_group_and_freezes_prior_maps(self):
         checks = runner.configured_checks()
@@ -308,7 +309,7 @@ class SemanticOrchestrationTests(unittest.TestCase):
         self.assertEqual(runner.WORKERS, 2)
 
     @patch.object(runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", runner.OWNED_DECODE_SHARD_ALLOCATION)
-    @patch.object(runner, "CHECKS", CURRENT_CHECKS)
+    @patch.object(runner, "CHECKS", PORTABLE_CHECKS)
     @patch.multiple(runner, **LIVE_TOPOLOGY)
     def test_original_owned_profile_is_additive_on_shard_one_without_moving_existing_groups(self):
         from check_owned_decode_proofs import CASES
@@ -349,7 +350,7 @@ class SemanticOrchestrationTests(unittest.TestCase):
         self.assertEqual(runner.WORKERS, 2)
 
     @patch.object(runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", runner.OWNED_DECODE_SHARD_ALLOCATION)
-    @patch.object(runner, "CHECKS", CURRENT_CHECKS)
+    @patch.object(runner, "CHECKS", PORTABLE_CHECKS)
     @patch.multiple(runner, **LIVE_TOPOLOGY)
     def test_owned_profile_requires_its_actual_complete_cost_under_the_unchanged_guard(self):
         # Synthetic boundary controls, not measurements or profile acceptance.
@@ -592,7 +593,7 @@ class SemanticOrchestrationTests(unittest.TestCase):
         from check_arithmetic_codec_proofs import CASES, CASE_GROUPS, CASE_BASELINE_GROUPS
 
         self.assertEqual({name: len(cases) for name, cases in CASE_GROUPS.items()}, {
-            "arithmetic-codec": 27, "huffman-codec": 13,
+            "arithmetic-codec": 27, "huffman-codec": 13, "huffman-field-selection": 5,
         })
         partitioned = [case for cases in CASE_GROUPS.values() for case in cases]
         self.assertEqual(len(partitioned), len(CASES))
@@ -642,15 +643,44 @@ class SemanticOrchestrationTests(unittest.TestCase):
         from check_value_bridge_proofs import CASES as value_cases
         from check_symbol_cardinality_proofs import CASES as cardinality_cases
 
-        with patch.object(runner, "CHECKS", LIVE_CHECKS):
+        with patch.object(runner, "CHECKS", CURRENT_CHECKS):
             checks = runner.configured_checks()
         counts = {row[0]: row[2] for row in checks}
         for identity, cases in codec_cases.items():
             self.assertEqual(counts[identity], len(cases))
         self.assertEqual(counts["value-bridge"], len(value_cases))
         self.assertEqual(counts["symbol-cardinality"], len(cardinality_cases))
-        self.assertEqual(sum(row[2] for row in checks), 494)
-        self.assertEqual(len(checks), 61)
+        self.assertEqual(sum(row[2] for row in checks), 510)
+        self.assertEqual(len(checks), 65)
+
+    @patch.object(runner, "CHECKS", CURRENT_CHECKS)
+    @patch.multiple(runner, **LIVE_TOPOLOGY)
+    def test_field_selection_adds_one_complete_group_without_retiming_old_profiles(self):
+        from check_arithmetic_codec_proofs import FIELD_CASES
+
+        with patch.object(runner, "CHECKS", PORTABLE_CHECKS):
+            previous = (runner.configured_whole_checks(), runner.configured_collector_checks(),
+                        *runner.configured_shards())
+        current = (runner.configured_whole_checks(), runner.configured_collector_checks(),
+                   *runner.configured_shards())
+        identity = "huffman-field-selection"
+        for before, after in zip(previous, current):
+            self.assertEqual(before, tuple(row for row in after if row[0] != identity))
+        added = [row for role in current for row in role if row[0] == identity]
+        self.assertEqual(len(added), 1)
+        self.assertEqual(added[0][2], len(FIELD_CASES))
+        self.assertIn(added[0], current[2 + 6])
+        rows = [{"id": row[0], "status": "passed", "seconds": 1}
+                for role in previous for row in role]
+        with self.assertRaisesRegex(ValueError, "every complete current-profile group"):
+            runner.measured_shard_seconds(rows)
+        rows.append({"id": identity, "status": "passed", "seconds": 1})
+        baseline = runner.measured_shard_seconds(rows)
+        rows[-1]["seconds"] += 1050 - baseline[6]
+        self.assertEqual(runner.measured_shard_seconds(rows)[6], 1050)
+        rows[-1]["seconds"] += 1
+        with self.assertRaisesRegex(ValueError, "1050-second guard"):
+            runner.measured_shard_seconds(rows)
 
     @patch.object(runner, "CHECKS", PRE_REFERENCE_TYPE_CHECKS)
     @patch.multiple(runner, **LIVE_TOPOLOGY)

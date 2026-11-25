@@ -23,8 +23,8 @@
   },
   "model_classifications": {
     "review": "author-navigation-only-not-independent-normative-approval",
-    "registry_sha256": "19f29e18950f5e35d011f88b528ba889ff3d4d000d12990d8f9c82d7de0c69cb",
-    "project_source_sha256": "5e7faa2a718a3b768e15da79990dd12480e866df71181aac4e8dcd676d6925f6",
+    "registry_sha256": "0cfdfb077ac4bb7a7fd4abfb8cb7c482a7f9bd87fbd84a77d3b2bcf6711a6de2",
+    "project_source_sha256": "ca998a158763cb9097570ceac5b6261fd578582cc72dd3f5da47ea246c384af5",
     "families": [
       {
         "file": "specs/huffman_lookup.rs",
@@ -1228,12 +1228,26 @@
           "spec::huffman_symbol_id_result",
           "spec::huffman_symbol_id_state",
           "spec::huffman_symbol_id_transition",
-          "spec::huffman_codec_initial"
+          "spec::huffman_codec_initial",
+          "spec::selected_standard_table",
+          "spec::selected_field_table",
+          "spec::huffman_table_integer_state",
+          "spec::huffman_integer_transition"
         ],
         "classification": "project-result-model",
         "justification": "Composes the existing primitive Huffman decode_state with nonnegative i32 ID preservation, exact negative/OOB rejection and the existing error policy factored into pure closed results reused by FromSpecImpl and exact executing From contracts. Proved definition bridges preserve private datatype opacity without a self-trait model dependency. Includes literal fallback and exact reader/metadata frames through the actual enum branch. No new table precondition or trusted fact. Fresh actual Huffman construction/setup also binds body, zero cursor, strip width, absent ID table, requested refinement template and zero work, while preserving all supplied field-table bindings.",
         "ambiguity": "",
-        "caveats": "Not independently reviewed Annex B translation, caller table/extent selection or full refinement/rendered streams."
+        "caveats": "Not independently reviewed Annex B translation, derivation of caller table/extent bindings or full refinement/rendered streams. Exact supplied cache/field lookup and integer-adapter composition do not prove normative header selector fidelity."
+      },
+      {
+        "file": "specs/symbol_text/huffman_codec.rs",
+        "members": [
+          "spec::optional_table_contents"
+        ],
+        "classification": "proof-support",
+        "justification": "Projects an optional borrowed table to complete logical contents for exact lookup contracts; makes no pointer-identity or normative table-entry claim.",
+        "ambiguity": "",
+        "caveats": "Structural contents projection, not an allocator or aliasing theorem."
       },
       {
         "file": "specs/huffman.rs",
@@ -2259,10 +2273,10 @@
     "specs/mod.rs": "34f81994f8b77e618a7d48d4552175d09cf3be633307166227c13ce94a06ba21",
     "specs/readers.rs": "ee10b54a7ee8dce323488bf8ef5229fbbf1d5811888a3364cda8f2cc187ba251",
     "specs/segments.rs": "dc288038574b7f902a15752e58096ef504d0253a0f308950474278ca2104e451",
-    "specs/symbol_text.rs": "26395f97c269d85dc074ea8a1979f6428217074d7f5c5e930f0135ef9477bf89",
+    "specs/symbol_text.rs": "010c79a4dc72384287574679e85c12e3de7073be0a3f42f8b061b67e302ca24d",
     "specs/symbol_text/arithmetic_codec.rs": "c96145d1428fd0edda0b93437f15e15592e9f7476d8465dbd55feb071d1a866c",
     "specs/symbol_text/dictionary.rs": "f7994737d95cefbca3e6067754190b160ddb8c85900a17edf672b4f8d80882b2",
-    "specs/symbol_text/huffman_codec.rs": "3a56e2a0f9c27443b1ee91029c92584a45df3398fc4f433de4ffc1e717246295",
+    "specs/symbol_text/huffman_codec.rs": "75292125cfe9663534f1c13f5bdac9538e712c48c53c7cdd425596e9ef65bed2",
     "specs/symbol_text/symbol_ids.rs": "a08f24685e8ef5f95e98b5bb953ad18a1b6dbbffd754ca48f09931f36a87aacc",
     "src/arithmetic.rs": "a8e0ad666b2ea1750413da9601f665b197c2be0d012bd77c115539ee7c6ba971",
     "src/arithmetic/decoding.rs": "537afa619108dc6ce7773688683d85eb5b4251dbb75a939c92223746b7a90fd5",
@@ -2343,9 +2357,9 @@
     "src/symbol_text.rs": "3bdf11ab2da830a6cbcb53d97972cc93030258947679b347dbbea0b817d587d4",
     "src/symbol_text/bitmap.rs": "d872783ab5e9768ba4064ca309700f089e31b3ca799425edc6a5d7471efc40b2",
     "src/symbol_text/codebook.rs": "3ad3dd4131dbb7343a3267f32718d4c5278f029c1b90937f45d06363b8defbcc",
-    "src/symbol_text/codec.rs": "4f975eff5bd958e0b201dd9c80e91b40be4681254a56adb02a681cc87e297e78",
+    "src/symbol_text/codec.rs": "d6da4c1b3b7c33b057029976d43691ca3666ba72a04e4f5cbcc52339d9d4805a",
     "src/symbol_text/codec/arithmetic.rs": "041f67c8c84b3387a1b2e5dec0d3ae7d8754abf060e036013d2780e43d37c284",
-    "src/symbol_text/codec/huffman.rs": "a706f6674a164c1398d6fdc199a4a0ef8614a86e0be69e6eb13e3a8c2f6b83a1",
+    "src/symbol_text/codec/huffman.rs": "24532382735e221606ac614a4ff24a9ac30ce9d4bc5abc5c01aa74e4fff7cf71",
     "src/symbol_text/codec/refinement.rs": "71d5bb90d828932191eba96f52982c1f7adc24433cb5e4d21dc721b3f6997d83",
     "src/symbol_text/codec/symbols.rs": "01f2f2d2739c42ce2ed5fe4ed170451082478dcfc7f405b73ac9f6a819ce3248",
     "src/symbol_text/dictionary.rs": "8b24e5591a74737e2a5b2e44400ec7d467eead766b473869b419d7cfbc999b64",
@@ -2354,13 +2368,14 @@
     "src/symbol_text/dictionary/huffman.rs": "db75bd5f0b7703b2bec0493bb0f534049e5bddf5ea91e228ef93eac68b06a40e",
     "src/symbol_text/headers.rs": "69da74f1ff5627d013f327d5c152d49582c7bb82462fc70b48b82159b9e8d987",
     "src/symbol_text/placement.rs": "6fe7228afc13c0735fcfe0d9359e07e03dfdd5a6883ba8d79523dcfde8885e5d",
+    "src/symbol_text/tables.rs": "b6752eff62f1aa306879e95ed6903df4bc1fd21a843e4e2d52be8e60e1758594",
     "src/symbol_text/tests/arithmetic_composition.rs": "8749f6561c7b3030deafa47358bd499514821726851cb296d4f00b2ff2110120",
     "src/symbol_text/tests/codec_and_exports.rs": "4215ca5d6af0d628d33fb5b9818d0c0012f8ef09dddf4b5a73f8db467f02540f",
     "src/symbol_text/tests/dictionary_dispatch.rs": "632ca48342adb2713092cecab915ee9f67eb3610dc92a2764cb429773a103f82",
     "src/symbol_text/tests/dictionary_dispatch/huffman_aggregation.rs": "0349534fe6854219a69f33105ed9fdf5cdfe63d0298002bdc4a6098c43afcc8b",
     "src/symbol_text/tests/flags_and_tables.rs": "ac4e3ee2b5aadda78ebbe2c7804584f49a48a96816c85fa37adb99aa2a0113fe",
     "src/symbol_text/tests/huffman_fields.rs": "5c93de28ea3e786db07de325f86e7ea3bc375febf7920925af1ad02b630685ac",
-    "src/symbol_text/tests/huffman_symbol_ids.rs": "89dce150f0deb0e9eb16bb38cda5238c6546589d8022829680c412ff4f3becd0",
+    "src/symbol_text/tests/huffman_symbol_ids.rs": "5ac3e343aa6aec7670d0d689dae58733cb29afe77ee0f7843d52401dac940ce0",
     "src/symbol_text/tests/placement_render.rs": "5d07c12827335abdba47df041992ea76e1b12d1a2ae1fb598ba3d4ecba1350b1",
     "src/symbol_text/tests/placement_state.rs": "4842dd4690593cf25b854787030a1e99f93c5611801899a22fce35f9625c75e3",
     "src/symbol_text/tests/resource_accounting.rs": "e86bd903f4dc80efd45a424a60ab182b2fded216601163ccb01dd78488b76ab4",
@@ -4345,6 +4360,61 @@
       ],
       "name": "checked_symbol_id_transition",
       "role": "Exact project ID-preserving range rejection or checked arithmetic/table/literal Huffman result/state composition; not extent derivation or full rendered streams."
+    },
+    "symbol-optional-table-contents": {
+      "kind": "spec",
+      "file": "specs/symbol_text/huffman_codec.rs",
+      "module_path": [
+        "symbol_text",
+        "symbol_text_spec",
+        "huffman_codec"
+      ],
+      "name": "optional_table_contents",
+      "role": "Complete logical contents of an optional borrowed table; proof support, not pointer identity or normative approval."
+    },
+    "symbol-selected-standard-table": {
+      "kind": "spec",
+      "file": "specs/symbol_text/huffman_codec.rs",
+      "module_path": [
+        "symbol_text",
+        "symbol_text_spec",
+        "huffman_codec"
+      ],
+      "name": "selected_standard_table",
+      "role": "Exact supplied A-O cache-slot contents, including absence; does not establish normative entries or upstream selector derivation."
+    },
+    "symbol-selected-field-table": {
+      "kind": "spec",
+      "file": "specs/symbol_text/huffman_codec.rs",
+      "module_path": [
+        "symbol_text",
+        "symbol_text_spec",
+        "huffman_codec"
+      ],
+      "name": "selected_field_table",
+      "role": "Exact resolution of the supplied integer field's custom/standard/absent binding; not derivation from wire header selectors."
+    },
+    "symbol-huffman-table-integer-state": {
+      "kind": "spec",
+      "file": "specs/symbol_text/huffman_codec.rs",
+      "module_path": [
+        "symbol_text",
+        "symbol_text_spec",
+        "huffman_codec"
+      ],
+      "name": "huffman_table_integer_state",
+      "role": "Compose exact bound-table decoding with signed integer/OOB/error projection and cursor; missing bindings reject without consuming input."
+    },
+    "symbol-huffman-integer-transition": {
+      "kind": "spec",
+      "file": "specs/symbol_text/huffman_codec.rs",
+      "module_path": [
+        "symbol_text",
+        "symbol_text_spec",
+        "huffman_codec"
+      ],
+      "name": "huffman_integer_transition",
+      "role": "Preserve exact table-field results/cursors and complete reader/table/strip/ID/refinement metadata through enum dispatch; literal fields keep their separate exact contract."
     },
     "symbol-huffman-id-result": {
       "kind": "spec",
@@ -9335,9 +9405,13 @@
       "feature": "standard_huffman_tables",
       "runtime": [
         "huffman::construction::HuffmanTable::standard",
-        "huffman::standard_lines"
+        "huffman::standard_lines",
+        "symbol_text::tables::StandardHuffmanTables::table"
       ],
-      "models": [],
+      "models": [
+        "symbol-optional-table-contents",
+        "symbol-selected-standard-table"
+      ],
       "proof_macros": [],
       "tests": [
         {
@@ -9347,18 +9421,30 @@
         {
           "target": "lib",
           "name": "huffman::tests::canonical_decoding::every_line_of_every_standard_table_decodes"
+        },
+        {
+          "target": "lib",
+          "name": "symbol_text::tests::huffman_symbol_ids::standard_cache_lookup_preserves_each_slot_presence_and_contents"
         }
       ],
-      "strength": "safety_only",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "Verified table selection/construction; neither helper exports equality to an independently reviewed normative table model.",
+      "scope_of_formal_result": "Partial project result: each supplied A-O tag resolves to the complete contents of its own cache slot, including absence. Existing native selection/construction safety remains. This lookup contract does not establish the normative entries of any standard table, constructor source fidelity or derivation of upstream wire selectors.",
       "assumptions": [
         "The listed tests are existing project tests, not newly imported official content; a consistency test can share implementation data."
       ],
       "gaps": [
         "Decompose and independently review each table's entries and caller selectors; tests and B.5 family mapping are not a complete per-table normative enumeration."
       ],
-      "functional_evidence": [],
+      "functional_evidence": [
+        {
+          "runtime": "symbol_text::tables::StandardHuffmanTables::table",
+          "section": "ensures",
+          "tokens": [
+            "symbol_text_spec::optional_table_contents(out) == symbol_text_spec::selected_standard_table(self, table)"
+          ]
+        }
+      ],
       "invariant_evidence": []
     },
     {
@@ -9369,12 +9455,19 @@
       "feature": "standard_huffman_tables",
       "runtime": [
         "huffman::decoding::HuffmanTable::decode",
-        "huffman::decoding::HuffmanTable::decode_fallback"
+        "huffman::decoding::HuffmanTable::decode_fallback",
+        "symbol_text::tables::HuffmanFieldTables::table_for",
+        "symbol_text::codec::huffman::HuffmanCodec::decode_integer",
+        "symbol_text::codec::SymbolCodec::decode_integer"
       ],
       "models": [
         "huffman-reader-valid",
         "huffman-fallback-run",
-        "huffman-decode-state"
+        "huffman-decode-state",
+        "symbol-optional-table-contents",
+        "symbol-selected-field-table",
+        "symbol-huffman-table-integer-state",
+        "symbol-huffman-integer-transition"
       ],
       "proof_macros": [],
       "tests": [
@@ -9405,19 +9498,47 @@
         {
           "target": "lib",
           "name": "huffman::tests::fallback_state::nonzero_long_prefixes_select_the_given_wide_code_and_ordered_line"
+        },
+        {
+          "target": "lib",
+          "name": "symbol_text::tests::huffman_symbol_ids::table_integer_fields_preserve_selection_results_errors_cursor_and_frames"
         }
       ],
       "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "The actual public decoder now has complete operational result/error/cursor state over valid original readers and supplied table metadata. Fallback reads each original bit, advances the checked wide prefix, searches the first matching length bucket and ordered line and composes exact suffix outcomes; cached, missing-cache and insufficient-lookahead dispatch select the appropriate state. The previous cached-hit result and reader validity remain. This project functional contract does not establish independently approved canonical table/cache construction, standard parameter fidelity or complete JBIG2 stream correctness.",
+      "scope_of_formal_result": "The actual public decoder has complete operational result/error/cursor state over valid original readers and supplied table metadata. Fallback reads each original bit, advances the checked wide prefix, searches the first matching length bucket and ordered line and composes exact suffix outcomes; cached, missing-cache and insufficient-lookahead dispatch select the appropriate state. The actual field getter now resolves each supplied custom/standard binding exactly, including missing cache slots. Concrete and enum Huffman integer adapters compose signed i32 values, OOB, exact converted errors and complete cursor effects; missing bindings reject without input consumption. Reader bytes and all table/strip/ID/refinement metadata are unchanged on success and failure. Existing raw-field and arithmetic guarantees remain, without a new precondition. These project contracts do not establish independently approved canonical table/cache construction, normative header selector derivation, standard parameter fidelity or complete JBIG2 stream correctness.",
       "assumptions": [
         "The table metadata is supplied to the operational result model; constructor/cache/codebook fidelity and independent normative review remain separate. Independent numeric/Boolean oracles supplement, but do not replace, that review."
       ],
       "gaps": [
         "Independently review table/codebook parameters and prove canonical cache/constructor fidelity for every supported line source, including standard and symbol-ID tables.",
-        "Compose the operational Huffman result with dictionary/text and full JBIG2 stream semantics against independently reviewed models; official positive disagreements remain unresolved."
+        "Derive upstream dictionary/text table and codec selections from independently reviewed normative header models and compose full JBIG2 stream semantics. Exact supplied field binding and integer-adapter composition alone do not close this gap."
       ],
       "functional_evidence": [
+        {
+          "runtime": "symbol_text::tables::HuffmanFieldTables::table_for",
+          "section": "ensures",
+          "tokens": [
+            "symbol_text_spec::optional_table_contents(out) == symbol_text_spec::selected_field_table(self, field)"
+          ]
+        },
+        {
+          "runtime": "symbol_text::codec::huffman::HuffmanCodec::decode_integer",
+          "section": "ensures",
+          "tokens": [
+            "out == symbol_text_spec::huffman_table_integer_state(old(self), field).0",
+            "final(self).reader.bit_position == symbol_text_spec::huffman_table_integer_state(old(self), field).1",
+            "final(self).tables == old(self).tables",
+            "final(self).refinement == old(self).refinement"
+          ]
+        },
+        {
+          "runtime": "symbol_text::codec::SymbolCodec::decode_integer",
+          "section": "ensures",
+          "tokens": [
+            "symbol_text_spec::huffman_integer_transition(old(self), final(self), field, out)"
+          ]
+        },
         {
           "runtime": "huffman::decoding::HuffmanTable::decode",
           "section": "ensures",

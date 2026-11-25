@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "status": "verified_exact_project_scope_with_reviewed_limits",
-  "source_revision": "f2ded09787e983edf76ed05a7487fabcbedfe728",
-  "scope": "Fresh pinned whole verification of owned arithmetic-halftone probability-bank validity reuse and identity-order all-new symbol export ownership transfer. The privately initialized bank invariant is strengthened and preserved across success and failure; arbitrary external banks retain checked validation. Export contracts retain exact count/order/content and current per-payload memory checks. Removed physical allocations have no phantom reservations or allocation failures. Other export selections retain the original copying path. Strict/Compatibility/RGB APIs, entropy order, logical work/decoded-byte/retained limits and the frozen bi-level support matrix are unchanged. Same20 reviewed limitations, no new assumptions, trusted bodies or runtime/proof substitutions. Component contracts and finite native oracles, not an allocator/aliasing theorem, full decoded-output proof, renewed normative approval or performance qualification.",
+  "source_revision": "3e275d1a2bfddb95a25c801ae37a277500849ce8",
+  "scope": "Fresh pinned whole verification of exact supplied Huffman cache/field lookup and concrete/enum integer-adapter composition. Each supplied custom/standard/absent field binding yields its exact signed integer, OOB or converted error and complete consumed cursor, with unchanged reader bytes and all table/strip/ID/refinement metadata. Missing bindings consume no input. Existing arithmetic/literal contracts and all770 native production declaration bodies are unchanged from accepted main775e57f; no stronger precondition, assumption, trusted body, runtime/proof substitution or reviewed limitation is added. Prior owned-halftone/export and strict/Compatibility/RGB behavior, limits, bi-level matrix, host-build profiles and1050-second CI guard remain. These project-result contracts do not derive normative header selectors, approve Annex B entries, complete statement enumeration, establish full rendered streams or grant external-validation readiness.",
   "toolchain": {
     "manifest": "config/toolchain.json",
     "verus_version": "0.2026.10.04.426d8b0",
     "verus_commit": "426d8b01e7ffb910a36c15e1f870ff985bb61eef",
     "archive_sha256": "624018662868563a7bec0dd07be5e4dd0c3d61124b4b55105765884bf2d4d1a0"
   },
-  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-cargo-macro-o1 CARGO_INCREMENTAL=0 cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/macro-build-profile/expanded\" --output-json",
+  "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-issue135-fields CARGO_INCREMENTAL=0 cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/issue135-20261125/final/expanded\" --output-json",
   "result": {
     "verified_obligations": 1532,
     "verified_production_functions": 750,
@@ -24,7 +24,7 @@
     "runtime_proof_divergences": 0,
     "incomplete_functions": 0
   },
-  "production_proof_coverage_sha256": "13d4ba23adf60094f4888e39e48f9f314d6c01e77fe481e620b6d2bc1d01e5b0",
+  "production_proof_coverage_sha256": "8e751e8122f8d8d1a17d40fe37ca1b0132748e5a793361d8f655d8e47dbce98a",
   "proof_dispositions_sha256": "0743e3eba8f677f1d891f669cee2929238ae73613896d4f0f0a3ef7329bb7faa",
   "standard_library_boundary": {
     "manifest": "verification/stdlib/review.json",
@@ -33,7 +33,7 @@
     "review_kind": "delegated_engineering_review",
     "normative_approval": false
   },
-  "current_evidence_note": "Exact runtime f2ded09787e983edf76ed05a7487fabcbedfe728 is unchanged. Fresh whole1532/0 after optimizing only host build dependencies, exact750 direct verified functions and unchanged20 reviewed limitations; coverage is byte-identical, expanded inventory and source-bound traceability pass. Actual Cargo profiles retain production/vstd/reviewed-interface opt0, debug2 and debug/overflow checks; only host procedural macros/build dependencies use opt1. Every selected proof, native query, root invalidation, resource cap, role and the1050-second guard remains. Original N2/LLVM24/PDFium321-image/140-PDF qualification for121bee27 is separately published under tools/pdfium-qualification/runs/pr241-121bee27-n2 and is not relabelled as a new measurement. Fresh complete64-group/505-contrast same-run CI remains required on the corrected head. No backport, publication or renewed normative approval.",
+  "current_evidence_note": "Exact750 direct verified functions and unchanged20 reviewed limitations retain whole1532/0 with stronger field-result contracts and refreshed source-bound coverage. All770 production declaration bodies match accepted main775e57f; MSRV643 native tests plus one doctest pass, with16 existing ignored tests. Five new contrasts form a separate complete huffman-field-selection group, preserving the original64-group/505-contrast historical scopes and all prior queries as current65/510. Selective literal negative controls retain the new table guarantees; table controls retain literal/arithmetic semantics, reader validity, metadata frames and the other result/cursor component. Actual Cargo profiles, root invalidation, roles, concurrency, pinned tools/resource settings and1050-second guard remain. Require complete same-run protected CI on the final head; local diagnostics are not canonical acceptance. Original N2/LLVM24/PDFium qualification remains the prior published measurement, not a new binary/timing claim. No backport, publication, normative approval or readiness grant.",
   "host_build_dependency_ci_repair": {
     "baseline_source": "470aaa6e556443872a77784dece82ebab0bafb4f",
     "preserved_rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/45410252328",

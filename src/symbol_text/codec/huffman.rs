@@ -137,7 +137,17 @@ impl HuffmanCodec<'_> {
         requires crate::huffman::huffman_spec::reader_valid(&old(self).reader),
         ensures
             crate::huffman::huffman_spec::reader_valid(&final(self).reader),
+            final(self).reader.bytes@ == old(self).reader.bytes@,
+            final(self).tables == old(self).tables,
             final(self).log_strip_size == old(self).log_strip_size,
+            final(self).symbol_id_table == old(self).symbol_id_table,
+            final(self).refinement == old(self).refinement,
+            final(self).refinement_work == old(self).refinement_work,
+            (field != IntegerField::WithinStripT && field != IntegerField::RefinementIndicator)
+                ==> out == symbol_text_spec::huffman_table_integer_state(old(self), field).0,
+            (field != IntegerField::WithinStripT && field != IntegerField::RefinementIndicator)
+                ==> final(self).reader.bit_position
+                    == symbol_text_spec::huffman_table_integer_state(old(self), field).1,
             (field == IntegerField::WithinStripT || field == IntegerField::RefinementIndicator)
                 ==> {
                     let count = if field == IntegerField::WithinStripT {

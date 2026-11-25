@@ -2494,13 +2494,18 @@ class TraceabilityTests(unittest.TestCase):
         ):
             self.assertEqual(features[name]["decomposition"], "partial")
 
-    def test_parser_only_records_stay_weak_and_mmr_requires_input_raster_evidence(self):
+    def test_partial_lookup_results_do_not_approve_table_entries_or_full_rasters(self):
         ledger = load_json(TOOLS.parent / "validation/traceability/requirements.json")
         rows = {row["id"]: row for row in ledger["requirements"]}
-        for name in ("T88-HUFFMAN-STANDARD-TABLES",):
-            self.assertEqual(rows[name]["strength"], "safety_only")
-            self.assertEqual(rows[name]["functional_evidence"], [])
-            self.assertTrue(rows[name]["gaps"])
+        standard = rows["T88-HUFFMAN-STANDARD-TABLES"]
+        self.assertEqual(standard["strength"], "functional_contract")
+        self.assertEqual(standard["review"], "provisional")
+        self.assertTrue(standard["gaps"])
+        self.assertEqual(
+            {claim["runtime"] for claim in standard["functional_evidence"]},
+            {"symbol_text::tables::StandardHuffmanTables::table"},
+        )
+        self.assertIn("does not establish the normative entries", standard["scope_of_formal_result"])
         prefix = rows["T88-HUFFMAN-PREFIX-MATCH"]
         self.assertEqual(prefix["strength"], "functional_contract")
         self.assertEqual(prefix["review"], "provisional")
@@ -2510,7 +2515,10 @@ class TraceabilityTests(unittest.TestCase):
         self.assertEqual(
             {claim["runtime"] for claim in prefix["functional_evidence"]},
             {"huffman::decoding::HuffmanTable::decode",
-             "huffman::decoding::HuffmanTable::decode_fallback"},
+             "huffman::decoding::HuffmanTable::decode_fallback",
+             "symbol_text::tables::HuffmanFieldTables::table_for",
+             "symbol_text::codec::huffman::HuffmanCodec::decode_integer",
+             "symbol_text::codec::SymbolCodec::decode_integer"},
         )
         self.assertIn("canonical", " ".join(prefix["gaps"]))
         assignment = rows["T88-HUFFMAN-CANONICAL-ASSIGNMENT"]

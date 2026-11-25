@@ -319,3 +319,176 @@ fn table_id_range_endpoints_zero_and_i32_max_are_exact() {
         assert_frame(&mut actual, &bytes, 32, &before);
     }
 }
+
+#[test]
+fn standard_cache_lookup_preserves_each_slot_presence_and_contents() {
+    let mut cache = StandardHuffmanTables::empty();
+    for tag in [
+        StandardHuffmanTable::A,
+        StandardHuffmanTable::B,
+        StandardHuffmanTable::C,
+        StandardHuffmanTable::D,
+        StandardHuffmanTable::E,
+        StandardHuffmanTable::F,
+        StandardHuffmanTable::G,
+        StandardHuffmanTable::H,
+        StandardHuffmanTable::I,
+        StandardHuffmanTable::J,
+        StandardHuffmanTable::K,
+        StandardHuffmanTable::L,
+        StandardHuffmanTable::M,
+        StandardHuffmanTable::N,
+        StandardHuffmanTable::O,
+    ] {
+        assert!(cache.table(tag).is_none());
+        cache.materialize(tag, &Limits::default()).unwrap();
+    }
+    for (tag, slot) in [
+        (StandardHuffmanTable::A, &cache.a),
+        (StandardHuffmanTable::B, &cache.b),
+        (StandardHuffmanTable::C, &cache.c),
+        (StandardHuffmanTable::D, &cache.d),
+        (StandardHuffmanTable::E, &cache.e),
+        (StandardHuffmanTable::F, &cache.f),
+        (StandardHuffmanTable::G, &cache.g),
+        (StandardHuffmanTable::H, &cache.h),
+        (StandardHuffmanTable::I, &cache.i),
+        (StandardHuffmanTable::J, &cache.j),
+        (StandardHuffmanTable::K, &cache.k),
+        (StandardHuffmanTable::L, &cache.l),
+        (StandardHuffmanTable::M, &cache.m),
+        (StandardHuffmanTable::N, &cache.n),
+        (StandardHuffmanTable::O, &cache.o),
+    ] {
+        assert!(core::ptr::eq(
+            cache.table(tag).unwrap(),
+            slot.as_deref().unwrap()
+        ));
+    }
+}
+
+fn bind_integer_table<'a>(
+    tables: &mut HuffmanFieldTables<'a>,
+    field: IntegerField,
+    binding: Option<MaterializedHuffmanTable<'a>>,
+) {
+    let slot = match field {
+        IntegerField::AggregationInstances => &mut tables.aggregation_instances,
+        IntegerField::HeightDelta => &mut tables.height_delta,
+        IntegerField::WidthDelta => &mut tables.width_delta,
+        IntegerField::ExportRun => &mut tables.export_run,
+        IntegerField::StripDelta => &mut tables.strip_delta,
+        IntegerField::FirstS => &mut tables.first_s,
+        IntegerField::SubsequentS => &mut tables.subsequent_s,
+        IntegerField::RefinementWidth => &mut tables.refinement_width,
+        IntegerField::RefinementHeight => &mut tables.refinement_height,
+        IntegerField::RefinementX => &mut tables.refinement_x,
+        IntegerField::RefinementY => &mut tables.refinement_y,
+        IntegerField::RefinementSize => &mut tables.refinement_size,
+        IntegerField::DictionaryBitmapSize => &mut tables.dictionary_bitmap_size,
+        _ => panic!("literal field has no table slot"),
+    };
+    *slot = binding;
+}
+
+#[test]
+fn table_integer_fields_preserve_selection_results_errors_cursor_and_frames() {
+    #[derive(Clone, Copy)]
+    enum Binding {
+        Missing,
+        Custom,
+        MissingStandard,
+        Standard,
+    }
+    for field in [
+        IntegerField::AggregationInstances,
+        IntegerField::HeightDelta,
+        IntegerField::WidthDelta,
+        IntegerField::ExportRun,
+        IntegerField::StripDelta,
+        IntegerField::FirstS,
+        IntegerField::SubsequentS,
+        IntegerField::RefinementWidth,
+        IntegerField::RefinementHeight,
+        IntegerField::RefinementX,
+        IntegerField::RefinementY,
+        IntegerField::RefinementSize,
+        IntegerField::DictionaryBitmapSize,
+    ] {
+        for family in FAMILIES {
+            let custom = table(family);
+            for binding in [
+                Binding::Missing,
+                Binding::Custom,
+                Binding::MissingStandard,
+                Binding::Standard,
+            ] {
+                for bytes in SAMPLES {
+                    for position in [0, bytes.len() * 4, bytes.len() * 8] {
+                        for wrapped in [false, true] {
+                            let mut actual = fixture(bytes, position, Family::EightBit);
+                            bind_integer_table(
+                                &mut actual.tables,
+                                field,
+                                match binding {
+                                    Binding::Missing => None,
+                                    Binding::Custom => {
+                                        Some(MaterializedHuffmanTable::Custom(&custom))
+                                    }
+                                    Binding::MissingStandard | Binding::Standard => Some(
+                                        MaterializedHuffmanTable::Standard(StandardHuffmanTable::A),
+                                    ),
+                                },
+                            );
+                            if matches!(binding, Binding::Standard) {
+                                actual.tables.standard_tables.a = Some(Box::new(table(family)));
+                            }
+                            let (expected, end) =
+                                if matches!(binding, Binding::Missing | Binding::MissingStandard) {
+                                    (
+                                        Err(SymbolTextError::InvalidTableAssociation(
+                                            "no Huffman table bound for field",
+                                        )),
+                                        position,
+                                    )
+                                } else {
+                                    let (decoded, end) = oracle(bytes, position, family);
+                                    // The scalar ID oracle rejects the fixture's -1 and OOB;
+                                    // integer fields must preserve those entropy values instead.
+                                    (
+                                        match decoded {
+                                            Ok(value) => {
+                                                Ok(EntropyInteger::Value(i64::from(value)))
+                                            }
+                                            Err(SymbolTextError::InvalidEntropyValue(
+                                                "symbol ID",
+                                            )) => Ok(EntropyInteger::Value(-1)),
+                                            Err(SymbolTextError::UnexpectedOutOfBand(
+                                                "symbol ID",
+                                            )) => Ok(EntropyInteger::OutOfBand),
+                                            Err(error) => Err(error),
+                                        },
+                                        end,
+                                    )
+                                };
+                            let before = metadata(&actual);
+                            let result = if wrapped {
+                                let mut codec = SymbolCodec::Huffman(actual);
+                                let result = codec.decode_integer(field);
+                                let SymbolCodec::Huffman(codec) = codec else {
+                                    panic!("changed codec variant");
+                                };
+                                actual = codec;
+                                result
+                            } else {
+                                actual.decode_integer(field)
+                            };
+                            assert_eq!(format!("{result:?}"), format!("{expected:?}"));
+                            assert_frame(&mut actual, bytes, end, &before);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

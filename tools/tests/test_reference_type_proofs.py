@@ -16,7 +16,9 @@ import run_semantic_proofs as runner
 
 REFERENCE_TYPE_PROFILE_CHECKS = tuple(
     row for row in runner.CHECKS
-    if row[0] not in {"colour-rgb", "arithmetic-certainty", "owned-decode"}
+    if row[0] not in {
+        "colour-rgb", "arithmetic-certainty", "owned-decode", "huffman-field-selection",
+    }
 )
 
 
