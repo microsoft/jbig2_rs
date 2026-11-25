@@ -485,6 +485,17 @@ pub(super) fn try_decode(
     decoder: &mut ArithmeticDecoder<'_>,
     contexts: &mut Vec<ArithmeticContext>,
 ) -> Result<bool, GenericRegionError> {
+    if super::generic_packed::try_decode(
+        bitmap,
+        rows,
+        GenericTemplate::Template0,
+        super::GenericContextDescriptor::NominalTemplate0,
+        typical_prediction,
+        decoder,
+        contexts,
+    )? {
+        return Ok(true);
+    }
     if !fits_managed_memory(width, rows, context_bytes, bitmap_bytes, limits)? {
         return Ok(false);
     }

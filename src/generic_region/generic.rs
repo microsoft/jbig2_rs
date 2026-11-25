@@ -642,6 +642,19 @@ pub(super) fn decode_generic_with(
         crate::views::bitmap_fields(bitmap);
     }
     let descriptor = GenericContextDescriptor::new(template, extended, adaptive);
+    if skip.is_none()
+        && super::generic_packed::try_decode(
+            bitmap,
+            rows,
+            template,
+            descriptor,
+            typical_prediction,
+            decoder,
+            contexts,
+        )?
+    {
+        return Ok(());
+    }
     let mut ltp = false;
     let mut y = 0_u32;
     #[cfg_attr(verus_keep_ghost, verus_spec(

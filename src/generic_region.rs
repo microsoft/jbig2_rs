@@ -42,6 +42,7 @@ mod colour;
 mod contexts;
 mod generic;
 mod generic_context;
+mod generic_packed;
 mod headers;
 mod refinement;
 mod segments;

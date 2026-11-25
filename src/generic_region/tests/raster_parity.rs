@@ -4,6 +4,68 @@
 use super::*;
 
 #[test]
+fn direct_packed_nominal_rows_preserve_tails_banks_and_partial_failures() {
+    let limits = Limits::default();
+    let mut random = 0xc471_63aa_58b0_2d19;
+    for template in [
+        GenericTemplate::Template0,
+        GenericTemplate::Template1,
+        GenericTemplate::Template2,
+        GenericTemplate::Template3,
+    ] {
+        for width in [0, 1, 7, 8, 9, 31, 32, 33, 129, 3111, 3562] {
+            for prediction in [false, true] {
+                for prefix in [2, 3, 7, usize::MAX] {
+                    let mut coded = arithmetic_bytes(&mut random);
+                    coded.truncate(prefix);
+                    let mut decoder = ArithmeticDecoder::new(&coded).unwrap();
+                    let mut oracle_decoder = ArithmeticDecoder::new(&coded).unwrap();
+                    let mut contexts =
+                        vec![ArithmeticContext::new(); generic_context_count(template)];
+                    let mut oracle_contexts = contexts.clone();
+                    let header = generic_header(width, 5, template, false, prediction);
+                    let mut actual = Bitmap::blank(width, 5, &limits).unwrap();
+                    let mut expected = Bitmap::blank(width, 5, &limits).unwrap();
+                    let result = decode_generic_with(
+                        &mut actual,
+                        4,
+                        template,
+                        false,
+                        &header.adaptive,
+                        prediction,
+                        None,
+                        &mut decoder,
+                        &mut contexts,
+                    );
+                    let oracle_result = decode_generic_with_oracle(
+                        &mut expected,
+                        4,
+                        template,
+                        false,
+                        &header.adaptive,
+                        prediction,
+                        None,
+                        &mut oracle_decoder,
+                        &mut oracle_contexts,
+                    );
+                    assert_eq!(
+                        result.as_ref().err().map(|error| format!("{error:?}")),
+                        oracle_result
+                            .as_ref()
+                            .err()
+                            .map(|error| format!("{error:?}")),
+                        "{template:?}/{width}/{prediction}/{prefix}",
+                    );
+                    assert_eq!(actual, expected);
+                    assert_eq!(contexts, oracle_contexts);
+                    assert_decoder_state_eq(&decoder, &oracle_decoder);
+                }
+            }
+        }
+    }
+}
+
+#[test]
 fn specialized_generic_kernels_match_scalar_oracle_randomized() {
     let limits = Limits::default();
     let templates = [
