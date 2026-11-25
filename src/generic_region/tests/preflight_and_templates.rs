@@ -20,6 +20,15 @@ fn pattern_rows_match_literal_contexts_for_wide_lags_and_other_adaptive_shapes()
                     GenericContextDescriptor::new(GenericTemplate::Template0, false, &adaptive);
                 for y in 0..7 {
                     let mut row = GenericRowContext::new(descriptor, &bitmap, y);
+                    let mut pattern = super::super::pattern_context::pattern_lag(&[
+                        adaptive[0],
+                        adaptive[1],
+                        adaptive[2],
+                        adaptive[3],
+                    ])
+                    .map(|lag| {
+                        super::super::pattern_context::PatternRowContext::new(&bitmap, y, lag)
+                    });
                     for x in 0..width + 5 {
                         let history = control_window(&bitmap, i64::from(x), i64::from(y), -4, 4);
                         let expected = generic_context(
@@ -33,7 +42,16 @@ fn pattern_rows_match_literal_contexts_for_wide_lags_and_other_adaptive_shapes()
                         assert_eq!(descriptor.context(&bitmap, x, y, history), expected);
                         if x % 7 == 0 {
                             row.advance(&bitmap, x);
+                            if let Some(pattern) = pattern.as_mut() {
+                                pattern.advance(&bitmap, x);
+                            }
                         } else {
+                            if let Some(pattern) = pattern.as_mut() {
+                                assert_eq!(
+                                    pattern.context_and_advance(&bitmap, x, history),
+                                    expected
+                                );
+                            }
                             assert_eq!(
                                 row.context_and_advance(&bitmap, x, y, history),
                                 expected,

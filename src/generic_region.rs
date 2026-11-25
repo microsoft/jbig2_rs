@@ -418,7 +418,6 @@ struct GenericSlot {
 #[cfg_attr(verus_keep_ghost, verus_verify)]
 enum GenericContextDescriptor {
     NominalTemplate0,
-    PatternTemplate0(u8),
     Template0([TemplateOffset; 4]),
     Template0Extended([TemplateOffset; 16]),
     NominalTemplate1,
@@ -432,7 +431,6 @@ enum GenericContextDescriptor {
 #[derive(Debug, Clone, Copy)]
 #[cfg_attr(verus_keep_ghost, verus_verify)]
 enum GenericRowContext {
-    PatternTemplate0(pattern_context::PatternRowContext),
     Template0 {
         top: usize,
         previous: usize,

@@ -1,7 +1,6 @@
 use super::support::sample_bitmap;
 use super::{
-    pattern_context, GenericContextDescriptor, GenericRowContext, GenericSlot, GenericTemplate,
-    TemplateOffset,
+    GenericContextDescriptor, GenericRowContext, GenericSlot, GenericTemplate, TemplateOffset,
 };
 use crate::Bitmap;
 #[cfg(verus_keep_ghost)]
@@ -267,8 +266,6 @@ impl GenericContextDescriptor {
                     ]
                 {
                     Self::NominalTemplate0
-                } else if let Some(lag) = pattern_context::pattern_lag(&values) {
-                    Self::PatternTemplate0(lag)
                 } else {
                     Self::Template0(values)
                 }
@@ -301,7 +298,6 @@ impl GenericContextDescriptor {
     #[cfg_attr(verus_keep_ghost, verus_verify)]
     pub(super) fn context(&self, bitmap: &Bitmap, x: u32, y: u32, history: usize) -> usize {
         match self {
-            Self::PatternTemplate0(lag) => pattern_context::context_at(bitmap, x, y, history, *lag),
             Self::NominalTemplate0 => {
                 let top = packed_row_bits(bitmap, i64::from(x), i64::from(y) - 2, -2, 5);
                 let previous = packed_row_bits(bitmap, i64::from(x), i64::from(y) - 1, -3, 7);
@@ -383,12 +379,8 @@ pub(super) fn queue_exhausted(remaining: &mut u8) -> bool {
 impl GenericRowContext {
     #[cfg_attr(verus_keep_ghost, verus_verify)]
     pub(super) fn new(descriptor: GenericContextDescriptor, bitmap: &Bitmap, y: u32) -> Self {
-        let row = y;
         let y = i64::from(y);
         match descriptor {
-            GenericContextDescriptor::PatternTemplate0(lag) => {
-                Self::PatternTemplate0(pattern_context::PatternRowContext::new(bitmap, row, lag))
-            }
             GenericContextDescriptor::NominalTemplate0 => Self::Template0 {
                 top: packed_row_bits(bitmap, 0, y - 2, -2, 5),
                 previous: packed_row_bits(bitmap, 0, y - 1, -3, 7),
@@ -436,7 +428,6 @@ impl GenericRowContext {
     ) -> usize {
         let sample_x = i64::from(x);
         match self {
-            Self::PatternTemplate0(row) => row.context_and_advance(bitmap, x, history),
             Self::Template0 {
                 top,
                 previous,
@@ -521,10 +512,8 @@ impl GenericRowContext {
 
     #[cfg_attr(verus_keep_ghost, verus_verify)]
     pub(super) fn advance(&mut self, bitmap: &Bitmap, x: u32) {
-        let pixel = x;
         let x = i64::from(x);
         match self {
-            Self::PatternTemplate0(row) => row.advance(bitmap, pixel),
             Self::Template0 {
                 top,
                 previous,

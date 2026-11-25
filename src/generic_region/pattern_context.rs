@@ -1,5 +1,9 @@
 use super::generic_context::{packed_row_bits, packed_row_byte, packed_row_start, queue_exhausted};
+#[cfg(verus_keep_ghost)]
+use super::generic_region_spec;
 use super::TemplateOffset;
+use super::{decode_probability_signal, probability_signal_error, GenericRegionError};
+use crate::arithmetic::{ArithmeticContext, ArithmeticDecoder};
 use crate::Bitmap;
 #[cfg(verus_keep_ghost)]
 use vstd::prelude::*;
@@ -56,18 +60,6 @@ fn combine(top: usize, previous: usize, lag_bit: bool, history: usize) -> usize 
     context
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
-pub(super) fn context_at(bitmap: &Bitmap, x: u32, y: u32, history: usize, lag: u8) -> usize {
-    let x = i64::from(x);
-    let y = i64::from(y);
-    combine(
-        packed_row_bits(bitmap, x, y - 2, -2, 5),
-        packed_row_bits(bitmap, x, y - 1, -3, 6),
-        packed_row_byte(bitmap, packed_row_start(bitmap, y), x - i64::from(lag)) & 0x80 != 0,
-        history,
-    )
-}
-
 #[derive(Debug, Clone, Copy)]
 #[cfg_attr(verus_keep_ghost, verus_verify)]
 pub(super) struct PatternRowContext {
@@ -100,7 +92,104 @@ impl PatternRowContext {
             lag,
         }
     }
+}
 
+#[allow(clippy::ptr_arg)]
+#[inline(never)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+            requires
+                crate::spec::bitmap::storage_valid(old(bitmap)),
+                rows <= old(bitmap).height,
+                crate::arithmetic::arithmetic_spec::decoder_valid(old(decoder)),
+                generic_region_spec::contexts_valid(old(contexts)@),
+            ensures
+                crate::spec::bitmap::storage_valid(final(bitmap)),
+                final(bitmap).width == old(bitmap).width,
+                final(bitmap).height == old(bitmap).height,
+                final(bitmap).stride == old(bitmap).stride,
+                generic_region_spec::contexts_valid(final(contexts)@),
+                out.is_ok() ==> crate::arithmetic::arithmetic_spec::decoder_valid(final(decoder)),
+        ))]
+pub(super) fn try_decode(
+    bitmap: &mut Bitmap,
+    rows: u32,
+    adaptive: &[TemplateOffset; 12],
+    decoder: &mut ArithmeticDecoder<'_>,
+    contexts: &mut Vec<ArithmeticContext>,
+) -> Result<bool, GenericRegionError> {
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        crate::views::bitmap_fields(bitmap);
+    }
+    let Some(lag) = pattern_lag(&[adaptive[0], adaptive[1], adaptive[2], adaptive[3]]) else {
+        return Ok(false);
+    };
+    let width = bitmap.width;
+    #[cfg(verus_keep_ghost)]
+    let height = bitmap.height;
+    #[cfg(verus_keep_ghost)]
+    let stride = bitmap.stride;
+    let mut y = 0_u32;
+    #[cfg_attr(verus_keep_ghost, verus_spec(
+                invariant
+                    y <= rows <= bitmap.height,
+                    bitmap.width == width,
+                    bitmap.height == height,
+                    bitmap.stride == stride,
+                    width == old(bitmap).width,
+                    height == old(bitmap).height,
+                    stride == old(bitmap).stride,
+                    crate::spec::bitmap::storage_valid(bitmap),
+                    crate::arithmetic::arithmetic_spec::decoder_valid(decoder),
+                    generic_region_spec::contexts_valid(contexts@),
+                decreases rows - y,
+            ))]
+    while y < rows {
+        let mut row = PatternRowContext::new(bitmap, y, lag);
+        let mut history = 0_usize;
+        let mut x = 0_u32;
+        #[cfg_attr(verus_keep_ghost, verus_spec(
+                    invariant
+                        x <= width,
+                        y < rows <= bitmap.height,
+                        bitmap.width == width,
+                        bitmap.height == height,
+                        bitmap.stride == stride,
+                        width == old(bitmap).width,
+                        height == old(bitmap).height,
+                        stride == old(bitmap).stride,
+                        crate::spec::bitmap::storage_valid(bitmap),
+                        crate::arithmetic::arithmetic_spec::decoder_valid(decoder),
+                        generic_region_spec::contexts_valid(contexts@),
+                    decreases width - x,
+                ))]
+        while x < width {
+            let context = row.context_and_advance(bitmap, x, history);
+            let signal = decode_probability_signal(decoder, contexts, context);
+            if signal > 1 {
+                return Err(probability_signal_error(
+                    decoder,
+                    context,
+                    contexts.len(),
+                    signal,
+                ));
+            }
+            history = ((history << 1) | usize::from(signal)) & 15;
+            if signal != 0 {
+                bitmap.set_pixel(x, y, true)?;
+                #[cfg(verus_keep_ghost)]
+                proof! {
+                    crate::views::bitmap_fields(bitmap);
+                }
+            }
+            x += 1;
+        }
+        y += 1;
+    }
+    Ok(true)
+}
+
+impl PatternRowContext {
     #[cfg_attr(verus_keep_ghost, verus_verify)]
     pub(super) fn context_and_advance(&mut self, bitmap: &Bitmap, x: u32, history: usize) -> usize {
         let lag = packed_row_byte(bitmap, self.current_row, i64::from(x) - i64::from(self.lag));

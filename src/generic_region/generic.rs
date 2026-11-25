@@ -641,6 +641,18 @@ pub(super) fn decode_generic_with(
     proof! {
         crate::views::bitmap_fields(bitmap);
     }
+    if template == GenericTemplate::Template0
+        && !extended
+        && !typical_prediction
+        && skip.is_none()
+        && super::pattern_context::try_decode(bitmap, rows, adaptive, decoder, contexts)?
+    {
+        return Ok(());
+    }
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        crate::views::bitmap_fields(bitmap);
+    }
     let descriptor = GenericContextDescriptor::new(template, extended, adaptive);
     let mut ltp = false;
     let mut y = 0_u32;
