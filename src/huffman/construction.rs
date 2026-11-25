@@ -473,12 +473,19 @@ impl HuffmanTable {
             Ok(table) => huffman_lookup_spec::table_lookup_valid(&table),
             Err(_) => true,
         },
+        match out {
+            Ok(result) =>
+                huffman_spec::canonical_assignment(huffman_spec::standard_table_lines(table), &result),
+            Err(_) => true,
+        },
     ))]
     #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     pub(crate) fn standard(
         table: StandardHuffmanTable,
         limits: &Limits,
     ) -> Result<Self, HuffmanError> {
+        #[cfg(verus_keep_ghost)]
+        proof! { huffman_spec::standard_table_lines_definition(table); }
         Self::from_line_source(HuffmanLines::Standard(standard_lines(table)), limits)
     }
 }

@@ -19,7 +19,7 @@ mod huffman_codec;
 pub(super) use huffman_codec::{
     huffman_codec_initial, huffman_error_result, huffman_error_result_definition,
     huffman_integer_transition, huffman_symbol_id_state, huffman_symbol_id_transition,
-    huffman_table_integer_state, optional_table_contents, selected_field_table,
+    huffman_table_integer_state, optional_standard_contents, optional_table_contents, selected_field_table,
     selected_standard_table,
 };
 

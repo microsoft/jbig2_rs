@@ -331,7 +331,7 @@ pub(super) open spec fn line_lengths_valid(lines: Seq<super::HuffmanLine>) -> bo
 // Mapping: no registered requirement/locator mapping.
 // Fidelity: unresolved; no independent normative approval.
 pub(super) open spec fn is_raw(source: super::HuffmanLines) -> bool {
-    source is Borrowed
+    source is Borrowed || source is Standard
 }
 
 // Model navigation: spec::raw_lines [proof-support]
@@ -341,6 +341,7 @@ pub(super) open spec fn is_raw(source: super::HuffmanLines) -> bool {
 pub(super) open spec fn raw_lines(source: super::HuffmanLines) -> Seq<super::HuffmanLine> {
     match source {
         super::HuffmanLines::Borrowed(lines) => lines@,
+        super::HuffmanLines::Standard(table) => standard_source_lines(table),
         _ => Seq::empty(),
     }
 }
@@ -750,3 +751,4 @@ pub(crate) closed spec fn table_has_oob(table: &super::HuffmanTable) -> bool {
 
 // Keep the closed-model reveal in its owning module.
 include!("../proofs/model_support/huffman.rs");
+include!("huffman_lines.rs");

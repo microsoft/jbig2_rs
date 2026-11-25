@@ -9,6 +9,7 @@ use super::{
     SymbolTextError, TableBinding, TableBindings, TableChoice, TableParameter, TextRegionConfig,
     MAX_TABLE_BINDINGS,
 };
+use crate::huffman::standard::{CodecHuffmanTable, StandardDescriptor};
 #[cfg(verus_keep_ghost)]
 use vstd::prelude::*;
 
@@ -248,14 +249,24 @@ impl StandardHuffmanTables {
         }
     }
 
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures
+            forall|tag: StandardHuffmanTable|
+                symbol_text_spec::selected_standard_table(final(self), tag)
+                == if tag == table && out.is_ok()
+                    && symbol_text_spec::selected_standard_table(old(self), tag).is_none() {
+                    Some(*crate::huffman::standard::standard_spec::selected(table))
+                } else {
+                    symbol_text_spec::selected_standard_table(old(self), tag)
+                },
+    ))]
     pub(super) fn materialize(
         &mut self,
         table: StandardHuffmanTable,
         limits: &Limits,
     ) -> Result<(), HuffmanError> {
         if self.table(table).is_none() {
-            let materialized = Some(Box::new(HuffmanTable::standard(table, limits)?));
+            let materialized = Some(StandardDescriptor::new(table, limits)?);
             match table {
                 StandardHuffmanTable::A => self.a = materialized,
                 StandardHuffmanTable::B => self.b = materialized,
@@ -278,14 +289,15 @@ impl StandardHuffmanTables {
     }
 
     #[cfg_attr(verus_keep_ghost, verus_spec(out =>
-        ensures symbol_text_spec::optional_table_contents(out)
+        ensures symbol_text_spec::optional_standard_contents(out)
             == symbol_text_spec::selected_standard_table(self, table),
     ))]
-    pub(super) fn table(&self, table: StandardHuffmanTable) -> Option<&HuffmanTable> {
+    #[inline]
+    pub(super) fn table(&self, table: StandardHuffmanTable) -> Option<&'static StandardDescriptor> {
         macro_rules! get {
             ($field:expr) => {
                 match $field {
-                    Some(table) => Some(table),
+                    Some(table) => Some(*table),
                     None => None,
                 }
             };
@@ -537,7 +549,11 @@ impl HuffmanFieldTables<'_> {
         ensures symbol_text_spec::optional_table_contents(out)
             == symbol_text_spec::selected_field_table(self, field),
     ))]
-    pub(super) fn table_for(&self, field: IntegerField) -> Option<&HuffmanTable> {
+    // Fuse resolution with decoding instead of carrying a new tag through custom fields.
+    // Keep the explicit selection relation visible to Verus.
+    #[inline(always)]
+    #[allow(clippy::inline_always, clippy::manual_map)]
+    pub(super) fn table_for(&self, field: IntegerField) -> Option<CodecHuffmanTable<'_>> {
         let resolved = match field {
             IntegerField::AggregationInstances => self.aggregation_instances.as_ref(),
             IntegerField::HeightDelta => self.height_delta.as_ref(),
@@ -555,8 +571,15 @@ impl HuffmanFieldTables<'_> {
             IntegerField::WithinStripT | IntegerField::RefinementIndicator => None,
         };
         match resolved {
-            Some(MaterializedHuffmanTable::Standard(table)) => self.standard_tables.table(*table),
-            Some(MaterializedHuffmanTable::Custom(table)) => Some(table),
+            Some(MaterializedHuffmanTable::Standard(table)) => {
+                match self.standard_tables.table(*table) {
+                    Some(table) => Some(CodecHuffmanTable::Standard(table)),
+                    None => None,
+                }
+            }
+            Some(MaterializedHuffmanTable::Custom(table)) => {
+                Some(CodecHuffmanTable::General(table))
+            }
             None => None,
         }
     }

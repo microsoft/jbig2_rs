@@ -69,6 +69,9 @@ impl HuffmanTable {
         ensures
             huffman_spec::reader_valid(final(reader)),
             final(reader).bytes@ == old(reader).bytes@,
+            final(reader).bit_position == huffman_spec::decode_state(
+                self, old(reader).bytes@, old(reader).bit_position,
+            ).1,
             out == Ok(None) ==> (
                 huffman_spec::zero_padding_before_prefix(self, old(reader))
                 && final(reader).bit_position == old(reader).bytes@.len() * 8

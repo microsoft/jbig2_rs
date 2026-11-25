@@ -7,8 +7,20 @@ use crate::symbol_text::{
     StandardHuffmanTable, StandardHuffmanTables, SymbolTextError,
 };
 use crate::huffman::HuffmanTable;
+use crate::huffman::standard::{CodecHuffmanTable, StandardDescriptor, standard_spec};
 
 verus! {
+
+pub(in crate::symbol_text) enum FieldHuffmanTable {
+    Standard(StandardDescriptor),
+    General(HuffmanTable),
+}
+
+pub(in crate::symbol_text) open spec fn optional_standard_contents(
+    table: Option<&StandardDescriptor>,
+) -> Option<StandardDescriptor> {
+    match table { Some(table) => Some(*table), None => None }
+}
 
 // Model navigation: spec::optional_table_contents [proof-support]
 // Purpose: Compare a borrowed lookup result with complete table contents, not pointer identity.
@@ -16,10 +28,11 @@ verus! {
 // REQUIREMENT CONTEXT: T88-HUFFMAN-STANDARD-TABLES | ITU-T T.88 (08/2018) | B.5; Tables B.1-B.15
 // Fidelity: unresolved; no independent normative approval.
 pub(in crate::symbol_text) open spec fn optional_table_contents(
-    table: Option<&HuffmanTable>,
-) -> Option<HuffmanTable> {
+    table: Option<CodecHuffmanTable>,
+) -> Option<FieldHuffmanTable> {
     match table {
-        Some(table) => Some(*table),
+        Some(CodecHuffmanTable::Standard(table)) => Some(FieldHuffmanTable::Standard(*table)),
+        Some(CodecHuffmanTable::General(table)) => Some(FieldHuffmanTable::General(*table)),
         None => None,
     }
 }
@@ -32,7 +45,7 @@ pub(in crate::symbol_text) open spec fn optional_table_contents(
 pub(in crate::symbol_text) open spec fn selected_standard_table(
     tables: &StandardHuffmanTables,
     table: StandardHuffmanTable,
-) -> Option<HuffmanTable> {
+) -> Option<StandardDescriptor> {
     let selected = match table {
         StandardHuffmanTable::A => tables.a,
         StandardHuffmanTable::B => tables.b,
@@ -64,7 +77,7 @@ pub(in crate::symbol_text) open spec fn selected_standard_table(
 pub(in crate::symbol_text) open spec fn selected_field_table(
     tables: &HuffmanFieldTables,
     field: IntegerField,
-) -> Option<HuffmanTable> {
+) -> Option<FieldHuffmanTable> {
     let selected = match field {
         IntegerField::AggregationInstances => tables.aggregation_instances,
         IntegerField::HeightDelta => tables.height_delta,
@@ -83,8 +96,11 @@ pub(in crate::symbol_text) open spec fn selected_field_table(
     };
     match selected {
         Some(MaterializedHuffmanTable::Standard(table)) =>
-            selected_standard_table(&tables.standard_tables, table),
-        Some(MaterializedHuffmanTable::Custom(table)) => Some(*table),
+            match selected_standard_table(&tables.standard_tables, table) {
+                Some(table) => Some(FieldHuffmanTable::Standard(table)),
+                None => None,
+            },
+        Some(MaterializedHuffmanTable::Custom(table)) => Some(FieldHuffmanTable::General(*table)),
         None => None,
     }
 }
@@ -102,9 +118,14 @@ pub(in crate::symbol_text) open spec fn huffman_table_integer_state(
 {
     match selected_field_table(&codec.tables, field) {
         Some(table) => {
-            let decoded = crate::huffman::huffman_spec::decode_state(
-                &table, codec.reader.bytes@, codec.reader.bit_position,
-            );
+            let decoded = match table {
+                FieldHuffmanTable::Standard(table) => standard_spec::decode_state(
+                    &table, codec.reader.bytes@, codec.reader.bit_position,
+                ),
+                FieldHuffmanTable::General(table) => crate::huffman::huffman_spec::decode_state(
+                    &table, codec.reader.bytes@, codec.reader.bit_position,
+                ),
+            };
             let result = match decoded.0 {
                 Ok(crate::huffman::HuffmanValue::Integer(value)) =>
                     Ok(EntropyInteger::Value(value as i64)),

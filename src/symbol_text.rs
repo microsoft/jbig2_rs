@@ -539,21 +539,21 @@ enum MaterializedHuffmanTable<'a> {
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
 struct StandardHuffmanTables {
-    a: Option<Box<HuffmanTable>>,
-    b: Option<Box<HuffmanTable>>,
-    c: Option<Box<HuffmanTable>>,
-    d: Option<Box<HuffmanTable>>,
-    e: Option<Box<HuffmanTable>>,
-    f: Option<Box<HuffmanTable>>,
-    g: Option<Box<HuffmanTable>>,
-    h: Option<Box<HuffmanTable>>,
-    i: Option<Box<HuffmanTable>>,
-    j: Option<Box<HuffmanTable>>,
-    k: Option<Box<HuffmanTable>>,
-    l: Option<Box<HuffmanTable>>,
-    m: Option<Box<HuffmanTable>>,
-    n: Option<Box<HuffmanTable>>,
-    o: Option<Box<HuffmanTable>>,
+    a: Option<&'static crate::huffman::standard::StandardDescriptor>,
+    b: Option<&'static crate::huffman::standard::StandardDescriptor>,
+    c: Option<&'static crate::huffman::standard::StandardDescriptor>,
+    d: Option<&'static crate::huffman::standard::StandardDescriptor>,
+    e: Option<&'static crate::huffman::standard::StandardDescriptor>,
+    f: Option<&'static crate::huffman::standard::StandardDescriptor>,
+    g: Option<&'static crate::huffman::standard::StandardDescriptor>,
+    h: Option<&'static crate::huffman::standard::StandardDescriptor>,
+    i: Option<&'static crate::huffman::standard::StandardDescriptor>,
+    j: Option<&'static crate::huffman::standard::StandardDescriptor>,
+    k: Option<&'static crate::huffman::standard::StandardDescriptor>,
+    l: Option<&'static crate::huffman::standard::StandardDescriptor>,
+    m: Option<&'static crate::huffman::standard::StandardDescriptor>,
+    n: Option<&'static crate::huffman::standard::StandardDescriptor>,
+    o: Option<&'static crate::huffman::standard::StandardDescriptor>,
 }
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]

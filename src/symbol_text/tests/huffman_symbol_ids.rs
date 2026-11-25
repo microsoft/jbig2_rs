@@ -391,15 +391,46 @@ fn bind_integer_table<'a>(
     *slot = binding;
 }
 
+#[derive(Clone, Copy)]
+enum IntegerBinding {
+    Missing,
+    Custom,
+    MissingStandard,
+    Standard,
+}
+
+fn standard_family(family: Family) -> StandardHuffmanTable {
+    match family {
+        Family::TwoBit => StandardHuffmanTable::N,
+        Family::EightBit => StandardHuffmanTable::I,
+        Family::SignedAndOob => StandardHuffmanTable::B,
+        Family::Range31 => StandardHuffmanTable::A,
+    }
+}
+
+fn standard_integer_oracle(
+    bytes: &[u8],
+    position: usize,
+    tag: StandardHuffmanTable,
+) -> (Result<EntropyInteger, SymbolTextError>, usize) {
+    let table = HuffmanTable::standard(tag, &Limits::default()).unwrap();
+    let mut reader = BitReader {
+        bytes,
+        bit_position: position,
+    };
+    let result = table
+        .decode(&mut reader)
+        .map(|value| match value {
+            HuffmanValue::Integer(value) => EntropyInteger::Value(i64::from(value)),
+            HuffmanValue::OutOfBand => EntropyInteger::OutOfBand,
+        })
+        .map_err(SymbolTextError::from);
+    (result, reader.bit_position)
+}
+
 #[test]
 fn table_integer_fields_preserve_selection_results_errors_cursor_and_frames() {
-    #[derive(Clone, Copy)]
-    enum Binding {
-        Missing,
-        Custom,
-        MissingStandard,
-        Standard,
-    }
+    use IntegerBinding as Binding;
     for field in [
         IntegerField::AggregationInstances,
         IntegerField::HeightDelta,
@@ -440,8 +471,15 @@ fn table_integer_fields_preserve_selection_results_errors_cursor_and_frames() {
                                     ),
                                 },
                             );
+                            let standard_tag = standard_family(family);
                             if matches!(binding, Binding::Standard) {
-                                actual.tables.standard_tables.a = Some(Box::new(table(family)));
+                                actual.tables.standard_tables.a = Some(
+                                    crate::huffman::standard::StandardDescriptor::new(
+                                        standard_tag,
+                                        &Limits::default(),
+                                    )
+                                    .unwrap(),
+                                );
                             }
                             let (expected, end) =
                                 if matches!(binding, Binding::Missing | Binding::MissingStandard) {
@@ -451,6 +489,10 @@ fn table_integer_fields_preserve_selection_results_errors_cursor_and_frames() {
                                         )),
                                         position,
                                     )
+                                } else if matches!(binding, Binding::Standard) {
+                                    // Deliberately store another standard descriptor in slot A:
+                                    // selection must use supplied contents, not reconstruct its tag.
+                                    standard_integer_oracle(bytes, position, standard_tag)
                                 } else {
                                     let (decoded, end) = oracle(bytes, position, family);
                                     // The scalar ID oracle rejects the fixture's -1 and OOB;

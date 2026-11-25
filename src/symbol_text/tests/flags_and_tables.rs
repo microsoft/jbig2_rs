@@ -520,12 +520,16 @@ fn raw_table_associations_reject_missing_fields_and_preserve_borrowed_tables(
     assert!(std::ptr::eq(
         dictionary_tables
             .table_for(IntegerField::HeightDelta)
+            .unwrap()
+            .general()
             .unwrap(),
         std::ptr::from_ref(&plain)
     ));
     assert!(std::ptr::eq(
         dictionary_tables
             .table_for(IntegerField::WidthDelta)
+            .unwrap()
+            .general()
             .unwrap(),
         std::ptr::from_ref(&oob)
     ));
@@ -567,7 +571,7 @@ fn raw_table_associations_reject_missing_fields_and_preserve_borrowed_tables(
     .enumerate()
     {
         assert!(std::ptr::eq(
-            text_tables.table_for(field).unwrap(),
+            text_tables.table_for(field).unwrap().general().unwrap(),
             borrowed[index]
         ));
     }
@@ -716,13 +720,14 @@ fn repeated_standard_table_materialization_is_reused() {
     tables
         .materialize(StandardHuffmanTable::A, &limits)
         .expect("first table A");
-    let first = tables
-        .table(StandardHuffmanTable::A)
-        .expect("materialized table") as *const HuffmanTable;
+    let first = std::ptr::from_ref(
+        tables
+            .table(StandardHuffmanTable::A)
+            .expect("materialized table"),
+    );
     tables
         .materialize(StandardHuffmanTable::A, &limits)
         .expect("second table A");
-    let second =
-        tables.table(StandardHuffmanTable::A).expect("reused table") as *const HuffmanTable;
+    let second = std::ptr::from_ref(tables.table(StandardHuffmanTable::A).expect("reused table"));
     assert_eq!(first, second);
 }
