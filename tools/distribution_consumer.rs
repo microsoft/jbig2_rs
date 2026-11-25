@@ -1,6 +1,6 @@
 use std::io::Cursor;
 
-use jbig2_decoder::{DecodeError, Decoder, Limits, Page};
+use jbig2_decoder::{DecodeError, DecodePolicy, Decoder, Limits, Page, RecoveryKind};
 
 fn segment(number: u32, kind: u8, page: u8, payload: &[u8], output: &mut Vec<u8>) {
     output.extend_from_slice(&number.to_be_bytes());
@@ -49,6 +49,30 @@ pub(crate) fn main() -> Result<(), DecodeError> {
     assert_eq!(document.pages().len(), 1);
     check_page(&document.pages()[0]);
     assert_eq!(decoder.inspect(&standalone)?, *document.info());
+
+    let strict = decoder.decode_with_policy(&standalone, DecodePolicy::Strict)?;
+    assert_eq!(strict.value, document);
+    assert!(strict.recoveries.is_empty());
+    let mut missing_eop = standalone[..standalone.len() - 22].to_vec();
+    segment(3, 51, 0, &[], &mut missing_eop);
+    assert!(decoder.decode(&missing_eop).is_err());
+    let recovered = decoder.decode_with_policy(&missing_eop, DecodePolicy::Compatibility)?;
+    assert_eq!(recovered.value.pages(), document.pages());
+    assert_eq!(recovered.recoveries.len(), 1);
+    assert_eq!(recovered.recoveries[0].kind, RecoveryKind::MissingEndOfPage);
+    assert_eq!(recovered.recoveries[0].page, 1);
+    assert_eq!(recovered.recoveries[0].byte_offset, None);
+
+    let rgb = decoder.decode_rgb(&standalone)?;
+    assert_eq!(rgb.pages().len(), 1);
+    let rgb_page = &rgb.pages()[0];
+    assert_eq!(rgb_page.number(), 1);
+    let bitmap = rgb_page.bitmap();
+    assert_eq!(
+        (bitmap.width(), bitmap.height(), bitmap.stride()),
+        (8, 1, 24)
+    );
+    assert_eq!(bitmap.bytes(), &[255; 24]);
 
     let from_reader = decoder.decode_reader(&mut Cursor::new(&standalone))?;
     assert_eq!(document, from_reader);

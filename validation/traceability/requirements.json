@@ -1,11 +1,17 @@
 {
   "schema_version": 1,
-  "development_scope": {
-    "profile": "0.3-development",
-    "crate_version": "0.3.0-dev",
-    "maintenance_branch": "release/0.2",
-    "proof_completion_issue": "https://github.com/microsoft/jbig2_rs/issues/135",
-    "publication_enabled": false
+  "publication_scope": {
+    "profile": "0.3-partial-verus",
+    "crate_version": "0.3.0",
+    "release_branch": "release/0.3",
+    "authority": "repository_owner_release_scope",
+    "approved_at": "2026-11-25T20:19:47.302+00:00",
+    "instruction": "I agree, let's focus on preparing a 0.3.0 release. Please do the required work and once done branch out a release/0.3 and update main to become 0.4",
+    "decision_reference": "agent-host-session://ahp-session/26f37efd-6438-4b64-9529-cf251ed02717",
+    "exhaustive_requirement_coverage_required": false,
+    "complete_functional_proof_required": false,
+    "existing_proof_and_quality_gates_required": true,
+    "full_spec_conformance_claim": false
   },
   "maintenance_release_scope": {
     "profile": "0.1-partial-verus",

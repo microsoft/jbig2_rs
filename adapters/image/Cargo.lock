@@ -34,7 +34,7 @@ dependencies = [
 
 [[package]]
 name = "jbig2-decoder"
-version = "0.3.0-dev"
+version = "0.3.0"
 
 [[package]]
 name = "jbig2-image"
