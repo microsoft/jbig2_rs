@@ -7,6 +7,7 @@ import json
 import math
 import os
 from pathlib import Path
+import platform
 import random
 import re
 import statistics
@@ -122,12 +123,20 @@ def measure(build, fixture, output):
             raise ValueError("the exact fixture/limit/refusal control did not execute")
     bindings = {path.name: sha(path) for path in fixture.iterdir() if path.is_file()}
     report = {
-        "scope": "Independent hosted x86-64 replication, not N2/PDFium, shipping qualification or a cache proof. Cold includes complete owner preparation/copies/output/owner destruction per original three-page document. Warm is secondary same-owner repetition, not observed repaint frequency.",
+        "scope": "Independent hosted native replication; architecture/CPU and compiler identities are recorded, not inferred from a runner label. Not the original LLVM24/PDFium qualification, shipping approval or a cache proof. Cold includes complete owner preparation/copies/output/owner destruction per original three-page document. Warm is secondary same-owner repetition, not observed repaint frequency.",
         "memory_scope": "Additional65536-byte document-owner/copy allowance, not a same-total-memory-budget claim. Capacities are from a separate checked sequence, not process RSS.",
         "calibration_rule": "Identical baseline/baseline paired95 interval must lie within0.95–1.05 before treating this runner as a resolved timing diagnostic.",
         "source_revision": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
         "binary_sha256": sha(binary), "protocol_sha256": sha(Path(__file__)),
         "fixture_sha256": bindings, "cpu_affinity": cpu, "rounds": 9,
+        "architecture": platform.machine(),
+        "cpu_identity": {
+            key: sorted({line.split(":", 1)[1].strip()
+                         for line in Path("/proc/cpuinfo").read_text().splitlines()
+                         if ":" in line and line.split(":", 1)[0].strip() == key})
+            for key in ("model name", "CPU implementer", "CPU architecture",
+                        "CPU part", "CPU variant", "CPU revision")
+        },
         "rustc": subprocess.check_output(["rustc", "+1.98.1", "-vV"], text=True),
         "build_profile": {key: os.environ[key] for key in (
             "RUSTFLAGS", "CARGO_PROFILE_RELEASE_LTO", "CARGO_PROFILE_RELEASE_CODEGEN_UNITS",
