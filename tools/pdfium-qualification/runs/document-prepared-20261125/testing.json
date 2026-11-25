@@ -1,0 +1,68 @@
+{
+  "native": {
+    "records": [
+      {
+        "profile": "enabled",
+        "tests": 12,
+        "failures": 0
+      },
+      {
+        "profile": "off",
+        "tests": 12,
+        "failures": 0
+      },
+      {
+        "profile": "zero-budget",
+        "tests": 12,
+        "failures": 0
+      },
+      {
+        "profile": "small-budget",
+        "tests": 12,
+        "failures": 0
+      },
+      {
+        "profile": "best-policy",
+        "tests": 12,
+        "failures": 0
+      }
+    ],
+    "total": 60
+  },
+  "public_api_unit_tests": {
+    "passed": 8,
+    "failed": 0
+  },
+  "public_api_external_fixture_control": {
+    "passed": 1,
+    "failed": 0,
+    "quota_frontiers": 15,
+    "observations": "Both neighbours and frontier, genuine distinct pages, strict typed outcomes and malformed globals."
+  },
+  "functional": {
+    "result": "PASS",
+    "requests": 461,
+    "profiles": 7,
+    "outcomes": 3227,
+    "differences": []
+  },
+  "independent_references": {
+    "cpp": {
+      "exact": 164,
+      "wrong_pixels": 11,
+      "rejected": 8
+    },
+    "rust_strict": {
+      "exact": 166,
+      "rejected": 17
+    },
+    "rust_best": {
+      "exact": 166,
+      "rejected": 17
+    }
+  },
+  "independent_reference_requests": 183,
+  "independent_reference_outcomes": 549,
+  "explicit_reference_exclusions": 15,
+  "source_proof_note": "No source proof rerun or new C++-interop proof is claimed; candidate core source remains exact6d1bac1."
+}

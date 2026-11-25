@@ -1,0 +1,30 @@
+{
+  "records": [
+    {
+      "profile": "enabled",
+      "tests": 12,
+      "failures": 0
+    },
+    {
+      "profile": "off",
+      "tests": 12,
+      "failures": 0
+    },
+    {
+      "profile": "zero-budget",
+      "tests": 12,
+      "failures": 0
+    },
+    {
+      "profile": "small-budget",
+      "tests": 12,
+      "failures": 0
+    },
+    {
+      "profile": "best-policy",
+      "tests": 12,
+      "failures": 0
+    }
+  ],
+  "total": 60
+}

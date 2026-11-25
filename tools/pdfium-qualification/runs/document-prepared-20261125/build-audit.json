@@ -1,0 +1,104 @@
+{
+  "cpu": "Neoverse-N2",
+  "architecture": "aarch64",
+  "shared_host": true,
+  "clang": "clang version 24.0.0git (https://chromium.googlesource.com/external/github.com/llvm/llvm-project c3223914b50811fb3be915840f06456acb83d096)",
+  "rustc": "rustc 1.101.0-nightly (41b321963 2026-10-29) (96a18bf5ffa2b24f9cf3d1c731a9eb121c1acad9-5-llvmorg-24-init-17044-gc3223914 chromium)\nbinary: rustc\ncommit-hash: 41b321963cf979d564d4bb447d9a09347664659f\ncommit-date: 2026-10-29\nhost: aarch64-unknown-linux-gnu\nrelease: 1.101.0-nightly\nLLVM version: 24.0.0\n",
+  "binaries": {
+    "strict": {
+      "path": "pdfium/out/DocStrict/jbig2_eval",
+      "sha256": "3f32ddb4616663031d0f147ea53ca196205af73d3511a3a5938d38ac2a9f2a36",
+      "c_cpp_o3_native_thinlto_commands": 1236,
+      "final_link_lto_opt": 3,
+      "event_tracing": false,
+      "core_archive_sha256": "683cde053c665ac5042dd392794017f283c46a2d64f10bb5ea448d0cfbfe4393"
+    },
+    "best": {
+      "path": "pdfium/out/DocBest/jbig2_eval",
+      "sha256": "dc7e05359d84d258189ae7f257ae8a4b03c39ff85f6d73e403a8b7bf1cb83cb6",
+      "c_cpp_o3_native_thinlto_commands": 1236,
+      "final_link_lto_opt": 3,
+      "event_tracing": false,
+      "core_archive_sha256": "683cde053c665ac5042dd392794017f283c46a2d64f10bb5ea448d0cfbfe4393"
+    },
+    "trace_strict": {
+      "path": "pdfium/out/DocTraceStrict/jbig2_eval",
+      "sha256": "1a66c572ceaa852b4912590ff832d37afbf96e16c9d99f3ab5b1f0d70e47288d",
+      "c_cpp_o3_native_thinlto_commands": 1236,
+      "final_link_lto_opt": 3,
+      "event_tracing": true,
+      "core_archive_sha256": "683cde053c665ac5042dd392794017f283c46a2d64f10bb5ea448d0cfbfe4393"
+    },
+    "trace_best": {
+      "path": "pdfium/out/DocTraceBest/jbig2_eval",
+      "sha256": "d0d1e67af50fa0a121eac472957297158df99aba05e37f13c973f7075868d806",
+      "c_cpp_o3_native_thinlto_commands": 1236,
+      "final_link_lto_opt": 3,
+      "event_tracing": true,
+      "core_archive_sha256": "683cde053c665ac5042dd392794017f283c46a2d64f10bb5ea448d0cfbfe4393"
+    },
+    "trace_cpp": {
+      "path": "pdfium/out/TraceCpp/jbig2_eval",
+      "sha256": "9be35f9ddc7768cff939b6c16ba0627c35f533dd45659fd28af3aea695a18232",
+      "c_cpp_o3_native_thinlto_commands": 1232,
+      "final_link_lto_opt": 3,
+      "event_tracing": true
+    },
+    "accepted_strict": {
+      "path": "reference-pdfium/out/AcceptedStrict/jbig2_eval",
+      "sha256": "fa289bd99df1cc738c97cd6bec4054373b5dc1b95520306b722d5bfe97ce46d5",
+      "c_cpp_o3_native_thinlto_commands": 1236,
+      "final_link_lto_opt": 3,
+      "event_tracing": false,
+      "core_archive_sha256": "3e6b8af0392a1c6af536044db31c265ff2bd638c2b3afbe2e7643f44d2d96bd6"
+    },
+    "accepted_best": {
+      "path": "reference-pdfium/out/AcceptedBest/jbig2_eval",
+      "sha256": "fab83a9707da96afa80e1df23302b8a04825f5d2448ecd9248b4d88e97104d0f",
+      "c_cpp_o3_native_thinlto_commands": 1236,
+      "final_link_lto_opt": 3,
+      "event_tracing": false,
+      "core_archive_sha256": "3e6b8af0392a1c6af536044db31c265ff2bd638c2b3afbe2e7643f44d2d96bd6"
+    },
+    "cpp": {
+      "path": "reference-pdfium/out/Cpp/jbig2_eval",
+      "sha256": "b4e24adbe0c4a955fabc1ea65adb161bdaf84bc126728fe8f9c7605c492173e7",
+      "c_cpp_o3_native_thinlto_commands": 1232,
+      "final_link_lto_opt": 3,
+      "event_tracing": false
+    }
+  },
+  "unchanged_original_cpp_binary_sha256": "a854099a628a7ef303fcb9a68f8a6186d6e4021acd8471a6aea3f6a0181e638d",
+  "unchanged_cpp_jbig2_object_hashes": {
+    "jbig2_sdd_proc.o": "ac1d032c549c991f06ee42c6f49321e3969a3780787df8a39f985b2661386f9f",
+    "jbig2_bit_stream.o": "7f7b8936749cf3472ff986f95e8c1193fc6b5150486a0b28b089fd99215dc3cc",
+    "jbig2_grrd_proc.o": "b802cf3b9d3caf4f423f6f35d9de3aee9b58ace753e290ebe41a81947a6269a6",
+    "jbig2_decoder.o": "57fc9ebbb951dc638137beb30cdf11c81ebd090c96ff37c79ce017eac9de0a4b",
+    "jbig2_huffman_decoder.o": "7c837fe822a02e04584cb9c561ac5122e4ef6212e6ce963505507c7c16d0b216",
+    "jbig2_symbol_dict.o": "fe94af683b1cc1ea5d07d44dff7e66fe25d8448dbeb70a0fb66ab1628c957c6f",
+    "jbig2_grd_proc.o": "343b895cff83f2b7c3a124f57f93486c54e3171bc3b20b8a905c917acd0ea268",
+    "jbig2_pdd_proc.o": "5ce188744c5e1a90398f5e0799a704851154ae5653da4cb6fb50569347bf54f7",
+    "jbig2_context.o": "d5360b0d7e9455c2f47482266d1946969860571321c97fd325a5baf07c7bd9fd",
+    "jbig2_document_context.o": "1348615c0b9ad9c9bf1d6aba255bb0e856b88df1b15dbe5179172bcd8d43c2dd",
+    "jbig2_image.o": "67ac2b6ee3ce96efd3b43372b355e1caee56b92221a2dcb03e20de78fc3817d6",
+    "jbig2_arith_int_decoder.o": "1541d8ac89dc38a4969aa7da552512ec27fc39d40c7624d247e91bad51500645",
+    "jbig2_trd_proc.o": "9fd11211bd499446a1f7324a373a6c40fa94e24905ec93ccdca180e5bac07bed",
+    "jbig2_htrd_proc.o": "c2355eed55d1c217abcb0764212fd646a94e299893eb1065ba18a9dc8919c694",
+    "jbig2_pattern_dict.o": "3e5711d2293dc4e5ab650b6b5e6947fc59ed19f2cd13c93e11a491b5b87d3fbd",
+    "jbig2_arith_decoder.o": "3077e260d0176d464c3f5430ba7d92c37dbf69f9bf89eb94373901ad8cbe5581",
+    "jbig2_segment.o": "19ff5f57a053c00557dde46a372b487a13ddfdcdac0b317082df1f44d58a377b",
+    "jbig2_huffman_table.o": "027a23ed88e2918fbeaf7dba147a754a56bae6fcc381e57deb1cec78238107c7"
+  },
+  "sources": {
+    "candidate": "6d1bac13480af4eb08916d685013ef1e00b71fac",
+    "accepted": "14aeac451f6491aa3e413fcbc60aafb11fa75b7c"
+  },
+  "experimental_consumer_source_hashes": {
+    "jbig2_eval.cpp": "260b68bb246025290fdd9c198c477d43bd98b397c559d7927d2a9cf48a136012",
+    "core/fxcodec/jbig2/rust_jbig2_ffi.rs": "a43178b3e8e9c66ed4b05d7c4fbb9ffa79fdd4d8a3a1637a6820742ee2b07735",
+    "core/fxcodec/jbig2/jbig2_document_context.cpp": "1855aaaae1131325906ff67cfe09d705d98ac1e1653b9a7a4135fc47662e247d",
+    "core/fxcodec/jbig2/jbig2_document_context.h": "20e936b264df91f2805489dd3dfce433199b2df832f342ffe130c3c109d46ca5",
+    "build/rust/allocator/lib.rs": "faf79ad587a40830d4b8ffafebae3facc04dc486420f3b6017235a54ef401a8a"
+  },
+  "allocation_accounting": "Underlying System allocator unchanged; per-thread construction footprint is admission work. Full allocation counters enabled only in separate memory children; trace defines absent from latency builds."
+}

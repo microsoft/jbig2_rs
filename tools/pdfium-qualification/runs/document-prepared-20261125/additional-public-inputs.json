@@ -1,0 +1,21 @@
+[
+  {
+    "url": "https://raw.githubusercontent.com/ocrmypdf/OCRmyPDF/cbcf5adcf7fa3d3ba354b0cebd5727ffa32232c3/tests/resources/jbig2.pdf",
+    "sha256": "210b845b62eab7118bc1e6076a3235a37eb947218254198c6102d06422f35037",
+    "bytes": 42818,
+    "id": "extra/ocrmypdf-jbig2.pdf"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/ocrmypdf/OCRmyPDF/cbcf5adcf7fa3d3ba354b0cebd5727ffa32232c3/tests/resources/multipage.pdf",
+    "sha256": "07987c44650938fa8dcf08c0937691712fdd800669b4607c2c7e3fee21cb1f80",
+    "bytes": 1120291,
+    "id": "extra/ocrmypdf-multipage.pdf"
+  },
+  {
+    "id": "extra/pdfjs-JBIG2Globals.pdf",
+    "bytes": 444161,
+    "sha256": "19c9ab320b3effffd9d6761bd5eb377ea240346fc01f61474d89021953df28eb",
+    "url": "https://github.com/pdfminer/pdfminer.six/files/8399364/64.pdf",
+    "public_test_pointer": "https://github.com/mozilla/pdf.js/blob/master/test/pdfs/JBIG2Globals.pdf.link"
+  }
+]

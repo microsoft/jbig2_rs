@@ -1,0 +1,3151 @@
+{
+  "records": [
+    {
+      "id": "hayro/composite_and_xnor-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/composite_and_xnor_halftone-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/composite_and_xnor_refine-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/composite_and_xnor_text-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/composite_or_xor_replace-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/composite_or_xor_replace_halftone-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/composite_or_xor_replace_refine-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/composite_or_xor_replace_text-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/composite_page_default_pixel_and-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/composite_page_default_pixel_replace-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/composite_page_default_pixel_xnor-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/composite_page_replace-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/composite_region_default_pixel-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/file_page_association_32bit-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/file_pages-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/file_pages-page2",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/file_pages-page3",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/file_random_access-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_mmr-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_template0-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_template0_custom_at-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_template0_custom_at_tpgdon-page1",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_template0_ext-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 8853
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_template0_ext_custom_at-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 8851
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_template0_ext_custom_at_tpgdon-page1",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 7661
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_template0_tpgdon-page1",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_template1-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_template1_custom_at-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_template1_custom_at_tpgdon-page1",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_template1_tpgdon-page1",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_template2-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_template2_custom_at-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_template2_custom_at_tpgdon-page1",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_template2_tpgdon-page1",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_template3-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_template3_custom_at-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_template3_custom_at_tpgdon-page1",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_template3_tpgdon-page1",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_trailing_7fff_stripped-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_trailing_7fff_stripped_many-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_unknown_length-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_unknown_length_custom_at-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/generic_unknown_length_mmr-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone-page1",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_10_bitplanes-page1",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_10_bitplanes_mmr-page1",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_combination_operators-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_global-page1",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_large_patterns-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_pattern_width_128-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_pattern_width_129-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 8729
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_pattern_width_255-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 8861
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_replace_word_aligned-page1",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_rotated_grid-page1",
+      "reference": "sphere.png",
+      "reference_sha256": "d672be65e7ebd7c70eb526856c54094d1c7e5fad3c9687f674e23f4bf232652d",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_rotated_grid_skip-page1",
+      "reference": "sphere.png",
+      "reference_sha256": "d672be65e7ebd7c70eb526856c54094d1c7e5fad3c9687f674e23f4bf232652d",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_rotated_grid_skip_template1-page1",
+      "reference": "sphere.png",
+      "reference_sha256": "d672be65e7ebd7c70eb526856c54094d1c7e5fad3c9687f674e23f4bf232652d",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_rotated_grid_skip_template2-page1",
+      "reference": "sphere.png",
+      "reference_sha256": "d672be65e7ebd7c70eb526856c54094d1c7e5fad3c9687f674e23f4bf232652d",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_rotated_grid_skip_template3-page1",
+      "reference": "sphere.png",
+      "reference_sha256": "d672be65e7ebd7c70eb526856c54094d1c7e5fad3c9687f674e23f4bf232652d",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_single_pattern-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_single_pattern_mmr-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_skip_unused-page1",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_tall_patterns-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_template1-page1",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_template2-page1",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_template3-page1",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_then_refine-page1",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_then_refine_default_pixel-page1",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 7584
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_tiles_and-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_tiles_replace-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_tiles_xnor-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/halftone_tiles_xor-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_custom_aggregate_count-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_custom_table_htlow_min-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "decode_error"
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_custom_table_long_prefixes-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "decode_error"
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_custom_tables-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_many_symbols-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_standard_tables-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_symbol_id_run_codes-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_table_b12_transposed-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_tables_b10_b13-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_tables_b5_b3_b7_b9_b12-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_text_refine-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_text_refine_b15-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_text_refine_custom-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_text_refine_custom_data_size-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_text_refine_custom_offsets-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_text_refine_custom_sizes-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_text_refine_custom_sizes_offsets-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_text_refine_custom_x_offset-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_text_refine_different_offset_tables-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_text_refine_global_tables-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_text_refine_large_offsets-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 2415
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_trailing_unused_symbols-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/huffman_uncompressed_symbols-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/lenient_colour_region-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 6229
+      },
+      "rust_strict": {
+        "status": "decode_error"
+      },
+      "rust_best": {
+        "status": "decode_error"
+      }
+    },
+    {
+      "id": "hayro/lenient_end_of_page_of_previous_page-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "decode_error"
+      },
+      "rust_best": {
+        "status": "decode_error"
+      }
+    },
+    {
+      "id": "hayro/lenient_end_of_page_of_previous_page-page2",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "decode_error"
+      },
+      "rust_best": {
+        "status": "decode_error"
+      }
+    },
+    {
+      "id": "hayro/lenient_end_of_page_of_previous_page-page3",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "decode_error"
+      },
+      "rust_best": {
+        "status": "decode_error"
+      }
+    },
+    {
+      "id": "hayro/lenient_failing_region-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "decode_error"
+      },
+      "rust_strict": {
+        "status": "decode_error"
+      },
+      "rust_best": {
+        "status": "decode_error"
+      }
+    },
+    {
+      "id": "hayro/lenient_gray_value_out_of_range-page1",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "decode_error"
+      },
+      "rust_best": {
+        "status": "decode_error"
+      }
+    },
+    {
+      "id": "hayro/lenient_intermediate_page_refinement-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 2531
+      },
+      "rust_strict": {
+        "status": "decode_error"
+      },
+      "rust_best": {
+        "status": "decode_error"
+      }
+    },
+    {
+      "id": "hayro/lenient_missing_final_oob-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "decode_error"
+      },
+      "rust_best": {
+        "status": "decode_error"
+      }
+    },
+    {
+      "id": "hayro/lenient_missing_final_oob_huffman-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "decode_error"
+      },
+      "rust_best": {
+        "status": "decode_error"
+      }
+    },
+    {
+      "id": "hayro/lenient_missing_reference-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "decode_error"
+      },
+      "rust_strict": {
+        "status": "decode_error"
+      },
+      "rust_best": {
+        "status": "decode_error"
+      }
+    },
+    {
+      "id": "hayro/lenient_mmr_rows_missing-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "decode_error"
+      },
+      "rust_best": {
+        "status": "decode_error"
+      }
+    },
+    {
+      "id": "hayro/lenient_necessary_extension-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "decode_error"
+      },
+      "rust_best": {
+        "status": "decode_error"
+      }
+    },
+    {
+      "id": "hayro/lenient_page_count_mismatch-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/lenient_page_count_mismatch-page2",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/lenient_page_count_mismatch-page3",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/lenient_page_without_end_of_page-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/lenient_page_without_end_of_page-page2",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/lenient_page_without_end_of_page-page3",
+      "reference": "maze.png",
+      "reference_sha256": "78ab46d95d0278e321f88b627ed4a3283567e36b20843f86e7fdad0831cd769c",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/lenient_refinement_of_immediate_region-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "decode_error"
+      },
+      "rust_strict": {
+        "status": "decode_error"
+      },
+      "rust_best": {
+        "status": "decode_error"
+      }
+    },
+    {
+      "id": "hayro/lenient_reserved_region_flags-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "decode_error"
+      },
+      "rust_best": {
+        "status": "decode_error"
+      }
+    },
+    {
+      "id": "hayro/lenient_reserved_segment_type-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "decode_error"
+      },
+      "rust_best": {
+        "status": "decode_error"
+      }
+    },
+    {
+      "id": "hayro/lenient_symbol_out_of_range-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "decode_error"
+      },
+      "rust_strict": {
+        "status": "decode_error"
+      },
+      "rust_best": {
+        "status": "decode_error"
+      }
+    },
+    {
+      "id": "hayro/lenient_table_past_hthigh-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/lenient_unknown_length_intermediate-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "decode_error"
+      },
+      "rust_best": {
+        "status": "decode_error"
+      }
+    },
+    {
+      "id": "hayro/memory_immediate_regions-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/page_striped-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/page_striped_last_stripe_implicit-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/page_striped_no_end_of_stripe-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/page_striped_single_stripe-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/page_striped_unknown_height-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/refine_lossless-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/refine_page-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/refine_page_part-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 2563
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/refine_refined_region-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/refine_template0-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/refine_template0_custom_at-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/refine_template0_custom_at_tpgron-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/refine_template0_tpgron-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/refine_template1-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/refine_template1_tpgron-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/refine_trailing_7fff_stripped_many-page1",
+      "reference": "truchet.png",
+      "reference_sha256": "0dd7687b8ab20d224a7e83e4011c9f4e0880a6414a6a384f591a71d55323f286",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_aggregate-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_aggregate_then_refine-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_context_reuse-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_context_reuse_refine-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_custom_at-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_empty-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_global-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_huffman_aggregate-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_huffman_aggregate_then_refine-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_huffman_context_reuse_refine-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_huffman_context_reuse_refine_table-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_huffman_refine_after_arithmetic-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_huffman_refine_offsets-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_huffman_refine_one-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_huffman_refine_text_refine-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_huffman_refine_text_refine_export-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_large_segment_numbers-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_many_dictionaries-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_many_symbols-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_refine_offsets-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_refine_one-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_refine_one_custom_at-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_refine_one_template1-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_refine_text_refine-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_refine_text_refine_export-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/symbol_template2-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/text_bottomleft-page1",
+      "reference": "sphere.png",
+      "reference_sha256": "d672be65e7ebd7c70eb526856c54094d1c7e5fad3c9687f674e23f4bf232652d",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/text_bottomleft_transposed-page1",
+      "reference": "sphere.png",
+      "reference_sha256": "d672be65e7ebd7c70eb526856c54094d1c7e5fad3c9687f674e23f4bf232652d",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/text_bottomright-page1",
+      "reference": "sphere.png",
+      "reference_sha256": "d672be65e7ebd7c70eb526856c54094d1c7e5fad3c9687f674e23f4bf232652d",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/text_bottomright_transposed-page1",
+      "reference": "sphere.png",
+      "reference_sha256": "d672be65e7ebd7c70eb526856c54094d1c7e5fad3c9687f674e23f4bf232652d",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/text_composition-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/text_instance_far_left-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "decode_error"
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/text_large_integer-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/text_many_instances-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "decode_error"
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/text_negative_ds_offset-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/text_refine-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/text_refine_custom_at-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/text_refine_far_reference-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/text_refine_large_offsets-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/text_refine_negative_delta_width-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/text_refine_positive_offset-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/text_refine_template1-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/text_then_refine-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/text_then_refine_default_pixel-page1",
+      "reference": "honeycomb.png",
+      "reference_sha256": "2800678e0e6ff045c8104a3d86ae6d46359394b3a9dcec4792814a8974757c59",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 9020
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/text_topleft_transposed-page1",
+      "reference": "sphere.png",
+      "reference_sha256": "d672be65e7ebd7c70eb526856c54094d1c7e5fad3c9687f674e23f4bf232652d",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/text_topright-page1",
+      "reference": "sphere.png",
+      "reference_sha256": "d672be65e7ebd7c70eb526856c54094d1c7e5fad3c9687f674e23f4bf232652d",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    },
+    {
+      "id": "hayro/text_topright_transposed-page1",
+      "reference": "sphere.png",
+      "reference_sha256": "d672be65e7ebd7c70eb526856c54094d1c7e5fad3c9687f674e23f4bf232652d",
+      "cpp": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_strict": {
+        "status": "ok",
+        "different_pixels": 0
+      },
+      "rust_best": {
+        "status": "ok",
+        "different_pixels": 0
+      }
+    }
+  ],
+  "summary": {
+    "cpp": {
+      "exact": 164,
+      "wrong_pixels": 11,
+      "rejected": 8
+    },
+    "rust_strict": {
+      "exact": 166,
+      "rejected": 17
+    },
+    "rust_best": {
+      "exact": 166,
+      "rejected": 17
+    }
+  },
+  "skipped": [
+    {
+      "id": "hayro/generic_row_ending_in_full_chunks-page1",
+      "reason": "No direct uncropped reference mapping"
+    },
+    {
+      "id": "hayro/halftone_mmr_bitplane_boundary-page1",
+      "reason": "No direct uncropped reference mapping"
+    },
+    {
+      "id": "hayro/malformed_huffman_value_out_of_range-page1",
+      "reason": "No direct uncropped reference mapping"
+    },
+    {
+      "id": "hayro/malformed_mmr_region_with_height_0-page1",
+      "reason": "No direct uncropped reference mapping"
+    },
+    {
+      "id": "hayro/malformed_reused_contexts_of_another_template-page1",
+      "reason": "No direct uncropped reference mapping"
+    },
+    {
+      "id": "hayro/malformed_symbol_dictionary_empty_export_runs-page1",
+      "reason": "No direct uncropped reference mapping"
+    },
+    {
+      "id": "hayro/malformed_symbol_dictionary_empty_height_classes-page1",
+      "reason": "No direct uncropped reference mapping"
+    },
+    {
+      "id": "hayro/malformed_symbol_dictionary_garbage_data-page1",
+      "reason": "No direct uncropped reference mapping"
+    },
+    {
+      "id": "hayro/malformed_text_placement_out_of_range-page1",
+      "reason": "No direct uncropped reference mapping"
+    },
+    {
+      "id": "hayro/memory_halftone_grid-page1",
+      "reason": "No direct uncropped reference mapping"
+    },
+    {
+      "id": "hayro/memory_intermediate_regions-page1",
+      "reason": "No direct uncropped reference mapping"
+    },
+    {
+      "id": "hayro/memory_page-page1",
+      "reason": "No direct uncropped reference mapping"
+    },
+    {
+      "id": "hayro/memory_symbol_dictionary_global-page1",
+      "reason": "No direct uncropped reference mapping"
+    },
+    {
+      "id": "hayro/memory_symbol_dictionary_large_symbol-page1",
+      "reason": "No direct uncropped reference mapping"
+    },
+    {
+      "id": "hayro/memory_symbol_dictionary_many_symbols-page1",
+      "reason": "No direct uncropped reference mapping"
+    }
+  ],
+  "result": "PASS"
+}

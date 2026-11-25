@@ -10,6 +10,12 @@ The held original consumer gate has now been executed for PR #241:
 The functional and per-case median performance gates pass for the exact
 tested base/head. This is separate from project proof/CI and not merge approval.
 
+The actual document-level assessment of issue #238's public prepared-global
+API is also complete:
+[143-document cold/repeat study, full controls and raw evidence](runs/document-prepared-20261125/README.md).
+It observes no successful decoded-resource reuse in this domain and does not
+recommend PDFium adoption; existing conditional API gains remain separate.
+
 The original narrative and TSVs are under `frozen/`; JSON outcomes are portable
 projections, so their file hashes deliberately differ from the original
 machine-local JSON hashes recorded in the historical verification receipt.

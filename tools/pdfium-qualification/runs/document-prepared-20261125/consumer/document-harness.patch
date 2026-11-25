@@ -1,0 +1,264 @@
+--- a/jbig2_eval.cpp
++++ b/jbig2_eval.cpp
+@@ -1,3 +1,4 @@
++#include <sys/resource.h>
+ #include <algorithm>
+ #include <chrono>
+ #include <cstdio>
+@@ -11,6 +12,14 @@
+ #include "core/fxcodec/jbig2/jbig2_document_context.h"
+ #include "public/fpdfview.h"
+ 
++#if defined(PDF_ENABLE_RUST_JBIG2)
++extern "C" uint64_t jbig2_doc_alloc_live();
++extern "C" void jbig2_doc_alloc_meter(bool enabled);
++extern "C" uint64_t jbig2_doc_alloc_calls();
++extern "C" uint64_t jbig2_doc_alloc_requested();
++extern "C" uint64_t jbig2_doc_alloc_peak();
++#endif
++
+ namespace {
+ 
+ struct Result {
+@@ -43,9 +52,10 @@
+   fxcodec::Jbig2Context context;
+   JBig2_DocumentContext document;
+   auto status = fxcodec::Jbig2Decoder::StartDecode(
+-      &context, &document, width, height, input, 1, globals, 2, padded,
+-      pitch, nullptr, false);
+-  for (int i = 0; status == FXCODEC_STATUS::kDecodeToBeContinued && i < 10000; ++i) {
++      &context, &document, width, height, input, 1, globals, 2, padded, pitch,
++      nullptr, false);
++  for (int i = 0; status == FXCODEC_STATUS::kDecodeToBeContinued && i < 10000;
++       ++i) {
+     status = fxcodec::Jbig2Decoder::ContinueDecode(&context, nullptr);
+   }
+   if (status != FXCODEC_STATUS::kDecodeFinished) {
+@@ -63,14 +73,18 @@
+   return result;
+ }
+ 
+-Result Pdf(const std::vector<uint8_t>& input) {
+-  FPDF_DOCUMENT doc = FPDF_LoadMemDocument64(input.data(), input.size(), nullptr);
++Result Pdf(const std::vector<uint8_t>& input, int passes = 1) {
++  FPDF_DOCUMENT doc =
++      FPDF_LoadMemDocument64(input.data(), input.size(), nullptr);
+   if (!doc) {
+     return {"document_error"};
+   }
+   Result result{"ok"};
+   result.channels = 4;
+   int count = FPDF_GetPageCount(doc);
++#if defined(JBIG2_DOCUMENT_TRACE)
++  std::fprintf(stderr, "JBIG2_DOC_BEGIN doc=%p pages=%d\n", doc, count);
++#endif
+   for (int i = 0; i < count; ++i) {
+     FPDF_PAGE page = FPDF_LoadPage(doc, i);
+     if (!page) {
+@@ -91,32 +105,155 @@
+       result.status = "bitmap_error";
+       break;
+     }
+-    FPDFBitmap_FillRect(bitmap, 0, 0, w, h, 0xffffffff);
+-    FPDF_RenderPageBitmap(bitmap, page, 0, 0, w, h, 0, FPDF_ANNOT);
+-    auto* data = static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap));
+-    int stride = FPDFBitmap_GetStride(bitmap);
+-    for (int y = 0; y < h; ++y) {
+-      result.pixels.insert(result.pixels.end(), data + y * stride,
+-                           data + y * stride + w * 4);
+-    }
+-    result.width = static_cast<uint32_t>(w);
+-    result.height += static_cast<uint32_t>(h);
++    for (int pass = 0; pass < passes; ++pass) {
++      if (result.pixels.size() + uint64_t(w) * h * 4 > 512 * 1024 * 1024) {
++        result.status = "output_limit";
++        break;
++      }
++#if defined(JBIG2_DOCUMENT_TRACE)
++      std::fprintf(stderr, "JBIG2_PAGE_BEGIN page=%d pass=%d\n", i, pass);
++#endif
++      FPDFBitmap_FillRect(bitmap, 0, 0, w, h, 0xffffffff);
++      FPDF_RenderPageBitmap(bitmap, page, 0, 0, w, h, 0, FPDF_ANNOT);
++      auto* data = static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap));
++      int stride = FPDFBitmap_GetStride(bitmap);
++      for (int y = 0; y < h; ++y) {
++        result.pixels.insert(result.pixels.end(), data + y * stride,
++                             data + y * stride + w * 4);
++      }
++      result.width = static_cast<uint32_t>(w);
++      result.height += static_cast<uint32_t>(h);
++#if defined(JBIG2_DOCUMENT_TRACE)
++      std::fprintf(stderr, "JBIG2_PAGE_END page=%d pass=%d\n", i, pass);
++#endif
++    }
+     FPDFBitmap_Destroy(bitmap);
+     FPDF_ClosePage(page);
++    if (result.status != "ok") {
++      break;
++    }
+   }
+   FPDF_CloseDocument(doc);
++#if defined(JBIG2_DOCUMENT_TRACE)
++  std::fprintf(stderr, "JBIG2_DOC_END doc=%p\n", doc);
++#endif
+   return result;
++}
++
++int DocumentMain(char** argv, bool repeat, bool memory) {
++  const auto input = Read(argv[2]);
++  FPDF_LIBRARY_CONFIG config{};
++  config.version = 2;
++  FPDF_InitLibraryWithConfig(&config);
++  const int passes = repeat ? 2 : 1;
++  const int repetitions = std::atoi(argv[7]);
++  const auto clock = [] { return std::chrono::steady_clock::now(); };
++  const auto micros = [](auto duration) {
++    return std::chrono::duration<double, std::micro>(duration).count();
++  };
++  if (memory) {
++    uint64_t before = 0;
++    uint64_t after = 0;
++    uint64_t peak = 0;
++    uint64_t allocations = 0;
++    uint64_t requested = 0;
++#if defined(PDF_ENABLE_RUST_JBIG2)
++    before = jbig2_doc_alloc_live();
++    jbig2_doc_alloc_meter(true);
++#endif
++    {
++      auto result = Pdf(input, passes);
++      if (result.status != "ok") {
++        std::fprintf(stderr, "Document failed: %s\n", result.status.c_str());
++        return 2;
++      }
++    }
++#if defined(PDF_ENABLE_RUST_JBIG2)
++    after = jbig2_doc_alloc_live();
++    peak = jbig2_doc_alloc_peak();
++    allocations = jbig2_doc_alloc_calls();
++    requested = jbig2_doc_alloc_requested();
++    jbig2_doc_alloc_meter(false);
++#endif
++    rusage usage{};
++    if (getrusage(RUSAGE_SELF, &usage)) {
++      std::perror("getrusage");
++      return 2;
++    }
++    std::printf(
++        "{\"before_rust_bytes\":%llu,\"after_document_rust_bytes\":%llu,"
++        "\"peak_rust_requested_bytes\":%llu,\"rust_allocation_calls\":%llu,"
++        "\"rust_requested_total\":%llu,\"maxrss_kib\":%ld}\n",
++        static_cast<unsigned long long>(before),
++        static_cast<unsigned long long>(after),
++        static_cast<unsigned long long>(peak),
++        static_cast<unsigned long long>(allocations),
++        static_cast<unsigned long long>(requested), usage.ru_maxrss);
++  } else {
++    Result expected = Pdf(input, passes);
++    if (expected.status != "ok") {
++      std::fprintf(stderr, "Document failed: %s\n", expected.status.c_str());
++      return 2;
++    }
++    for (int warmup = 0; repetitions && warmup < 3; ++warmup) {
++      if (Pdf(input, passes).pixels != expected.pixels) {
++        std::fprintf(stderr, "Document warmup pixels differ\n");
++        return 2;
++      }
++    }
++    std::vector<double> samples;
++    for (int i = 0; i < repetitions; ++i) {
++      const auto begin = clock();
++      auto actual = Pdf(input, passes);
++      const auto decoded = clock();
++      if (actual.status != expected.status || actual.width != expected.width ||
++          actual.height != expected.height ||
++          actual.pixels != expected.pixels) {
++        std::fprintf(stderr, "Document pixels differ\n");
++        return 2;
++      }
++      const auto dropping = clock();
++      actual = {};
++      const auto dropped = clock();
++      samples.push_back(micros(decoded - begin) + micros(dropped - dropping));
++    }
++    std::ofstream output(argv[4], std::ios::binary);
++    output.write(reinterpret_cast<const char*>(expected.pixels.data()),
++                 expected.pixels.size());
++    if (!output) {
++      std::fprintf(stderr, "Cannot write document pixels\n");
++      return 2;
++    }
++    std::printf(
++        "{\"status\":\"ok\",\"width\":%u,\"height\":%u,\"bytes\":%zu,"
++        "\"passes\":%d,\"samples_us\":[",
++        expected.width, expected.height, expected.pixels.size(), passes);
++    for (size_t i = 0; i < samples.size(); ++i) {
++      std::printf("%s%.6f", i ? "," : "", samples[i]);
++    }
++    std::printf("]}\n");
++  }
++  FPDF_DestroyLibrary();
++  return 0;
+ }
+ 
+ }  // namespace
+ 
+ int main(int argc, char** argv) {
+   if (argc != 8) {
+-    std::fprintf(stderr, "image|pdf input globals|- output width height repetitions\n");
++    std::fprintf(stderr,
++                 "image|pdf input globals|- output width height repetitions\n");
+     return 2;
+   }
++  const std::string mode(argv[1]);
++  if (mode == "document" || mode == "repeat_document" ||
++      mode == "document_memory" || mode == "repeat_document_memory") {
++    return DocumentMain(argv, mode.starts_with("repeat_"),
++                        mode.ends_with("_memory"));
++  }
+   auto input = Read(argv[2]);
+-  auto globals = std::string(argv[3]) == "-" ? std::vector<uint8_t>{} : Read(argv[3]);
++  auto globals =
++      std::string(argv[3]) == "-" ? std::vector<uint8_t>{} : Read(argv[3]);
+   bool pdf = std::string(argv[1]) == "pdf";
+   if (pdf) {
+     FPDF_LIBRARY_CONFIG config{};
+@@ -126,12 +263,15 @@
+   uint32_t width = std::strtoul(argv[5], nullptr, 10);
+   uint32_t height = std::strtoul(argv[6], nullptr, 10);
+   int runs = std::atoi(argv[7]);
+-  auto decode = [&]() { return pdf ? Pdf(input) : Image(input, globals, width, height); };
++  auto decode = [&]() {
++    return pdf ? Pdf(input) : Image(input, globals, width, height);
++  };
+   Result result = decode();
+   std::vector<double> times;
+   if (result.status == "ok") {
+     std::ofstream output(argv[4], std::ios::binary);
+-    output.write(reinterpret_cast<const char*>(result.pixels.data()), result.pixels.size());
++    output.write(reinterpret_cast<const char*>(result.pixels.data()),
++                 result.pixels.size());
+     if (!output) {
+       std::fprintf(stderr, "Cannot write pixels\n");
+       return 2;
+@@ -146,7 +286,8 @@
+       auto start = std::chrono::steady_clock::now();
+       auto repeated = decode();
+       double elapsed = std::chrono::duration<double, std::micro>(
+-                           std::chrono::steady_clock::now() - start).count();
++                           std::chrono::steady_clock::now() - start)
++                           .count();
+       if (repeated.status != "ok" || repeated.pixels != result.pixels) {
+         std::fprintf(stderr, "Non-repeatable pixels\n");
+         return 2;
+@@ -155,8 +296,8 @@
+     }
+   }
+   std::sort(times.begin(), times.end());
+-  std::printf("%s\t%u\t%u\t%u\t%.3f\t%.3f\t%zu\n",
+-              result.status.c_str(), result.width, result.height, result.channels,
++  std::printf("%s\t%u\t%u\t%u\t%.3f\t%.3f\t%zu\n", result.status.c_str(),
++              result.width, result.height, result.channels,
+               times.empty() ? 0 : times[times.size() / 2],
+               times.empty() ? 0 : times[times.size() * 9 / 10], times.size());
+   if (pdf) {

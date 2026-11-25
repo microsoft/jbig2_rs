@@ -1,0 +1,127 @@
+--- a/build/rust/allocator/lib.rs
++++ b/build/rust/allocator/lib.rs
+@@ -70,8 +70,123 @@
+ /// using the default Rust allocator.
+ #[cfg(not(RUST_ALLOCATOR_USES_ALLOCATOR_IMPLS_H))]
+ mod rust_allocator {
++    use std::alloc::{GlobalAlloc, Layout, System};
++    use std::cell::Cell;
++    use std::sync::atomic::{AtomicBool, AtomicU64, Ordering::Relaxed};
++
++    static LIVE: AtomicU64 = AtomicU64::new(0);
++    static PEAK: AtomicU64 = AtomicU64::new(0);
++    static CALLS: AtomicU64 = AtomicU64::new(0);
++    static REQUESTED: AtomicU64 = AtomicU64::new(0);
++    static METER: AtomicBool = AtomicBool::new(false);
++    std::thread_local! {
++        static OWNER_SCOPE: Cell<Option<u64>> = const { Cell::new(None) };
++    }
++
++    fn allocated(size: usize) {
++        if METER.load(Relaxed) {
++            let live = LIVE.fetch_add(size as u64, Relaxed) + size as u64;
++            CALLS.fetch_add(1, Relaxed);
++            REQUESTED.fetch_add(size as u64, Relaxed);
++            PEAK.fetch_max(live, Relaxed);
++        }
++        OWNER_SCOPE.with(|scope| {
++            if let Some(live) = scope.get() {
++                scope.set(Some(live + size as u64));
++            }
++        });
++    }
++
++    fn freed(size: usize) {
++        if METER.load(Relaxed) {
++            LIVE.fetch_sub(size as u64, Relaxed);
++        }
++        OWNER_SCOPE.with(|scope| {
++            if let Some(live) = scope.get() {
++                scope.set(Some(live - size as u64));
++            }
++        });
++    }
++
++    struct AccountedSystem;
++
++    unsafe impl GlobalAlloc for AccountedSystem {
++        unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
++            let ptr = unsafe { System.alloc(layout) };
++            if !ptr.is_null() {
++                allocated(layout.size());
++            }
++            ptr
++        }
++
++        unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
++            let ptr = unsafe { System.alloc_zeroed(layout) };
++            if !ptr.is_null() {
++                allocated(layout.size());
++            }
++            ptr
++        }
++
++        unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
++            freed(layout.size());
++            unsafe { System.dealloc(ptr, layout) };
++        }
++
++        unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, size: usize) -> *mut u8 {
++            let out = unsafe { System.realloc(ptr, layout, size) };
++            if !out.is_null() {
++                freed(layout.size());
++                allocated(size);
++            }
++            out
++        }
++    }
++
++    #[no_mangle]
++    pub extern "C" fn jbig2_doc_alloc_live() -> u64 {
++        LIVE.load(Relaxed)
++    }
++
++    #[no_mangle]
++    pub extern "C" fn jbig2_doc_alloc_meter(enabled: bool) {
++        METER.store(false, Relaxed);
++        LIVE.store(0, Relaxed);
++        CALLS.store(0, Relaxed);
++        REQUESTED.store(0, Relaxed);
++        PEAK.store(LIVE.load(Relaxed), Relaxed);
++        METER.store(enabled, Relaxed);
++    }
++
++    #[no_mangle]
++    pub extern "C" fn jbig2_doc_alloc_calls() -> u64 {
++        CALLS.load(Relaxed)
++    }
++
++    #[no_mangle]
++    pub extern "C" fn jbig2_doc_alloc_requested() -> u64 {
++        REQUESTED.load(Relaxed)
++    }
++
++    #[no_mangle]
++    pub extern "C" fn jbig2_doc_alloc_peak() -> u64 {
++        PEAK.load(Relaxed)
++    }
++
++    #[no_mangle]
++    pub extern "C" fn jbig2_doc_alloc_scope_begin() {
++        OWNER_SCOPE.with(|scope| {
++            assert!(scope.get().is_none(), "non-nested owner construction");
++            scope.set(Some(0));
++        });
++    }
++
++    #[no_mangle]
++    pub extern "C" fn jbig2_doc_alloc_scope_end() -> u64 {
++        OWNER_SCOPE.with(|scope| scope.replace(None).expect("active owner construction"))
++    }
++
+     #[global_allocator]
+-    static GLOBAL: std::alloc::System = std::alloc::System;
++    static GLOBAL: AccountedSystem = AccountedSystem;
+ }
+ 
+ /// Module that provides global symbols that are needed both by `cpp_allocator`

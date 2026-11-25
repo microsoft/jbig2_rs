@@ -1,0 +1,1008 @@
+--- a/BUILD.gn
++++ b/BUILD.gn
+@@ -8,6 +8,9 @@
+ import("pdfium.gni")
+ 
+ executable("jbig2_eval") {
++  if (jbig2_document_trace) {
++    defines = [ "JBIG2_DOCUMENT_TRACE" ]
++  }
+   sources = [ "jbig2_eval.cpp" ]
+   configs += [ ":pdfium_core_config" ]
+   cflags = [ "-Wno-missing-field-initializers" ]
+--- a/pdfium.gni
++++ b/pdfium.gni
+@@ -8,6 +8,8 @@
+ # This file contains PDFium-related build flags.
+ 
+ declare_args() {
++  jbig2_document_trace = false
++
+   # Build PDFium with FreeType support.
+   pdf_enable_freetype = pdf_enable_freetype_override
+ }
+--- a/jbig2_eval.cpp
++++ b/jbig2_eval.cpp
+@@ -1,3 +1,4 @@
++#include <sys/resource.h>
+ #include <algorithm>
+ #include <chrono>
+ #include <cstdio>
+@@ -11,6 +12,14 @@
+ #include "core/fxcodec/jbig2/jbig2_document_context.h"
+ #include "public/fpdfview.h"
+ 
++#if defined(PDF_ENABLE_RUST_JBIG2)
++extern "C" uint64_t jbig2_doc_alloc_live();
++extern "C" void jbig2_doc_alloc_meter(bool enabled);
++extern "C" uint64_t jbig2_doc_alloc_calls();
++extern "C" uint64_t jbig2_doc_alloc_requested();
++extern "C" uint64_t jbig2_doc_alloc_peak();
++#endif
++
+ namespace {
+ 
+ struct Result {
+@@ -43,9 +52,10 @@
+   fxcodec::Jbig2Context context;
+   JBig2_DocumentContext document;
+   auto status = fxcodec::Jbig2Decoder::StartDecode(
+-      &context, &document, width, height, input, 1, globals, 2, padded,
+-      pitch, nullptr, false);
+-  for (int i = 0; status == FXCODEC_STATUS::kDecodeToBeContinued && i < 10000; ++i) {
++      &context, &document, width, height, input, 1, globals, 2, padded, pitch,
++      nullptr, false);
++  for (int i = 0; status == FXCODEC_STATUS::kDecodeToBeContinued && i < 10000;
++       ++i) {
+     status = fxcodec::Jbig2Decoder::ContinueDecode(&context, nullptr);
+   }
+   if (status != FXCODEC_STATUS::kDecodeFinished) {
+@@ -63,14 +73,18 @@
+   return result;
+ }
+ 
+-Result Pdf(const std::vector<uint8_t>& input) {
+-  FPDF_DOCUMENT doc = FPDF_LoadMemDocument64(input.data(), input.size(), nullptr);
++Result Pdf(const std::vector<uint8_t>& input, int passes = 1) {
++  FPDF_DOCUMENT doc =
++      FPDF_LoadMemDocument64(input.data(), input.size(), nullptr);
+   if (!doc) {
+     return {"document_error"};
+   }
+   Result result{"ok"};
+   result.channels = 4;
+   int count = FPDF_GetPageCount(doc);
++#if defined(JBIG2_DOCUMENT_TRACE)
++  std::fprintf(stderr, "JBIG2_DOC_BEGIN doc=%p pages=%d\n", doc, count);
++#endif
+   for (int i = 0; i < count; ++i) {
+     FPDF_PAGE page = FPDF_LoadPage(doc, i);
+     if (!page) {
+@@ -91,32 +105,155 @@
+       result.status = "bitmap_error";
+       break;
+     }
+-    FPDFBitmap_FillRect(bitmap, 0, 0, w, h, 0xffffffff);
+-    FPDF_RenderPageBitmap(bitmap, page, 0, 0, w, h, 0, FPDF_ANNOT);
+-    auto* data = static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap));
+-    int stride = FPDFBitmap_GetStride(bitmap);
+-    for (int y = 0; y < h; ++y) {
+-      result.pixels.insert(result.pixels.end(), data + y * stride,
+-                           data + y * stride + w * 4);
+-    }
+-    result.width = static_cast<uint32_t>(w);
+-    result.height += static_cast<uint32_t>(h);
++    for (int pass = 0; pass < passes; ++pass) {
++      if (result.pixels.size() + uint64_t(w) * h * 4 > 512 * 1024 * 1024) {
++        result.status = "output_limit";
++        break;
++      }
++#if defined(JBIG2_DOCUMENT_TRACE)
++      std::fprintf(stderr, "JBIG2_PAGE_BEGIN page=%d pass=%d\n", i, pass);
++#endif
++      FPDFBitmap_FillRect(bitmap, 0, 0, w, h, 0xffffffff);
++      FPDF_RenderPageBitmap(bitmap, page, 0, 0, w, h, 0, FPDF_ANNOT);
++      auto* data = static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap));
++      int stride = FPDFBitmap_GetStride(bitmap);
++      for (int y = 0; y < h; ++y) {
++        result.pixels.insert(result.pixels.end(), data + y * stride,
++                             data + y * stride + w * 4);
++      }
++      result.width = static_cast<uint32_t>(w);
++      result.height += static_cast<uint32_t>(h);
++#if defined(JBIG2_DOCUMENT_TRACE)
++      std::fprintf(stderr, "JBIG2_PAGE_END page=%d pass=%d\n", i, pass);
++#endif
++    }
+     FPDFBitmap_Destroy(bitmap);
+     FPDF_ClosePage(page);
++    if (result.status != "ok") {
++      break;
++    }
+   }
+   FPDF_CloseDocument(doc);
++#if defined(JBIG2_DOCUMENT_TRACE)
++  std::fprintf(stderr, "JBIG2_DOC_END doc=%p\n", doc);
++#endif
+   return result;
++}
++
++int DocumentMain(char** argv, bool repeat, bool memory) {
++  const auto input = Read(argv[2]);
++  FPDF_LIBRARY_CONFIG config{};
++  config.version = 2;
++  FPDF_InitLibraryWithConfig(&config);
++  const int passes = repeat ? 2 : 1;
++  const int repetitions = std::atoi(argv[7]);
++  const auto clock = [] { return std::chrono::steady_clock::now(); };
++  const auto micros = [](auto duration) {
++    return std::chrono::duration<double, std::micro>(duration).count();
++  };
++  if (memory) {
++    uint64_t before = 0;
++    uint64_t after = 0;
++    uint64_t peak = 0;
++    uint64_t allocations = 0;
++    uint64_t requested = 0;
++#if defined(PDF_ENABLE_RUST_JBIG2)
++    before = jbig2_doc_alloc_live();
++    jbig2_doc_alloc_meter(true);
++#endif
++    {
++      auto result = Pdf(input, passes);
++      if (result.status != "ok") {
++        std::fprintf(stderr, "Document failed: %s\n", result.status.c_str());
++        return 2;
++      }
++    }
++#if defined(PDF_ENABLE_RUST_JBIG2)
++    after = jbig2_doc_alloc_live();
++    peak = jbig2_doc_alloc_peak();
++    allocations = jbig2_doc_alloc_calls();
++    requested = jbig2_doc_alloc_requested();
++    jbig2_doc_alloc_meter(false);
++#endif
++    rusage usage{};
++    if (getrusage(RUSAGE_SELF, &usage)) {
++      std::perror("getrusage");
++      return 2;
++    }
++    std::printf(
++        "{\"before_rust_bytes\":%llu,\"after_document_rust_bytes\":%llu,"
++        "\"peak_rust_requested_bytes\":%llu,\"rust_allocation_calls\":%llu,"
++        "\"rust_requested_total\":%llu,\"maxrss_kib\":%ld}\n",
++        static_cast<unsigned long long>(before),
++        static_cast<unsigned long long>(after),
++        static_cast<unsigned long long>(peak),
++        static_cast<unsigned long long>(allocations),
++        static_cast<unsigned long long>(requested), usage.ru_maxrss);
++  } else {
++    Result expected = Pdf(input, passes);
++    if (expected.status != "ok") {
++      std::fprintf(stderr, "Document failed: %s\n", expected.status.c_str());
++      return 2;
++    }
++    for (int warmup = 0; repetitions && warmup < 3; ++warmup) {
++      if (Pdf(input, passes).pixels != expected.pixels) {
++        std::fprintf(stderr, "Document warmup pixels differ\n");
++        return 2;
++      }
++    }
++    std::vector<double> samples;
++    for (int i = 0; i < repetitions; ++i) {
++      const auto begin = clock();
++      auto actual = Pdf(input, passes);
++      const auto decoded = clock();
++      if (actual.status != expected.status || actual.width != expected.width ||
++          actual.height != expected.height ||
++          actual.pixels != expected.pixels) {
++        std::fprintf(stderr, "Document pixels differ\n");
++        return 2;
++      }
++      const auto dropping = clock();
++      actual = {};
++      const auto dropped = clock();
++      samples.push_back(micros(decoded - begin) + micros(dropped - dropping));
++    }
++    std::ofstream output(argv[4], std::ios::binary);
++    output.write(reinterpret_cast<const char*>(expected.pixels.data()),
++                 expected.pixels.size());
++    if (!output) {
++      std::fprintf(stderr, "Cannot write document pixels\n");
++      return 2;
++    }
++    std::printf(
++        "{\"status\":\"ok\",\"width\":%u,\"height\":%u,\"bytes\":%zu,"
++        "\"passes\":%d,\"samples_us\":[",
++        expected.width, expected.height, expected.pixels.size(), passes);
++    for (size_t i = 0; i < samples.size(); ++i) {
++      std::printf("%s%.6f", i ? "," : "", samples[i]);
++    }
++    std::printf("]}\n");
++  }
++  FPDF_DestroyLibrary();
++  return 0;
+ }
+ 
+ }  // namespace
+ 
+ int main(int argc, char** argv) {
+   if (argc != 8) {
+-    std::fprintf(stderr, "image|pdf input globals|- output width height repetitions\n");
++    std::fprintf(stderr,
++                 "image|pdf input globals|- output width height repetitions\n");
+     return 2;
+   }
++  const std::string mode(argv[1]);
++  if (mode == "document" || mode == "repeat_document" ||
++      mode == "document_memory" || mode == "repeat_document_memory") {
++    return DocumentMain(argv, mode.starts_with("repeat_"),
++                        mode.ends_with("_memory"));
++  }
+   auto input = Read(argv[2]);
+-  auto globals = std::string(argv[3]) == "-" ? std::vector<uint8_t>{} : Read(argv[3]);
++  auto globals =
++      std::string(argv[3]) == "-" ? std::vector<uint8_t>{} : Read(argv[3]);
+   bool pdf = std::string(argv[1]) == "pdf";
+   if (pdf) {
+     FPDF_LIBRARY_CONFIG config{};
+@@ -126,12 +263,15 @@
+   uint32_t width = std::strtoul(argv[5], nullptr, 10);
+   uint32_t height = std::strtoul(argv[6], nullptr, 10);
+   int runs = std::atoi(argv[7]);
+-  auto decode = [&]() { return pdf ? Pdf(input) : Image(input, globals, width, height); };
++  auto decode = [&]() {
++    return pdf ? Pdf(input) : Image(input, globals, width, height);
++  };
+   Result result = decode();
+   std::vector<double> times;
+   if (result.status == "ok") {
+     std::ofstream output(argv[4], std::ios::binary);
+-    output.write(reinterpret_cast<const char*>(result.pixels.data()), result.pixels.size());
++    output.write(reinterpret_cast<const char*>(result.pixels.data()),
++                 result.pixels.size());
+     if (!output) {
+       std::fprintf(stderr, "Cannot write pixels\n");
+       return 2;
+@@ -146,7 +286,8 @@
+       auto start = std::chrono::steady_clock::now();
+       auto repeated = decode();
+       double elapsed = std::chrono::duration<double, std::micro>(
+-                           std::chrono::steady_clock::now() - start).count();
++                           std::chrono::steady_clock::now() - start)
++                           .count();
+       if (repeated.status != "ok" || repeated.pixels != result.pixels) {
+         std::fprintf(stderr, "Non-repeatable pixels\n");
+         return 2;
+@@ -155,8 +296,8 @@
+     }
+   }
+   std::sort(times.begin(), times.end());
+-  std::printf("%s\t%u\t%u\t%u\t%.3f\t%.3f\t%zu\n",
+-              result.status.c_str(), result.width, result.height, result.channels,
++  std::printf("%s\t%u\t%u\t%u\t%.3f\t%.3f\t%zu\n", result.status.c_str(),
++              result.width, result.height, result.channels,
+               times.empty() ? 0 : times[times.size() / 2],
+               times.empty() ? 0 : times[times.size() * 9 / 10], times.size());
+   if (pdf) {
+--- a/core/fpdfapi/page/BUILD.gn
++++ b/core/fpdfapi/page/BUILD.gn
+@@ -6,6 +6,9 @@
+ import("../../../testing/test.gni")
+ 
+ source_set("page") {
++  if (jbig2_document_trace) {
++    defines = [ "JBIG2_DOCUMENT_TRACE" ]
++  }
+   sources = [
+     "cpdf_allstates.cpp",
+     "cpdf_allstates.h",
+--- a/core/fpdfapi/page/cpdf_dib.cpp
++++ b/core/fpdfapi/page/cpdf_dib.cpp
+@@ -9,11 +9,13 @@
+ #include <stdint.h>
+ 
+ #include <algorithm>
++#include <cstdio>
+ #include <memory>
+ #include <optional>
+ #include <utility>
+ #include <vector>
+ 
++#include "core/fdrm/fx_crypt_sha.h"
+ #include "core/fpdfapi/page/cpdf_colorspace.h"
+ #include "core/fpdfapi/page/cpdf_docpagedata.h"
+ #include "core/fpdfapi/page/cpdf_iccprofile.h"
+@@ -289,11 +291,34 @@
+       nGlobalKey = global_acc_->KeyForCache();
+     }
+     const bool reject_large_regions_when_fuzzing = false;
++#if defined(JBIG2_DOCUMENT_TRACE)
++    std::fprintf(stderr,
++                 "JBIG2_INVOKE doc=%p image=%u source_key=%llu global_key=%llu "
++                 "source_bytes=%zu global_bytes=%zu mask=%d width=%d height=%d "
++                 "source_sha=",
++                 static_cast<void*>(document_.get()), stream_->GetObjNum(),
++                 static_cast<unsigned long long>(nSrcKey),
++                 static_cast<unsigned long long>(nGlobalKey), pSrcSpan.size(),
++                 pGlobalSpan.size(), image_mask_, GetWidth(), GetHeight());
++    for (uint8_t byte : CryptSha256Generate(pSrcSpan)) {
++      std::fprintf(stderr, "%02x", byte);
++    }
++    std::fprintf(stderr, " global_sha=");
++    for (uint8_t byte : CryptSha256Generate(pGlobalSpan)) {
++      std::fprintf(stderr, "%02x", byte);
++    }
++    std::fprintf(stderr, "\n");
++#endif
+     iDecodeStatus = Jbig2Decoder::StartDecode(
+         jbig_2context_.get(), document_->GetOrCreateCodecContext(), GetWidth(),
+         GetHeight(), pSrcSpan, nSrcKey, pGlobalSpan, nGlobalKey,
+         cached_bitmap_->GetWritableBuffer(), cached_bitmap_->GetPitch(), pPause,
+         reject_large_regions_when_fuzzing);
++#if defined(JBIG2_DOCUMENT_TRACE)
++    std::fprintf(stderr, "JBIG2_RETURN doc=%p image=%u status=%d\n",
++                 static_cast<void*>(document_.get()), stream_->GetObjNum(),
++                 static_cast<int>(iDecodeStatus));
++#endif
+   } else {
+     iDecodeStatus = Jbig2Decoder::ContinueDecode(jbig_2context_.get(), pPause);
+   }
+--- a/core/fpdfapi/page/cpdf_pageimagecache.cpp
++++ b/core/fpdfapi/page/cpdf_pageimagecache.cpp
+@@ -10,6 +10,7 @@
+ #include <stdint.h>
+ 
+ #include <algorithm>
++#include <cstdio>
+ #include <utility>
+ #include <vector>
+ 
+@@ -271,6 +272,17 @@
+     bool bLoadMask,
+     const CFX_Size& max_size_required) {
+   if (cached_bitmap_ && IsCacheValid(max_size_required)) {
++#if defined(JBIG2_DOCUMENT_TRACE)
++    const auto dict = image_->GetStream()->GetDict();
++    auto mask = dict->GetStreamFor("SMask");
++    if (!mask) {
++      mask = dict->GetStreamFor("Mask");
++    }
++    std::fprintf(stderr, "JBIG2_IMAGE_CACHE doc=%p image=%u attached_mask=%u\n",
++                 static_cast<void*>(image_->GetDocument()),
++                 image_->GetStream()->GetObjNum(),
++                 cached_mask_ && mask ? mask->GetObjNum() : 0);
++#endif
+     cur_bitmap_ = cached_bitmap_;
+     cur_mask_ = cached_mask_;
+     return CPDF_DIB::LoadState::kSuccess;
+--- a/core/fxcodec/jbig2/jbig2_decoder.cpp
++++ b/core/fxcodec/jbig2/jbig2_decoder.cpp
+@@ -65,12 +65,9 @@
+ #if defined(PDF_ENABLE_RUST_JBIG2)
+   // The Rust decoder decodes an entire embedded stream in one call.
+   auto out = dest_buf.first(Fx2DSizeOrDie(height, dest_pitch));
+-  return rust_jbig2::decode(
+-             rust::Slice<const uint8_t>(src_span.data(), src_span.size()),
+-             rust::Slice<const uint8_t>(global_span.data(), global_span.size()),
+-             width, height, dest_pitch,
+-             rust::Slice<uint8_t>(out.data(), out.size()),
+-             reject_large_regions_when_fuzzing)
++  return pJBig2DocumentContext->DecodeRust(
++             src_span, src_key, global_span, global_key, width, height,
++             dest_pitch, out, reject_large_regions_when_fuzzing)
+              ? FXCODEC_STATUS::kDecodeFinished
+              : FXCODEC_STATUS::kError;
+ #else
+--- a/core/fxcodec/jbig2/jbig2_decoder_unittest.cpp
++++ b/core/fxcodec/jbig2/jbig2_decoder_unittest.cpp
+@@ -51,6 +51,84 @@
+ }
+ 
+ #if defined(PDF_ENABLE_RUST_JBIG2)
++extern "C" uint64_t jbig2_doc_alloc_live();
++extern "C" void jbig2_doc_alloc_meter(bool enabled);
++
++constexpr std::array<uint8_t, 31> kGlobals = {
++    0,    0, 0,    0,    0,    0, 0, 0, 0, 0, 20, 0, 0, 3,    0xff, 0xfd,
++    0xff, 2, 0xfe, 0xfe, 0xfe, 0, 0, 0, 0, 0, 0,  0, 0, 0xff, 0xac,
++};
++
++FXCODEC_STATUS DecodeWithDocument(
++    JBig2_DocumentContext* document,
++    pdfium::span<const uint8_t> globals,
++    bool reject_large = false,
++    pdfium::span<const uint8_t> source = kStream) {
++  Jbig2Context image;
++  alignas(uint32_t) std::array<uint8_t, 8> dest = {};
++  return Jbig2Decoder::StartDecode(&image, document, 9, 2, source, 1, globals,
++                                   2, dest, 4, nullptr, reject_large);
++}
++
++TEST(Jbig2DecoderTest, DocumentOwnerDoesNotUseStreamKeysAsContentIdentity) {
++  JBig2_DocumentContext document;
++  ASSERT_EQ(FXCODEC_STATUS::kDecodeFinished,
++            DecodeWithDocument(&document, kGlobals));
++  constexpr std::array<uint8_t, 1> kMalformed = {0};
++  EXPECT_EQ(FXCODEC_STATUS::kError, DecodeWithDocument(&document, kMalformed));
++  EXPECT_EQ(FXCODEC_STATUS::kDecodeFinished,
++            DecodeWithDocument(&document, kGlobals));
++}
++
++TEST(Jbig2DecoderTest, DocumentOwnerPreservesInvalidCanvasGuard) {
++  JBig2_DocumentContext document;
++  Jbig2Context image;
++  alignas(uint32_t) std::array<uint8_t, 4> dest = {};
++  EXPECT_EQ(FXCODEC_STATUS::kError,
++            Jbig2Decoder::StartDecode(&image, &document, 9, 2, kStream, 1,
++                                      kGlobals, 2, dest, 1, nullptr, false));
++}
++
++TEST(Jbig2DecoderTest, DocumentOwnerDoesNotCrossLimitProfiles) {
++  JBig2_DocumentContext document;
++  ASSERT_EQ(FXCODEC_STATUS::kDecodeFinished,
++            DecodeWithDocument(&document, kGlobals));
++  auto wide = std::to_array(kStream);
++  wide[13] = 0x13;
++  wide[14] = 0x88;
++  EXPECT_EQ(FXCODEC_STATUS::kError,
++            DecodeWithDocument(&document, kGlobals, true, wide));
++  EXPECT_EQ(FXCODEC_STATUS::kDecodeFinished,
++            DecodeWithDocument(&document, kGlobals, false, wide));
++}
++
++TEST(Jbig2DecoderTest, DocumentOwnerResetAndDestructionReleaseResources) {
++  {
++    JBig2_DocumentContext warm;
++    ASSERT_EQ(FXCODEC_STATUS::kDecodeFinished,
++              DecodeWithDocument(&warm, kGlobals));
++  }
++  jbig2_doc_alloc_meter(true);
++  const uint64_t before = jbig2_doc_alloc_live();
++  {
++    JBig2_DocumentContext document;
++    for (int i = 0; i < 3; ++i) {
++      ASSERT_EQ(FXCODEC_STATUS::kDecodeFinished,
++                DecodeWithDocument(&document, kGlobals));
++    }
++    document.ResetRustForTesting();
++    ASSERT_EQ(FXCODEC_STATUS::kDecodeFinished,
++              DecodeWithDocument(&document, kGlobals));
++    auto retained = kGlobals;
++    retained[11] = 2;
++    JBig2_DocumentContext other_document;
++    EXPECT_EQ(FXCODEC_STATUS::kDecodeFinished,
++              DecodeWithDocument(&other_document, retained));
++  }
++  EXPECT_EQ(before, jbig2_doc_alloc_live());
++  jbig2_doc_alloc_meter(false);
++}
++
+ TEST(Jbig2DecoderTest, FillsUncoveredCanvasPixelsAndPadding) {
+   Jbig2Context context;
+   JBig2_DocumentContext document;
+--- a/core/fxcodec/jbig2/jbig2_document_context.cpp
++++ b/core/fxcodec/jbig2/jbig2_document_context.cpp
+@@ -9,6 +9,244 @@
+ #include "core/fxcodec/jbig2/jbig2_image.h"
+ #include "core/fxcodec/jbig2/jbig2_symbol_dict.h"
+ 
++#if defined(PDF_ENABLE_RUST_JBIG2)
++#include <algorithm>
++#include <cerrno>
++#include <cstdio>
++#include <cstdlib>
++#include <cstring>
++#include <optional>
++#include <vector>
++
++#include "core/fxcodec/jbig2/rust_jbig2_ffi.rs.h"
++#include "core/fxcrt/check.h"
++
++namespace {
++
++namespace bridge = fxcodec::rust_jbig2;
++
++int OwnerMode() {
++  static const int mode = [] {
++    const char* text = std::getenv("JBIG2_DOC_MODE");
++    if (!text || std::strcmp(text, "ordinary") == 0) {
++      return 0;
++    }
++    if (std::strcmp(text, "parsed") == 0) {
++      return 1;
++    }
++    if (std::strcmp(text, "prepared") == 0) {
++      return 2;
++    }
++    std::fprintf(stderr, "Invalid JBIG2_DOC_MODE\n");
++    std::abort();
++  }();
++  return mode;
++}
++
++bool OwnerTrace() {
++  static const bool trace = std::getenv("JBIG2_OWNER_TRACE") != nullptr;
++  return trace;
++}
++
++uint64_t StorageOption(const char* name, uint64_t fallback) {
++  const char* text = std::getenv(name);
++  if (!text) {
++    return fallback;
++  }
++  char* end = nullptr;
++  errno = 0;
++  auto value = std::strtoull(text, &end, 10);
++  if (errno || !*text || *text == '-' || *end) {
++    std::fprintf(stderr, "Invalid %s\n", name);
++    std::abort();
++  }
++  return value;
++}
++
++}  // namespace
++
++class Jbig2RustDocumentOwner {
++ public:
++  struct Entry {
++    Entry(pdfium::span<const uint8_t> globals, bool reject_large)
++        : key(globals.begin(), globals.end()),
++          reject_large(reject_large),
++          parsed(bridge::new_parsed(
++              rust::Slice<const uint8_t>(globals.data(), globals.size()),
++              reject_large)) {}
++
++    std::vector<uint8_t> key;
++    const bool reject_large;
++    rust::Box<bridge::ParsedOwner> parsed;
++    // CXX carries the Rust lifetime in its signature. C++ must destroy this
++    // borrowing box before the immutable parsed owner declared above it.
++    std::optional<rust::Box<bridge::PreparedOwner>> prepared;
++    uint64_t metadata = 0;
++  };
++
++  ~Jbig2RustDocumentOwner() {
++    entry_.reset();
++    if (OwnerTrace()) {
++      std::fprintf(stderr, "JBIG2_OWNER_DROP owner=%p retained=0\n",
++                   static_cast<void*>(this));
++    }
++  }
++
++  bool Decode(pdfium::span<const uint8_t> src,
++              uint64_t src_key,
++              pdfium::span<const uint8_t> globals,
++              uint32_t width,
++              uint32_t height,
++              uint32_t pitch,
++              pdfium::span<uint8_t> dest,
++              bool reject_large) {
++    bool parsed_hit = !!entry_;
++    std::unique_ptr<Entry> temporary;
++    Entry* current = entry_.get();
++    const auto source = rust::Slice<const uint8_t>(src.data(), src.size());
++    auto output = rust::Slice<uint8_t>(dest.data(), dest.size());
++    if (!current) {
++      temporary = std::make_unique<Entry>(globals, reject_large);
++      current = temporary.get();
++      current->metadata = sizeof(*this) + sizeof(Entry) +
++                          current->key.capacity() +
++                          bridge::parsed_storage(*current->parsed) +
++                          bridge::prepared_box_bytes();
++      if (current->metadata <= budget_ &&
++          bridge::parsed_valid(*current->parsed)) {
++        current->prepared.emplace(bridge::new_prepared(
++            *current->parsed,
++            std::min(allowance_, budget_ - current->metadata)));
++        entry_ = std::move(temporary);
++      }
++    }
++    if (!current->prepared) {
++      if (OwnerTrace()) {
++        std::fprintf(
++            stderr,
++            "JBIG2_OWNER_BYPASS reason=%s owner=%p source_key=%llu "
++            "metadata=%llu budget=%llu retained=%zu\n",
++            bridge::parsed_valid(*current->parsed) ? "aggregate_metadata_budget"
++                                                   : "global_parse_error",
++            static_cast<void*>(this), static_cast<unsigned long long>(src_key),
++            static_cast<unsigned long long>(current->metadata),
++            static_cast<unsigned long long>(budget_), sizeof(*this));
++      }
++      return bridge::decode_parsed(*current->parsed, source, width, height,
++                                   pitch, output);
++    }
++    auto before = bridge::owner_info(**current->prepared);
++    bool success = OwnerMode() == 2
++                       ? bridge::decode_prepared(**current->prepared, source,
++                                                 width, height, pitch, output)
++                       : bridge::decode_parsed(*current->parsed, source, width,
++                                               height, pitch, output);
++    auto after = bridge::owner_info(**current->prepared);
++    CHECK(current->metadata <= budget_);
++    CHECK(after.resident <= budget_ - current->metadata);
++    if (OwnerTrace()) {
++      std::fprintf(
++          stderr,
++          "JBIG2_OWNER owner=%p source_key=%llu mode=%d parsed_hit=%d "
++          "resource_hit=%d success=%d before=%u after=%u resident=%llu "
++          "metadata=%llu reserved=%llu budget=%llu\n",
++          static_cast<void*>(this), static_cast<unsigned long long>(src_key),
++          OwnerMode(), parsed_hit,
++          success && before.state == 1 && after.state == 1, success,
++          before.state, after.state,
++          static_cast<unsigned long long>(after.resident),
++          static_cast<unsigned long long>(current->metadata),
++          static_cast<unsigned long long>(current->metadata + after.allowance),
++          static_cast<unsigned long long>(budget_));
++    }
++    return success;
++  }
++
++  bool Matches(pdfium::span<const uint8_t> globals, bool reject_large) const {
++    return !entry_ || (entry_->reject_large == reject_large &&
++                       std::ranges::equal(entry_->key, globals));
++  }
++
++  uint64_t budget() const { return budget_; }
++
++  uint64_t RetainedBytes() const {
++    return entry_ ? entry_->metadata +
++                        bridge::owner_info(**entry_->prepared).resident
++                  : sizeof(*this);
++  }
++
++  void Reset() {
++    if (entry_) {
++      bridge::owner_reset(**entry_->prepared);
++      CHECK(bridge::owner_info(**entry_->prepared).resident == 0);
++    }
++  }
++
++ private:
++  const uint64_t budget_ = StorageOption("JBIG2_DOC_BUDGET", 4 * 1024 * 1024);
++  const uint64_t allowance_ = StorageOption("JBIG2_DOC_ALLOWANCE", 65536);
++  std::unique_ptr<Entry> entry_;
++};
++#endif
++
+ JBig2_DocumentContext::JBig2_DocumentContext() = default;
+ 
+ JBig2_DocumentContext::~JBig2_DocumentContext() = default;
++
++#if defined(PDF_ENABLE_RUST_JBIG2)
++bool JBig2_DocumentContext::DecodeRust(pdfium::span<const uint8_t> src,
++                                       uint64_t src_key,
++                                       pdfium::span<const uint8_t> globals,
++                                       uint64_t global_key,
++                                       uint32_t width,
++                                       uint32_t height,
++                                       uint32_t pitch,
++                                       pdfium::span<uint8_t> dest,
++                                       bool reject_large) {
++  const char* bypass = nullptr;
++  if (!width || !height || pitch < (uint64_t{width} + 7) / 8 ||
++      uint64_t{height} * pitch != dest.size()) {
++    bypass = "invalid_canvas";
++  } else if (bridge::is_best_effort()) {
++    bypass = "best_effort_policy";
++  } else if (!OwnerMode()) {
++    bypass = "disabled";
++  } else if (globals.empty()) {
++    bypass = "no_globals";
++  } else if (StorageOption("JBIG2_DOC_BUDGET", 4 * 1024 * 1024) <
++             sizeof(Jbig2RustDocumentOwner)) {
++    bypass = "document_metadata_budget";
++  } else {
++    if (!rust_owner_) {
++      rust_owner_ = std::make_unique<Jbig2RustDocumentOwner>();
++    }
++    if (globals.size() > rust_owner_->budget()) {
++      bypass = "encoded_global_budget";
++    } else if (!rust_owner_->Matches(globals, reject_large)) {
++      bypass = "document_slot_or_limits";
++    } else {
++      return rust_owner_->Decode(src, src_key, globals, width, height, pitch,
++                                 dest, reject_large);
++    }
++  }
++  if (OwnerTrace()) {
++    std::fprintf(stderr,
++                 "JBIG2_OWNER_BYPASS reason=%s source_key=%llu global_key=%llu "
++                 "retained=%llu\n",
++                 bypass, static_cast<unsigned long long>(src_key),
++                 static_cast<unsigned long long>(global_key),
++                 static_cast<unsigned long long>(
++                     rust_owner_ ? rust_owner_->RetainedBytes() : 0));
++  }
++  return bridge::decode(
++      rust::Slice<const uint8_t>(src.data(), src.size()),
++      rust::Slice<const uint8_t>(globals.data(), globals.size()), width, height,
++      pitch, rust::Slice<uint8_t>(dest.data(), dest.size()), reject_large);
++}
++
++void JBig2_DocumentContext::ResetRustForTesting() {
++  if (rust_owner_) {
++    rust_owner_->Reset();
++  }
++}
++#endif
+--- a/core/fxcodec/jbig2/jbig2_document_context.h
++++ b/core/fxcodec/jbig2/jbig2_document_context.h
+@@ -13,7 +13,10 @@
+ #include <memory>
+ #include <utility>
+ 
++#include "core/fxcrt/span.h"
++
+ class CJBig2_SymbolDict;
++class Jbig2RustDocumentOwner;
+ 
+ // Cache is keyed by both the key of a stream and an index within the stream.
+ using CJBig2_CompoundKey = std::pair<uint64_t, uint32_t>;
+@@ -30,7 +33,23 @@
+     return &symbol_dict_cache_;
+   }
+ 
++#if defined(PDF_ENABLE_RUST_JBIG2)
++  bool DecodeRust(pdfium::span<const uint8_t> src,
++                  uint64_t src_key,
++                  pdfium::span<const uint8_t> globals,
++                  uint64_t global_key,
++                  uint32_t width,
++                  uint32_t height,
++                  uint32_t pitch,
++                  pdfium::span<uint8_t> dest,
++                  bool reject_large);
++  void ResetRustForTesting();
++#endif
++
+  private:
++#if defined(PDF_ENABLE_RUST_JBIG2)
++  std::unique_ptr<Jbig2RustDocumentOwner> rust_owner_;
++#endif
+   std::list<CJBig2_CachePair> symbol_dict_cache_;
+ };
+ 
+--- a/core/fxcodec/jbig2/rust_jbig2_ffi.rs
++++ b/core/fxcodec/jbig2/rust_jbig2_ffi.rs
+@@ -2,11 +2,49 @@
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+ 
+-use jbig2_decoder::{Decoder, Limits};
++use jbig2_decoder::{
++    DecodeError, DecodedDocument, Decoder, GlobalSegments, Limits, PreparedGlobals,
++    PreparedGlobalsBypass, PreparedGlobalsState,
++};
+ 
+ #[cxx::bridge(namespace = "fxcodec::rust_jbig2")]
+ mod ffi {
++    struct OwnerInfo {
++        state: u32,
++        resident: u64,
++        allowance: u64,
++    }
++
+     extern "Rust" {
++        type ParsedOwner;
++        type PreparedOwner<'a>;
++        fn new_parsed(globals: &[u8], reject_large: bool) -> Box<ParsedOwner>;
++        fn parsed_valid(owner: &ParsedOwner) -> bool;
++        fn parsed_storage(owner: &ParsedOwner) -> u64;
++        fn prepared_box_bytes() -> u64;
++        unsafe fn new_prepared<'a>(
++            owner: &'a ParsedOwner,
++            allowance: u64,
++        ) -> Box<PreparedOwner<'a>>;
++        fn owner_info(owner: &PreparedOwner<'_>) -> OwnerInfo;
++        fn owner_reset(owner: &mut PreparedOwner<'_>);
++        fn is_best_effort() -> bool;
++        fn decode_parsed(
++            owner: &ParsedOwner,
++            src: &[u8],
++            width: u32,
++            height: u32,
++            pitch: usize,
++            dest: &mut [u8],
++        ) -> bool;
++        fn decode_prepared(
++            owner: &mut PreparedOwner<'_>,
++            src: &[u8],
++            width: u32,
++            height: u32,
++            pitch: usize,
++            dest: &mut [u8],
++        ) -> bool;
+         fn decode(
+             src: &[u8],
+             globals: &[u8],
+@@ -19,6 +57,131 @@
+     }
+ }
+ 
++extern "C" {
++    fn jbig2_doc_alloc_scope_begin();
++    fn jbig2_doc_alloc_scope_end() -> u64;
++}
++
++pub struct ParsedOwner {
++    decoder: Decoder,
++    globals: Result<GlobalSegments, DecodeError>,
++    storage: u64,
++}
++
++pub struct PreparedOwner<'a> {
++    parsed: &'a ParsedOwner,
++    value: Option<PreparedGlobals<'a>>,
++}
++
++fn new_parsed(globals: &[u8], reject_large: bool) -> Box<ParsedOwner> {
++    unsafe { jbig2_doc_alloc_scope_begin() };
++    let decoder = decoder(reject_large);
++    let globals = decoder.parse_globals(globals);
++    let mut owner = Box::new(ParsedOwner { decoder, globals, storage: 0 });
++    owner.storage = unsafe { jbig2_doc_alloc_scope_end() };
++    owner
++}
++
++fn parsed_valid(owner: &ParsedOwner) -> bool {
++    owner.globals.is_ok()
++}
++
++fn parsed_storage(owner: &ParsedOwner) -> u64 {
++    owner.storage
++}
++
++fn prepared_box_bytes() -> u64 {
++    std::mem::size_of::<PreparedOwner<'_>>() as u64
++}
++
++// C++ must keep the immutable parsed box alive until this borrowing box drops.
++unsafe fn new_prepared(owner: &ParsedOwner, allowance: u64) -> Box<PreparedOwner<'_>> {
++    Box::new(PreparedOwner {
++        parsed: owner,
++        value: owner
++            .globals
++            .as_ref()
++            .ok()
++            .map(|globals| owner.decoder.prepared_globals(globals, allowance)),
++    })
++}
++
++fn owner_info(owner: &PreparedOwner<'_>) -> ffi::OwnerInfo {
++    let Some(value) = &owner.value else {
++        return ffi::OwnerInfo { state: 7, resident: 0, allowance: 0 };
++    };
++    let info = value.info();
++    let state = match info.state {
++        PreparedGlobalsState::Pending => 0,
++        PreparedGlobalsState::Ready => 1,
++        PreparedGlobalsState::Uncached(PreparedGlobalsBypass::NoResources) => 2,
++        PreparedGlobalsState::Uncached(PreparedGlobalsBypass::CustomTables) => 3,
++        PreparedGlobalsState::Uncached(PreparedGlobalsBypass::RetainedContexts) => 4,
++        PreparedGlobalsState::Uncached(PreparedGlobalsBypass::AdditionalStorage) => 5,
++        PreparedGlobalsState::Uncached(PreparedGlobalsBypass::CopyAllocation) => 6,
++    };
++    ffi::OwnerInfo {
++        state,
++        resident: info.resident_bytes,
++        allowance: info.additional_storage_bytes,
++    }
++}
++
++fn owner_reset(owner: &mut PreparedOwner<'_>) {
++    if let Some(value) = &mut owner.value {
++        value.reset();
++    }
++}
++
++fn is_best_effort() -> bool {
++    cfg!(pdf_eval_jbig2_best_effort)
++}
++
++fn decode_parsed(
++    owner: &ParsedOwner,
++    src: &[u8],
++    width: u32,
++    height: u32,
++    pitch: usize,
++    dest: &mut [u8],
++) -> bool {
++    let mut context = owner.decoder.context();
++    match &owner.globals {
++        Ok(globals) => {
++            pack(context.decode_embedded_with_globals(src, globals), width, height, pitch, dest)
++        }
++        Err(error) => {
++            eprintln!("JBIG2_ERROR {error:?}");
++            false
++        }
++    }
++}
++
++fn decode_prepared(
++    owner: &mut PreparedOwner<'_>,
++    src: &[u8],
++    width: u32,
++    height: u32,
++    pitch: usize,
++    dest: &mut [u8],
++) -> bool {
++    match &mut owner.value {
++        Some(value) => pack(value.decode_embedded(src), width, height, pitch, dest),
++        None => decode_parsed(owner.parsed, src, width, height, pitch, dest),
++    }
++}
++
++fn decoder(reject_large: bool) -> Decoder {
++    let mut limits = Limits::default();
++    limits.max_pages = 1;
++    if reject_large {
++        limits.max_width = 4096;
++        limits.max_height = 4096;
++        limits.max_pixels_per_page = 4096 * 4096;
++    }
++    Decoder::new(limits)
++}
++
+ fn decode(
+     src: &[u8],
+     globals: &[u8],
+@@ -37,14 +200,7 @@
+         return false;
+     }
+ 
+-    let mut limits = Limits::default();
+-    limits.max_pages = 1;
+-    if reject_large_regions_when_fuzzing {
+-        limits.max_width = 4096;
+-        limits.max_height = 4096;
+-        limits.max_pixels_per_page = 4096 * 4096;
+-    }
+-    let decoder = Decoder::new(limits);
++    let decoder = decoder(reject_large_regions_when_fuzzing);
+     let mut context = decoder.context();
+     #[cfg(not(pdf_eval_jbig2_best_effort))]
+     let result = if globals.is_empty() {
+@@ -56,11 +212,7 @@
+     };
+     #[cfg(pdf_eval_jbig2_best_effort)]
+     let result = (|| {
+-        let parsed = if globals.is_empty() {
+-            None
+-        } else {
+-            Some(context.parse_globals(globals)?)
+-        };
++        let parsed = if globals.is_empty() { None } else { Some(context.parse_globals(globals)?) };
+         context
+             .decode_embedded_with_policy(
+                 src,
+@@ -69,7 +221,8 @@
+             )
+             .map(|decoded| {
+                 static DIAGNOSTICS: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+-                if *DIAGNOSTICS.get_or_init(|| std::env::var_os("JBIG2_EVAL_RECOVERIES").is_some()) {
++                if *DIAGNOSTICS.get_or_init(|| std::env::var_os("JBIG2_EVAL_RECOVERIES").is_some())
++                {
+                     for recovery in &decoded.recoveries {
+                         eprintln!("JBIG2_RECOVERY {recovery:?}");
+                     }
+@@ -77,6 +230,16 @@
+                 decoded.value
+             })
+     })();
++    pack(result, width, height, pitch, dest)
++}
++
++fn pack(
++    result: Result<DecodedDocument, DecodeError>,
++    width: u32,
++    height: u32,
++    pitch: usize,
++    dest: &mut [u8],
++) -> bool {
+     let document = match result {
+         Ok(document) => document,
+         Err(error) => {
