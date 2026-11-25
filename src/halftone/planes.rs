@@ -6,7 +6,7 @@ use super::resources::{
     require_bitmap_dimensions,
 };
 use super::{
-    GenericRegionCoding, GenericRegionRequest, GenericRegionState, HalftoneError,
+    GenericRegionCoding, GenericRegionRequest, GenericRegionState, GrayIndexes, HalftoneError,
     PatternDictionaryHeader, WorkBudget,
 };
 use crate::bitmap::CombinationOperator;
@@ -425,9 +425,10 @@ pub(super) fn accumulate_gray_byte(
                 && (bit_depth == 0 ==> (
                     *final(decoder) == *old(decoder)
                     && *final(work) == *old(work)
-                    && indexes@.len() == width as nat * height as nat
-                    && forall|index: int| 0 <= index < indexes@.len() ==>
-                        indexes@[index] == 0
+                    && halftone_spec::index_values(&indexes).len() == width as nat * height as nat
+                    && forall|index: int|
+                        0 <= index < halftone_spec::index_values(&indexes).len() ==>
+                            halftone_spec::index_values(&indexes)[index] == 0
                 )),
         Err(_) => true,
     },
@@ -442,7 +443,7 @@ pub(crate) fn decode_gray_planes(
     decoder: &mut GenericRegionState<'_>,
     limits: &Limits,
     work: &mut WorkBudget,
-) -> Result<Vec<u32>, HalftoneError> {
+) -> Result<GrayIndexes, HalftoneError> {
     if bit_depth > 32 {
         return Err(HalftoneError::InvalidGrayBitDepth(bit_depth));
     }
@@ -458,7 +459,7 @@ pub(crate) fn decode_gray_planes(
         .checked_mul(u64::from(height))
         .ok_or(MalformedError::IntegerOverflow)?;
     let value_bytes = pixels
-        .checked_mul(4)
+        .checked_mul(if bit_depth <= 8 { 1 } else { 4 })
         .ok_or(MalformedError::IntegerOverflow)?;
     let plane_bytes = bitmap_bytes(width, height)?;
     let concurrent_plane_count = if bit_depth == 0 {
@@ -481,13 +482,7 @@ pub(crate) fn decode_gray_planes(
     )?;
 
     let pixel_count = usize::try_from(pixels).map_err(|_| MalformedError::IntegerOverflow)?;
-    let mut values = Vec::new();
-    values
-        .try_reserve(pixel_count)
-        .map_err(|_| DecodeError::Allocation {
-            requested_bytes: value_bytes,
-        })?;
-    values.resize(pixel_count, 0);
+    let mut values = GrayIndexes::zeroed(pixel_count, bit_depth)?;
     if bit_depth == 0 {
         return Ok(values);
     }
@@ -511,7 +506,7 @@ pub(crate) fn decode_gray_planes(
         invariant
             halftone_spec::decoder_state_valid(decoder),
             halftone_spec::work_valid(work),
-            values@.len() == pixel_count,
+            halftone_spec::index_values(&values).len() == pixel_count,
             match skip {
                 Some(bitmap) => crate::spec::bitmap::storage_valid(bitmap),
                 None => true,
@@ -558,7 +553,7 @@ pub(crate) fn decode_gray_planes(
                 plane_index < 32,
                 tail_start <= width,
                 crate::spec::bitmap::storage_valid(&plane),
-                values@.len() == pixel_count,
+                halftone_spec::index_values(&values).len() == pixel_count,
                 match more_significant {
                     Some(ref bitmap) => crate::spec::bitmap::storage_valid(bitmap),
                     None => true,
@@ -580,7 +575,7 @@ pub(crate) fn decode_gray_planes(
                     y < height,
                     plane_index < 32,
                     crate::spec::bitmap::storage_valid(&plane),
-                    values@.len() == pixel_count,
+                    halftone_spec::index_values(&values).len() == pixel_count,
                     match more_significant {
                         Some(ref bitmap) => crate::spec::bitmap::storage_valid(bitmap),
                         None => true,
@@ -602,7 +597,7 @@ pub(crate) fn decode_gray_planes(
                             .ok_or(MalformedError::IntegerOverflow)?,
                     )
                     .ok_or(MalformedError::IntegerOverflow)?;
-                accumulate_gray_byte(&mut values, value_offset, byte, plane_index)?;
+                values.accumulate_byte(value_offset, byte, plane_index)?;
                 byte_index += 1;
             }
             let mut x = tail_start;
@@ -612,17 +607,14 @@ pub(crate) fn decode_gray_planes(
                     y < height,
                     plane_index < 32,
                     crate::spec::bitmap::storage_valid(&plane),
-                    values@.len() == pixel_count,
+                    halftone_spec::index_values(&values).len() == pixel_count,
                 decreases width - x,
             ))]
             while x < width {
                 let true_value = plane.pixel(x, y).ok_or(MalformedError::IntegerOverflow)?;
                 if true_value {
                     let offset = pixel_offset(width, x, y)?;
-                    let value = values
-                        .get_mut(offset)
-                        .ok_or(MalformedError::IntegerOverflow)?;
-                    *value |= 1_u32 << plane_index;
+                    values.insert_bit(offset, plane_index)?;
                 }
                 x += 1;
             }

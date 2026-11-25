@@ -128,8 +128,58 @@ fn reconstructs_gray_planes_most_significant_first() {
         &mut work,
     )
     .expect("planes should reconstruct");
-    assert_eq!(values, [7, 4, 5, 3]);
+    assert_eq!(values.test_values(), [7, 4, 5, 3]);
     assert!(planes.is_empty());
+}
+
+#[test]
+fn narrow_and_wide_gray_indices_match_literal_values_at_depth_and_tail_boundaries() {
+    let limits = Limits::default();
+    for depth in [0_u8, 1, 8, 9, 10, 31, 32] {
+        let maximum = u32::try_from((1_u64 << depth) - 1).unwrap();
+        let literals = [
+            0,
+            maximum,
+            u32::from(depth != 0),
+            maximum / 2 + u32::from(depth != 0),
+        ];
+        let expected = (0..13)
+            .map(|i| literals[i % literals.len()])
+            .collect::<Vec<_>>();
+        let mut planes = (0..depth)
+            .rev()
+            .map(|plane| {
+                let mut bitmap = Bitmap::blank(13, 1, &limits).unwrap();
+                for (x, value) in expected.iter().enumerate() {
+                    let gray = value ^ (value >> 1);
+                    bitmap
+                        .set_pixel(u32::try_from(x).unwrap(), 0, gray & (1_u32 << plane) != 0)
+                        .unwrap();
+                }
+                bitmap
+            })
+            .collect::<VecDeque<_>>();
+        let mut adapter = |_request: GenericRegionRequest<'_>| Ok(planes.pop_front().unwrap());
+        let mut decoder = GenericRegionState::scripted(&mut adapter);
+        let mut work = WorkBudget::new(&limits);
+        let actual = decode_gray_planes(
+            13,
+            1,
+            depth,
+            false,
+            0,
+            None,
+            &mut decoder,
+            &limits,
+            &mut work,
+        )
+        .unwrap();
+        assert_eq!(actual.test_values(), expected);
+        assert_eq!(matches!(actual, GrayIndexes::Narrow(_)), depth <= 8);
+        assert!(planes.is_empty());
+        assert_eq!(work.used(), u64::from(depth) * 13 * 2);
+        actual.validate(1_u64 << depth).unwrap();
+    }
 }
 
 #[test]
@@ -149,7 +199,7 @@ fn mmr_gray_plane_requires_eofb() {
     let values = decode_gray_planes(1, 1, 1, true, 0, None, &mut decoder, &limits, &mut work)
         .expect("MMR gray plane should decode");
     assert_eq!(calls, 1);
-    assert_eq!(values, [0]);
+    assert_eq!(values.test_values(), [0]);
 }
 
 #[test]
@@ -173,7 +223,7 @@ fn one_pattern_uses_no_gray_plane() {
         &mut work,
     )
     .expect("zero-plane image should decode");
-    assert_eq!(values, [0, 0, 0, 0]);
+    assert_eq!(values.test_values(), [0, 0, 0, 0]);
     assert_eq!(calls, 0);
 }
 

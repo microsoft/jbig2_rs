@@ -77,7 +77,7 @@ pub(super) fn enforce_halftone_memory(
     else {
         return Err(MalformedError::IntegerOverflow.into());
     };
-    let Some(values_bytes) = cells.checked_mul(4) else {
+    let Some(values_bytes) = cells.checked_mul(if bit_depth <= 8 { 1 } else { 4 }) else {
         return Err(MalformedError::IntegerOverflow.into());
     };
     let plane_bytes = bitmap_bytes(header.grid_width, header.grid_height)?;

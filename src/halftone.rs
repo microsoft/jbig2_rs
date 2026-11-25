@@ -35,9 +35,11 @@ mod halftone_shared;
 mod halftone_proofs;
 
 mod headers;
+mod indexes;
 mod planes;
 mod render;
 mod resources;
+use indexes::GrayIndexes;
 
 pub(crate) use headers::{parse_halftone_header, parse_pattern_dictionary_header};
 #[allow(unused_imports)]

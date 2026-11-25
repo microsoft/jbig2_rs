@@ -7,6 +7,13 @@ use vstd::prelude::*;
 
 verus! {
 
+pub(crate) open spec fn index_values(indexes: &super::GrayIndexes) -> Seq<u32> {
+    match *indexes {
+        super::GrayIndexes::Narrow(values) => values@.map(|_i: int, value: u8| value as u32),
+        super::GrayIndexes::Wide(values) => values@,
+    }
+}
+
 // Model navigation: spec::work_limit [proof-support]
 // Purpose: Powers, row-major ordering and private work-budget projections.
 // Mapping: no registered requirement/locator mapping.

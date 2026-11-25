@@ -304,7 +304,7 @@ pub(crate) fn decode_halftone_region(
         limits,
         work,
     )?;
-    validate_pattern_indices(&indexes, pattern_count)?;
+    indexes.validate(pattern_count)?;
 
     let mut output = Bitmap::filled(region_width, region_height, header.default_pixel, limits)?;
     #[cfg_attr(verus_keep_ghost, verus_spec(
@@ -312,7 +312,7 @@ pub(crate) fn decode_halftone_region(
             mg <= header.grid_height,
             crate::spec::bitmap::storage_valid(&output),
             halftone_spec::bitmaps_valid(patterns@),
-            halftone_spec::indexes_valid(indexes@, pattern_count),
+            halftone_spec::indexes_valid(halftone_spec::index_values(&indexes), pattern_count),
         decreases header.grid_height - mg,
     ))]
     for mg in 0..header.grid_height {
@@ -322,12 +322,12 @@ pub(crate) fn decode_halftone_region(
                 mg < header.grid_height,
                 crate::spec::bitmap::storage_valid(&output),
                 halftone_spec::bitmaps_valid(patterns@),
-                halftone_spec::indexes_valid(indexes@, pattern_count),
+                halftone_spec::indexes_valid(halftone_spec::index_values(&indexes), pattern_count),
             decreases header.grid_width - ng,
         ))]
         for ng in 0..header.grid_width {
             let offset = pixel_offset(header.grid_width, ng, mg)?;
-            let pattern_index = *indexes.get(offset).ok_or(MalformedError::IntegerOverflow)?;
+            let pattern_index = indexes.get(offset).ok_or(MalformedError::IntegerOverflow)?;
             let pattern = patterns
                 .get(usize::try_from(pattern_index).map_err(|_| MalformedError::IntegerOverflow)?)
                 .ok_or(HalftoneError::InvalidPatternIndex {

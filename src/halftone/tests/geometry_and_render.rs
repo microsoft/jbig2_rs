@@ -21,7 +21,7 @@ fn zero_plane_rendering_preserves_geometry_memory_work_and_configuration_guards(
     let patterns = [bitmap(&["1"])];
     let limits = Limits {
         max_width: 8,
-        max_decoder_managed_memory_bytes: 14,
+        max_decoder_managed_memory_bytes: 8,
         max_work_units: 6,
         ..Limits::default()
     };
@@ -43,11 +43,11 @@ fn zero_plane_rendering_preserves_geometry_memory_work_and_configuration_guards(
         ),
         (
             Limits {
-                max_decoder_managed_memory_bytes: 13,
+                max_decoder_managed_memory_bytes: 4,
                 ..limits
             },
             LimitKind::Memory,
-            14,
+            5,
         ),
         (
             Limits {
@@ -131,7 +131,7 @@ fn raw_halftone_memory_peaks_match_wide_stage_arithmetic() {
     ] {
         for (width, height) in [(0, 0), (9, 3), (u32::MAX, u32::MAX)] {
             for enable_skip in [false, true] {
-                for depth in [0, 1, 2, u8::MAX] {
+                for depth in [0, 1, 2, 8, 9, 10, 32, u8::MAX] {
                     let header = HalftoneHeader {
                         mmr: false,
                         template: 0,
@@ -150,7 +150,8 @@ fn raw_halftone_memory_peaks_match_wide_stage_arithmetic() {
                     let skip = if enable_skip { plane } else { 0 };
                     let active = u128::from(depth.min(2));
                     let output = u128::from(width).div_ceil(8) * u128::from(height);
-                    let fixed = 4 + 4 * cells + skip;
+                    let index_width = if depth <= 8 { 1 } else { 4 };
+                    let fixed = 4 + index_width * cells + skip;
                     let peak = (fixed + active * plane).max(fixed + output);
                     let representable = u64::try_from(peak).unwrap_or(u64::MAX);
                     for limit in [0, representable.saturating_sub(1), representable, u64::MAX] {
