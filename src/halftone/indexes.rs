@@ -76,6 +76,7 @@ impl GrayIndexes {
         ensures halftone_spec::index_values(final(self)).len()
             == halftone_spec::index_values(old(self)).len(),
     ))]
+    #[inline]
     pub(super) fn accumulate_byte(
         &mut self,
         offset: usize,
