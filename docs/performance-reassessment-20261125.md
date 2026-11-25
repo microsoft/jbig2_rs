@@ -204,3 +204,21 @@ The structural narrow source is `e97332c`, with actual fresh whole
 Its commit message accidentally says 1539; that stale number is not the machine
 receipt. The ordinary hint source was not timed. No timing result for the
 structural correction is claimed here.
+
+## Emitted code/data sizes
+
+The same frozen, uninstrumented native executables have these whole-harness
+ELF section sizes (bytes):
+
+| Source | `.text` | `.rodata` |
+|---|---:|---:|
+| Baseline `14aeac4` | 636,958 | 81,856 |
+| All-standard descriptors `d66db50` | 636,686 | 83,008 |
+| Initial narrow owner `78440b9` | 637,950 | 81,856 |
+| Ineffective ordinary hint `fc77eb5` | 637,950 | 81,856 |
+| Typed plane traversal `e97332c` | 643,982 | 82,112 |
+
+These are actual code/data sizes, not executed instruction counts, cycles,
+per-operation residency or a justification for ignoring adverse latency.
+The [complete size receipt](../validation/performance/native-code-sizes-20261125.json)
+binds all 11 frozen source/binary identities and other ELF sections.
