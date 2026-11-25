@@ -252,6 +252,7 @@ impl BitReader<'_> {
             },
     ))]
     #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    #[allow(clippy::too_many_lines)]
     pub(crate) fn read_bits(&mut self, count: u8) -> Result<u32, MalformedError> {
         if count > 32 {
             return Err(MalformedError::InvalidBitCount(count));
@@ -279,6 +280,39 @@ impl BitReader<'_> {
             .checked_add(count_usize)
             .ok_or(MalformedError::IntegerOverflow)?;
         let mut position = self.bit_position;
+        if count >= 8 {
+            let shift = position % 8;
+            #[cfg_attr(verus_keep_ghost, verus_spec(
+                invariant
+                    start == old(self).bit_position,
+                    start <= position <= end,
+                    end == start + count as usize,
+                    end <= self.bytes@.len() * 8,
+                    count <= 32,
+                    shift == position % 8,
+                    value as nat == crate::spec::readers::bits_value(
+                        self.bytes@, start as nat, (position - start) as nat,
+                    ),
+                decreases end - position,
+            ))]
+            while end - position >= 8 {
+                let first = self.bytes[position / 8];
+                let byte = if shift == 0 {
+                    first
+                } else {
+                    let last = self.bytes[position / 8 + 1];
+                    (first << shift) | (last >> (8 - shift))
+                };
+                #[cfg(verus_keep_ghost)]
+                proof! {
+                    crate::reader_properties::unaligned_byte_append(
+                        self.bytes@, start as nat, (position - start) as nat, value, byte,
+                    );
+                }
+                value = (value << 8) | u32::from(byte);
+                position += 8;
+            }
+        }
         #[cfg_attr(verus_keep_ghost, verus_spec(
             invariant
                 start == old(self).bit_position,
