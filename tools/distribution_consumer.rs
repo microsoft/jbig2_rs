@@ -68,7 +68,10 @@ pub(crate) fn main() -> Result<(), DecodeError> {
     let rgb_page = &rgb.pages()[0];
     assert_eq!(rgb_page.number(), 1);
     let bitmap = rgb_page.bitmap();
-    assert_eq!((bitmap.width(), bitmap.height(), bitmap.stride()), (8, 1, 24));
+    assert_eq!(
+        (bitmap.width(), bitmap.height(), bitmap.stride()),
+        (8, 1, 24)
+    );
     assert_eq!(bitmap.bytes(), &[255; 24]);
 
     let from_reader = decoder.decode_reader(&mut Cursor::new(&standalone))?;
