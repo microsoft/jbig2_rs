@@ -1,0 +1,68 @@
+{
+  "status": "exact-all321-both-policies-match",
+  "requests": 321,
+  "policy_outcomes": 642,
+  "mismatches": [],
+  "baseline": {
+    "revision": "14aeac451f6491aa3e413fcbc60aafb11fa75b7c",
+    "binary_sha256": "c5dac8eb71ed81ac13d65bdab95a51eb5e0aaac3d90efe6f67a829f16f378610",
+    "same_clean_build_path": "/workspace/jbig2-portable-performance-20261125/target/ordinary-cohort-check/private/matched",
+    "serializer_sha256": "e8acc81508c3fe244d9e1dd6cfb9970200b9442eeb2d059b3c0abb04fc23394a",
+    "lockfile_sha256": "09725afcdb8cf4613da10378e527869a2a660fe49c0d9cbe4cd0acacc57137dd",
+    "manifest_sha256": "977a43f546346c9763a38699322cdec32c81ae506f03c9534d674723a821d637",
+    "public_value_schema_audit": {
+      "src/error.rs": "35e87338ed815bdc4b77a519217d5b2a14cf547af689ab2d00d9e4d2222bf737",
+      "src/decode.rs": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
+      "src/document.rs": "e9ac0a112e6e6b195c7c7a22af5f3da1e685a5f19380109ea906770dd7aca6a5",
+      "src/document/embedded.rs": "6a2f1e1abe8c00d52cd3fb75c460658d36da9a9d90585caafe3ecf0a82359bef",
+      "src/bitmap.rs": "7151eb22ac6ebf41ed4cb75d3698e43eab4277dbf6667dc8c7fd699a48988e94",
+      "src/bitmap/access.rs": "ce458c26068422e717e32672c57eda03168d8118806d39ffaed278622e74fae3",
+      "src/bitmap/storage.rs": "8f6ce10586869f2b0ec85214156dcd6ead236b88f7465f107f54df90698524e4",
+      "src/file_header.rs": "9011f761698f3772c953980e2d2d56ed5ece4f792c8e318ca89a0e0f8d326e11"
+    },
+    "runtime_sha256": "286798351f58ced5810692fd2f633512af5ae184da32ebefa95926c2326166e9",
+    "driver_sha256": "3ab50b297e00e0a577fdd7dd887e4986b482c27206419d1f5c753ff80e16cab6",
+    "source_tree": "bc770069b3ffdb3bb5652b84069d9ea1ac34921f",
+    "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: x86_64-unknown-linux-gnu\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
+    "build": "cargo +1.98.1 build --release --locked --offline; no timing/instrumentation"
+  },
+  "candidate": {
+    "revision": "d66db50bca76c8650b29346592151d81427f8323",
+    "binary_sha256": "1a19130023937f173bc96b89595c7f472b60f3709d85d93812e575335440ced1",
+    "same_clean_build_path": "/workspace/jbig2-portable-performance-20261125/target/ordinary-cohort-check/private/matched",
+    "serializer_sha256": "e8acc81508c3fe244d9e1dd6cfb9970200b9442eeb2d059b3c0abb04fc23394a",
+    "lockfile_sha256": "09725afcdb8cf4613da10378e527869a2a660fe49c0d9cbe4cd0acacc57137dd",
+    "manifest_sha256": "977a43f546346c9763a38699322cdec32c81ae506f03c9534d674723a821d637",
+    "public_value_schema_audit": {
+      "src/error.rs": "35e87338ed815bdc4b77a519217d5b2a14cf547af689ab2d00d9e4d2222bf737",
+      "src/decode.rs": "bf6372596293d462737e3cdd3b9d8b15fbf6af6f8afc0ebd9bd4c6b5ccccab55",
+      "src/document.rs": "e9ac0a112e6e6b195c7c7a22af5f3da1e685a5f19380109ea906770dd7aca6a5",
+      "src/document/embedded.rs": "6a2f1e1abe8c00d52cd3fb75c460658d36da9a9d90585caafe3ecf0a82359bef",
+      "src/bitmap.rs": "7151eb22ac6ebf41ed4cb75d3698e43eab4277dbf6667dc8c7fd699a48988e94",
+      "src/bitmap/access.rs": "ce458c26068422e717e32672c57eda03168d8118806d39ffaed278622e74fae3",
+      "src/bitmap/storage.rs": "8f6ce10586869f2b0ec85214156dcd6ead236b88f7465f107f54df90698524e4",
+      "src/file_header.rs": "9011f761698f3772c953980e2d2d56ed5ece4f792c8e318ca89a0e0f8d326e11"
+    },
+    "runtime_sha256": "ce83105fddf9412fc9bdb78c4d988712cd0e0a41bd4afb27c6bb50c1d47274b6",
+    "driver_sha256": "3ab50b297e00e0a577fdd7dd887e4986b482c27206419d1f5c753ff80e16cab6",
+    "source_tree": "7209658078292c8eb57c5943817b51232f278c6d",
+    "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: x86_64-unknown-linux-gnu\nrelease: 1.98.1\nLLVM version: 22.1.8\n",
+    "build": "cargo +1.98.1 build --release --locked --offline; no timing/instrumentation"
+  },
+  "baseline_outcomes_sha256_sealed_before_candidate": "4a5bd8e610569e527140582b48d523f4ab6fb097b24efeb1c936bf4b1b37254c",
+  "baseline_counts": {
+    "strict/error": 46,
+    "best-effort/decoded": 291,
+    "strict/decoded": 275,
+    "best-effort/error": 30
+  },
+  "candidate_counts": {
+    "strict/error": 46,
+    "best-effort/decoded": 291,
+    "strict/decoded": 275,
+    "best-effort/error": 30
+  },
+  "scope": "Ordinary-API preservation of accepted14ae only; not new independent reference,183 decisions,2305 outcomes,full-PDF or LLVM24 qualification.",
+  "latency_executed": false,
+  "raw_pixels_persisted": false
+}

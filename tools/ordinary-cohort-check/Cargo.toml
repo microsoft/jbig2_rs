@@ -1,0 +1,10 @@
+[package]
+name = "ordinary-cohort-serialize"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+jbig2-decoder = { path = "../../target/ordinary-cohort-check/private/matched" }
+
+[workspace]
