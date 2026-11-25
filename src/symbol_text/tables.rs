@@ -277,7 +277,10 @@ impl StandardHuffmanTables {
         Ok(())
     }
 
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures symbol_text_spec::optional_table_contents(out)
+            == symbol_text_spec::selected_standard_table(self, table),
+    ))]
     pub(super) fn table(&self, table: StandardHuffmanTable) -> Option<&HuffmanTable> {
         macro_rules! get {
             ($field:expr) => {
@@ -530,7 +533,10 @@ pub(super) fn select_text_tables<'a>(
 }
 
 impl HuffmanFieldTables<'_> {
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures symbol_text_spec::optional_table_contents(out)
+            == symbol_text_spec::selected_field_table(self, field),
+    ))]
     pub(super) fn table_for(&self, field: IntegerField) -> Option<&HuffmanTable> {
         let resolved = match field {
             IntegerField::AggregationInstances => self.aggregation_instances.as_ref(),

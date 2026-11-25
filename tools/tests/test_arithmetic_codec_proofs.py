@@ -13,12 +13,28 @@ TOOLS = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(TOOLS))
 
 from source_group import source_text
-from check_arithmetic_codec_proofs import CASES
+from check_arithmetic_codec_proofs import CASES, FIELD_CASES
 from proof_sensitivity import replace_once, weakened_contract
 from rust_source import parse
 
 
 class ArithmeticCodecProofTests(unittest.TestCase):
+    def test_field_result_controls_keep_literal_semantics_frames_and_the_other_state_component(self):
+        for case in FIELD_CASES:
+            if case["function"] != "HuffmanCodec::decode_integer":
+                continue
+            _, weaker = case["controls"][0]
+            with self.subTest(case=case["id"]):
+                self.assertIn("bit_read_error", weaker)
+                self.assertIn("reader_valid(&old(self).reader)", weaker)
+                self.assertIn("reader_valid(&final(self).reader)", weaker)
+                for field in ("tables", "log_strip_size", "symbol_id_table", "refinement", "refinement_work"):
+                    self.assertIn(f"final(self).{field} == old(self).{field}", weaker)
+                retained = "1" if case["id"].endswith("substitutes_zero") else "0"
+                removed = "0" if retained == "1" else "1"
+                self.assertIn(f"huffman_table_integer_state(old(self), field).{retained}", weaker)
+                self.assertNotIn(f"huffman_table_integer_state(old(self), field).{removed}", weaker)
+
     def test_literal_controls_retain_each_original_validity_boundary(self):
         literals = [
             case for case in CASES
@@ -40,8 +56,8 @@ class ArithmeticCodecProofTests(unittest.TestCase):
                     self.assertIn("reader_valid(&final(self).reader)", weaker)
 
     def test_unique_sites_and_relation_specific_controls(self):
-        self.assertEqual(len(CASES), 40)
-        self.assertEqual(len({case["id"] for case in CASES}), 40)
+        self.assertEqual(len(CASES), 45)
+        self.assertEqual(len({case["id"] for case in CASES}), 45)
         for case in CASES:
             source = source_text(TOOLS.parent, case["file"])
             with self.subTest(case=case["id"]):

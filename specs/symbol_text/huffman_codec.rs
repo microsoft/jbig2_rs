@@ -2,8 +2,159 @@
 // Guide: ../README.md; audit ledger: ../../validation/traceability/requirements.json
 
 use super::*;
+use crate::symbol_text::{
+    EntropyInteger, HuffmanCodec, HuffmanFieldTables, IntegerField, MaterializedHuffmanTable,
+    StandardHuffmanTable, StandardHuffmanTables, SymbolTextError,
+};
+use crate::huffman::HuffmanTable;
 
 verus! {
+
+// Model navigation: spec::optional_table_contents [proof-support]
+// Purpose: Compare a borrowed lookup result with complete table contents, not pointer identity.
+// Audit: symbol-optional-table-contents
+// REQUIREMENT CONTEXT: T88-HUFFMAN-STANDARD-TABLES | ITU-T T.88 (08/2018) | B.5; Tables B.1-B.15
+// Fidelity: unresolved; no independent normative approval.
+pub(in crate::symbol_text) open spec fn optional_table_contents(
+    table: Option<&HuffmanTable>,
+) -> Option<HuffmanTable> {
+    match table {
+        Some(table) => Some(*table),
+        None => None,
+    }
+}
+
+// Model navigation: spec::selected_standard_table [project-result-model]
+// Purpose: Exact cache-slot contents, including absent slots, for each supplied standard tag.
+// Audit: symbol-selected-standard-table
+// REQUIREMENT CONTEXT: T88-HUFFMAN-STANDARD-TABLES | ITU-T T.88 (08/2018) | B.5; Tables B.1-B.15
+// Fidelity: unresolved; no independent normative approval.
+pub(in crate::symbol_text) open spec fn selected_standard_table(
+    tables: &StandardHuffmanTables,
+    table: StandardHuffmanTable,
+) -> Option<HuffmanTable> {
+    let selected = match table {
+        StandardHuffmanTable::A => tables.a,
+        StandardHuffmanTable::B => tables.b,
+        StandardHuffmanTable::C => tables.c,
+        StandardHuffmanTable::D => tables.d,
+        StandardHuffmanTable::E => tables.e,
+        StandardHuffmanTable::F => tables.f,
+        StandardHuffmanTable::G => tables.g,
+        StandardHuffmanTable::H => tables.h,
+        StandardHuffmanTable::I => tables.i,
+        StandardHuffmanTable::J => tables.j,
+        StandardHuffmanTable::K => tables.k,
+        StandardHuffmanTable::L => tables.l,
+        StandardHuffmanTable::M => tables.m,
+        StandardHuffmanTable::N => tables.n,
+        StandardHuffmanTable::O => tables.o,
+    };
+    match selected {
+        Some(table) => Some(*table),
+        None => None,
+    }
+}
+
+// Model navigation: spec::selected_field_table [project-result-model]
+// Purpose: Resolve the supplied field's own custom or standard binding; literal fields have none.
+// Audit: symbol-selected-field-table
+// REQUIREMENT CONTEXT: T88-HUFFMAN-PREFIX-MATCH | ITU-T T.88 (08/2018) | B.4 step 1
+// Fidelity: unresolved; no independent normative approval.
+pub(in crate::symbol_text) open spec fn selected_field_table(
+    tables: &HuffmanFieldTables,
+    field: IntegerField,
+) -> Option<HuffmanTable> {
+    let selected = match field {
+        IntegerField::AggregationInstances => tables.aggregation_instances,
+        IntegerField::HeightDelta => tables.height_delta,
+        IntegerField::WidthDelta => tables.width_delta,
+        IntegerField::ExportRun => tables.export_run,
+        IntegerField::StripDelta => tables.strip_delta,
+        IntegerField::FirstS => tables.first_s,
+        IntegerField::SubsequentS => tables.subsequent_s,
+        IntegerField::RefinementWidth => tables.refinement_width,
+        IntegerField::RefinementHeight => tables.refinement_height,
+        IntegerField::RefinementX => tables.refinement_x,
+        IntegerField::RefinementY => tables.refinement_y,
+        IntegerField::RefinementSize => tables.refinement_size,
+        IntegerField::DictionaryBitmapSize => tables.dictionary_bitmap_size,
+        IntegerField::WithinStripT | IntegerField::RefinementIndicator => None,
+    };
+    match selected {
+        Some(MaterializedHuffmanTable::Standard(table)) =>
+            selected_standard_table(&tables.standard_tables, table),
+        Some(MaterializedHuffmanTable::Custom(table)) => Some(*table),
+        None => None,
+    }
+}
+
+// Model navigation: spec::huffman_table_integer_state [project-result-model]
+// Purpose: Exact selected-table integer/OOB/error result and cursor, including missing bindings.
+// Audit: symbol-huffman-table-integer-state
+// REQUIREMENT CONTEXT: T88-HUFFMAN-PREFIX-MATCH | ITU-T T.88 (08/2018) | B.4 step 1
+// Fidelity: unresolved; no independent normative approval.
+pub(in crate::symbol_text) open spec fn huffman_table_integer_state(
+    codec: &HuffmanCodec,
+    field: IntegerField,
+) -> (Result<EntropyInteger, SymbolTextError>, usize)
+    recommends crate::huffman::huffman_spec::reader_valid(&codec.reader),
+{
+    match selected_field_table(&codec.tables, field) {
+        Some(table) => {
+            let decoded = crate::huffman::huffman_spec::decode_state(
+                &table, codec.reader.bytes@, codec.reader.bit_position,
+            );
+            let result = match decoded.0 {
+                Ok(crate::huffman::HuffmanValue::Integer(value)) =>
+                    Ok(EntropyInteger::Value(value as i64)),
+                Ok(crate::huffman::HuffmanValue::OutOfBand) => Ok(EntropyInteger::OutOfBand),
+                Err(error) => Err(huffman_error_result(&error)),
+            };
+            (result, decoded.1)
+        },
+        None => (
+            Err(SymbolTextError::InvalidTableAssociation("no Huffman table bound for field")),
+            codec.reader.bit_position,
+        ),
+    }
+}
+
+// Model navigation: spec::huffman_integer_transition [project-result-model]
+// Purpose: Preserve field-specific table results/cursors and complete metadata through enum dispatch.
+// Audit: symbol-huffman-integer-transition
+// REQUIREMENT CONTEXT: T88-HUFFMAN-PREFIX-MATCH | ITU-T T.88 (08/2018) | B.4 step 1
+// Fidelity: unresolved; no independent normative approval.
+pub(in crate::symbol_text) open spec fn huffman_integer_transition<'a>(
+    before: &crate::symbol_text::SymbolCodec<'a>,
+    after: &crate::symbol_text::SymbolCodec<'a>,
+    field: IntegerField,
+    result: Result<EntropyInteger, SymbolTextError>,
+) -> bool
+    recommends codec_valid(before),
+{
+    match *before {
+        crate::symbol_text::SymbolCodec::Huffman(prior) => match *after {
+            crate::symbol_text::SymbolCodec::Huffman(next) => {
+                &&& field != IntegerField::WithinStripT
+                    && field != IntegerField::RefinementIndicator ==> {
+                        let decoded = huffman_table_integer_state(&prior, field);
+                        &&& result == decoded.0
+                        &&& next.reader.bit_position == decoded.1
+                    }
+                &&& next.reader.bytes@ == prior.reader.bytes@
+                &&& crate::huffman::huffman_spec::reader_valid(&next.reader)
+                &&& next.tables == prior.tables
+                &&& next.log_strip_size == prior.log_strip_size
+                &&& next.symbol_id_table == prior.symbol_id_table
+                &&& next.refinement == prior.refinement
+                &&& next.refinement_work == prior.refinement_work
+            },
+            _ => false,
+        },
+        _ => true,
+    }
+}
 
 // Model navigation: spec::huffman_codec_initial [project-result-model]
 // Purpose: Fresh Huffman cursor, literal input/strip setup and requested refinement metadata.

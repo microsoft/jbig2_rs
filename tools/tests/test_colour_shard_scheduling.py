@@ -11,9 +11,11 @@ sys.path.insert(0, str(TOOLS))
 import run_semantic_proofs as runner
 
 
-CURRENT_CHECKS = runner.CHECKS
+PORTABLE_CHECKS = tuple(
+    row for row in runner.CHECKS if row[0] != "huffman-field-selection"
+)
 COLOUR_CERTAINTY_CHECKS = tuple(
-    row for row in CURRENT_CHECKS if row[0] not in {"owned-decode"}
+    row for row in PORTABLE_CHECKS if row[0] not in {"owned-decode"}
 )
 TIMINGS = json.loads(
     (Path(__file__).parent / "fixtures/colour-rgb-semantic-timings.json").read_text()
@@ -61,7 +63,7 @@ def configured_roles():
 
 
 class RobustPortableShardSchedulingTests(unittest.TestCase):
-    @patch.object(runner, "CHECKS", CURRENT_CHECKS)
+    @patch.object(runner, "CHECKS", PORTABLE_CHECKS)
     def test_complete_rejection_is_preserved_and_only_whole_groups_are_rebalanced(self):
         profile = PORTABLE_BALANCED_REJECTED
         self.assertEqual(profile["run_identity"], {
@@ -110,7 +112,7 @@ class RobustPortableShardSchedulingTests(unittest.TestCase):
         self.assertAlmostEqual(max(projected), 1019.920750152, places=9)
         self.assertEqual(len(projected), 14)
 
-    @patch.object(runner, "CHECKS", CURRENT_CHECKS)
+    @patch.object(runner, "CHECKS", PORTABLE_CHECKS)
     def test_complete_component_envelope_keeps_all_adverse_observations(self):
         seconds = dict(OWNED_COMPLETE_REJECTED["seconds"])
         for rows in OWNED_REJECTED["shards"].values():
@@ -135,7 +137,7 @@ class RobustPortableShardSchedulingTests(unittest.TestCase):
 
 class PortableShardSchedulingTests(unittest.TestCase):
     @patch.object(runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", runner.PORTABLE_SHARD_ALLOCATION)
-    @patch.object(runner, "CHECKS", CURRENT_CHECKS)
+    @patch.object(runner, "CHECKS", PORTABLE_CHECKS)
     def test_complete_portable_rejection_moves_only_one_complete_group(self):
         profile = PORTABLE_REJECTED
         self.assertEqual(profile["run_identity"], {
@@ -185,7 +187,7 @@ class PortableShardSchedulingTests(unittest.TestCase):
         self.assertAlmostEqual(max(projected), 1045.988282866, places=9)
 
     @patch.object(runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", runner.PORTABLE_SHARD_ALLOCATION)
-    @patch.object(runner, "CHECKS", CURRENT_CHECKS)
+    @patch.object(runner, "CHECKS", PORTABLE_CHECKS)
     def test_portable_plan_preserves_all_known_owned_components_as_planning_only(self):
         seconds = dict(OWNED_COMPLETE_REJECTED["seconds"])
         for rows in OWNED_REJECTED["shards"].values():
@@ -231,12 +233,12 @@ class ColourShardSchedulingTests(unittest.TestCase):
             row["id"]: row["seconds"]
             for rows in OWNED_REJECTED["shards"].values() for row in rows
         }
-        counts = {row[0]: row[2] for row in CURRENT_CHECKS}
+        counts = {row[0]: row[2] for row in PORTABLE_CHECKS}
         for rows in OWNED_REJECTED["shards"].values():
             for row in rows:
                 self.assertEqual(row["status"], "passed")
                 self.assertEqual(row["counterexamples"], counts[row["id"]])
-        with patch.object(runner, "CHECKS", CURRENT_CHECKS):
+        with patch.object(runner, "CHECKS", PORTABLE_CHECKS):
             with patch.object(runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", {
                 **runner.OWNED_DECODE_SHARD_ALLOCATION, "owned-decode": 0,
             }):
@@ -270,7 +272,7 @@ class ColourShardSchedulingTests(unittest.TestCase):
 
     def test_owned_relocation_keeps_complete_historical_maxima_as_planning_not_acceptance(self):
         # No setup-saving deductions or acceptance inferred from different-source runs.
-        with patch.object(runner, "CHECKS", CURRENT_CHECKS), patch.object(
+        with patch.object(runner, "CHECKS", PORTABLE_CHECKS), patch.object(
             runner, "PORTABLE_ROBUST_SHARD_ALLOCATION", runner.OWNED_DECODE_SHARD_ALLOCATION,
         ):
             current = runner.configured_shards()
@@ -327,7 +329,7 @@ class ColourShardSchedulingTests(unittest.TestCase):
         self.assertTrue(profile["all_groups_passed"])
         self.assertEqual(profile["counterexamples"], 505)
         seconds = profile["seconds"]
-        with patch.object(runner, "CHECKS", CURRENT_CHECKS):
+        with patch.object(runner, "CHECKS", PORTABLE_CHECKS):
             self.assertEqual(set(seconds), {row[0] for row in runner.configured_checks()})
             self.assertEqual(len(seconds), 64)
             self.assertEqual(sum(row[2] for row in runner.configured_checks()), 505)
@@ -378,7 +380,7 @@ class ColourShardSchedulingTests(unittest.TestCase):
             for row in rows:
                 self.assertIn(row["id"], seconds)
                 seconds[row["id"]] = max(seconds[row["id"]], row["seconds"])
-        with patch.object(runner, "CHECKS", CURRENT_CHECKS):
+        with patch.object(runner, "CHECKS", PORTABLE_CHECKS):
             self.assertEqual(set(seconds), {row[0] for row in runner.configured_checks()})
             bounds = runner.measured_shard_seconds(timing_rows(seconds))
             self.assertAlmostEqual(bounds[0], 1006.845207815, places=9)
@@ -389,7 +391,7 @@ class ColourShardSchedulingTests(unittest.TestCase):
 
     def test_current_inventory_requires_owned_costs_without_changing_the_original_guard(self):
         historical_rows = timing_rows(maximum_seconds())
-        with patch.object(runner, "CHECKS", CURRENT_CHECKS):
+        with patch.object(runner, "CHECKS", PORTABLE_CHECKS):
             checks = runner.configured_checks()
             self.assertEqual(len(checks), 64)
             self.assertEqual(sum(row[2] for row in checks), 505)

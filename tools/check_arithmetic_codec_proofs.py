@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check entropy-adapter results, exact literal bits and arithmetic bank isolation."""
+"""Check entropy-adapter results, supplied Huffman bindings and bank isolation."""
 
 import argparse
 import json
@@ -25,6 +25,7 @@ BASELINE_GROUPS = (
         "HuffmanCodec::read_raw_bits", "HuffmanCodec::decode_integer",
         "HuffmanCodec::decode_symbol_id",
     )),
+    ("symbol_text", ("StandardHuffmanTables::table", "HuffmanFieldTables::table_for")),
     ("symbol_text", ("SymbolCodec::decode_integer", "SymbolCodec::decode_symbol_id")),
 )
 ERROR_POST = "out == arithmetic_spec::decode_error(self),"
@@ -101,6 +102,15 @@ ENUM_ID_POST = "symbol_text_spec::arithmetic_symbol_id_transition(old(self), fin
 HUFFMAN_ID_POST = "symbol_text_spec::huffman_symbol_id_transition(old(self), final(self), request, out),"
 HUFFMAN_ID_RESULT = "out == symbol_text_spec::huffman_symbol_id_state(old(self), request).0,"
 HUFFMAN_ID_POSITION = "final(self).reader.bit_position == symbol_text_spec::huffman_symbol_id_state(old(self), request).1,"
+HUFFMAN_INTEGER_POST = "symbol_text_spec::huffman_integer_transition(old(self), final(self), field, out),"
+TABLE_INTEGER_RESULT = """(field != IntegerField::WithinStripT && field != IntegerField::RefinementIndicator)
+    ==> out == symbol_text_spec::huffman_table_integer_state(old(self), field).0,"""
+TABLE_INTEGER_POSITION = """(field != IntegerField::WithinStripT && field != IntegerField::RefinementIndicator)
+    ==> final(self).reader.bit_position
+        == symbol_text_spec::huffman_table_integer_state(old(self), field).1,"""
+TABLE_INTEGER_DECODE = """SymbolTextError::InvalidTableAssociation("no Huffman table bound for field"),
+)?;
+match table.decode(&mut self.reader)? {"""
 TABLE_DECODE_HEAD = """if let Some(table) = self.symbol_id_table.as_ref() {
     match table.decode(&mut self.reader)?"""
 HUFFMAN_FRAME = """final(self).reader.bytes@ == old(self).reader.bytes@,
@@ -188,6 +198,8 @@ def literal_case(identity, function, site, replacement, test):
         ))]"""
         post = ENUM_INTEGER_POST if function.endswith("decode_integer") else ENUM_ID_POST
         weaker = weaker.replace("ensures match out {", f"ensures {post}\nmatch out {{")
+        if function.endswith("decode_integer"):
+            weaker = weaker.replace(f"ensures {post}", f"ensures {post}\n{HUFFMAN_INTEGER_POST}")
         if function.endswith("decode_symbol_id"):
             preserved = """match *old(self) {
                 Self::Huffman(prior) => {
@@ -223,6 +235,9 @@ def literal_case(identity, function, site, replacement, test):
                         == symbol_text_spec::huffman_symbol_id_state(old(self), request).1
                 },"""
             weaker = weaker.replace("ensures crate", f"ensures {preserved}\ncrate")
+        elif function.endswith("decode_integer"):
+            preserved = HUFFMAN_FRAME + TABLE_INTEGER_RESULT + TABLE_INTEGER_POSITION
+            weaker = weaker.replace("ensures crate", f"ensures {preserved}\ncrate")
     return {
         "id": identity, "file": row["file"], "module": "symbol_text",
         "function": function, "site": site, "replacement": replacement,
@@ -240,6 +255,54 @@ def table_case(identity, module, function, site, replacement, control, *, native
     row["controls"] = ((attributes[0], replace_once(attributes[0], control, "")),)
     return row
 
+
+FIELD_CASES = (
+    case(
+        "huffman_standard_tag_selects_other_slot", "symbol_text", "StandardHuffmanTables::table",
+        "StandardHuffmanTable::A => get!(&self.a),",
+        "StandardHuffmanTable::A => get!(&self.b),",
+        """ensures symbol_text_spec::optional_table_contents(out)
+            == symbol_text_spec::selected_standard_table(self, table),""",
+        "ensures true,",
+        native_test="symbol_text::tests::huffman_symbol_ids::standard_cache_lookup_preserves_each_slot_presence_and_contents",
+    ),
+    case(
+        "huffman_integer_field_selects_other_binding", "symbol_text", "HuffmanFieldTables::table_for",
+        "IntegerField::FirstS => self.first_s.as_ref(),",
+        "IntegerField::FirstS => self.subsequent_s.as_ref(),",
+        """ensures symbol_text_spec::optional_table_contents(out)
+            == symbol_text_spec::selected_field_table(self, field),""",
+        "ensures true,",
+        native_test="symbol_text::tests::huffman_symbol_ids::table_integer_fields_preserve_selection_results_errors_cursor_and_frames",
+    ),
+    table_case(
+        "huffman_bound_integer_substitutes_zero", "symbol_text", "HuffmanCodec::decode_integer",
+        "HuffmanValue::Integer(value) => Ok(EntropyInteger::Value(i64::from(value))),",
+        "HuffmanValue::Integer(_value) => Ok(EntropyInteger::Value(0)),",
+        TABLE_INTEGER_RESULT,
+        native_test="symbol_text::tests::huffman_symbol_ids::table_integer_fields_preserve_selection_results_errors_cursor_and_frames",
+    ),
+    table_case(
+        "huffman_bound_integer_discards_consumption", "symbol_text", "HuffmanCodec::decode_integer",
+        TABLE_INTEGER_DECODE,
+        TABLE_INTEGER_DECODE.replace(
+            "match table.decode(&mut self.reader)? {",
+            "let mut discarded = self.reader;\nmatch table.decode(&mut discarded)? {",
+        ),
+        TABLE_INTEGER_POSITION,
+        native_test="symbol_text::tests::huffman_symbol_ids::table_integer_fields_preserve_selection_results_errors_cursor_and_frames",
+    ),
+    table_case(
+        "huffman_bound_integer_caller_selects_other_field", "symbol_text", "SymbolCodec::decode_integer",
+        "Self::Huffman(codec) => codec.decode_integer(field),",
+        """Self::Huffman(codec) => codec.decode_integer(match field {
+            IntegerField::FirstS => IntegerField::SubsequentS,
+            _ => field,
+        }),""",
+        HUFFMAN_INTEGER_POST,
+        native_test="symbol_text::tests::huffman_symbol_ids::table_integer_fields_preserve_selection_results_errors_cursor_and_frames",
+    ),
+)
 
 CASES = (
     table_case(
@@ -535,7 +598,10 @@ CASES = (
     literal_case(
         "huffman_integer_caller_selects_indicator", "SymbolCodec::decode_integer",
         "Self::Huffman(codec) => codec.decode_integer(field),",
-        "Self::Huffman(codec) => codec.decode_integer(IntegerField::RefinementIndicator),",
+        """Self::Huffman(codec) => codec.decode_integer(match field {
+            IntegerField::WithinStripT => IntegerField::RefinementIndicator,
+            _ => field,
+        }),""",
         "fixed_huffman_integer_fields_match_literal_bits_through_both_adapters",
     ),
     literal_case(
@@ -551,7 +617,9 @@ CASES = (
 CASE_GROUPS = {
     "arithmetic-codec": tuple(case for case in CASES if not case["id"].startswith("huffman_")),
     "huffman-codec": tuple(case for case in CASES if case["id"].startswith("huffman_")),
+    "huffman-field-selection": FIELD_CASES,
 }
+CASES += FIELD_CASES
 CASE_BASELINE_GROUPS = {
     identity: tuple(
         (module, functions) for module, functions in BASELINE_GROUPS
@@ -577,7 +645,7 @@ def main():
              "specs/symbol_text/arithmetic_codec.rs", "specs/symbol_text/huffman_codec.rs",
              "specs/generic_region.rs"),
             "jbig2-arithmetic-codec-",
-            "Exact fresh arithmetic banks/input/registers and enum integer/IAID composition; complete owned-table Huffman symbol-ID results, converted errors, reader effects and metadata frames through concrete/enum callers; prior generic diagnostics and literal contracts. Normative table selection, field/reset timing and full entropy/raster streams remain separate",
+            "Exact fresh arithmetic banks/input/registers and enum integer/IAID composition; complete owned-table Huffman symbol-ID results and supplied A-O/custom field binding with integer/OOB/error results, reader effects and metadata frames through concrete/enum callers; prior generic diagnostics and literal contracts. Normative upstream header/table selection, field/reset timing and full entropy/raster streams remain separate",
             baseline_groups=(
                 BASELINE_GROUPS if arguments.case_group is None
                 else CASE_BASELINE_GROUPS[arguments.case_group]

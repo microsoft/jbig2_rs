@@ -57,6 +57,16 @@ that the corresponding model covers the component's entire behavior.
 | Symbols and text | Reuse small bitmap shapes, position them and combine them into an image. | [Symbols and text](symbol_text.rs), [decoding and composition](decode.rs) |
 | Halftones | Place patterns on a grid to represent an image. | [Halftone models](halftone.rs) |
 
+For Huffman integer fields, the [adapter models](symbol_text/huffman_codec.rs)
+bind each supplied field to its own custom table or A-O cache slot, including
+missing bindings. The concrete and enum adapters preserve exact signed values,
+OOB, converted errors, consumed cursor and untouched metadata. Literal fields
+retain their separate exact bit contracts. These are project-result models:
+they do not independently approve Annex B entries, derive upstream wire
+selectors, or establish complete dictionary/text raster semantics. The
+[readiness assessment](../tools/readiness_assessment.py) remains a gap report,
+not an external-validation approval.
+
 ## A first audit: the BYTEIN refill step
 
 Try a concrete question: **when a refill recognizes a marker, does it consume
