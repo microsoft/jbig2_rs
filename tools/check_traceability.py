@@ -1091,7 +1091,9 @@ def check_v01_scope(root, ledger, report):
 
 def check_development_scope(root, ledger, report):
     scope = ledger.get("development_scope")
-    if not isinstance(scope, dict) or scope.get("profile") not in {"0.2-development", "0.3-development"}:
+    if not isinstance(scope, dict) or scope.get("profile") not in {
+        "0.2-development", "0.3-development", "0.4-development",
+    }:
         raise ValueError("development scope requires a recorded supported development profile")
     package = tomllib.loads((root / "Cargo.toml").read_text())["package"]
     if package["version"] != scope["crate_version"] or package.get("publish") is not False:
@@ -1115,10 +1117,12 @@ def check_current_scope(root, ledger, report):
     scope = ledger["publication_scope"]
     package = tomllib.loads((root / "Cargo.toml").read_text())["package"]
     if (
-        scope["profile"] != "0.2-partial-verus"
+        (scope["profile"], scope["crate_version"], scope["release_branch"]) not in {
+            ("0.2-partial-verus", "0.2.0", "release/0.2"),
+            ("0.3-partial-verus", "0.3.0", "release/0.3"),
+        }
         or scope["crate_version"] != package["version"]
         or package.get("publish") != ["crates-io"]
-        or scope["release_branch"] != "release/0.2"
     ):
         raise ValueError("publication version, branch and crates.io-only target must match the approved scope")
     try:

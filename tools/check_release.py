@@ -18,7 +18,7 @@ from urllib.request import Request, urlopen
 
 REPOSITORY = "microsoft/jbig2_rs"
 PACKAGE = "jbig2-decoder"
-RELEASE_BRANCHES = {"0.1": "release/0.1", "0.2": "release/0.2"}
+RELEASE_BRANCHES = {"0.1": "release/0.1", "0.2": "release/0.2", "0.3": "release/0.3"}
 PUBLISHED_MAIN_RELEASES = {
     "v0.1.0": {
         "commit": "ace4fae35afc4e17830d339cc61484e64d2d5870",
@@ -184,7 +184,7 @@ def validate_tag(root, tag, api=github, wait_for_checks=False):
         raise ValueError("tag must be a vMAJOR.MINOR.PATCH Cargo version")
     release_branch = RELEASE_BRANCHES.get(".".join(tag[1:].split(".")[:2]))
     if release_branch is None:
-        raise ValueError("only the 0.1.x and 0.2.x release lines are configured for publication")
+        raise ValueError("only the 0.1.x, 0.2.x and 0.3.x release lines are configured for publication")
     commit = git(root, "rev-parse", "--verify", f"refs/tags/{tag}^{{commit}}")
     if not SHA.fullmatch(commit):
         raise ValueError("tag did not resolve to a GitHub commit")

@@ -11,7 +11,7 @@ publish = false
 
 [dependencies]
 image = { version = "0.25.10", default-features = false }
-jbig2-decoder = { path = "../..", version = ">=0.2.1, <=0.3.0-dev" }
+jbig2-decoder = { path = "../..", version = ">=0.2.1, <=0.4.0-dev" }
 
 [workspace]
 

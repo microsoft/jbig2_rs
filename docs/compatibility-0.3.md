@@ -1,6 +1,6 @@
 # JBIG2 compatibility decisions for 0.3
 
-These changes target main/0.3 only. They are not backported to release/0.2.
+These changes are included in 0.3. They are not backported to release/0.2.
 Comparison baseline: `e7f2fffcd0c3f8e844c6740be3e4ac0a63fa3650`.
 
 ## Evidence and interpretation

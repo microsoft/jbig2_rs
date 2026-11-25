@@ -304,35 +304,38 @@ class ReleaseChecksTests(unittest.TestCase):
         ):
             release.validate_tag(Path("."), "v0.1.2", lambda endpoint: [pr])
         self.assertEqual(run.call_args.args[0][-1], "origin/release/0.1")
-        for tag in ("v0.3.0", "v1.0.0"):
+        for tag in ("v0.4.0", "v1.0.0"):
             with self.subTest(tag=tag), patch.object(release, "git") as git, self.assertRaises(ValueError):
                 release.validate_tag(Path("."), tag)
             git.assert_not_called()
 
-    def test_02_release_requires_its_own_merged_branch_and_matching_tree(self):
-        pr = {"number": 2, "merged": True, "merged_at": "2026-11-12",
-              "merge_commit_sha": COMMIT, "head": {"sha": HEAD},
-              "base": {"ref": "release/0.2", "repo": {"full_name": release.REPOSITORY}}}
-        def api(endpoint):
-            if "/git/commits/" in endpoint:
-                return {"sha": HEAD, "tree": {"sha": "d" * 40}}
-            return [pr] if "/pulls?" in endpoint else pr
-        def git(root, *args):
-            if args[0] == "show":
-                return MANIFEST.replace("0.1.1", "0.2.0")
-            return "d" * 40 if args[-1].endswith("^{tree}") else COMMIT
-        with (
-            patch.object(release, "git", side_effect=git),
-            patch.object(release.subprocess, "run", return_value=subprocess.CompletedProcess([], 0)) as run,
-            patch.object(release, "validate_checks", return_value={"checked": True}),
-        ):
-            report = release.validate_tag(Path("."), "v0.2.0", api)
-            self.assertEqual(report["release_branch"], "release/0.2")
-            self.assertEqual(run.call_args.args[0][-1], "origin/release/0.2")
-            for branch in ("main", "release/0.1"):
-                pr["base"]["ref"] = branch
-                with self.subTest(branch=branch), self.assertRaisesRegex(ValueError, "merged release/0.2 PR"):
-                    release.validate_tag(Path("."), "v0.2.0", api)
+    def test_release_lines_require_their_own_merged_branch_and_matching_tree(self):
+        for line in ("0.2", "0.3"):
+            branch = "release/" + line
+            pr = {"number": 2, "merged": True, "merged_at": "2026-11-25",
+                  "merge_commit_sha": COMMIT, "head": {"sha": HEAD},
+                  "base": {"ref": branch, "repo": {"full_name": release.REPOSITORY}}}
+            def api(endpoint):
+                if "/git/commits/" in endpoint:
+                    return {"sha": HEAD, "tree": {"sha": "d" * 40}}
+                return [pr] if "/pulls?" in endpoint else pr
+            def git(root, *args):
+                if args[0] == "show":
+                    return MANIFEST.replace("0.1.1", line + ".0")
+                return "d" * 40 if args[-1].endswith("^{tree}") else COMMIT
+            with (
+                self.subTest(line=line),
+                patch.object(release, "git", side_effect=git),
+                patch.object(release.subprocess, "run", return_value=subprocess.CompletedProcess([], 0)) as run,
+                patch.object(release, "validate_checks", return_value={"checked": True}),
+            ):
+                report = release.validate_tag(Path("."), "v" + line + ".0", api)
+                self.assertEqual(report["release_branch"], branch)
+                self.assertEqual(run.call_args.args[0][-1], "origin/" + branch)
+                for wrong in {"main", "release/0.1", "release/0.2", "release/0.3"} - {branch}:
+                    pr["base"]["ref"] = wrong
+                    with self.subTest(branch=wrong), self.assertRaisesRegex(ValueError, "merged " + branch + " PR"):
+                        release.validate_tag(Path("."), "v" + line + ".0", api)
 
     def test_only_the_two_immutable_published_main_releases_are_grandfathered(self):
         for tag, identity in self.published.items():

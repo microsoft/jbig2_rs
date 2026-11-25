@@ -5,9 +5,12 @@ A dependency-free Rust decoder for JBIG2 black-and-white images.
 **This is an early release under active development and is not yet suitable
 for untrusted production documents.** Verus coverage is partial; implemented
 features are not a claim of full JBIG2 or Annex F profile 1 conformance.
-Existing bi-level APIs do not decode colour. Main/0.3 development additionally
+Existing bi-level APIs do not decode colour. Version 0.3 additionally
 offers a limited, explicit [generic-region RGB8 profile](docs/generic-colour-0.3.md).
 Encoding remains outside the crate's scope.
+
+`main` is the unpublished `0.4.0-dev` development line. The 0.3.0 candidate is
+maintained separately on `release/0.3`; preparation does not imply publication.
 
 ## Decode a document
 
@@ -16,7 +19,7 @@ The runtime MSRV is **Rust 1.88.0**.
 
 ```toml
 [dependencies]
-jbig2-decoder = "0.2"
+jbig2-decoder = "0.3"
 ```
 
 ```rust,no_run
@@ -39,7 +42,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 Consumers need only ordinary Rust and Cargo, not Verus or the repository's
 proof files. Choose application-appropriate `Limits` before accepting input.
 
-The 0.3 development byte-slice API additionally offers explicit, bounded
+The 0.3 byte-slice API additionally offers explicit, bounded
 [standalone compatibility](docs/standalone-compatibility.md), with recovery
 diagnostics and no partial-output fallback. Existing APIs remain strict.
 
@@ -62,6 +65,8 @@ Root Cargo commands keep their existing scope; test the companion with
 
 Measured context/dictionary optimizations, their correctness checks and excluded
 experiments are documented in [performance improvements](docs/performance-improvements.md).
+The [0.3.0 release notes](docs/release-0.3.0.md) distinguish the candidate's
+supported additions, intentional refusals and partial verification scope.
 
 ## Decoder scope
 

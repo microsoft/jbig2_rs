@@ -1,6 +1,7 @@
 # Development roadmap
 
-`main` develops the unpublished 0.3 line. Protected `release/0.2` maintains 0.2.x;
+`main` develops unpublished 0.4. The 0.3.0 candidate is maintained on
+`release/0.3`. Protected `release/0.2` maintains 0.2.x;
 `release/0.1` continues to maintain 0.1.x. Relevant decoder correctness fixes are assessed individually
 for cherry-picking with their tests. Proof-only progress stays on `main` unless
 it is needed to validate a selected functional maintenance fix.

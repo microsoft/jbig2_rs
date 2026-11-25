@@ -1,5 +1,10 @@
 {
   "schema_version": 1,
+  "release_030_metadata_binding": {
+    "runtime_source_revision": "e763d7ab394fd5d1c16719352d038ab19c910af7",
+    "crate_version": "0.3.0",
+    "scope": "Owner-requested 0.3.0 release preparation and 0.4 development routing only. The existing schema and workflow checks additionally recognize exact 0.3 publication and 0.4 development scopes, with paired allow/reject tests and unchanged proof, resource, source-identity and publication gates. Runtime, models, proofs, decoder regressions and conformance runners are byte-identical to accepted main. Historical executions, strict-rejection dispositions, owner confirmations and normative limitations are not renewed. No tag or publication is performed."
+  },
   "huffman_field_contract_rebinding": {
     "baseline_source_revision": "775e57f2f99d1dbad386e51e094f2994f817ceaf",
     "production_declaration_bodies_compared": 770,
@@ -288,14 +293,14 @@
     "validation/differential/run_oracles.py": "0ddc98d3d9a443b9a3b0ee1241916d7096fab90198a27e08a55caa5f9b373c8c",
     "tools/tests/test_validation_gates.py": "75ccd838aaa7d6bc9aa8487d43c101f074b62bb8af4c842935d37c651b564711",
     "tools/tests/test_proof_audits.py": "2cf96d8d44510559f9af56e6714137c7a84b471479d9a28d4b69c4da8782ce9d",
-    "tools/evidence.schema.json": "0685bcdce957360fdbdb2638499abc9570c6daaceea65676530852730b51b41f",
+    "tools/evidence.schema.json": "00ce4f5873114e4566708516a46c66ddd061acc33a9ba79632018beef6ba43da",
     "tools/evidence.py": "1286345e1679a72362fc4cc60f3ef1d6294b19df4edcea7c6d0f74970d117571",
     "tools/verify_provenance.py": "0d9be7e393273d59adf5d38adeb828cb8299d63365412dee3e61f565d7ee9aed",
     "validation/source-provenance.json": "95e21a8330540c2f1be6ae7446764a97047ee6cd9412516775da935f3c3b8571",
     "validation/conformance/expected-differences.json": "43ff49fa1b5a4d6d90cf7e4cd4694029c70dc130ce6f989f867821fa7866b118",
     "validation/conformance/fetch_itu.py": "ef7d846d05440ff052581de0d04caaa76f6e9cc9582ee1b9fb8baff34b89e86b",
     "tools/tests/test_conformance_acquisition.py": "57535afa7a966244302b51554c3dd6dc1fc00dac11fec7f33f49906fe35258f7",
-    "tools/check_workflows.py": "87b60e17f0db77c901ead2cb8da715a7454b2053883aa5c34b96bb7260857ae4",
+    "tools/check_workflows.py": "7f08562416cb20d73d0eeb92dcb287fd339cf670f4235d35d4c29bfaad25a196",
     "tools/tests/test_workflows.py": "ee863583184cf72d922e72352013007b28bdfe7ae63d44bcf4ccd02043f345e9",
     ".github/workflows/conformance.yml": "3da7b1553cd8c0661dab3538866712afe5c9b017b2d4e93db36e01a6dec98dc3"
   },

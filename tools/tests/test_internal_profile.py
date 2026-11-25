@@ -78,9 +78,14 @@ class InternalProfileTests(unittest.TestCase):
         for version, publish, accepted in (
             ("0.3.0-dev", "false", True),
             ("0.2.0", '["crates-io"]', True),
+            ("0.3.0", '["crates-io"]', True),
+            ("0.4.0-dev", "false", True),
             ("0.3.0-dev", '["crates-io"]', False),
             ("0.2.0", "false", False),
-            ("0.4.0-dev", "false", False),
+            ("0.3.0", "false", False),
+            ("0.4.0-dev", '["crates-io"]', False),
+            ("0.4.0", '["crates-io"]', False),
+            ("0.5.0-dev", "false", False),
         ):
             manifest.write_text(
                 f'[package]\nname = "jbig2-decoder"\nversion = "{version}"\npublish = {publish}\n',

@@ -1,10 +1,10 @@
-# Generic-region RGB8 profile (main/0.3 development)
+# Generic-region RGB8 profile (0.3)
 
 `Decoder::decode_rgb(bytes)` and
 `Decoder::decode_rgb_with_policy(bytes, DecodePolicy::Compatibility)` return a
 separate `DecodedColourDocument`. Existing bi-level decoder, reader, context,
 sink and image-companion APIs are unchanged and still reject colour.
-There is no publication or release/0.2 backport.
+This profile is new in 0.3 and is not backported to release/0.2.
 
 ## Output and supported syntax
 
