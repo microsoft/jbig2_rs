@@ -93,10 +93,10 @@ pub(crate) closed spec fn step_valid(s: Step, end: usize) -> bool {
     && s.after.bytes == s.before.bytes && s.after.bytes@ == s.before.bytes@
     && s.after == after_decision(&s.before, s.context)
     && checked_decision(&s.before, s.context) == Ok(s.bit)
-    && s.context_after.state_index == arithmetic_spec::entry_index(
-        s.before.interval, s.before.code, s.context.state_index)
-    && s.context_after.mps == arithmetic_spec::entry_mps(
-        s.before.interval, s.before.code, s.context.state_index, s.context.mps)
+    && arithmetic_spec::context_index(s.context_after) == arithmetic_spec::entry_index(
+        s.before.interval, s.before.code, arithmetic_spec::context_index(s.context))
+    && arithmetic_spec::context_mps(s.context_after) == arithmetic_spec::entry_mps(
+        s.before.interval, s.before.code, arithmetic_spec::context_index(s.context), arithmetic_spec::context_mps(s.context))
     && decision_spread(&s.before, s.context, s.width_before, end) == Some(s.width_after)
 }
 
@@ -107,10 +107,10 @@ pub(in crate::arithmetic) proof fn certify_step(s: Step, end: usize)
         s.after.bytes == s.before.bytes, s.after.bytes@ == s.before.bytes@,
         s.after == after_decision(&s.before, s.context),
         checked_decision(&s.before, s.context) == Ok(s.bit),
-        s.context_after.state_index == arithmetic_spec::entry_index(
-            s.before.interval, s.before.code, s.context.state_index),
-        s.context_after.mps == arithmetic_spec::entry_mps(
-            s.before.interval, s.before.code, s.context.state_index, s.context.mps),
+        arithmetic_spec::context_index(s.context_after) == arithmetic_spec::entry_index(
+            s.before.interval, s.before.code, arithmetic_spec::context_index(s.context)),
+        arithmetic_spec::context_mps(s.context_after) == arithmetic_spec::entry_mps(
+            s.before.interval, s.before.code, arithmetic_spec::context_index(s.context), arithmetic_spec::context_mps(s.context)),
         decision_spread(&s.before, s.context, s.width_before, end) == Some(s.width_after),
     ensures step_valid(s, end),
 {
@@ -280,7 +280,7 @@ pub(in crate::arithmetic) open spec fn decision_frame<'a>(d: &ArithmeticDecoder<
     -> ArithmeticDecoder<'a>
     recommends arithmetic_spec::decoder_valid(d), arithmetic_spec::context_valid(context),
 {
-    let qe = QE_STATES@[context.state_index as int].qe as u32;
+    let qe = QE_STATES@[arithmetic_spec::context_index(context) as int].qe as u32;
     let lower = d.code < (qe << 16);
     ArithmeticDecoder {
         bytes: d.bytes, byte_position: d.byte_position, current_byte: d.current_byte,
@@ -298,7 +298,7 @@ pub(in crate::arithmetic) open spec fn decision_spread(d: &ArithmeticDecoder, co
     w: u32, end: usize) -> Option<u32>
     recommends arithmetic_spec::decoder_valid(d), arithmetic_spec::context_valid(context),
 {
-    let qe = QE_STATES@[context.state_index as int].qe as u32;
+    let qe = QE_STATES@[arithmetic_spec::context_index(context) as int].qe as u32;
     if w > d.code || (d.code >= (qe << 16) && (d.code as int - w as int) < (qe << 16)) {
         None
     } else {
@@ -466,22 +466,22 @@ pub(in crate::arithmetic) proof fn decision_independent(
         decision_spread(d, context, w, end).is_some(),
         d.code as int - w as int <= code <= d.code,
     ensures
-        arithmetic_spec::entry_decision(d.interval, code, context.state_index, context.mps)
-            == arithmetic_spec::entry_decision(d.interval, d.code, context.state_index, context.mps),
-        arithmetic_spec::entry_index(d.interval, code, context.state_index)
-            == arithmetic_spec::entry_index(d.interval, d.code, context.state_index),
-        arithmetic_spec::entry_mps(d.interval, code, context.state_index, context.mps)
-            == arithmetic_spec::entry_mps(d.interval, d.code, context.state_index, context.mps),
+        arithmetic_spec::entry_decision(d.interval, code, arithmetic_spec::context_index(context), arithmetic_spec::context_mps(context))
+            == arithmetic_spec::entry_decision(d.interval, d.code, arithmetic_spec::context_index(context), arithmetic_spec::context_mps(context)),
+        arithmetic_spec::entry_index(d.interval, code, arithmetic_spec::context_index(context))
+            == arithmetic_spec::entry_index(d.interval, d.code, arithmetic_spec::context_index(context)),
+        arithmetic_spec::entry_mps(d.interval, code, arithmetic_spec::context_index(context), arithmetic_spec::context_mps(context))
+            == arithmetic_spec::entry_mps(d.interval, d.code, arithmetic_spec::context_index(context), arithmetic_spec::context_mps(context)),
 {
-    let qe = QE_STATES@[context.state_index as int].qe as u32;
-    super::super::arithmetic_shared::qe_transition_valid(context.state_index as int);
+    let qe = QE_STATES@[arithmetic_spec::context_index(context) as int].qe as u32;
+    super::super::arithmetic_shared::qe_transition_valid(arithmetic_spec::context_index(context) as int);
     assert((code >> 16 < qe) == (code < (qe << 16))) by(bit_vector)
         requires qe <= 0xffff;
     let upper = d.code;
     assert((upper >> 16 < qe) == (upper < (qe << 16))) by(bit_vector)
         requires qe <= 0xffff;
-    arithmetic_spec::entry_model_equations(d.interval, code, context.state_index, context.mps);
-    arithmetic_spec::entry_model_equations(d.interval, d.code, context.state_index, context.mps);
+    arithmetic_spec::entry_model_equations(d.interval, code, arithmetic_spec::context_index(context), arithmetic_spec::context_mps(context));
+    arithmetic_spec::entry_model_equations(d.interval, d.code, arithmetic_spec::context_index(context), arithmetic_spec::context_mps(context));
 }
 
 // Model navigation: spec::admissible_initial [project-policy]
@@ -531,7 +531,7 @@ pub(in crate::arithmetic) proof fn initial_enclosure(d: &ArithmeticDecoder,
 // Fidelity: unresolved; no independent normative approval.
 pub(in crate::arithmetic) open spec fn alternative_step(s: Step, code: nat,
     sources: Seq<nat>, end: usize) -> nat {
-    let qe = QE_STATES@[s.context.state_index as int].qe as u32;
+    let qe = QE_STATES@[arithmetic_spec::context_index(s.context) as int].qe as u32;
     let residual = if code < (qe << 16) { code } else { (code - (qe << 16)) as nat };
     alternative_normalization(&decision_frame(&s.before, s.context), residual, sources, end)
 }
@@ -546,22 +546,22 @@ pub(in crate::arithmetic) proof fn step_enclosure(s: Step, end: usize,
         s.after.code as int - s.width_after as int
             <= alternative_step(s, code as nat, sources, end) <= s.after.code,
         arithmetic_spec::entry_decision(s.before.interval, code,
-            s.context.state_index, s.context.mps) == s.bit,
+            arithmetic_spec::context_index(s.context), arithmetic_spec::context_mps(s.context)) == s.bit,
         arithmetic_spec::entry_index(s.before.interval, code,
-            s.context.state_index) == s.context_after.state_index,
+            arithmetic_spec::context_index(s.context)) == arithmetic_spec::context_index(s.context_after),
         arithmetic_spec::entry_mps(s.before.interval, code,
-            s.context.state_index, s.context.mps) == s.context_after.mps,
+            arithmetic_spec::context_index(s.context), arithmetic_spec::context_mps(s.context)) == arithmetic_spec::context_mps(s.context_after),
 {
     reveal(step_valid);
     let frame = decision_frame(&s.before, s.context);
-    let qe = QE_STATES@[s.context.state_index as int].qe as u32;
-    super::super::arithmetic_shared::qe_transition_valid(s.context.state_index as int);
+    let qe = QE_STATES@[arithmetic_spec::context_index(s.context) as int].qe as u32;
+    super::super::arithmetic_shared::qe_transition_valid(arithmetic_spec::context_index(s.context) as int);
     let upper = s.before.code;
     assert((upper >> 16 < qe) == (upper < (qe << 16))) by(bit_vector)
         requires qe <= 0xffff;
     arithmetic_spec::decision_model_equations(&s.before, s.context);
     arithmetic_spec::entry_model_equations(s.before.interval, s.before.code,
-        s.context.state_index, s.context.mps);
+        arithmetic_spec::context_index(s.context), arithmetic_spec::context_mps(s.context));
     decision_independent(&s.before, s.context, s.width_before, end, code);
     assert(arithmetic_spec::decoder_state_valid(&frame));
     let residual = if (code as nat) < (qe << 16) { code as nat }
@@ -624,7 +624,11 @@ pub(crate) proof fn prefix_enclosure(o: &PrefixCertainty, d: &ArithmeticDecoder,
         assert(step_valid(s, o.entropy_end));
         assert(s.before.code == trace_upper(o, (k-1) as nat));
         assert(s.width_before == trace_width(o, (k-1) as nat));
+        assert(admissible_sources(&decision_frame(&o.history@[i].before,
+            o.history@[i].context), sources[i], o.entropy_end));
+        assert(codes[i] <= u32::MAX);
         step_enclosure(s, o.entropy_end, codes[i] as u32, sources[i]);
+        assert(codes[i + 1] == alternative_step(s, codes[i], sources[i], o.entropy_end));
     }
 }
 
@@ -637,22 +641,22 @@ pub(crate) proof fn active_trace_sound(o: &PrefixCertainty, d: &ArithmeticDecode
     ensures
         forall|i: int| 0 <= i < o.history@.len() ==> (
             arithmetic_spec::entry_decision(o.history@[i].before.interval, codes[i] as u32,
-                o.history@[i].context.state_index, o.history@[i].context.mps) == o.history@[i].bit
+                arithmetic_spec::context_index(o.history@[i].context), arithmetic_spec::context_mps(o.history@[i].context)) == o.history@[i].bit
             && arithmetic_spec::entry_index(o.history@[i].before.interval, codes[i] as u32,
-                o.history@[i].context.state_index) == o.history@[i].context_after.state_index
+                arithmetic_spec::context_index(o.history@[i].context)) == arithmetic_spec::context_index(o.history@[i].context_after)
             && arithmetic_spec::entry_mps(o.history@[i].before.interval, codes[i] as u32,
-                o.history@[i].context.state_index, o.history@[i].context.mps) == o.history@[i].context_after.mps
+                arithmetic_spec::context_index(o.history@[i].context), arithmetic_spec::context_mps(o.history@[i].context)) == arithmetic_spec::context_mps(o.history@[i].context_after)
         ),
 {
     reveal(trace_valid);
     reveal(admissible_prefix);
     assert forall|i: int| 0 <= i < o.history@.len() implies (
         arithmetic_spec::entry_decision(o.history@[i].before.interval, codes[i] as u32,
-            o.history@[i].context.state_index, o.history@[i].context.mps) == o.history@[i].bit
+            arithmetic_spec::context_index(o.history@[i].context), arithmetic_spec::context_mps(o.history@[i].context)) == o.history@[i].bit
         && arithmetic_spec::entry_index(o.history@[i].before.interval, codes[i] as u32,
-            o.history@[i].context.state_index) == o.history@[i].context_after.state_index
+            arithmetic_spec::context_index(o.history@[i].context)) == arithmetic_spec::context_index(o.history@[i].context_after)
         && arithmetic_spec::entry_mps(o.history@[i].before.interval, codes[i] as u32,
-            o.history@[i].context.state_index, o.history@[i].context.mps) == o.history@[i].context_after.mps
+            arithmetic_spec::context_index(o.history@[i].context), arithmetic_spec::context_mps(o.history@[i].context)) == arithmetic_spec::context_mps(o.history@[i].context_after)
     ) by {
         prefix_enclosure(o, d, codes, sources, first, refill, i as nat);
         let s = o.history@[i];
@@ -728,11 +732,11 @@ pub(crate) proof fn arbitrary_fill_sound(o: &PrefixCertainty, d: &ArithmeticDeco
         let codes = alternative_codes(o, sources, first, refill, o.history@.len());
         forall|i: int| 0 <= i < o.history@.len() ==>
             arithmetic_spec::entry_decision(o.history@[i].before.interval, codes[i] as u32,
-                o.history@[i].context.state_index, o.history@[i].context.mps) == o.history@[i].bit
+                arithmetic_spec::context_index(o.history@[i].context), arithmetic_spec::context_mps(o.history@[i].context)) == o.history@[i].bit
             && arithmetic_spec::entry_index(o.history@[i].before.interval, codes[i] as u32,
-                o.history@[i].context.state_index) == o.history@[i].context_after.state_index
+                arithmetic_spec::context_index(o.history@[i].context)) == arithmetic_spec::context_index(o.history@[i].context_after)
             && arithmetic_spec::entry_mps(o.history@[i].before.interval, codes[i] as u32,
-                o.history@[i].context.state_index, o.history@[i].context.mps) == o.history@[i].context_after.mps
+                arithmetic_spec::context_index(o.history@[i].context), arithmetic_spec::context_mps(o.history@[i].context)) == arithmetic_spec::context_mps(o.history@[i].context_after)
     }),
 {
     reveal(source_choices_admissible);
@@ -767,11 +771,11 @@ pub(crate) proof fn saved_arbitrary_fill_sound(o: &PrefixCertainty, count: u32,
         let codes = alternative_codes(&snapshot, sources, first, refill, snapshot.history@.len());
         forall|i: int| 0 <= i < snapshot.history@.len() ==>
             arithmetic_spec::entry_decision(snapshot.history@[i].before.interval, codes[i] as u32,
-                snapshot.history@[i].context.state_index, snapshot.history@[i].context.mps) == snapshot.history@[i].bit
+                arithmetic_spec::context_index(snapshot.history@[i].context), arithmetic_spec::context_mps(snapshot.history@[i].context)) == snapshot.history@[i].bit
             && arithmetic_spec::entry_index(snapshot.history@[i].before.interval, codes[i] as u32,
-                snapshot.history@[i].context.state_index) == snapshot.history@[i].context_after.state_index
+                arithmetic_spec::context_index(snapshot.history@[i].context)) == arithmetic_spec::context_index(snapshot.history@[i].context_after)
             && arithmetic_spec::entry_mps(snapshot.history@[i].before.interval, codes[i] as u32,
-                snapshot.history@[i].context.state_index, snapshot.history@[i].context.mps) == snapshot.history@[i].context_after.mps
+                arithmetic_spec::context_index(snapshot.history@[i].context), arithmetic_spec::context_mps(snapshot.history@[i].context)) == arithmetic_spec::context_mps(snapshot.history@[i].context_after)
     }),
 {
     reveal(saved_valid);

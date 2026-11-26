@@ -11,8 +11,12 @@ pub(super) proof fn context_components_are_bounded(
     context: super::ArithmeticContext,
 )
     requires super::arithmetic_spec::context_valid(context),
-    ensures context.state_index < 47, context.mps <= 1,
-{}
+    ensures
+        super::arithmetic_spec::context_index(context) < 47,
+        super::arithmetic_spec::context_mps(context) <= 1,
+{
+    super::arithmetic_shared::packed_context_bounds(context);
+}
 
 pub(super) proof fn binary_history_index_is_valid(previous: u16)
     ensures (previous & 0x01ff) < 512,

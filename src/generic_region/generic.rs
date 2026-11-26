@@ -436,6 +436,7 @@ pub(crate) fn decode_generic_on_validated(
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires
         crate::arithmetic::arithmetic_spec::decoder_valid(old(decoder)),
+        generic_region_spec::generic_contexts_valid(old(contexts)),
         crate::spec::bitmap::storage_valid(old(bitmap)),
         bitmap.width == call.width,
         bitmap.height == call.height,
@@ -471,7 +472,6 @@ pub(super) fn decode_generic_on_into(
         contexts.extended_template,
         &contexts.contexts,
     )?;
-    validate_probability_states(&contexts.contexts)?;
     validate_generic_adaptive_values(
         contexts.template,
         contexts.extended_template,
@@ -484,6 +484,10 @@ pub(super) fn decode_generic_on_into(
     enforce_work(next_work, limits)?;
     let bitmap_bytes = bitmap_storage_bytes(call.width, call.height)?;
     enforce_managed_memory(contexts.storage_bytes, bitmap_bytes, limits)?;
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        reveal(generic_region_spec::generic_contexts_valid);
+    }
     *cumulative_work = next_work;
 
     let descriptor = GenericContextDescriptor::new(
@@ -503,6 +507,10 @@ pub(super) fn decode_generic_on_into(
             decoder,
             &mut contexts.contexts,
         )? {
+            #[cfg(verus_keep_ghost)]
+            proof! {
+                reveal(generic_region_spec::generic_contexts_valid);
+            }
             return Ok(());
         }
         #[cfg(verus_keep_ghost)]
@@ -520,7 +528,12 @@ pub(super) fn decode_generic_on_into(
         None,
         decoder,
         &mut contexts.contexts,
-    )
+    )?;
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        reveal(generic_region_spec::generic_contexts_valid);
+    }
+    Ok(())
 }
 
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>

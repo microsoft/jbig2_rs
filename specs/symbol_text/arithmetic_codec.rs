@@ -16,7 +16,7 @@ pub(in crate::symbol_text) open spec fn integer_contexts_initial(
     forall|slot: int, index: int|
         0 <= slot < crate::symbol_text::INTEGER_FIELD_COUNT && 0 <= index < 512 ==>
             #[trigger] contexts.slots[slot][index]
-                == crate::arithmetic::ArithmeticContext { state_index: 0, mps: 0 }
+                == crate::arithmetic::ArithmeticContext { packed: 0 }
 }
 
 // Model navigation: spec::arithmetic_integer_transition [project-result-model]

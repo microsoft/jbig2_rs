@@ -81,52 +81,47 @@ fn probability_state_validation_matches_all_raw_fields_and_first_error() {
     assert!(validate_probability_states(&[]).is_ok());
     let mut cases = 0;
     let mut accepted = 0;
-    for state_index in 0..=u8::MAX {
-        for mps in 0..=u8::MAX {
-            let candidate = ArithmeticContext { state_index, mps };
-            let contexts = [
-                ArithmeticContext::new(),
-                candidate,
-                ArithmeticContext {
-                    state_index: u8::MAX,
-                    mps: u8::MAX,
-                },
-            ];
-            let valid = state_index < 47 && mps <= 1;
-            for with_tail in [false, true] {
-                let slice = if with_tail {
-                    &contexts[..]
-                } else {
-                    &contexts[..2]
-                };
-                match validate_probability_states(slice) {
-                    Ok(()) => {
-                        assert!(valid && !with_tail);
-                        accepted += 1;
-                    }
-                    Err(error) => {
-                        let expected = if valid {
-                            assert!(with_tail);
-                            (u8::MAX, u8::MAX)
-                        } else {
-                            (state_index, mps)
-                        };
-                        assert_eq!(
-                            control_malformed(error),
-                            MalformedError::InvalidArithmeticContextState {
-                                state_index: expected.0,
-                                mps: expected.1,
-                            }
-                        );
-                    }
+    for packed in 0..=u8::MAX {
+        let candidate = ArithmeticContext::from_packed(packed);
+        let contexts = [
+            ArithmeticContext::new(),
+            candidate,
+            ArithmeticContext::from_packed(u8::MAX),
+        ];
+        let valid = packed < 94;
+        for with_tail in [false, true] {
+            let slice = if with_tail {
+                &contexts[..]
+            } else {
+                &contexts[..2]
+            };
+            match validate_probability_states(slice) {
+                Ok(()) => {
+                    assert!(valid && !with_tail);
+                    accepted += 1;
                 }
-                assert_eq!(contexts[1].state_index(), state_index);
-                assert_eq!(contexts[1].mps(), mps);
-                cases += 1;
+                Err(error) => {
+                    let expected = if valid {
+                        assert!(with_tail);
+                        (u8::MAX >> 1, u8::MAX & 1)
+                    } else {
+                        (packed >> 1, packed & 1)
+                    };
+                    assert_eq!(
+                        control_malformed(error),
+                        MalformedError::InvalidArithmeticContextState {
+                            state_index: expected.0,
+                            mps: expected.1,
+                        }
+                    );
+                }
             }
+            assert_eq!(contexts[1].state_index(), packed >> 1);
+            assert_eq!(contexts[1].mps(), packed & 1);
+            cases += 1;
         }
     }
-    assert_eq!(cases, 131_072);
+    assert_eq!(cases, 512);
     assert_eq!(accepted, 94);
 }
 

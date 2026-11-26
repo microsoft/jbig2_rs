@@ -27,12 +27,12 @@ fn checkpoints_compare_entire_banks_not_only_refresh_keys() {
         for field in mode.fields() {
             for index in [0, 1, 255, 511] {
                 let slot = field.slot();
-                current.integers.slots[slot][index].state_index = 1;
+                current.integers.slots[slot][index].set_state_and_mps(1, 0);
                 assert!(!checkpoint.matches(&current, mode, (3, 7, false)));
-                current.integers.slots[slot][index].state_index = 0;
-                current.integers.slots[slot][index].mps = 1;
+                current.integers.slots[slot][index].set_state_and_mps(0, 0);
+                current.integers.slots[slot][index].set_state_and_mps(0, 1);
                 assert!(!checkpoint.matches(&current, mode, (3, 7, false)));
-                current.integers.slots[slot][index].mps = 0;
+                current.integers.slots[slot][index].set_state_and_mps(0, 0);
             }
         }
         assert!(!checkpoint.matches(&current, mode, (4, 7, false)));

@@ -5,7 +5,7 @@ use super::*;
 #[cfg(not(verus_keep_ghost))]
 use super::{
     unexpected_eof, ArithmeticContext, ArithmeticDecoder, ArithmeticError, MalformedError, QeState,
-    MIN_INTERVAL, QE_STATES, RASTER_SIGNAL_EOF, RASTER_SIGNAL_OVERFLOW,
+    MIN_INTERVAL, QE_PACKED_VALS, QE_STATES, RASTER_SIGNAL_EOF, RASTER_SIGNAL_OVERFLOW,
 };
 
 impl<'a> ArithmeticDecoder<'a> {
@@ -86,18 +86,24 @@ impl<'a> ArithmeticDecoder<'a> {
             arithmetic_spec::context_valid(*final(context)),
             final(self).bytes@ == old(self).bytes@,
             final(self).bytes == old(self).bytes,
-            final(context).state_index == arithmetic_spec::entry_index(
-                old(self).interval, old(self).code, old(context).state_index,
+            arithmetic_spec::context_index(*final(context)) == arithmetic_spec::entry_index(
+                old(self).interval, old(self).code, arithmetic_spec::context_index(*old(context)),
             ),
-            final(context).mps == arithmetic_spec::entry_mps(
-                old(self).interval, old(self).code, old(context).state_index, old(context).mps,
+            arithmetic_spec::context_mps(*final(context)) == arithmetic_spec::entry_mps(
+                old(self).interval,
+                old(self).code,
+                arithmetic_spec::context_index(*old(context)),
+                arithmetic_spec::context_mps(*old(context)),
             ),
             match out {
                 Ok(decision) =>
                     decision <= 1
                     && arithmetic_spec::decoder_valid(final(self))
                     && decision == arithmetic_spec::entry_decision(
-                        old(self).interval, old(self).code, old(context).state_index, old(context).mps,
+                        old(self).interval,
+                        old(self).code,
+                        arithmetic_spec::context_index(*old(context)),
+                        arithmetic_spec::context_mps(*old(context)),
                     )
                     && decision == arithmetic_spec::decision_state(old(self), *old(context)).0,
                 Err(_) => true,
@@ -142,13 +148,19 @@ impl<'a> ArithmeticDecoder<'a> {
             final(self).bytes == old(self).bytes,
             out <= 1 ==> arithmetic_spec::decoder_valid(final(self)),
             out <= 1 ==> out == arithmetic_spec::entry_decision(
-                old(self).interval, old(self).code, old(context).state_index, old(context).mps,
+                old(self).interval,
+                old(self).code,
+                arithmetic_spec::context_index(*old(context)),
+                arithmetic_spec::context_mps(*old(context)),
             ),
-            final(context).state_index == arithmetic_spec::entry_index(
-                old(self).interval, old(self).code, old(context).state_index,
+            arithmetic_spec::context_index(*final(context)) == arithmetic_spec::entry_index(
+                old(self).interval, old(self).code, arithmetic_spec::context_index(*old(context)),
             ),
-            final(context).mps == arithmetic_spec::entry_mps(
-                old(self).interval, old(self).code, old(context).state_index, old(context).mps,
+            arithmetic_spec::context_mps(*final(context)) == arithmetic_spec::entry_mps(
+                old(self).interval,
+                old(self).code,
+                arithmetic_spec::context_index(*old(context)),
+                arithmetic_spec::context_mps(*old(context)),
             ),
             out == arithmetic_spec::decision_state(old(self), *old(context)).0,
             final(self).interval == arithmetic_spec::decision_state(old(self), *old(context)).1,
@@ -165,31 +177,35 @@ impl<'a> ArithmeticDecoder<'a> {
         production_reveal_decoder_valid!();
         #[cfg(verus_keep_ghost)]
         proof! {
+            crate::arithmetic::arithmetic_shared::packed_context_bounds(*context);
+            crate::arithmetic::arithmetic_shared::packed_tables_match(context.packed);
             arithmetic_spec::decision_model_equations(self, *context);
             arithmetic_spec::entry_model_equations(
-                self.interval, self.code, context.state_index, context.mps,
+                self.interval,
+                self.code,
+                arithmetic_spec::context_index(*context),
+                arithmetic_spec::context_mps(*context),
             );
         }
-        let state_index = usize::from(context.state_index);
-        let qe = u32::from(QE_STATES[state_index].qe);
+        let packed = context.packed();
         #[cfg(verus_keep_ghost)]
         proof! {
-            crate::arithmetic::arithmetic_shared::qe_transition_valid(
-                context.state_index as int,
-            );
-            assert(QE_STATES@[context.state_index as int].qe > 0);
-            assert(QE_STATES@[context.state_index as int].qe <= 0x5601);
+            let p_usize = packed as usize;
+            assert((p_usize & 0x7fusize) == p_usize) by (bit_vector)
+                requires p_usize < 94usize;
         }
-        let old_mps = context.mps;
+        let qe = u32::from(QE_PACKED_VALS[usize::from(packed) & 0x7f]);
+        let old_mps = context.mps();
 
         #[cfg(verus_keep_ghost)]
         production_decode_interval_subtraction!(self, qe);
         self.interval -= qe;
 
         if self.code >> 16 < qe {
-            let state = QE_STATES[state_index];
+            let state_index = context.state_index();
+            let state = QE_STATES[usize::from(state_index)];
             #[cfg(verus_keep_ghost)]
-            production_qe_transition_valid!(context.state_index, state);
+            production_qe_transition_valid!(state_index, state);
             return self.decode_lower_signal(context, state, qe, old_mps);
         }
 
@@ -207,9 +223,10 @@ impl<'a> ArithmeticDecoder<'a> {
             return old_mps;
         }
 
-        let state = QE_STATES[state_index];
+        let state_index = context.state_index();
+        let state = QE_STATES[usize::from(state_index)];
         #[cfg(verus_keep_ghost)]
-        production_qe_transition_valid!(context.state_index, state);
+        production_qe_transition_valid!(state_index, state);
         self.decode_upper_signal(context, state, qe, old_mps)
     }
 
@@ -228,11 +245,16 @@ impl<'a> ArithmeticDecoder<'a> {
             final(self).bytes@ == old(self).bytes@,
             final(self).bytes == old(self).bytes,
             out <= 1 ==> arithmetic_spec::decoder_valid(final(self)),
-            final(context).state_index == arithmetic_spec::exchange_index(
+            arithmetic_spec::context_index(*final(context)) == arithmetic_spec::exchange_index(
                 true, old(self).interval, qe, state.next_mps, state.next_lps,
             ),
-            final(context).mps == arithmetic_spec::exchange_mps(
-                true, old(self).interval, qe, state.switch_mps, old(context).mps, old_mps,
+            arithmetic_spec::context_mps(*final(context)) == arithmetic_spec::exchange_mps(
+                true,
+                old(self).interval,
+                qe,
+                state.switch_mps,
+                arithmetic_spec::context_mps(*old(context)),
+                old_mps,
             ),
             out <= 1 ==> out == arithmetic_spec::exchange_decision(
                 true, old(self).interval, qe, old_mps,
@@ -250,6 +272,7 @@ impl<'a> ArithmeticDecoder<'a> {
             final(self).marker == arithmetic_spec::exchange_normalization(old(self), true, qe).6,
     ))]
     #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    #[cold]
     #[inline(never)]
     pub(super) fn decode_lower_signal(
         &mut self,
@@ -260,21 +283,25 @@ impl<'a> ArithmeticDecoder<'a> {
     ) -> u8 {
         #[cfg(verus_keep_ghost)]
         proof! {
+            crate::arithmetic::arithmetic_shared::packed_context_bounds(*context);
             reveal(arithmetic_spec::exchange_decision);
             reveal(arithmetic_spec::exchange_is_mps);
             reveal(arithmetic_spec::exchange_index);
             reveal(arithmetic_spec::exchange_mps);
         }
+        let prior_mps = context.mps();
         let decision;
         if self.interval < qe {
             decision = old_mps;
-            context.state_index = state.next_mps;
+            context.set_state_and_mps(state.next_mps, prior_mps);
         } else {
             decision = 1 - old_mps;
-            context.state_index = state.next_lps;
-            if state.switch_mps {
-                context.mps = decision;
-            }
+            let next_mps = if state.switch_mps {
+                decision
+            } else {
+                prior_mps
+            };
+            context.set_state_and_mps(state.next_lps, next_mps);
         }
         self.interval = qe;
         let signal = self.renormalize_signal();
@@ -300,11 +327,16 @@ impl<'a> ArithmeticDecoder<'a> {
             final(self).bytes@ == old(self).bytes@,
             final(self).bytes == old(self).bytes,
             out <= 1 ==> arithmetic_spec::decoder_valid(final(self)),
-            final(context).state_index == arithmetic_spec::exchange_index(
+            arithmetic_spec::context_index(*final(context)) == arithmetic_spec::exchange_index(
                 false, old(self).interval, qe, state.next_mps, state.next_lps,
             ),
-            final(context).mps == arithmetic_spec::exchange_mps(
-                false, old(self).interval, qe, state.switch_mps, old(context).mps, old_mps,
+            arithmetic_spec::context_mps(*final(context)) == arithmetic_spec::exchange_mps(
+                false,
+                old(self).interval,
+                qe,
+                state.switch_mps,
+                arithmetic_spec::context_mps(*old(context)),
+                old_mps,
             ),
             out <= 1 ==> out == arithmetic_spec::exchange_decision(
                 false, old(self).interval, qe, old_mps,
@@ -322,6 +354,7 @@ impl<'a> ArithmeticDecoder<'a> {
             final(self).marker == arithmetic_spec::exchange_normalization(old(self), false, qe).6,
     ))]
     #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    #[cold]
     #[inline(never)]
     pub(super) fn decode_upper_signal(
         &mut self,
@@ -332,21 +365,25 @@ impl<'a> ArithmeticDecoder<'a> {
     ) -> u8 {
         #[cfg(verus_keep_ghost)]
         proof! {
+            crate::arithmetic::arithmetic_shared::packed_context_bounds(*context);
             reveal(arithmetic_spec::exchange_decision);
             reveal(arithmetic_spec::exchange_is_mps);
             reveal(arithmetic_spec::exchange_index);
             reveal(arithmetic_spec::exchange_mps);
         }
+        let prior_mps = context.mps();
         let decision;
         if self.interval < qe {
             decision = 1 - old_mps;
-            context.state_index = state.next_lps;
-            if state.switch_mps {
-                context.mps = decision;
-            }
+            let next_mps = if state.switch_mps {
+                decision
+            } else {
+                prior_mps
+            };
+            context.set_state_and_mps(state.next_lps, next_mps);
         } else {
             decision = old_mps;
-            context.state_index = state.next_mps;
+            context.set_state_and_mps(state.next_mps, prior_mps);
         }
         let signal = self.renormalize_signal();
         if signal == 0 {
@@ -375,9 +412,9 @@ impl<'a> ArithmeticDecoder<'a> {
         &mut self,
         context: &mut ArithmeticContext,
     ) -> Result<u8, ArithmeticError> {
-        let state = QE_STATES[usize::from(context.state_index)];
+        let state = QE_STATES[usize::from(context.state_index())];
         let qe = u32::from(state.qe);
-        let old_mps = context.mps;
+        let old_mps = context.mps();
         self.interval = self
             .interval
             .checked_sub(qe)
@@ -387,13 +424,11 @@ impl<'a> ArithmeticDecoder<'a> {
             let decision;
             if self.interval < qe {
                 decision = old_mps;
-                context.state_index = state.next_mps;
+                context.set_state_and_mps(state.next_mps, old_mps);
             } else {
                 decision = 1 - old_mps;
-                context.state_index = state.next_lps;
-                if state.switch_mps {
-                    context.mps = decision;
-                }
+                let next_mps = if state.switch_mps { decision } else { old_mps };
+                context.set_state_and_mps(state.next_lps, next_mps);
             }
             self.interval = qe;
             self.renormalize_checked_oracle()?;
@@ -411,13 +446,11 @@ impl<'a> ArithmeticDecoder<'a> {
         let decision;
         if self.interval < qe {
             decision = 1 - old_mps;
-            context.state_index = state.next_lps;
-            if state.switch_mps {
-                context.mps = decision;
-            }
+            let next_mps = if state.switch_mps { decision } else { old_mps };
+            context.set_state_and_mps(state.next_lps, next_mps);
         } else {
             decision = old_mps;
-            context.state_index = state.next_mps;
+            context.set_state_and_mps(state.next_mps, old_mps);
         }
         self.renormalize_checked_oracle()?;
         Ok(decision)

@@ -278,7 +278,7 @@ fn fresh_huffman_codec_preserves_input_strip_tables_and_requested_refinement() {
                         assert!(actual
                             .contexts
                             .iter()
-                            .all(|context| { context.state_index == 0 && context.mps == 0 }));
+                            .all(|context| { context.state_index() == 0 && context.mps() == 0 }));
                     }
                     _ => panic!("constructor changed requested refinement presence"),
                 }
@@ -291,7 +291,7 @@ fn fresh_huffman_codec_preserves_input_strip_tables_and_requested_refinement() {
 
 #[test]
 fn actual_huffman_segment_setup_preserves_requested_refinement_allocation() {
-    let requested = 8192 * u64::try_from(core::mem::size_of::<ArithmeticContext>()).unwrap();
+    let requested = 8192 * 2_u64;
     let limits = Limits {
         max_decoder_managed_memory_bytes: requested - 1,
         ..Limits::default()

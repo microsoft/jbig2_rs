@@ -128,14 +128,17 @@ impl<'a> PrefixCertainty<'a> {
         production_reveal_decoder_valid!();
         #[cfg(verus_keep_ghost)]
         proof! {
+            super::arithmetic_shared::packed_context_bounds(context);
             reveal(certainty_spec::decision_spread);
             reveal(certainty_spec::decision_frame);
-            super::arithmetic_shared::qe_transition_valid(context.state_index as int);
+            super::arithmetic_shared::qe_transition_valid(
+                arithmetic_spec::context_index(context) as int,
+            );
         }
         if !self.active {
             return;
         }
-        let qe = u32::from(QE_STATES[usize::from(context.state_index)].qe);
+        let qe = u32::from(QE_STATES[usize::from(context.state_index())].qe);
         let threshold = qe << 16;
         if self.spread > before.code
             || (before.code >= threshold && before.code - self.spread < threshold)
@@ -222,10 +225,17 @@ impl<'a> PrefixCertainty<'a> {
                 final(decoder).bytes == old(decoder).bytes,
                 final(decoder).bytes@ == old(decoder).bytes@,
                 *final(decoder) == certainty_spec::after_decision(old(decoder), *old(context)),
-                final(context).state_index == arithmetic_spec::entry_index(
-                    old(decoder).interval, old(decoder).code, old(context).state_index),
-                final(context).mps == arithmetic_spec::entry_mps(
-                    old(decoder).interval, old(decoder).code, old(context).state_index, old(context).mps),
+                arithmetic_spec::context_index(*final(context)) == arithmetic_spec::entry_index(
+                    old(decoder).interval,
+                    old(decoder).code,
+                    arithmetic_spec::context_index(*old(context)),
+                ),
+                arithmetic_spec::context_mps(*final(context)) == arithmetic_spec::entry_mps(
+                    old(decoder).interval,
+                    old(decoder).code,
+                    arithmetic_spec::context_index(*old(context)),
+                    arithmetic_spec::context_mps(*old(context)),
+                ),
                 out == certainty_spec::checked_decision(old(decoder), *old(context)),
                 out.is_ok() ==> arithmetic_spec::decoder_valid(final(decoder)),
                 certainty_spec::observer_valid(final(self), final(decoder)),

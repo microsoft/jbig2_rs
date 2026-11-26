@@ -34,7 +34,7 @@ impl IntegerContexts {
             && codec.iaid@.len() == (1usize << iaid_code_length)
             && (forall|index: int| 0 <= index < codec.iaid@.len() ==>
                 #[trigger] codec.iaid@[index]
-                    == ArithmeticContext { state_index: 0, mps: 0 })
+                    == ArithmeticContext { packed: 0 })
             && codec.refinement_work == 0
             && codec.prefix.is_none()
             && codec.refinement.is_some() == refinement_template.is_some()

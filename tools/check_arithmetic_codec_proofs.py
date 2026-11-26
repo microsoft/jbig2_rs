@@ -138,7 +138,7 @@ BANK_INITIAL_POST = "&& symbol_text_spec::integer_contexts_initial(&codec.intege
 IAID_LENGTH_POST = "&& codec.iaid@.len() == (1usize << iaid_code_length)"
 IAID_INITIAL_POST = """&& (forall|index: int| 0 <= index < codec.iaid@.len() ==>
     #[trigger] codec.iaid@[index]
-        == ArithmeticContext { state_index: 0, mps: 0 })"""
+        == ArithmeticContext { packed: 0 })"""
 INPUT_INITIAL_POST = """&& codec.decoder.bytes@ == bytes@
 && codec.decoder.interval == crate::arithmetic::MIN_INTERVAL
 && codec.decoder.byte_position
@@ -366,7 +366,7 @@ CASES = (
     case(
         "fresh_codec_poisoned_integer_banks", "symbol_text", "new_arithmetic_codec",
         "integers: IntegerContexts { slots: [[ArithmeticContext::new(); 512]; INTEGER_FIELD_COUNT], },",
-        "integers: IntegerContexts { slots: [[ArithmeticContext { state_index: 0, mps: 1 }; 512]; INTEGER_FIELD_COUNT], },",
+        "integers: IntegerContexts { slots: [[ArithmeticContext { packed: 1 }; 512]; INTEGER_FIELD_COUNT], },",
         BANK_INITIAL_POST, native_test=CONSTRUCTOR_TEST,
     ),
     case(
@@ -378,7 +378,7 @@ CASES = (
     case(
         "fresh_codec_poisoned_iaid_bank", "symbol_text", "new_arithmetic_codec",
         "iaid.resize(count, ArithmeticContext::new());",
-        "iaid.resize(count, ArithmeticContext { state_index: 1, mps: 1 });",
+        "iaid.resize(count, ArithmeticContext { packed: 3 });",
         IAID_INITIAL_POST, native_test=CONSTRUCTOR_TEST,
     ),
     case(

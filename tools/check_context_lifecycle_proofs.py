@@ -19,10 +19,11 @@ BASELINE_GROUPS = (("generic_region", tuple(
 )),)
 TEST_PREFIX = "generic_region::tests::sessions_and_snapshots::"
 RESET_ZERO = """forall |index: int| 0 <= index < final(self).contexts@.len() ==>
-    final(self).contexts@[index].state_index == 0
-        && final(self).contexts@[index].mps == 0"""
+    crate::arithmetic::arithmetic_spec::context_index(final(self).contexts@[index]) == 0
+        && crate::arithmetic::arithmetic_spec::context_mps(final(self).contexts@[index]) == 0"""
 NEW_ZERO = """&& (forall |index: int| 0 <= index < contexts.contexts@.len() ==>
-    contexts.contexts@[index].state_index == 0 && contexts.contexts@[index].mps == 0)"""
+    crate::arithmetic::arithmetic_spec::context_index(contexts.contexts@[index]) == 0
+        && crate::arithmetic::arithmetic_spec::context_mps(contexts.contexts@[index]) == 0)"""
 PREFIX = """forall |completed: int| 0 <= completed < index ==>
     self.contexts@[completed] == snapshot.contexts@[completed],"""
 COPY_ASSERT = "assert(self.contexts@ == snapshot.contexts@);"
@@ -91,7 +92,7 @@ for owner, view, offset, test in (
             "let contexts = allocate_contexts(count, 0, limits)?;",
             """let mut contexts = allocate_contexts(count, 0, limits)?;
             if !contexts.is_empty() {
-                contexts[0] = ArithmeticContext { state_index: 0, mps: 1 };
+                contexts[0] = ArithmeticContext { packed: 1 };
             }""",
             NEW_ZERO, test="fresh_context_banks_have_exact_metadata_and_zero_probability_states",
         ),
