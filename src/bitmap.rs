@@ -46,6 +46,7 @@ pub struct Bitmap {
 mod access;
 mod chunks;
 mod compose;
+mod fast_compose;
 mod operators;
 mod region;
 mod storage;
