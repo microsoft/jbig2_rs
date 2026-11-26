@@ -136,7 +136,7 @@ impl ArithmeticDecoder<'_> {
             ),
     ))]
     #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
-    #[allow(clippy::inline_always, dead_code)]
+    #[allow(clippy::inline_always)]
     #[inline(always)]
     pub(crate) fn decode_bit_cached(
         &mut self,
@@ -237,7 +237,7 @@ impl ArithmeticDecoder<'_> {
             },
     ))]
     #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
-    #[allow(clippy::inline_always, dead_code)]
+    #[allow(clippy::inline_always)]
     #[inline(always)]
     pub(crate) fn try_skip_byte_mps(
         context: ArithmeticContext,

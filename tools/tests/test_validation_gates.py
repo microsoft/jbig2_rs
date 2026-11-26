@@ -168,7 +168,7 @@ class PackageAuditTests(unittest.TestCase):
     def test_reject_empty_and_missing(self):
         self.assertTrue(package.audit([]))
         self.assertTrue(package.audit(["Cargo.toml"]))
-        self.assertTrue(package.audit(sorted(package.REQUIRED - {"src/generic_row_ring.rs"})))
+        self.assertTrue(package.audit(sorted(package.REQUIRED - {"src/generic_region/fast.rs"})))
 
     def test_reject_unexpected_and_malformed(self):
         for path in (
