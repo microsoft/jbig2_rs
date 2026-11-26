@@ -52,14 +52,17 @@ fn raw_canonical_assignment_matches_numeric_histogram_and_stable_order() {
                 continue;
             }
             let table = result.expect("numeric prefix allocation fits");
-            assert_eq!(table.lines, lines);
-            assert_eq!(table.length_count, counts);
+            assert_eq!(table.lines.as_slice(), lines.as_slice());
+            for (len, &expected_count) in counts.iter().enumerate() {
+                assert_eq!(table.length_count_at(len), expected_count);
+            }
             assert_eq!(
-                table.ordered_lines,
+                table.ordered_lines.as_slice(),
                 expected_order
                     .iter()
                     .map(|&i| u32::try_from(i).unwrap())
                     .collect::<Vec<_>>()
+                    .as_slice()
             );
             let maximum = usize::from(table.max_prefix_len);
             assert_eq!(
@@ -67,13 +70,13 @@ fn raw_canonical_assignment_matches_numeric_histogram_and_stable_order() {
                 usize::from(lines[*expected_order.last().unwrap()].prefix_len)
             );
             for length in 1..=maximum {
-                assert_eq!(table.first_code[length].limbs, [first[length], 0, 0, 0]);
+                assert_eq!(table.first_code_at(length).limbs, [first[length], 0, 0, 0]);
                 let start = expected_order
                     .iter()
                     .take_while(|&&index| usize::from(lines[index].prefix_len) < length)
                     .count();
                 if counts[length] != 0 {
-                    assert_eq!(usize::try_from(table.first_line[length]).unwrap(), start);
+                    assert_eq!(usize::try_from(table.first_line_at(length)).unwrap(), start);
                 }
                 for (rank, &index) in expected_order
                     .iter()
@@ -130,7 +133,7 @@ fn symbol_length_source_matches_materialized_line_oracle() {
     let specialized =
         HuffmanTable::new_symbol_ids(&lengths, &Limits::default()).expect("specialized table");
     let materialized = HuffmanTable::new(&lines, &Limits::default()).expect("materialized table");
-    assert_eq!(specialized.lines.capacity(), materialized.lines.capacity());
+    assert_eq!(specialized.lines.len(), materialized.lines.len());
     for prefix in 0_u16..=u16::MAX {
         let bytes = prefix.to_be_bytes();
         let mut specialized_reader = bit_reader(&bytes);
