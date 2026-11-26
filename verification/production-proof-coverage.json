@@ -6193,7 +6193,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "c2594924f5d6c7f53254d34128f6b2af83a1defd71ba3a0fb3d7933921458b6b",
+      "file_sha256": "3ce0c4dc1d92f485b5073020a4308e24916d5975a48293c3fa481da5c9f9018a",
       "verus_functions": [
         "jbig2_rs_production::huffman::standard_static::static_standard_table"
       ]

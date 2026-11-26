@@ -4,7 +4,7 @@
   "status": "layout_rebound_ratchet_release_goals_met",
   "policy": "Refreshed pinned LLVM coverage ratchet after verified performance optimizations (#247-#252) replacing src/generic_row_ring.rs with direct packed-byte generic/refinement/composition/Huffman fast paths. Every surviving file is non-regressing against its prior reviewed floor, every new runtime file is locked to its fresh pinned LLVM measurement, and overall line/region/branch coverage increased (93.47% lines, 88.05% regions, 86.34% branches) with all release goals met.",
   "source_revision": "e781aff6c5de6cba4924dfde52dc78d4c78dc15a",
-  "source_sha256": "30226374d971ca0531c0a798f6c10a1e024a446b6f48ba38a90848ea6b553971",
+  "source_sha256": "2d316b876152add96af4933680824c915096d0dde3a09a12d3483a87a4a41509",
   "test_source_sha256": "70b01cd7a9fd05e8ebf80b341fc9f9a4a6f4c2b079517dae30a2ec07ba8191c2",
   "toolchain": {
     "rust_toolchain": "nightly-2026-10-12",

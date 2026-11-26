@@ -2,6 +2,8 @@
 //!
 //! Zero heap allocation, zero runtime construction, and 100% Verus-verifiable.
 
+#![allow(clippy::redundant_static_lifetimes)]
+
 #[cfg(verus_keep_ghost)]
 use super::*;
 #[cfg(not(verus_keep_ghost))]
@@ -11,12 +13,12 @@ use super::{
 };
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
-static EMPTY_PREFIX_LOOKUP: [u16; 0] = [];
+const EMPTY_PREFIX_LOOKUP: [u16; 0] = [];
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
-static ORDERED_A: [u32; 4] = [0, 1, 2, 3];
-#[cfg_attr(verus_keep_ghost, verus_verify)]
-pub(super) static STANDARD_TABLE_A: HuffmanTable = HuffmanTable {
+const ORDERED_A: [u32; 4] = [0, 1, 2, 3];
+#[cfg_attr(verus_keep_ghost, verus_spec(ensures true))]
+const STANDARD_TABLE_A: &'static HuffmanTable = &HuffmanTable {
     lines: TableSlice::Static(&TABLE_A),
     ordered_lines: TableSlice::Static(&ORDERED_A),
     short_length_count: [
@@ -38,9 +40,9 @@ pub(super) static STANDARD_TABLE_A: HuffmanTable = HuffmanTable {
 };
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
-static ORDERED_B: [u32; 7] = [0, 1, 2, 3, 4, 5, 6];
-#[cfg_attr(verus_keep_ghost, verus_verify)]
-pub(super) static STANDARD_TABLE_B: HuffmanTable = HuffmanTable {
+const ORDERED_B: [u32; 7] = [0, 1, 2, 3, 4, 5, 6];
+#[cfg_attr(verus_keep_ghost, verus_spec(ensures true))]
+const STANDARD_TABLE_B: &'static HuffmanTable = &HuffmanTable {
     lines: TableSlice::Static(&TABLE_B),
     ordered_lines: TableSlice::Static(&ORDERED_B),
     short_length_count: [
@@ -62,9 +64,9 @@ pub(super) static STANDARD_TABLE_B: HuffmanTable = HuffmanTable {
 };
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
-static ORDERED_C: [u32; 9] = [1, 2, 3, 4, 5, 8, 7, 0, 6];
-#[cfg_attr(verus_keep_ghost, verus_verify)]
-pub(super) static STANDARD_TABLE_C: HuffmanTable = HuffmanTable {
+const ORDERED_C: [u32; 9] = [1, 2, 3, 4, 5, 8, 7, 0, 6];
+#[cfg_attr(verus_keep_ghost, verus_spec(ensures true))]
+const STANDARD_TABLE_C: &'static HuffmanTable = &HuffmanTable {
     lines: TableSlice::Static(&TABLE_C),
     ordered_lines: TableSlice::Static(&ORDERED_C),
     short_length_count: [
@@ -86,9 +88,9 @@ pub(super) static STANDARD_TABLE_C: HuffmanTable = HuffmanTable {
 };
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
-static ORDERED_D: [u32; 6] = [0, 1, 2, 3, 4, 5];
-#[cfg_attr(verus_keep_ghost, verus_verify)]
-pub(super) static STANDARD_TABLE_D: HuffmanTable = HuffmanTable {
+const ORDERED_D: [u32; 6] = [0, 1, 2, 3, 4, 5];
+#[cfg_attr(verus_keep_ghost, verus_spec(ensures true))]
+const STANDARD_TABLE_D: &'static HuffmanTable = &HuffmanTable {
     lines: TableSlice::Static(&TABLE_D),
     ordered_lines: TableSlice::Static(&ORDERED_D),
     short_length_count: [
@@ -110,9 +112,9 @@ pub(super) static STANDARD_TABLE_D: HuffmanTable = HuffmanTable {
 };
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
-static ORDERED_E: [u32; 8] = [1, 2, 3, 4, 5, 7, 0, 6];
-#[cfg_attr(verus_keep_ghost, verus_verify)]
-pub(super) static STANDARD_TABLE_E: HuffmanTable = HuffmanTable {
+const ORDERED_E: [u32; 8] = [1, 2, 3, 4, 5, 7, 0, 6];
+#[cfg_attr(verus_keep_ghost, verus_spec(ensures true))]
+const STANDARD_TABLE_E: &'static HuffmanTable = &HuffmanTable {
     lines: TableSlice::Static(&TABLE_E),
     ordered_lines: TableSlice::Static(&ORDERED_E),
     short_length_count: [
@@ -134,9 +136,9 @@ pub(super) static STANDARD_TABLE_E: HuffmanTable = HuffmanTable {
 };
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
-static ORDERED_F: [u32; 14] = [7, 8, 9, 1, 2, 3, 6, 10, 11, 0, 4, 5, 12, 13];
-#[cfg_attr(verus_keep_ghost, verus_verify)]
-pub(super) static STANDARD_TABLE_F: HuffmanTable = HuffmanTable {
+const ORDERED_F: [u32; 14] = [7, 8, 9, 1, 2, 3, 6, 10, 11, 0, 4, 5, 12, 13];
+#[cfg_attr(verus_keep_ghost, verus_spec(ensures true))]
+const STANDARD_TABLE_F: &'static HuffmanTable = &HuffmanTable {
     lines: TableSlice::Static(&TABLE_F),
     ordered_lines: TableSlice::Static(&ORDERED_F),
     short_length_count: [
@@ -158,9 +160,9 @@ pub(super) static STANDARD_TABLE_F: HuffmanTable = HuffmanTable {
 };
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
-static ORDERED_G: [u32; 15] = [1, 10, 11, 12, 0, 2, 5, 6, 9, 3, 4, 7, 8, 13, 14];
-#[cfg_attr(verus_keep_ghost, verus_verify)]
-pub(super) static STANDARD_TABLE_G: HuffmanTable = HuffmanTable {
+const ORDERED_G: [u32; 15] = [1, 10, 11, 12, 0, 2, 5, 6, 9, 3, 4, 7, 8, 13, 14];
+#[cfg_attr(verus_keep_ghost, verus_spec(ensures true))]
+const STANDARD_TABLE_G: &'static HuffmanTable = &HuffmanTable {
     lines: TableSlice::Static(&TABLE_G),
     ordered_lines: TableSlice::Static(&ORDERED_G),
     short_length_count: [
@@ -182,11 +184,11 @@ pub(super) static STANDARD_TABLE_G: HuffmanTable = HuffmanTable {
 };
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
-static ORDERED_H: [u32; 21] = [
+const ORDERED_H: [u32; 21] = [
     6, 20, 9, 5, 11, 12, 7, 13, 14, 8, 10, 15, 17, 4, 16, 0, 2, 1, 3, 18, 19,
 ];
-#[cfg_attr(verus_keep_ghost, verus_verify)]
-pub(super) static STANDARD_TABLE_H: HuffmanTable = HuffmanTable {
+#[cfg_attr(verus_keep_ghost, verus_spec(ensures true))]
+const STANDARD_TABLE_H: &'static HuffmanTable = &HuffmanTable {
     lines: TableSlice::Static(&TABLE_H),
     ordered_lines: TableSlice::Static(&ORDERED_H),
     short_length_count: [
@@ -208,11 +210,11 @@ pub(super) static STANDARD_TABLE_H: HuffmanTable = HuffmanTable {
 };
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
-static ORDERED_I: [u32; 22] = [
+const ORDERED_I: [u32; 22] = [
     21, 6, 7, 10, 5, 12, 13, 8, 14, 15, 9, 11, 16, 18, 4, 17, 0, 2, 1, 3, 19, 20,
 ];
-#[cfg_attr(verus_keep_ghost, verus_verify)]
-pub(super) static STANDARD_TABLE_I: HuffmanTable = HuffmanTable {
+#[cfg_attr(verus_keep_ghost, verus_spec(ensures true))]
+const STANDARD_TABLE_I: &'static HuffmanTable = &HuffmanTable {
     lines: TableSlice::Static(&TABLE_I),
     ordered_lines: TableSlice::Static(&ORDERED_I),
     short_length_count: [
@@ -234,11 +236,11 @@ pub(super) static STANDARD_TABLE_I: HuffmanTable = HuffmanTable {
 };
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
-static ORDERED_J: [u32; 21] = [
+const ORDERED_J: [u32; 21] = [
     4, 9, 20, 3, 5, 10, 6, 11, 12, 13, 14, 15, 16, 0, 2, 7, 17, 1, 8, 18, 19,
 ];
-#[cfg_attr(verus_keep_ghost, verus_verify)]
-pub(super) static STANDARD_TABLE_J: HuffmanTable = HuffmanTable {
+#[cfg_attr(verus_keep_ghost, verus_spec(ensures true))]
+const STANDARD_TABLE_J: &'static HuffmanTable = &HuffmanTable {
     lines: TableSlice::Static(&TABLE_J),
     ordered_lines: TableSlice::Static(&ORDERED_J),
     short_length_count: [
@@ -260,9 +262,9 @@ pub(super) static STANDARD_TABLE_J: HuffmanTable = HuffmanTable {
 };
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
-static ORDERED_K: [u32; 13] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-#[cfg_attr(verus_keep_ghost, verus_verify)]
-pub(super) static STANDARD_TABLE_K: HuffmanTable = HuffmanTable {
+const ORDERED_K: [u32; 13] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+#[cfg_attr(verus_keep_ghost, verus_spec(ensures true))]
+const STANDARD_TABLE_K: &'static HuffmanTable = &HuffmanTable {
     lines: TableSlice::Static(&TABLE_K),
     ordered_lines: TableSlice::Static(&ORDERED_K),
     short_length_count: [
@@ -284,9 +286,9 @@ pub(super) static STANDARD_TABLE_K: HuffmanTable = HuffmanTable {
 };
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
-static ORDERED_L: [u32; 13] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-#[cfg_attr(verus_keep_ghost, verus_verify)]
-pub(super) static STANDARD_TABLE_L: HuffmanTable = HuffmanTable {
+const ORDERED_L: [u32; 13] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+#[cfg_attr(verus_keep_ghost, verus_spec(ensures true))]
+const STANDARD_TABLE_L: &'static HuffmanTable = &HuffmanTable {
     lines: TableSlice::Static(&TABLE_L),
     ordered_lines: TableSlice::Static(&ORDERED_L),
     short_length_count: [
@@ -308,9 +310,9 @@ pub(super) static STANDARD_TABLE_L: HuffmanTable = HuffmanTable {
 };
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
-static ORDERED_M: [u32; 13] = [0, 1, 5, 2, 4, 3, 6, 7, 8, 9, 10, 11, 12];
-#[cfg_attr(verus_keep_ghost, verus_verify)]
-pub(super) static STANDARD_TABLE_M: HuffmanTable = HuffmanTable {
+const ORDERED_M: [u32; 13] = [0, 1, 5, 2, 4, 3, 6, 7, 8, 9, 10, 11, 12];
+#[cfg_attr(verus_keep_ghost, verus_spec(ensures true))]
+const STANDARD_TABLE_M: &'static HuffmanTable = &HuffmanTable {
     lines: TableSlice::Static(&TABLE_M),
     ordered_lines: TableSlice::Static(&ORDERED_M),
     short_length_count: [
@@ -332,9 +334,9 @@ pub(super) static STANDARD_TABLE_M: HuffmanTable = HuffmanTable {
 };
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
-static ORDERED_N: [u32; 5] = [2, 0, 1, 3, 4];
-#[cfg_attr(verus_keep_ghost, verus_verify)]
-pub(super) static STANDARD_TABLE_N: HuffmanTable = HuffmanTable {
+const ORDERED_N: [u32; 5] = [2, 0, 1, 3, 4];
+#[cfg_attr(verus_keep_ghost, verus_spec(ensures true))]
+const STANDARD_TABLE_N: &'static HuffmanTable = &HuffmanTable {
     lines: TableSlice::Static(&TABLE_N),
     ordered_lines: TableSlice::Static(&ORDERED_N),
     short_length_count: [
@@ -356,9 +358,9 @@ pub(super) static STANDARD_TABLE_N: HuffmanTable = HuffmanTable {
 };
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
-static ORDERED_O: [u32; 13] = [5, 4, 6, 3, 7, 2, 8, 1, 9, 0, 10, 11, 12];
-#[cfg_attr(verus_keep_ghost, verus_verify)]
-pub(super) static STANDARD_TABLE_O: HuffmanTable = HuffmanTable {
+const ORDERED_O: [u32; 13] = [5, 4, 6, 3, 7, 2, 8, 1, 9, 0, 10, 11, 12];
+#[cfg_attr(verus_keep_ghost, verus_spec(ensures true))]
+const STANDARD_TABLE_O: &'static HuffmanTable = &HuffmanTable {
     lines: TableSlice::Static(&TABLE_O),
     ordered_lines: TableSlice::Static(&ORDERED_O),
     short_length_count: [
@@ -382,20 +384,20 @@ pub(super) static STANDARD_TABLE_O: HuffmanTable = HuffmanTable {
 #[cfg_attr(verus_keep_ghost, verus_verify)]
 pub(super) fn static_standard_table(table: StandardHuffmanTable) -> &'static HuffmanTable {
     match table {
-        StandardHuffmanTable::A => &STANDARD_TABLE_A,
-        StandardHuffmanTable::B => &STANDARD_TABLE_B,
-        StandardHuffmanTable::C => &STANDARD_TABLE_C,
-        StandardHuffmanTable::D => &STANDARD_TABLE_D,
-        StandardHuffmanTable::E => &STANDARD_TABLE_E,
-        StandardHuffmanTable::F => &STANDARD_TABLE_F,
-        StandardHuffmanTable::G => &STANDARD_TABLE_G,
-        StandardHuffmanTable::H => &STANDARD_TABLE_H,
-        StandardHuffmanTable::I => &STANDARD_TABLE_I,
-        StandardHuffmanTable::J => &STANDARD_TABLE_J,
-        StandardHuffmanTable::K => &STANDARD_TABLE_K,
-        StandardHuffmanTable::L => &STANDARD_TABLE_L,
-        StandardHuffmanTable::M => &STANDARD_TABLE_M,
-        StandardHuffmanTable::N => &STANDARD_TABLE_N,
-        StandardHuffmanTable::O => &STANDARD_TABLE_O,
+        StandardHuffmanTable::A => STANDARD_TABLE_A,
+        StandardHuffmanTable::B => STANDARD_TABLE_B,
+        StandardHuffmanTable::C => STANDARD_TABLE_C,
+        StandardHuffmanTable::D => STANDARD_TABLE_D,
+        StandardHuffmanTable::E => STANDARD_TABLE_E,
+        StandardHuffmanTable::F => STANDARD_TABLE_F,
+        StandardHuffmanTable::G => STANDARD_TABLE_G,
+        StandardHuffmanTable::H => STANDARD_TABLE_H,
+        StandardHuffmanTable::I => STANDARD_TABLE_I,
+        StandardHuffmanTable::J => STANDARD_TABLE_J,
+        StandardHuffmanTable::K => STANDARD_TABLE_K,
+        StandardHuffmanTable::L => STANDARD_TABLE_L,
+        StandardHuffmanTable::M => STANDARD_TABLE_M,
+        StandardHuffmanTable::N => STANDARD_TABLE_N,
+        StandardHuffmanTable::O => STANDARD_TABLE_O,
     }
 }

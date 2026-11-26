@@ -193,7 +193,7 @@
     "src/huffman/construction_long.rs": "ef5243c5d0a3b3c5a4a7be99ce0fcec02c8509347a3753c1a56bda57dd1208b5",
     "src/huffman/decoding.rs": "8282179614cce90de920bc4cab19b0ae47fd8a0a8a9c3f6348641949abb7fe76",
     "src/huffman/lookup.rs": "62bdb3eb62a463db6123d6cbe0a775bac8e974d2fae4c515c949e44552438868",
-    "src/huffman/standard_static.rs": "c2594924f5d6c7f53254d34128f6b2af83a1defd71ba3a0fb3d7933921458b6b",
+    "src/huffman/standard_static.rs": "3ce0c4dc1d92f485b5073020a4308e24916d5975a48293c3fa481da5c9f9018a",
     "src/huffman/tables.rs": "d64eafa6a985558abd3869bf599e095baaa4a57d3d826358f4642208a1561f5f",
     "src/huffman/tests/benchmarks.rs": "0f2deb471091907f7461394025bb531a8eb61c06cf62beb3fdf0bd5c34550f27",
     "src/huffman/tests/cache_map.rs": "e8931fc6d4c3b1300877574416598ae90aa3826dd5ab15ecea6ca2778274b044",
