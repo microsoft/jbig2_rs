@@ -43,6 +43,8 @@ mod contexts;
 mod fast;
 mod fast_custom;
 mod fast_pattern;
+mod fast_refinement;
+mod fast_refinement_general;
 mod fast_support;
 mod generic;
 mod generic_context;
@@ -58,7 +60,10 @@ pub(crate) use generic::{
     decode_probability_signal, probability_signal_error, RASTER_SIGNAL_CONTEXT,
 };
 pub(crate) use headers::{parse_generic_region_header, parse_refinement_region_header};
-pub(crate) use refinement::{decode_arithmetic_refinement, decode_refinement_on};
+#[allow(unused_imports)]
+pub(crate) use refinement::{
+    decode_arithmetic_refinement, decode_refinement_on, decode_refinement_on_validated,
+};
 #[allow(unused_imports)]
 pub(crate) use segments::{
     decode_generic_region_segment, decode_generic_region_segment_into,

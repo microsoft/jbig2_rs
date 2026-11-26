@@ -4,7 +4,7 @@
 use super::*;
 #[cfg(not(verus_keep_ghost))]
 use super::{
-    decode_generic_on_validated, decode_refinement_on, enforce_limit, ArithmeticCodec,
+    decode_generic_on_validated, decode_refinement_on_validated, enforce_limit, ArithmeticCodec,
     ArithmeticContext, ArithmeticDecoder, ArithmeticInteger, Bitmap, DecodeError, EntropyInteger,
     GenericArithmeticCall, GenericContexts, IntegerContexts, IntegerField, LimitKind, Limits,
     MalformedError, NormalizedArithmetic, RefinementArithmeticCall, RefinementContexts,
@@ -252,6 +252,11 @@ impl ArithmeticCodec<'_> {
     #[cfg_attr(verus_keep_ghost, verus_spec(out =>
         requires
             crate::arithmetic::arithmetic_spec::decoder_valid(&old(self).decoder),
+            match &old(self).refinement {
+                Some(contexts) =>
+                    crate::generic_region::generic_region_spec::refinement_contexts_valid(contexts),
+                None => true,
+            },
             crate::spec::bitmap::storage_valid(request.reference),
         ensures match out {
             Ok(bitmap) =>
@@ -259,6 +264,13 @@ impl ArithmeticCodec<'_> {
                     && crate::arithmetic::arithmetic_spec::decoder_valid(
                         &final(self).decoder
                     )
+                    && match &final(self).refinement {
+                        Some(contexts) =>
+                            crate::generic_region::generic_region_spec::refinement_contexts_valid(
+                                contexts,
+                            ),
+                        None => true,
+                    }
                     && final(self).integers.slots@ == old(self).integers.slots@
                     && final(self).iaid@ == old(self).iaid@
                     && final(self).prefix.is_none(),
@@ -297,7 +309,7 @@ impl ArithmeticCodec<'_> {
             .ok_or(SymbolTextError::InvalidState(
                 "missing arithmetic refinement contexts",
             ))?;
-        Ok(decode_refinement_on(
+        Ok(decode_refinement_on_validated(
             &mut self.decoder,
             contexts,
             call,
@@ -324,6 +336,7 @@ impl ArithmeticCodec<'_> {
                     )
                     && final(self).integers.slots@ == old(self).integers.slots@
                     && final(self).iaid@ == old(self).iaid@
+                    && final(self).refinement == old(self).refinement
                     && crate::generic_region::generic_region_spec::generic_contexts_valid(final(contexts))
                     && final(self).prefix.is_none(),
             Err(_) => true,
