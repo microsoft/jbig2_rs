@@ -40,6 +40,10 @@ mod generic_region_proofs;
 
 mod colour;
 mod contexts;
+mod fast;
+mod fast_custom;
+mod fast_pattern;
+mod fast_support;
 mod generic;
 mod generic_context;
 mod headers;
@@ -60,6 +64,7 @@ pub(crate) use segments::{
     decode_generic_region_segment, decode_generic_region_segment_into,
     decode_generic_region_segment_reused,
 };
+#[allow(unused_imports)]
 pub(crate) use support::{enforce_managed_memory, integer_overflow, word_byte};
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
@@ -562,9 +567,6 @@ enum RefinementContextDescriptor {
     },
     Template1,
 }
-
-#[path = "generic_row_ring.rs"]
-mod generic_row_ring;
 
 #[cfg(test)]
 mod tests;

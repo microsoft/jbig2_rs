@@ -9,9 +9,8 @@ use super::support::{
     enforce_managed_memory, enforce_work, generic_work,
 };
 use super::{
-    generic_row_ring, GenericArithmeticCall, GenericArithmeticSession, GenericContextDescriptor,
-    GenericContexts, GenericRegionError, GenericRegionHeader, GenericRowContext, GenericTemplate,
-    TemplateOffset,
+    GenericArithmeticCall, GenericArithmeticSession, GenericContextDescriptor, GenericContexts,
+    GenericRegionError, GenericRegionHeader, GenericRowContext, GenericTemplate, TemplateOffset,
 };
 use crate::arithmetic::{ArithmeticContext, ArithmeticDecoder};
 use crate::{Bitmap, Limits, MalformedError};
@@ -382,37 +381,33 @@ pub(crate) fn decode_generic_on_validated(
     #[cfg(verus_keep_ghost)]
     proof! {
         crate::views::bitmap_fields(&bitmap);
+        if let Some(mask) = call.skip {
+            crate::views::bitmap_fields(mask);
+        }
         reveal(generic_region_spec::generic_contexts_valid);
     }
     *cumulative_work = next_work;
 
-    let descriptor = GenericContextDescriptor::new(
+    if super::fast::try_decode_generic(
+        &mut bitmap,
+        rows,
         contexts.template,
         contexts.extended_template,
         &call.adaptive,
-    );
-    if matches!(descriptor, GenericContextDescriptor::NominalTemplate0) && call.skip.is_none() {
-        if generic_row_ring::try_decode(
-            &mut bitmap,
-            call.width,
-            rows,
-            contexts.storage_bytes,
-            bitmap_bytes,
-            limits,
-            call.typical_prediction,
-            decoder,
-            &mut contexts.contexts,
-        )? {
-            #[cfg(verus_keep_ghost)]
-            proof! {
-                reveal(generic_region_spec::generic_contexts_valid);
-            }
-            return Ok(bitmap);
-        }
+        call.typical_prediction,
+        call.skip,
+        decoder,
+        &mut contexts.contexts,
+    )? {
         #[cfg(verus_keep_ghost)]
         proof! {
             reveal(generic_region_spec::generic_contexts_valid);
         }
+        return Ok(bitmap);
+    }
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        reveal(generic_region_spec::generic_contexts_valid);
     }
 
     decode_generic_with(
@@ -490,33 +485,26 @@ pub(super) fn decode_generic_on_into(
     }
     *cumulative_work = next_work;
 
-    let descriptor = GenericContextDescriptor::new(
+    if super::fast::try_decode_generic(
+        bitmap,
+        rows,
         contexts.template,
         contexts.extended_template,
         &call.adaptive,
-    );
-    if matches!(descriptor, GenericContextDescriptor::NominalTemplate0) {
-        if generic_row_ring::try_decode(
-            bitmap,
-            call.width,
-            rows,
-            contexts.storage_bytes,
-            bitmap_bytes,
-            limits,
-            call.typical_prediction,
-            decoder,
-            &mut contexts.contexts,
-        )? {
-            #[cfg(verus_keep_ghost)]
-            proof! {
-                reveal(generic_region_spec::generic_contexts_valid);
-            }
-            return Ok(());
-        }
+        call.typical_prediction,
+        None,
+        decoder,
+        &mut contexts.contexts,
+    )? {
         #[cfg(verus_keep_ghost)]
         proof! {
             reveal(generic_region_spec::generic_contexts_valid);
         }
+        return Ok(());
+    }
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        reveal(generic_region_spec::generic_contexts_valid);
     }
     decode_generic_with(
         bitmap,
