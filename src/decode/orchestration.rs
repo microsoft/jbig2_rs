@@ -100,6 +100,7 @@ pub(super) fn decode_global_resources(
     }
     let mut retained = RetainedBudget::new();
     let mut work = DecodeWork::new(structural_work(input.len(), &segments)?, limits)?;
+    let mut generic_scratch = Vec::new();
     let mut segment_index = 0_usize;
     #[cfg_attr(verus_keep_ghost, verus_spec(
         invariant
@@ -123,6 +124,7 @@ pub(super) fn decode_global_resources(
                     &mut retained,
                     &mut work,
                     limits,
+                    &mut generic_scratch,
                 )?;
             }
             SegmentType::SymbolDictionary => {
@@ -229,6 +231,7 @@ macro_rules! decode_segments_body {
         let mut retained = RetainedBudget::new();
         retained.retain(initial_retained_bytes, limits)?;
         let mut cumulative_work = DecodeWork::new(initial_work, limits)?;
+        let mut generic_scratch = Vec::new();
         let mut pattern_position = 0_usize;
         #[cfg_attr(verus_keep_ghost, verus_spec(
                                     invariant
@@ -362,6 +365,7 @@ macro_rules! decode_segments_body {
                         &mut cumulative_work,
                         limits,
                         mmr_scratch,
+                        &mut generic_scratch,
                     )?;
                 }
                 SegmentType::IntermediateGenericRefinementRegion
@@ -383,6 +387,7 @@ macro_rules! decode_segments_body {
                         &mut retained,
                         &mut cumulative_work,
                         limits,
+                        &mut generic_scratch,
                     )?;
                 }
                 SegmentType::SymbolDictionary => {
@@ -421,6 +426,7 @@ macro_rules! decode_segments_body {
                         &mut retained,
                         &mut cumulative_work,
                         limits,
+                        &mut generic_scratch,
                     )?;
                 }
                 SegmentType::EndOfPage => {

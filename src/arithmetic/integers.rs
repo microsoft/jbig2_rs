@@ -315,23 +315,20 @@ impl ArithmeticDecoder<'_> {
                 &mut mq_bit_count,
             ) {
                 Ok(decision) => {
-                    let Some(shifted) = previous.checked_mul(2) else {
-                        self.interval = interval;
-                        self.code = code;
-                        self.bit_count = mq_bit_count;
-                        loop_error =
-                            Some(ArithmeticError::Malformed(MalformedError::IntegerOverflow));
-                        continue;
-                    };
-                    let Some(next_previous) = shifted.checked_add(usize::from(decision)) else {
-                        self.interval = interval;
-                        self.code = code;
-                        self.bit_count = mq_bit_count;
-                        loop_error =
-                            Some(ArithmeticError::Malformed(MalformedError::IntegerOverflow));
-                        continue;
-                    };
-                    previous = next_previous;
+                    #[cfg(verus_keep_ghost)]
+                    proof! {
+                        assert(
+                            (previous as u64) * 2 + (decision as u64) <= u32::MAX as u64
+                            && (((previous << 1usize) | (decision as usize)) as u64)
+                                == (previous as u64) * 2 + (decision as u64)
+                        ) by (bit_vector)
+                            requires
+                                0 < previous && previous < required,
+                                code_length <= 31,
+                                required == 1usize << code_length,
+                                decision <= 1u8;
+                    }
+                    previous = (previous << 1) | usize::from(decision);
                     remaining -= 1;
                     #[cfg(verus_keep_ghost)]
                     production_iaid_prefix_bounds!(

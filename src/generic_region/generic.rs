@@ -5,8 +5,8 @@ use super::generic_region_spec;
 use super::headers::validate_generic_adaptive_values;
 use super::segments::{validate_arithmetic_terminator, validate_observed_marker};
 use super::support::{
-    bitmap_storage_bytes, copy_bitmap_row, enforce_generic_work, enforce_input_limit,
-    enforce_managed_memory, enforce_work, generic_work,
+    bitmap_storage_bytes, copy_bitmap_row, enforce_input_limit, enforce_managed_memory,
+    enforce_work, generic_work,
 };
 use super::{
     GenericArithmeticCall, GenericArithmeticSession, GenericContextDescriptor, GenericContexts,
@@ -56,6 +56,53 @@ impl<'a> GenericArithmeticSession<'a> {
         })
     }
 
+    /// Start a reusable session backed by a caller-owned scratch context buffer.
+    #[cfg_attr(verus_keep_ghost, verus_spec(result =>
+        ensures match result {
+            Ok(session) => generic_region_spec::generic_session_valid(&session)
+                && session.decoder.bytes@ == coded@
+                && session.coded_length == coded@.len()
+                && session.work_used == 0
+                && session.contexts.template == template
+                && session.contexts.extended_template == extended_template
+                && session.limits == *limits
+                && generic_region_spec::bounded_arithmetic_tail(coded@),
+            Err(_) => true,
+        },
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    pub(crate) fn new_from_scratch(
+        coded: &'a [u8],
+        template: GenericTemplate,
+        extended_template: bool,
+        limits: &Limits,
+        scratch: &mut Vec<ArithmeticContext>,
+    ) -> Result<Self, GenericRegionError> {
+        enforce_input_limit(coded, limits)?;
+        validate_arithmetic_terminator(coded)?;
+        let contexts = GenericContexts::from_scratch(template, extended_template, limits, scratch)?;
+        let decoder = match ArithmeticDecoder::new(coded) {
+            Ok(decoder) => decoder,
+            Err(error) => {
+                contexts.into_scratch(scratch);
+                return Err(GenericRegionError::Decode(error.into_decode()));
+            }
+        };
+        Ok(Self {
+            decoder,
+            contexts,
+            coded_length: coded.len(),
+            work_used: 0,
+            limits: *limits,
+        })
+    }
+
+    /// Return the session's context buffer to `scratch` for reuse.
+    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    pub(crate) fn into_scratch(self, scratch: &mut Vec<ArithmeticContext>) {
+        self.contexts.into_scratch(scratch);
+    }
+
     /// Decode another bitmap while preserving this session's decoder position
     /// and adaptive probability statistics.
     #[cfg_attr(verus_keep_ghost, verus_spec(out =>
@@ -95,7 +142,7 @@ impl<'a> GenericArithmeticSession<'a> {
             },
     ))]
     #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
-    fn decode_bitmap_rows(
+    pub(super) fn decode_bitmap_rows(
         &mut self,
         call: GenericArithmeticCall<'_>,
         rows: u32,
@@ -120,7 +167,7 @@ impl<'a> GenericArithmeticSession<'a> {
             out.is_ok() ==> crate::spec::bitmap::storage_valid(final(bitmap)),
             out.is_ok() ==> generic_region_spec::generic_session_valid(final(self)),
     ))]
-    fn decode_bitmap_rows_into(
+    pub(super) fn decode_bitmap_rows_into(
         &mut self,
         call: GenericArithmeticCall<'_>,
         rows: u32,
@@ -202,76 +249,15 @@ pub(crate) fn decode_arithmetic_generic(
     skip: Option<&Bitmap>,
     limits: &Limits,
 ) -> Result<Bitmap, GenericRegionError> {
-    if header.mmr || rows > header.region.height {
-        return Err(GenericRegionError::InvalidFlags(0x01));
-    }
-    validate_arithmetic_terminator(coded)?;
-    validate_generic_adaptive_values(header.template, header.extended_template, &header.adaptive)?;
-    enforce_generic_work(header.region.width, rows, header.typical_prediction, limits)?;
-    if let Some(skip_bitmap) = skip {
-        if skip_bitmap.width() != header.region.width
-            || skip_bitmap.height() != header.region.height
-        {
-            return Err(GenericRegionError::InvalidSkipDimensions);
-        }
-    }
-
-    let mut session =
-        GenericArithmeticSession::new(coded, header.template, header.extended_template, limits)?;
-    let bitmap = session.decode_bitmap_rows(
-        GenericArithmeticCall {
-            width: header.region.width,
-            height: header.region.height,
-            adaptive: header.adaptive,
-            typical_prediction: header.typical_prediction,
-            skip,
-        },
+    let mut scratch = Vec::new();
+    super::segments::decode_arithmetic_generic_with_scratch(
+        coded,
+        header,
         rows,
-    )?;
-    session.validate_final_marker()?;
-    Ok(bitmap)
-}
-
-#[cfg_attr(verus_keep_ghost, verus_spec(out =>
-    requires crate::spec::bitmap::storage_valid(old(bitmap)),
-    ensures out.is_ok() ==> crate::spec::bitmap::storage_valid(final(bitmap)),
-))]
-pub(super) fn decode_arithmetic_generic_into(
-    coded: &[u8],
-    header: &GenericRegionHeader,
-    rows: u32,
-    limits: &Limits,
-    bitmap: &mut Bitmap,
-) -> Result<(), GenericRegionError> {
-    if header.mmr
-        || rows > header.region.height
-        || bitmap.width() != header.region.width
-        || bitmap.height() != header.region.height
-    {
-        return Err(GenericRegionError::InvalidFlags(0x01));
-    }
-    validate_arithmetic_terminator(coded)?;
-    validate_generic_adaptive_values(header.template, header.extended_template, &header.adaptive)?;
-    enforce_generic_work(header.region.width, rows, header.typical_prediction, limits)?;
-    let mut session =
-        GenericArithmeticSession::new(coded, header.template, header.extended_template, limits)?;
-    #[cfg(verus_keep_ghost)]
-    proof! {
-        crate::views::bitmap_fields(bitmap);
-    }
-    session.decode_bitmap_rows_into(
-        GenericArithmeticCall {
-            width: header.region.width,
-            height: header.region.height,
-            adaptive: header.adaptive,
-            typical_prediction: header.typical_prediction,
-            skip: None,
-        },
-        rows,
-        bitmap,
-    )?;
-    session.validate_final_marker()?;
-    Ok(())
+        skip,
+        limits,
+        &mut scratch,
+    )
 }
 
 /// Decode one generic bitmap on an existing arithmetic stream and statistics

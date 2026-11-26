@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "verified_exact_project_scope_with_reviewed_limits",
   "source_revision": "3e275d1a2bfddb95a25c801ae37a277500849ce8",
-  "scope": "Fresh pinned whole-crate Verus verification of all verified performance optimizations (#247-#252): 1-byte packed ArithmeticContext, single-shot leading_zeros renormalization and 3-register cached MQ fast path, direct packed-byte generic/pattern/custom/refinement decoders with 8-pixel MPS/LTP skips, validated refinement context reuse, operator- and alignment-specialized bitmap composition, exact segment-type pre-reservation, multi-path BitReader::read_bits, compact HuffmanTable with static .rodata Annex B tables A-O, linear bucket construction, and u64 fallback decoding. Zero unsafe code, zero runtime-proof divergences, unchanged 20 reviewed verifier limitations, and all 784 verified production functions / 1,709 obligations pass with 0 errors.",
+  "scope": "Fresh pinned whole-crate Verus verification of all verified performance optimizations (#247-#254), including document-scoped GenericContexts scratch reuse across generic, pattern, and halftone segments, pristine-page XOR direct generic decode (#253), and register-cached MQ fast paths in ArithmeticDecoder::decode_integer and decode_iaid (#254). Zero unsafe code, zero runtime-proof divergences, unchanged 20 reviewed verifier limitations, and all 799 verified production functions / 1,732 obligations pass with 0 errors.",
   "toolchain": {
     "manifest": "config/toolchain.json",
     "verus_version": "0.2026.10.04.426d8b0",
@@ -11,8 +11,8 @@
   },
   "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-issue135-fields CARGO_INCREMENTAL=0 cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/issue135-20261125/final/expanded\" --output-json",
   "result": {
-    "verified_obligations": 1709,
-    "verified_production_functions": 784,
+    "verified_obligations": 1732,
+    "verified_production_functions": 799,
     "errors": 0,
     "proof_build_compiles": true,
     "exact_production_source_compiles": true,
@@ -24,8 +24,8 @@
     "runtime_proof_divergences": 0,
     "incomplete_functions": 0
   },
-  "production_proof_coverage_sha256": "cce781c82e7ec1e4dfff57c23a07dedffc340eff92b1efa6c69dc95cc821f9a3",
-  "proof_dispositions_sha256": "12bfab442850abd48ddf8801b3b3c56dcb0fc33545b95892a6f03030df47258e",
+  "production_proof_coverage_sha256": "a91000a5629bf476fb0dc31c306ffced3fc4dd3dc8ba94d14cd65b0485c637ea",
+  "proof_dispositions_sha256": "6cad7e1291ff8da5fe39b56cc47ed00fc8de23f8a3a67b0e7090c3cd5d9d1843",
   "standard_library_boundary": {
     "manifest": "verification/stdlib/review.json",
     "manifest_sha256": "5f007f853c6caad16d6d318bde996373c6a6f886e8949cd0df62612e5408a92c",
@@ -33,7 +33,7 @@
     "review_kind": "delegated_engineering_review",
     "normative_approval": false
   },
-  "current_evidence_note": "784 direct verified production functions and unchanged 20 reviewed limitations pass fresh pinned whole-crate Verus (1,709 verified obligations, 0 errors, 0 runtime-proof divergences). MSRV 1.88.0 tests (649 tests + 1 doctest), Rust 1.89.0 clippy -D warnings, rustfmt, runtime audit, traceability, provenance, and pinned LLVM coverage (93.47% lines / 88.05% regions / 86.34% branches) all pass. Hosted clean-runner exact-129/133 paired benchmarks measured 2.86x overall geomean speedup on x86-64 (run 45828548264, ratio 0.3496) and 2.74x on native Neoverse-N2 ARM64 (run 45828553596, ratio 0.3655) with 0/492 correctness differences. Require complete same-run protected CI on the final PR head.",
+  "current_evidence_note": "799 direct verified production functions and unchanged 20 reviewed limitations pass fresh pinned whole-crate Verus (1,732 verified obligations, 0 errors, 0 runtime-proof divergences) and expanded_project_function_inventory_reconciled. MSRV 1.88.0 tests (651 tests + 1 doctest), Rust 1.89.0 clippy -D warnings, rustfmt, runtime audit, traceability, provenance, and pinned LLVM coverage (93.59% lines / 88.21% regions / 86.43% branches) all pass. Require complete same-run protected CI on the final PR head.",
   "host_build_dependency_ci_repair": {
     "baseline_source": "470aaa6e556443872a77784dece82ebab0bafb4f",
     "preserved_rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/45410252328",

@@ -38,6 +38,7 @@ mod headers;
 mod planes;
 mod render;
 mod resources;
+mod scratch;
 
 pub(crate) use headers::{parse_halftone_header, parse_pattern_dictionary_header};
 #[allow(unused_imports)]
@@ -47,6 +48,9 @@ pub(crate) use planes::{
 #[allow(unused_imports)]
 pub(crate) use render::{
     decode_halftone_region, generate_skip_mask, grid_position, validate_pattern_indices,
+};
+pub(crate) use scratch::{
+    new_halftone_state_from_scratch, new_pattern_arithmetic_state_from_scratch,
 };
 
 /// Errors specific to pattern-dictionary and halftone decoding.
@@ -256,13 +260,16 @@ pub(crate) fn new_halftone_state<'a>(
     pattern_count: usize,
     limits: &Limits,
 ) -> Result<GenericRegionState<'a>, DecodeError> {
-    if pattern_count == 1 {
-        new_zero_plane_state(coded)
-    } else if mmr {
-        Ok(new_gray_mmr_state(coded, limits))
-    } else {
-        new_halftone_arithmetic_state(coded, template, template_code, limits)
-    }
+    let mut scratch = Vec::new();
+    new_halftone_state_from_scratch(
+        coded,
+        mmr,
+        template,
+        template_code,
+        pattern_count,
+        limits,
+        &mut scratch,
+    )
 }
 
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>

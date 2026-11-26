@@ -1,19 +1,20 @@
 use std::io::Read;
 
+use crate::arithmetic::ArithmeticContext;
 use crate::bitmap::CombinationOperator;
 use crate::document::{
     parse_embedded_document, parse_standalone_document, read_bounded_input, Decoder,
     DecoderContext, DocumentInfo, GlobalSegments, PageInfo, ParsedData, ParsedSegment,
 };
 use crate::generic_region::{
-    decode_arithmetic_refinement, decode_generic_region_segment_into,
-    decode_generic_region_segment_reused, parse_generic_region_header,
+    decode_arithmetic_refinement, decode_generic_region_segment_into_with_scratch,
+    decode_generic_region_segment_reused_with_scratch, parse_generic_region_header,
     parse_refinement_region_header, GenericRegionError, GenericTemplate, RefinementParameters,
 };
 use crate::halftone::{
     decode_halftone_region, decode_pattern_dictionary, halftone_error_into_decode,
-    new_halftone_state, new_pattern_arithmetic_state, new_pattern_mmr_state, parse_halftone_header,
-    parse_pattern_dictionary_header, WorkBudget,
+    new_halftone_state_from_scratch, new_pattern_arithmetic_state_from_scratch,
+    new_pattern_mmr_state, parse_halftone_header, parse_pattern_dictionary_header, WorkBudget,
 };
 use crate::huffman::{HuffmanError, HuffmanTable};
 use crate::mmr::MmrScratch;

@@ -1,13 +1,13 @@
-use super::generic::{decode_arithmetic_generic, decode_arithmetic_generic_into};
 #[cfg(verus_keep_ghost)]
 use super::generic_region_spec;
-use super::headers::parse_generic_region_header;
-use super::support::{enforce_input_limit, unexpected_eof};
+use super::headers::{parse_generic_region_header, validate_generic_adaptive_values};
+use super::support::{enforce_generic_work, enforce_input_limit, unexpected_eof};
 use super::{
-    DecodedGenericRegion, DecodedGenericRegionDirect, GenericRegionError, GenericRegionHeader,
-    UnknownLengthData, ARITHMETIC_TERMINATOR, MMR_UNKNOWN_LENGTH_SEPARATOR,
+    DecodedGenericRegion, DecodedGenericRegionDirect, GenericArithmeticCall,
+    GenericArithmeticSession, GenericRegionError, GenericRegionHeader, UnknownLengthData,
+    ARITHMETIC_TERMINATOR, MMR_UNKNOWN_LENGTH_SEPARATOR,
 };
-use crate::arithmetic::ArithmeticDecoder;
+use crate::arithmetic::{ArithmeticContext, ArithmeticDecoder};
 use crate::mmr::{decode_mmr_reused, EofbPolicy, MmrScratch};
 use crate::{Bitmap, DecodeError, LimitExceeded, LimitKind, Limits, MalformedError};
 #[cfg(verus_keep_ghost)]
@@ -44,6 +44,29 @@ pub(crate) fn decode_generic_region_segment_reused(
     limits: &Limits,
     scratch: &mut MmrScratch,
 ) -> Result<DecodedGenericRegion, GenericRegionError> {
+    let mut generic_scratch = Vec::new();
+    decode_generic_region_segment_reused_with_scratch(
+        payload,
+        unknown_length,
+        limits,
+        scratch,
+        &mut generic_scratch,
+    )
+}
+
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match out {
+        Ok(decoded) => crate::spec::bitmap::storage_valid(&decoded.bitmap),
+        Err(_) => true,
+    },
+))]
+pub(crate) fn decode_generic_region_segment_reused_with_scratch(
+    payload: &[u8],
+    unknown_length: bool,
+    limits: &Limits,
+    scratch: &mut MmrScratch,
+    generic_scratch: &mut Vec<ArithmeticContext>,
+) -> Result<DecodedGenericRegion, GenericRegionError> {
     let (header, header_length) = parse_generic_region_header(payload, limits)?;
     if header_length > payload.len() {
         return Err(MalformedError::IntegerOverflow.into());
@@ -73,7 +96,7 @@ pub(crate) fn decode_generic_region_segment_reused(
     };
 
     let bitmap = if !unknown_length {
-        decode_known_bitmap(coded, &header, limits, scratch)?
+        decode_known_bitmap(coded, &header, limits, scratch, generic_scratch)?
     } else if header.mmr {
         let decoded = decode_mmr_reused(
             coded,
@@ -85,7 +108,7 @@ pub(crate) fn decode_generic_region_segment_reused(
         )?;
         pad_bitmap_height(decoded, header.region.height, limits)?
     } else {
-        decode_arithmetic_generic(coded, &header, rows, None, limits)?
+        decode_arithmetic_generic_with_scratch(coded, &header, rows, None, limits, generic_scratch)?
     };
 
     let consumed_bytes = header_length
@@ -107,6 +130,7 @@ pub(super) fn decode_known_bitmap(
     header: &GenericRegionHeader,
     limits: &Limits,
     scratch: &mut MmrScratch,
+    generic_scratch: &mut Vec<ArithmeticContext>,
 ) -> Result<Bitmap, GenericRegionError> {
     if header.mmr {
         let bitmap = decode_mmr_reused(
@@ -119,7 +143,13 @@ pub(super) fn decode_known_bitmap(
         )?;
         pad_bitmap_height(bitmap, header.region.height, limits)
     } else {
-        decode_known_length_arithmetic_generic(coded, header, header.region.height, limits)
+        decode_known_length_arithmetic_generic_with_scratch(
+            coded,
+            header,
+            header.region.height,
+            limits,
+            generic_scratch,
+        )
     }
 }
 
@@ -129,11 +159,33 @@ pub(super) fn decode_known_bitmap(
     requires crate::spec::bitmap::storage_valid(old(bitmap)),
     ensures out.is_ok() ==> crate::spec::bitmap::storage_valid(final(bitmap)),
 ))]
+#[allow(dead_code)]
 pub(crate) fn decode_generic_region_segment_into(
     payload: &[u8],
     unknown_length: bool,
     limits: &Limits,
     bitmap: &mut Bitmap,
+) -> Result<Option<DecodedGenericRegionDirect>, GenericRegionError> {
+    let mut generic_scratch = Vec::new();
+    decode_generic_region_segment_into_with_scratch(
+        payload,
+        unknown_length,
+        limits,
+        bitmap,
+        &mut generic_scratch,
+    )
+}
+
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    requires crate::spec::bitmap::storage_valid(old(bitmap)),
+    ensures out.is_ok() ==> crate::spec::bitmap::storage_valid(final(bitmap)),
+))]
+pub(crate) fn decode_generic_region_segment_into_with_scratch(
+    payload: &[u8],
+    unknown_length: bool,
+    limits: &Limits,
+    bitmap: &mut Bitmap,
+    generic_scratch: &mut Vec<ArithmeticContext>,
 ) -> Result<Option<DecodedGenericRegionDirect>, GenericRegionError> {
     let (header, header_length) = parse_generic_region_header(payload, limits)?;
     if header.mmr
@@ -148,15 +200,23 @@ pub(crate) fn decode_generic_region_segment_into(
     let (rows, coded_consumed) = if unknown_length {
         let terminal =
             split_unknown_length_data(coded_and_following, false, header.region.height, limits)?;
-        decode_arithmetic_generic_into(terminal.coded, &header, terminal.rows, limits, bitmap)?;
+        decode_arithmetic_generic_into_with_scratch(
+            terminal.coded,
+            &header,
+            terminal.rows,
+            limits,
+            bitmap,
+            generic_scratch,
+        )?;
         (terminal.rows, terminal.consumed)
     } else {
-        decode_known_length_arithmetic_generic_into(
+        decode_known_length_arithmetic_generic_into_with_scratch(
             coded_and_following,
             &header,
             header.region.height,
             limits,
             bitmap,
+            generic_scratch,
         )?;
         (header.region.height, coded_and_following.len())
     };
@@ -171,22 +231,164 @@ pub(crate) fn decode_generic_region_segment_into(
 }
 
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    requires match skip {
+        Some(mask) => crate::spec::bitmap::storage_valid(mask),
+        None => true,
+    },
     ensures match out {
         Ok(bitmap) => crate::spec::bitmap::storage_valid(&bitmap),
         Err(_) => true,
     },
 ))]
+pub(super) fn decode_arithmetic_generic_with_scratch(
+    coded: &[u8],
+    header: &GenericRegionHeader,
+    rows: u32,
+    skip: Option<&Bitmap>,
+    limits: &Limits,
+    generic_scratch: &mut Vec<ArithmeticContext>,
+) -> Result<Bitmap, GenericRegionError> {
+    if header.mmr || rows > header.region.height {
+        return Err(GenericRegionError::InvalidFlags(0x01));
+    }
+    validate_arithmetic_terminator(coded)?;
+    validate_generic_adaptive_values(header.template, header.extended_template, &header.adaptive)?;
+    enforce_generic_work(header.region.width, rows, header.typical_prediction, limits)?;
+    if let Some(skip_bitmap) = skip {
+        if skip_bitmap.width() != header.region.width
+            || skip_bitmap.height() != header.region.height
+        {
+            return Err(GenericRegionError::InvalidSkipDimensions);
+        }
+    }
+
+    let mut session = GenericArithmeticSession::new_from_scratch(
+        coded,
+        header.template,
+        header.extended_template,
+        limits,
+        generic_scratch,
+    )?;
+    let mut result = session.decode_bitmap_rows(
+        GenericArithmeticCall {
+            width: header.region.width,
+            height: header.region.height,
+            adaptive: header.adaptive,
+            typical_prediction: header.typical_prediction,
+            skip,
+        },
+        rows,
+    );
+    if result.is_ok() {
+        if let Err(error) = session.validate_final_marker() {
+            result = Err(error);
+        }
+    }
+    session.into_scratch(generic_scratch);
+    result
+}
+
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    requires crate::spec::bitmap::storage_valid(old(bitmap)),
+    ensures out.is_ok() ==> crate::spec::bitmap::storage_valid(final(bitmap)),
+))]
+pub(super) fn decode_arithmetic_generic_into_with_scratch(
+    coded: &[u8],
+    header: &GenericRegionHeader,
+    rows: u32,
+    limits: &Limits,
+    bitmap: &mut Bitmap,
+    generic_scratch: &mut Vec<ArithmeticContext>,
+) -> Result<(), GenericRegionError> {
+    if header.mmr
+        || rows > header.region.height
+        || bitmap.width() != header.region.width
+        || bitmap.height() != header.region.height
+    {
+        return Err(GenericRegionError::InvalidFlags(0x01));
+    }
+    validate_arithmetic_terminator(coded)?;
+    validate_generic_adaptive_values(header.template, header.extended_template, &header.adaptive)?;
+    enforce_generic_work(header.region.width, rows, header.typical_prediction, limits)?;
+    let mut session = GenericArithmeticSession::new_from_scratch(
+        coded,
+        header.template,
+        header.extended_template,
+        limits,
+        generic_scratch,
+    )?;
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        crate::views::bitmap_fields(bitmap);
+    }
+    let mut result = session.decode_bitmap_rows_into(
+        GenericArithmeticCall {
+            width: header.region.width,
+            height: header.region.height,
+            adaptive: header.adaptive,
+            typical_prediction: header.typical_prediction,
+            skip: None,
+        },
+        rows,
+        bitmap,
+    );
+    if result.is_ok() {
+        if let Err(error) = session.validate_final_marker() {
+            result = Err(error);
+        }
+    }
+    session.into_scratch(generic_scratch);
+    result
+}
+
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match out {
+        Ok(bitmap) => crate::spec::bitmap::storage_valid(&bitmap),
+        Err(_) => true,
+    },
+))]
+#[cfg(test)]
 pub(super) fn decode_known_length_arithmetic_generic(
     coded: &[u8],
     header: &GenericRegionHeader,
     rows: u32,
     limits: &Limits,
 ) -> Result<Bitmap, GenericRegionError> {
+    let mut generic_scratch = Vec::new();
+    decode_known_length_arithmetic_generic_with_scratch(
+        coded,
+        header,
+        rows,
+        limits,
+        &mut generic_scratch,
+    )
+}
+
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match out {
+        Ok(bitmap) => crate::spec::bitmap::storage_valid(&bitmap),
+        Err(_) => true,
+    },
+))]
+pub(super) fn decode_known_length_arithmetic_generic_with_scratch(
+    coded: &[u8],
+    header: &GenericRegionHeader,
+    rows: u32,
+    limits: &Limits,
+    generic_scratch: &mut Vec<ArithmeticContext>,
+) -> Result<Bitmap, GenericRegionError> {
     let has_terminator = coded.len() >= 2
         && coded[coded.len() - 2] == ARITHMETIC_TERMINATOR[0]
         && coded[coded.len() - 1] == ARITHMETIC_TERMINATOR[1];
     if has_terminator {
-        return decode_arithmetic_generic(coded, header, rows, None, limits);
+        return decode_arithmetic_generic_with_scratch(
+            coded,
+            header,
+            rows,
+            None,
+            limits,
+            generic_scratch,
+        );
     }
     if coded.last() != Some(&0xff) {
         return Err(GenericRegionError::InvalidArithmeticTerminator);
@@ -225,13 +427,14 @@ pub(super) fn decode_known_length_arithmetic_generic(
         index += 1;
     }
     normalized.push(ARITHMETIC_TERMINATOR[1]);
-    decode_arithmetic_generic(&normalized, header, rows, None, limits)
+    decode_arithmetic_generic_with_scratch(&normalized, header, rows, None, limits, generic_scratch)
 }
 
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires crate::spec::bitmap::storage_valid(old(bitmap)),
     ensures out.is_ok() ==> crate::spec::bitmap::storage_valid(final(bitmap)),
 ))]
+#[cfg(test)]
 pub(super) fn decode_known_length_arithmetic_generic_into(
     coded: &[u8],
     header: &GenericRegionHeader,
@@ -239,11 +442,41 @@ pub(super) fn decode_known_length_arithmetic_generic_into(
     limits: &Limits,
     bitmap: &mut Bitmap,
 ) -> Result<(), GenericRegionError> {
+    let mut generic_scratch = Vec::new();
+    decode_known_length_arithmetic_generic_into_with_scratch(
+        coded,
+        header,
+        rows,
+        limits,
+        bitmap,
+        &mut generic_scratch,
+    )
+}
+
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    requires crate::spec::bitmap::storage_valid(old(bitmap)),
+    ensures out.is_ok() ==> crate::spec::bitmap::storage_valid(final(bitmap)),
+))]
+pub(super) fn decode_known_length_arithmetic_generic_into_with_scratch(
+    coded: &[u8],
+    header: &GenericRegionHeader,
+    rows: u32,
+    limits: &Limits,
+    bitmap: &mut Bitmap,
+    generic_scratch: &mut Vec<ArithmeticContext>,
+) -> Result<(), GenericRegionError> {
     let has_terminator = coded.len() >= 2
         && coded[coded.len() - 2] == ARITHMETIC_TERMINATOR[0]
         && coded[coded.len() - 1] == ARITHMETIC_TERMINATOR[1];
     if has_terminator {
-        return decode_arithmetic_generic_into(coded, header, rows, limits, bitmap);
+        return decode_arithmetic_generic_into_with_scratch(
+            coded,
+            header,
+            rows,
+            limits,
+            bitmap,
+            generic_scratch,
+        );
     }
     if coded.last() != Some(&0xff) {
         return Err(GenericRegionError::InvalidArithmeticTerminator);
@@ -280,7 +513,14 @@ pub(super) fn decode_known_length_arithmetic_generic_into(
         index += 1;
     }
     normalized.push(ARITHMETIC_TERMINATOR[1]);
-    decode_arithmetic_generic_into(&normalized, header, rows, limits, bitmap)
+    decode_arithmetic_generic_into_with_scratch(
+        &normalized,
+        header,
+        rows,
+        limits,
+        bitmap,
+        generic_scratch,
+    )
 }
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]

@@ -1,20 +1,20 @@
 use super::{
     allocation_size, bitmap_byte_len, check_combination_operator, compose_immediate,
-    decode_arithmetic_refinement, decode_generic_region_segment_into,
-    decode_generic_region_segment_reused, decode_halftone_region, decode_pattern_dictionary,
-    decode_symbol_dictionary, decode_text_region, generic_error_into_decode, get_huffman_table,
-    get_patterns, get_region_buffer, get_runtime_page, get_symbol_resource,
-    halftone_error_into_decode, huffman_table_index, insert_buffer, insert_patterns,
-    insert_symbol_resource, new_halftone_state, new_pattern_arithmetic_state,
-    new_pattern_mmr_state, note_page_write, parse_generic_region_header, parse_halftone_header,
-    parse_pattern_dictionary_header, parse_refinement_region_header, parse_region_info,
-    parse_symbol_dictionary_header, pattern_index, require_auxiliary_page,
-    require_matching_geometry, runtime_page_index, snapshot_region, symbol_index,
-    symbol_text_error_into_decode, Bitmap, ByteReader, CollectedSymbols, CombinationOperator,
-    DecodeError, DecodeWork, GenericTemplate, HuffmanTable, HuffmanTables, Limits, MalformedError,
-    MmrScratch, ParsedSegment, PatternStore, RefinementParameters, RegionBuffers, RetainedBudget,
-    RuntimePage, RuntimePages, SegmentType, SymbolDictionaryInput, SymbolResource, SymbolStore,
-    TextRegionInput, WorkBudget,
+    decode_arithmetic_refinement, decode_generic_region_segment_into_with_scratch,
+    decode_generic_region_segment_reused_with_scratch, decode_halftone_region,
+    decode_pattern_dictionary, decode_symbol_dictionary, decode_text_region,
+    generic_error_into_decode, get_huffman_table, get_patterns, get_region_buffer,
+    get_runtime_page, get_symbol_resource, halftone_error_into_decode, huffman_table_index,
+    insert_buffer, insert_patterns, insert_symbol_resource, new_halftone_state_from_scratch,
+    new_pattern_arithmetic_state_from_scratch, new_pattern_mmr_state, note_page_write,
+    parse_generic_region_header, parse_halftone_header, parse_pattern_dictionary_header,
+    parse_refinement_region_header, parse_region_info, parse_symbol_dictionary_header,
+    pattern_index, require_auxiliary_page, require_matching_geometry, runtime_page_index,
+    snapshot_region, symbol_index, symbol_text_error_into_decode, ArithmeticContext, Bitmap,
+    ByteReader, CollectedSymbols, CombinationOperator, DecodeError, DecodeWork, GenericTemplate,
+    HuffmanTable, HuffmanTables, Limits, MalformedError, MmrScratch, ParsedSegment, PatternStore,
+    RefinementParameters, RegionBuffers, RetainedBudget, RuntimePage, RuntimePages, SegmentType,
+    SymbolDictionaryInput, SymbolResource, SymbolStore, TextRegionInput, WorkBudget,
 };
 
 #[cfg(verus_keep_ghost)]
@@ -291,7 +291,7 @@ pub(super) fn direct_generic_page_index(
         || header.region.y != 0
         || !matches!(
             header.region.operator,
-            CombinationOperator::Or | CombinationOperator::Replace
+            CombinationOperator::Or | CombinationOperator::Xor | CombinationOperator::Replace
         )
     {
         return None;
@@ -326,12 +326,14 @@ pub(super) fn decode_generic_segment_direct_on_page(
     page: &mut RuntimePage,
     work: &mut DecodeWork,
     limits: &Limits,
+    generic_scratch: &mut Vec<ArithmeticContext>,
 ) -> Result<bool, DecodeError> {
-    let Some(decoded) = decode_generic_region_segment_into(
+    let Some(decoded) = decode_generic_region_segment_into_with_scratch(
         segment.payload,
         segment.header.data_length.is_none(),
         limits,
         &mut page.bitmap,
+        generic_scratch,
     )
     .map_err(generic_error_into_decode)?
     else {
@@ -386,6 +388,7 @@ pub(super) fn decode_generic_segment(
     work: &mut DecodeWork,
     limits: &Limits,
     mmr_scratch: &mut MmrScratch,
+    generic_scratch: &mut Vec<ArithmeticContext>,
 ) -> Result<(), DecodeError> {
     let arithmetic = match segment.payload.get(17) {
         Some(flags) => *flags & 0x01 == 0,
@@ -393,12 +396,27 @@ pub(super) fn decode_generic_segment(
     };
     if arithmetic {
         if let Some(index) = direct_generic_page_index(segment, pages, work, limits) {
-            if decode_generic_segment_direct_on_page(segment, &mut pages[index].1, work, limits)? {
+            if decode_generic_segment_direct_on_page(
+                segment,
+                &mut pages[index].1,
+                work,
+                limits,
+                generic_scratch,
+            )? {
                 return Ok(());
             }
         }
     }
-    decode_generic_segment_buffered(segment, pages, buffers, retained, work, limits, mmr_scratch)
+    decode_generic_segment_buffered(
+        segment,
+        pages,
+        buffers,
+        retained,
+        work,
+        limits,
+        mmr_scratch,
+        generic_scratch,
+    )
 }
 
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
@@ -412,6 +430,7 @@ pub(super) fn decode_generic_segment(
         Err(_) => true,
     },
 ))]
+#[allow(clippy::too_many_arguments)]
 pub(super) fn decode_generic_segment_buffered(
     segment: &ParsedSegment<'_>,
     pages: &mut RuntimePages,
@@ -420,12 +439,14 @@ pub(super) fn decode_generic_segment_buffered(
     work: &mut DecodeWork,
     limits: &Limits,
     mmr_scratch: &mut MmrScratch,
+    generic_scratch: &mut Vec<ArithmeticContext>,
 ) -> Result<(), DecodeError> {
-    let decoded = decode_generic_region_segment_reused(
+    let decoded = decode_generic_region_segment_reused_with_scratch(
         segment.payload,
         segment.header.data_length.is_none(),
         limits,
         mmr_scratch,
+        generic_scratch,
     )
     .map_err(generic_error_into_decode)?;
     if decoded.consumed_bytes != segment.payload.len() {
@@ -568,6 +589,7 @@ pub(super) fn decode_pattern_segment(
     retained: &mut RetainedBudget,
     cumulative_work: &mut DecodeWork,
     limits: &Limits,
+    generic_scratch: &mut Vec<ArithmeticContext>,
 ) -> Result<(), DecodeError> {
     if pattern_index(patterns, segment.header.number).is_some() {
         return Err(MalformedError::DuplicateSegmentNumber(segment.header.number).into());
@@ -581,11 +603,23 @@ pub(super) fn decode_pattern_segment(
         new_pattern_mmr_state(coded, limits)
     } else {
         let template = generic_template(header.template)?;
-        new_pattern_arithmetic_state(coded, template, header.template, limits)?
+        new_pattern_arithmetic_state_from_scratch(
+            coded,
+            template,
+            header.template,
+            limits,
+            generic_scratch,
+        )?
     };
-    let pattern_bitmaps = decode_pattern_dictionary(header, &mut decoder, limits, &mut work)
-        .map_err(halftone_error_into_decode)?;
-    decoder.finish()?;
+    let mut outcome = decode_pattern_dictionary(header, &mut decoder, limits, &mut work)
+        .map_err(halftone_error_into_decode);
+    if outcome.is_ok() {
+        if let Err(error) = decoder.finish() {
+            outcome = Err(error);
+        }
+    }
+    decoder.into_scratch(generic_scratch);
+    let pattern_bitmaps = outcome?;
 
     let requested_bytes = u64::try_from(std::mem::size_of::<(u32, Vec<Bitmap>)>())
         .map_err(|_| MalformedError::IntegerOverflow)?;
@@ -612,7 +646,7 @@ pub(super) fn decode_pattern_segment(
     Ok(())
 }
 
-#[allow(clippy::too_many_lines)]
+#[allow(clippy::too_many_arguments, clippy::too_many_lines)]
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires
         decode_spec::runtime_pages_valid(old(pages)),
@@ -633,6 +667,7 @@ pub(super) fn decode_halftone_segment(
     retained: &mut RetainedBudget,
     cumulative_work: &mut DecodeWork,
     limits: &Limits,
+    generic_scratch: &mut Vec<ArithmeticContext>,
 ) -> Result<(), DecodeError> {
     let pattern_number =
         first_referred_segment(&segment.header.referred_segments, segment.header.number)?;
@@ -648,15 +683,16 @@ pub(super) fn decode_halftone_segment(
     let mut work = WorkBudget::new(limits);
 
     let template = generic_template(header.template)?;
-    let mut decoder = new_halftone_state(
+    let mut decoder = new_halftone_state_from_scratch(
         coded,
         header.mmr,
         template,
         header.template,
         dictionary.len(),
         limits,
+        generic_scratch,
     )?;
-    let bitmap = decode_halftone_region(
+    let mut outcome = decode_halftone_region(
         &header,
         region.width,
         region.height,
@@ -665,8 +701,14 @@ pub(super) fn decode_halftone_segment(
         limits,
         &mut work,
     )
-    .map_err(halftone_error_into_decode)?;
-    decoder.finish()?;
+    .map_err(halftone_error_into_decode);
+    if outcome.is_ok() {
+        if let Err(error) = decoder.finish() {
+            outcome = Err(error);
+        }
+    }
+    decoder.into_scratch(generic_scratch);
+    let bitmap = outcome?;
 
     cumulative_work.charge(work.used(), limits)?;
     if segment.header.segment_type == SegmentType::IntermediateHalftoneRegion {
