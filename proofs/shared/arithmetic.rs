@@ -85,4 +85,221 @@ pub(super) proof fn packed_tables_match(packed: u8)
     else if packed == 92 {} else {}
 }
 
+proof fn single_shot_renormalize_step_induction(
+    decoder: &super::ArithmeticDecoder,
+    shift: u32,
+)
+    requires
+        super::arithmetic_spec::decoder_state_valid(decoder),
+        0 < decoder.interval < super::MIN_INTERVAL,
+        1 <= shift <= decoder.bit_count,
+        shift <= 8,
+        ((decoder.interval << (shift - 1) as u32) as u32) < super::MIN_INTERVAL,
+        super::MIN_INTERVAL <= ((decoder.interval << shift) as u32) <= 0xffffu32,
+        (decoder.code >> (32u32 - shift)) == 0,
+    ensures
+        super::arithmetic_spec::normalized_state(decoder) == (
+            0u8,
+            (decoder.interval << shift) as u32,
+            decoder.byte_position,
+            decoder.current_byte,
+            (decoder.code << shift) as u32,
+            (decoder.bit_count - shift as u8) as u8,
+            decoder.marker,
+        ),
+    decreases shift,
+{
+    reveal(super::arithmetic_spec::decoder_state_valid);
+    reveal(super::arithmetic_spec::decoder_valid);
+    let interval = decoder.interval;
+    let code = decoder.code;
+    assert(
+        ((interval << 1u32) as nat) == (interval as nat) * 2
+        && ((code >> 31u32) == 0)
+        && ((code << 1u32) as nat) == (code as nat) * 2
+        && (code as nat) * 2 <= u32::MAX as nat
+    ) by (bit_vector)
+        requires
+            0 < interval < 0x8000u32,
+            1 <= shift <= 8,
+            (code >> sub(32u32, shift)) == 0;
+    let step1 = super::ArithmeticDecoder {
+        bytes: decoder.bytes,
+        byte_position: decoder.byte_position,
+        current_byte: decoder.current_byte,
+        code: code << 1u32,
+        interval: interval << 1u32,
+        bit_count: (decoder.bit_count - 1) as u8,
+        marker: decoder.marker,
+    };
+    reveal_with_fuel(super::arithmetic_spec::normalized_state, 2);
+    assert(super::arithmetic_spec::normalized_state(decoder)
+        == super::arithmetic_spec::normalized_state(&step1));
+    if shift == 1 {
+        assert((interval << 1u32) >= 0x8000u32);
+    } else {
+        let rem = (shift - 1) as u32;
+        assert(
+            ((interval << 1u32) < 0x8000u32)
+            && ((interval << 1u32) > 0u32)
+            && (((interval << 1u32) << sub(rem, 1u32)) == (interval << rem))
+            && (((interval << 1u32) << rem) == (interval << shift))
+            && (((code << 1u32) << rem) == (code << shift))
+            && (((code << 1u32) >> sub(32u32, rem)) == 0u32)
+        ) by (bit_vector)
+            requires
+                0 < interval < 0x8000u32,
+                2 <= shift <= 8,
+                rem == sub(shift, 1u32),
+                (interval << rem) < 0x8000u32,
+                0x8000u32 <= (interval << shift) <= 0xffffu32,
+                (code >> sub(32u32, shift)) == 0;
+        single_shot_renormalize_step_induction(&step1, rem);
+    }
+}
+
+pub(super) proof fn single_shot_renormalize_matches(
+    decoder: &super::ArithmeticDecoder,
+    shift: u32,
+)
+    requires
+        super::arithmetic_spec::decoder_state_valid(decoder),
+        decoder.interval < super::MIN_INTERVAL,
+        shift == vstd::std_specs::bits::u32_leading_zeros(decoder.interval).wrapping_sub(16u32),
+        shift <= decoder.bit_count as u32,
+        (decoder.code >> (32u32 - shift)) == 0,
+    ensures
+        1 <= shift <= 8,
+        decoder.interval > 0,
+        super::MIN_INTERVAL <= ((decoder.interval << shift) as u32) <= 0xffffu32,
+        super::arithmetic_spec::normalized_state(decoder) == (
+            0u8,
+            (decoder.interval << shift) as u32,
+            decoder.byte_position,
+            decoder.current_byte,
+            (decoder.code << shift) as u32,
+            (decoder.bit_count - shift as u8) as u8,
+            decoder.marker,
+        ),
+{
+    reveal(super::arithmetic_spec::decoder_state_valid);
+    let interval = decoder.interval;
+    vstd::std_specs::bits::axiom_u32_leading_zeros(interval);
+    let lz = vstd::std_specs::bits::u32_leading_zeros(interval);
+    assert(
+        interval > 0
+        && 17 <= lz <= 31
+        && shift == sub(lz, 16u32)
+        && 1 <= shift <= 8
+        && ((interval << sub(shift, 1u32)) < 0x8000u32)
+        && (0x8000u32 <= (interval << shift) <= 0xffffu32)
+    ) by (bit_vector)
+        requires
+            interval < 0x8000u32,
+            0 <= lz <= 32,
+            (interval == 0) <==> (lz == 32),
+            (0 <= lz < 32) ==> (((interval >> sub(31u32, lz)) & 1u32) != 0u32),
+            (interval >> sub(32u32, lz)) == 0u32,
+            shift == sub(lz, 16u32),
+            shift <= 8u32;
+    single_shot_renormalize_step_induction(decoder, shift);
+}
+
+pub(super) proof fn inline_mps_renorm_matches(
+    decoder: &super::ArithmeticDecoder,
+    context: super::ArithmeticContext,
+    qe: u32,
+    next_a: u32,
+    next_c: u32,
+)
+    requires
+        super::arithmetic_spec::decoder_valid(decoder),
+        super::arithmetic_spec::context_valid(context),
+        qe == super::QE_STATES@[super::arithmetic_spec::context_index(context) as int].qe as u32,
+        decoder.code >= (qe << 16u32),
+        next_a == (decoder.interval - qe) as u32,
+        next_c == (decoder.code - (qe << 16u32)) as u32,
+        0x4000u32 <= next_a < super::MIN_INTERVAL,
+        next_a >= qe,
+        decoder.bit_count != 0,
+        (next_c & 0x8000_0000u32) == 0,
+    ensures
+        super::MIN_INTERVAL <= ((next_a << 1u32) as u32) <= 0xffffu32,
+        super::arithmetic_spec::entry_decision(
+            decoder.interval,
+            decoder.code,
+            super::arithmetic_spec::context_index(context),
+            super::arithmetic_spec::context_mps(context),
+        ) == super::arithmetic_spec::context_mps(context),
+        super::arithmetic_spec::entry_index(
+            decoder.interval,
+            decoder.code,
+            super::arithmetic_spec::context_index(context),
+        ) == super::QE_STATES@[super::arithmetic_spec::context_index(context) as int].next_mps,
+        super::arithmetic_spec::entry_mps(
+            decoder.interval,
+            decoder.code,
+            super::arithmetic_spec::context_index(context),
+            super::arithmetic_spec::context_mps(context),
+        ) == super::arithmetic_spec::context_mps(context),
+        super::arithmetic_spec::decision_state(decoder, context) == (
+            super::arithmetic_spec::context_mps(context),
+            (next_a << 1u32) as u32,
+            decoder.byte_position,
+            decoder.current_byte,
+            (next_c << 1u32) as u32,
+            (decoder.bit_count - 1) as u8,
+            decoder.marker,
+        ),
+{
+    reveal(super::arithmetic_spec::decoder_state_valid);
+    reveal(super::arithmetic_spec::decoder_valid);
+    super::arithmetic_spec::decision_model_equations(decoder, context);
+    super::arithmetic_spec::entry_model_equations(
+        decoder.interval,
+        decoder.code,
+        super::arithmetic_spec::context_index(context),
+        super::arithmetic_spec::context_mps(context),
+    );
+    reveal(super::arithmetic_spec::exchange_is_mps);
+    reveal(super::arithmetic_spec::exchange_decision);
+    reveal(super::arithmetic_spec::exchange_index);
+    reveal(super::arithmetic_spec::exchange_mps);
+    let idx = super::arithmetic_spec::context_index(context);
+    qe_transition_valid(idx as int);
+    let c = decoder.code;
+    assert(
+        (c >> 16u32) >= qe
+        && (next_a << 1u32) == mul(next_a, 2u32)
+        && 0x8000u32 <= (next_a << 1u32) <= 0xffffu32
+        && (next_c >> 31u32) == 0u32
+        && ((next_c << 1u32) as nat) == (next_c as nat) * 2
+        && (next_c as nat) * 2 <= u32::MAX as nat
+    ) by (bit_vector)
+        requires
+            0 < qe <= 0x5601u32,
+            c >= (qe << 16u32),
+            0x4000u32 <= next_a < 0x8000u32,
+            (next_c & 0x8000_0000u32) == 0u32;
+    let frame = super::ArithmeticDecoder {
+        bytes: decoder.bytes,
+        byte_position: decoder.byte_position,
+        current_byte: decoder.current_byte,
+        code: next_c,
+        interval: next_a,
+        bit_count: decoder.bit_count,
+        marker: decoder.marker,
+    };
+    reveal_with_fuel(super::arithmetic_spec::normalized_state, 2);
+    assert(super::arithmetic_spec::normalized_state(&frame) == (
+        0u8,
+        (next_a << 1u32) as u32,
+        decoder.byte_position,
+        decoder.current_byte,
+        (next_c << 1u32) as u32,
+        (decoder.bit_count - 1) as u8,
+        decoder.marker,
+    ));
+}
+
 }

@@ -78,64 +78,40 @@ impl ArithmeticDecoder<'_> {
     pub(super) fn renormalize_signal(&mut self) -> u8 {
         #[cfg(verus_keep_ghost)]
         production_reveal_decoder_valid!();
-        #[cfg_attr(verus_keep_ghost, verus_spec(
-            invariant
-                arithmetic_spec::decoder_state_valid(self),
-                arithmetic_spec::decoder_state_valid(old(self)),
-                self.bytes@ == old(self).bytes@,
-                self.bytes == old(self).bytes,
-                arithmetic_spec::normalized_state(old(self))
-                    == arithmetic_spec::normalized_state(self),
-            decreases arithmetic_spec::renormalization_steps(
-                self.interval as nat,
-            ),
-        ))]
-        while self.interval < MIN_INTERVAL {
+        if self.interval < MIN_INTERVAL {
+            let shift = self.interval.leading_zeros().wrapping_sub(16);
             #[cfg(verus_keep_ghost)]
-            proof_decl! {
-                let ghost previous_interval = self.interval;
-                let ghost before = *self;
+            proof! {
+                vstd::std_specs::bits::axiom_u32_leading_zeros(self.interval);
+                let lz = vstd::std_specs::bits::u32_leading_zeros(self.interval);
+                let interval = self.interval;
+                assert(17 <= lz <= 32) by (bit_vector)
+                    requires
+                        interval < 0x8000u32,
+                        0 <= lz <= 32,
+                        (interval == 0) <==> (lz == 32),
+                        (0 <= lz < 32) ==> (((interval >> sub(31u32, lz)) & 1u32) != 0u32),
+                        (interval >> sub(32u32, lz)) == 0u32;
+                assert(1 <= shift <= 16);
             }
-            if self.bit_count == 0 {
-                let signal = self.byte_in_signal();
+            if shift <= u32::from(self.bit_count) && (self.code >> (32 - shift)) == 0 {
+                #[cfg(verus_keep_ghost)]
+                proof! {
+                    crate::arithmetic::arithmetic_shared::single_shot_renormalize_matches(
+                        self, shift,
+                    );
+                }
+                self.interval <<= shift;
+                self.code <<= shift;
+                #[allow(clippy::cast_possible_truncation)]
+                {
+                    self.bit_count -= shift as u8;
+                }
+            } else {
+                let signal = self.renormalize_slow_signal();
                 if signal != 0 {
                     return signal;
                 }
-            }
-            #[cfg(verus_keep_ghost)]
-            proof! {
-                assert(self.interval < 0x8000u32);
-                assert(self.interval <= u32::MAX / 2);
-                assert(self.interval * 2 <= 0xffffu32);
-                assert(self.bit_count > 0);
-                assert(self.bit_count <= 8);
-                assert(
-                    MIN_INTERVAL - self.interval * 2
-                        <                         MIN_INTERVAL - self.interval
-                );
-            }
-            self.interval *= 2;
-            let Some(code) = self.code.checked_mul(2) else {
-                return RASTER_SIGNAL_OVERFLOW;
-            };
-            self.code = code;
-            self.bit_count -= 1;
-            #[cfg(verus_keep_ghost)]
-            proof! {
-                reveal_with_fuel(arithmetic_spec::normalized_state, 1);
-                assert(
-                    arithmetic_spec::normalized_state(&before)
-                        == arithmetic_spec::normalized_state(self)
-                );
-                assert(self.interval == previous_interval * 2);
-                reveal(arithmetic_spec::renormalization_steps);
-                assert(
-                    arithmetic_spec::renormalization_steps(
-                        self.interval as nat,
-                    ) < arithmetic_spec::renormalization_steps(
-                        previous_interval as nat,
-                    )
-                );
             }
         }
         0
@@ -242,6 +218,95 @@ impl ArithmeticDecoder<'_> {
         };
         self.code = code;
         self.bit_count = 8;
+        0
+    }
+
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        requires arithmetic_spec::decoder_state_valid(old(self)),
+        ensures
+            out <= RASTER_SIGNAL_OVERFLOW,
+            out == 0 || out == RASTER_SIGNAL_EOF || out == RASTER_SIGNAL_OVERFLOW,
+            arithmetic_spec::decoder_state_valid(final(self)),
+            out == 0 ==> arithmetic_spec::decoder_valid(final(self)),
+            final(self).bytes@ == old(self).bytes@,
+            final(self).bytes == old(self).bytes,
+            ({
+                let ns = arithmetic_spec::normalized_state(old(self));
+                &&& out == ns.0
+                &&& final(self).interval == ns.1
+                &&& final(self).byte_position == ns.2
+                &&& final(self).current_byte == ns.3
+                &&& final(self).code == ns.4
+                &&& final(self).bit_count == ns.5
+                &&& final(self).marker == ns.6
+            }),
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    #[cold]
+    #[inline(never)]
+    fn renormalize_slow_signal(&mut self) -> u8 {
+        #[cfg(verus_keep_ghost)]
+        production_reveal_decoder_valid!();
+        #[cfg_attr(verus_keep_ghost, verus_spec(
+            invariant
+                arithmetic_spec::decoder_state_valid(self),
+                arithmetic_spec::decoder_state_valid(old(self)),
+                self.bytes@ == old(self).bytes@,
+                self.bytes == old(self).bytes,
+                arithmetic_spec::normalized_state(old(self))
+                    == arithmetic_spec::normalized_state(self),
+            decreases arithmetic_spec::renormalization_steps(
+                self.interval as nat,
+            ),
+        ))]
+        while self.interval < MIN_INTERVAL {
+            #[cfg(verus_keep_ghost)]
+            proof_decl! {
+                let ghost previous_interval = self.interval;
+                let ghost before = *self;
+            }
+            if self.bit_count == 0 {
+                let signal = self.byte_in_signal();
+                if signal != 0 {
+                    return signal;
+                }
+            }
+            #[cfg(verus_keep_ghost)]
+            proof! {
+                assert(self.interval < 0x8000u32);
+                assert(self.interval <= u32::MAX / 2);
+                assert(self.interval * 2 <= 0xffffu32);
+                assert(self.bit_count > 0);
+                assert(self.bit_count <= 8);
+                assert(
+                    MIN_INTERVAL - self.interval * 2
+                        < MIN_INTERVAL - self.interval
+                );
+            }
+            self.interval *= 2;
+            let Some(code) = self.code.checked_mul(2) else {
+                return RASTER_SIGNAL_OVERFLOW;
+            };
+            self.code = code;
+            self.bit_count -= 1;
+            #[cfg(verus_keep_ghost)]
+            proof! {
+                reveal_with_fuel(arithmetic_spec::normalized_state, 1);
+                assert(
+                    arithmetic_spec::normalized_state(&before)
+                        == arithmetic_spec::normalized_state(self)
+                );
+                assert(self.interval == previous_interval * 2);
+                reveal(arithmetic_spec::renormalization_steps);
+                assert(
+                    arithmetic_spec::renormalization_steps(
+                        self.interval as nat,
+                    ) < arithmetic_spec::renormalization_steps(
+                        previous_interval as nat,
+                    )
+                );
+            }
+        }
         0
     }
 

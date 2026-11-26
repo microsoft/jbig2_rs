@@ -372,6 +372,7 @@ fn unexpected_eof(offset: usize, needed: usize, remaining: usize) -> ArithmeticE
 mod certainty;
 mod certified_integers;
 mod decoding;
+mod fast;
 mod integers;
 mod probability;
 mod refill;
