@@ -61,7 +61,7 @@ def cases(root):
         poisoned, "Ok(GenericRegionState::Arithmetic {",
         """if !session.contexts.contexts.is_empty() {
             session.contexts.contexts[0] = crate::arithmetic::ArithmeticContext {
-                state_index: 47, mps: 0,
+                packed: 94,
             };
         }
         Ok(GenericRegionState::Arithmetic {""",

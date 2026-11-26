@@ -252,9 +252,14 @@ impl BitReader<'_> {
             },
     ))]
     #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    #[allow(clippy::cast_possible_truncation, clippy::too_many_lines)]
+    #[inline]
     pub(crate) fn read_bits(&mut self, count: u8) -> Result<u32, MalformedError> {
         if count > 32 {
             return Err(MalformedError::InvalidBitCount(count));
+        }
+        if count == 0 {
+            return Ok(0);
         }
         let total_bits = self
             .bytes
@@ -269,6 +274,78 @@ impl BitReader<'_> {
                 needed: u64::from(count),
                 remaining: remaining as u64,
             });
+        }
+
+        let byte_index = self.bit_position / 8;
+        let bit_offset = (self.bit_position % 8) as u32;
+        if count == 1 {
+            let shift = 7 - bit_offset;
+            let bit = u32::from((self.bytes[byte_index] >> shift) & 1);
+            #[cfg(verus_keep_ghost)]
+            proof! {
+                crate::reader_properties::single_byte_bits_value(
+                    self.bytes@,
+                    byte_index as nat,
+                    bit_offset,
+                    1,
+                );
+                let b = self.bytes@[byte_index as int];
+                assert(
+                    (((b as u32) >> shift) & (0xffu32 >> 7u32))
+                        == (((b >> (shift as u8)) & 1u8) as u32)
+                ) by (bit_vector)
+                    requires shift < 8u32;
+            }
+            self.bit_position += 1;
+            return Ok(bit);
+        }
+        if bit_offset + u32::from(count) <= 8 {
+            let shift = 8 - bit_offset - u32::from(count);
+            let mask = 0xff_u32 >> (8 - u32::from(count));
+            let value = (u32::from(self.bytes[byte_index]) >> shift) & mask;
+            #[cfg(verus_keep_ghost)]
+            proof! {
+                crate::reader_properties::single_byte_bits_value(
+                    self.bytes@,
+                    byte_index as nat,
+                    bit_offset,
+                    count as u32,
+                );
+            }
+            self.bit_position += count_usize;
+            return Ok(value);
+        }
+        if self.bytes.len() - byte_index >= 8 {
+            let b = self.bytes;
+            let word = (u64::from(b[byte_index]) << 56)
+                | (u64::from(b[byte_index + 1]) << 48)
+                | (u64::from(b[byte_index + 2]) << 40)
+                | (u64::from(b[byte_index + 3]) << 32)
+                | (u64::from(b[byte_index + 4]) << 24)
+                | (u64::from(b[byte_index + 5]) << 16)
+                | (u64::from(b[byte_index + 6]) << 8)
+                | u64::from(b[byte_index + 7]);
+            let shift = 64 - bit_offset - u32::from(count);
+            let mask = 0xffff_ffff_u64 >> (32 - u32::from(count));
+            let raw = (word >> shift) & mask;
+            #[cfg(verus_keep_ghost)]
+            proof! {
+                crate::reader_properties::u64_be_bits_value(
+                    self.bytes@,
+                    byte_index as nat,
+                    bit_offset,
+                    count as u32,
+                    word,
+                );
+                assert(raw <= u32::MAX as u64) by (bit_vector)
+                    requires
+                        raw == ((word >> (shift as u64)) & mask),
+                        mask == (0xffff_ffffu64 >> sub(32u64, count as u64)),
+                        count <= 32u8;
+            }
+            self.bit_position += count_usize;
+            #[allow(clippy::cast_possible_truncation)]
+            return Ok(raw as u32);
         }
 
         let mut value = 0_u32;

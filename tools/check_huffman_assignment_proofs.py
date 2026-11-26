@@ -81,6 +81,13 @@ FALLBACK_INVARIANT = """huffman_spec::fallback_run(
 ) == huffman_spec::fallback_run(
     self, reader.bytes@, reader.bit_position, length, code,
 ),"""
+FALLBACK_FAST_INVARIANT = """huffman_spec::fallback_run(
+    self, old(reader).bytes@, old(reader).bit_position,
+    1, WideCode { limbs: [0u64, 0, 0, 0] },
+) == huffman_spec::fallback_run(
+    self, reader.bytes@, (start_pos + length - 1) as usize,
+    length, WideCode { limbs: [code32 as u64, 0, 0, 0] },
+),"""
 LINE_VALUE = """out == huffman_spec::line_state(
     line, old(reader).bytes@, old(reader).bit_position,
 ).0,"""
@@ -134,23 +141,24 @@ TOTAL_LINE_POST = """match line.kind {
     },
 },"""
 RETURN = """Ok(Self {
-    lines: owned_lines,
-    ordered_lines,
-    length_count,
-    first_code,
-    first_line,
-    prefix_lookup,
+    lines: TableSlice::Owned(owned_lines),
+    ordered_lines: TableSlice::Owned(ordered_lines),
+    short_length_count,
+    short_first_code,
+    short_first_line,
+    long_tables: None,
+    prefix_lookup: TableSlice::Owned(prefix_lookup),
     prefer_prefix_lookup,
     max_prefix_len,
 })"""
 
 
-def output_case(identity, field, replacement, predicate):
+def output_case(identity, site_line, replacement_line, predicate):
     return {
-        "id": identity, "file": "src/huffman.rs", "module": "huffman",
+        "id": identity, "file": "src/huffman/construction.rs", "module": "huffman",
         "function": "HuffmanTable::from_line_source",
         "site": RETURN,
-        "replacement": RETURN.replace(f"\n    {field},", f"\n    {field}: {replacement},"),
+        "replacement": RETURN.replace(f"\n    {site_line},", f"\n    {replacement_line},"),
         "controls": (
             (SOURCE_ATTRIBUTE, SOURCE_WEAKER),
             (f"&& huffman_spec::{predicate}(huffman_spec::raw_lines(lines), &table)", ""),
@@ -193,7 +201,10 @@ def fallback_case(identity, site, replacement, test):
         "id": identity, "file": FALLBACK["file"], "module": "huffman",
         "function": "HuffmanTable::decode_fallback", "site": FALLBACK_BODY,
         "replacement": replace_once(FALLBACK_BODY, site, replacement),
-        "controls": ((FALLBACK_VALUE, ""), (FALLBACK_CURSOR, ""), (FALLBACK_INVARIANT, "")),
+        "controls": (
+            (FALLBACK_VALUE, ""), (FALLBACK_CURSOR, ""),
+            (FALLBACK_INVARIANT, ""), (FALLBACK_FAST_INVARIANT, ""),
+        ),
         "native_test": "huffman::tests::fallback_state::" + test,
     }
 
@@ -286,18 +297,21 @@ CASES = (
         ),),
     },
     output_case(
-        "returned_first_code_corrupted", "first_code",
-        "{ first_code[usize::from(max_prefix_len)] = WideCode { limbs: [1, 0, 0, 0] }; first_code }",
+        "returned_first_code_corrupted",
+        "short_first_code",
+        "short_first_code: { short_first_code[usize::from(max_prefix_len)] = 1; short_first_code }",
         "assignment_codes",
     ),
     output_case(
-        "returned_bucket_start_corrupted", "first_line",
-        "{ first_line[usize::from(max_prefix_len)] = 1; first_line }",
+        "returned_bucket_start_corrupted",
+        "short_first_line",
+        "short_first_line: { short_first_line[usize::from(max_prefix_len)] = 1; short_first_line }",
         "assignment_starts",
     ),
     output_case(
-        "returned_original_line_order_corrupted", "ordered_lines",
-        "{ if !ordered_lines.is_empty() { ordered_lines[0] = 0; } ordered_lines }",
+        "returned_original_line_order_corrupted",
+        "ordered_lines: TableSlice::Owned(ordered_lines)",
+        "ordered_lines: TableSlice::Owned({ if !ordered_lines.is_empty() { ordered_lines[0] = 0; } ordered_lines })",
         "assignment_order",
     ),
     line_case(
@@ -378,8 +392,8 @@ CASES = (
     ),
     fallback_case(
         "fallback_uses_first_length_bucket",
-        "let count = self.length_count[length];",
-        "let count = self.length_count[1];",
+        "let count = self.length_count_at(length);",
+        "let count = self.length_count_at(1);",
         "standard_prefix_selection_matches_independent_numeric_assignment_and_frames",
     ),
     fallback_case(
@@ -391,11 +405,11 @@ CASES = (
     ),
     fallback_case(
         "fallback_discards_high_prefix_limbs",
-        "let count = self.length_count[length];",
+        "let count = self.length_count_at(length);",
         """code.limbs[1] = 0;
         code.limbs[2] = 0;
         code.limbs[3] = 0;
-        let count = self.length_count[length];""",
+        let count = self.length_count_at(length);""",
         "nonzero_long_prefixes_select_the_given_wide_code_and_ordered_line",
     ),
     {
@@ -428,7 +442,10 @@ CASES = (
         "file": "src/huffman.rs", "module": "huffman",
         "function": "HuffmanTable::from_line_source",
         "site": RETURN,
-        "replacement": RETURN.replace("\n    prefix_lookup,", "\n    prefix_lookup: Vec::new(),"),
+        "replacement": RETURN.replace(
+            "\n    prefix_lookup: TableSlice::Owned(prefix_lookup),",
+            "\n    prefix_lookup: TableSlice::Owned(Vec::new()),",
+        ),
         "controls": ((SOURCE_ATTRIBUTE, SOURCE_WEAKER),),
         "native_test": "huffman::tests::cache_map::raw_symbol_id_and_standard_constructors_keep_their_production_cache_map",
     },

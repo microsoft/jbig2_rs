@@ -255,7 +255,7 @@ impl StandardHuffmanTables {
         limits: &Limits,
     ) -> Result<(), HuffmanError> {
         if self.table(table).is_none() {
-            let materialized = Some(Box::new(HuffmanTable::standard(table, limits)?));
+            let materialized = Some(HuffmanTable::standard_static(table, limits)?);
             match table {
                 StandardHuffmanTable::A => self.a = materialized,
                 StandardHuffmanTable::B => self.b = materialized,
@@ -285,7 +285,7 @@ impl StandardHuffmanTables {
         macro_rules! get {
             ($field:expr) => {
                 match $field {
-                    Some(table) => Some(table),
+                    Some(table) => Some(*table),
                     None => None,
                 }
             };

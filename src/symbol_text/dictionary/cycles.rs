@@ -116,9 +116,7 @@ impl<'a> Checkpoint<'a> {
             ))]
             while key < 4 {
                 let index = keys[key];
-                if self.banks[bank][index].state_index != current[index].state_index
-                    || self.banks[bank][index].mps != current[index].mps
-                {
+                if self.banks[bank][index].packed() != current[index].packed() {
                     #[cfg(verus_keep_ghost)]
                     proof! {
                         assert(self.banks[bank as int][index as int] != current@[index as int]);
@@ -203,9 +201,7 @@ impl<'a> Checkpoint<'a> {
                 decreases 512 - index,
             ))]
             while index < 512 {
-                if self.banks[bank][index].state_index != current[index].state_index
-                    || self.banks[bank][index].mps != current[index].mps
-                {
+                if self.banks[bank][index].packed() != current[index].packed() {
                     #[cfg(verus_keep_ghost)]
                     proof! {
                         assert(self.banks[bank as int][index as int] != current@[index as int]);

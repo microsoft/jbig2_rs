@@ -115,10 +115,8 @@ fn contexts_reset_and_restore_safely() {
 fn batch_reset_zeros_all_stored_byte_pairs_and_is_idempotent() {
     reset_contexts(&mut []);
     let mut contexts = Vec::new();
-    for state_index in 0..=u8::MAX {
-        for mps in 0..=u8::MAX {
-            contexts.push(ArithmeticContext { state_index, mps });
-        }
+    for packed in 0..=u8::MAX {
+        contexts.push(ArithmeticContext::from_packed(packed));
     }
     let length = contexts.len();
     reset_contexts(&mut contexts);
@@ -130,6 +128,20 @@ fn batch_reset_zeros_all_stored_byte_pairs_and_is_idempotent() {
     assert!(contexts
         .iter()
         .all(|context| context.state_index() == 0 && context.mps() == 0));
+}
+
+#[test]
+fn packed_lookup_tables_match_qe_states_for_every_valid_context() {
+    assert_eq!(core::mem::size_of::<ArithmeticContext>(), 1);
+    for packed in 0..94_u8 {
+        let context = ArithmeticContext::from_packed(packed);
+        let state = QE_STATES[usize::from(context.state_index())];
+        assert_eq!(QE_PACKED_VALS[usize::from(packed)], state.qe);
+        let next = ArithmeticContext::from_packed(NEXT_MPS_PACKED[usize::from(packed)]);
+        assert!(next.packed() < 94);
+        assert_eq!(next.state_index(), state.next_mps);
+        assert_eq!(next.mps(), context.mps());
+    }
 }
 
 #[test]

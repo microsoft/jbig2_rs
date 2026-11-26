@@ -79,16 +79,9 @@ fn raw_cached_line_selection_composes_exact_values_errors_and_cursor_frames() {
     ];
     let mut outcomes = [0_usize; 9];
     let mut checked = 0;
-    let mut table = HuffmanTable {
-        lines: vec![HuffmanLine::normal(91, 8, 0); 2],
-        ordered_lines: Vec::new(),
-        length_count: [0; MAX_PREFIX_LEN + 1],
-        first_code: [WideCode::zero(); MAX_PREFIX_LEN + 1],
-        first_line: [0; MAX_PREFIX_LEN + 1],
-        prefix_lookup: vec![0; PREFIX_LOOKUP_SIZE],
-        prefer_prefix_lookup: true,
-        max_prefix_len: 0,
-    };
+    let mut table = HuffmanTable::test_empty(vec![HuffmanLine::normal(91, 8, 0); 2], Vec::new(), 0);
+    table.prefix_lookup = TableSlice::Owned(vec![0; PREFIX_LOOKUP_SIZE]);
+    table.prefer_prefix_lookup = true;
     for prefix in 0..=u8::MAX {
         for start in 0..8 {
             let mut buffer = [0xa5_u8; 8];
@@ -104,14 +97,18 @@ fn raw_cached_line_selection_composes_exact_values_errors_and_cursor_frames() {
             for byte_count in [2, 4, 8] {
                 let bytes = &buffer[..byte_count];
                 for (prefix_len, range_len, range_low, kind) in cases {
-                    table.lines[1] = HuffmanLine {
-                        prefix_len,
-                        range_len,
-                        range_low,
-                        kind,
-                    };
+                    if let TableSlice::Owned(ref mut ls) = table.lines {
+                        ls[1] = HuffmanLine {
+                            prefix_len,
+                            range_len,
+                            range_low,
+                            kind,
+                        };
+                    }
                     for entry in [0_u16, 1, 2, 3, u16::MAX] {
-                        table.prefix_lookup[usize::from(prefix)] = entry;
+                        if let TableSlice::Owned(ref mut pl) = table.prefix_lookup {
+                            pl[usize::from(prefix)] = entry;
+                        }
                         let (expected, position, outcome) = if entry == 0 {
                             (
                                 Err(HuffmanError::InvalidTable(HuffmanTableError::InvalidCode)),
@@ -156,7 +153,9 @@ fn raw_cached_line_selection_composes_exact_values_errors_and_cursor_frames() {
                     }
                 }
             }
-            table.prefix_lookup[usize::from(prefix)] = 0;
+            if let TableSlice::Owned(ref mut pl) = table.prefix_lookup {
+                pl[usize::from(prefix)] = 0;
+            }
         }
     }
     assert_eq!(checked, 368_640);
@@ -367,7 +366,7 @@ fn every_line_of_every_standard_table_decodes() {
         let mut table =
             HuffmanTable::standard(standard, &Limits::default()).expect("standard table");
         force_prefix_lookup(&mut table);
-        for (index, line) in table.lines.iter().copied().enumerate() {
+        for (index, line) in table.lines.as_slice().iter().copied().enumerate() {
             if line.prefix_len == 0 {
                 continue;
             }

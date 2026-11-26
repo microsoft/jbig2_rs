@@ -43,6 +43,8 @@ mod huffman_proofs;
 #[cfg_attr(verus_keep_ghost, verus_verify)]
 const MAX_PREFIX_LEN: usize = 255;
 #[cfg_attr(verus_keep_ghost, verus_verify)]
+const SHORT_PREFIX_MAX: usize = 32;
+#[cfg_attr(verus_keep_ghost, verus_verify)]
 const PREFIX_LOOKUP_BITS: u8 = 8;
 #[cfg_attr(verus_keep_ghost, verus_verify)]
 const PREFIX_LOOKUP_SIZE: usize = 1 << PREFIX_LOOKUP_BITS;
@@ -228,9 +230,65 @@ pub(crate) enum StandardHuffmanTable {
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 #[cfg_attr(verus_keep_ghost, verus_verify)]
-struct WideCode {
+pub(crate) struct WideCode {
     // Little-endian limbs. Annex B permits prefix lengths through 255 bits.
-    limbs: [u64; 4],
+    pub(crate) limbs: [u64; 4],
+}
+
+#[derive(Debug)]
+#[cfg_attr(verus_keep_ghost, verus_verify)]
+pub(crate) enum TableSlice<T: 'static> {
+    Owned(Vec<T>),
+    Static(&'static [T]),
+}
+
+impl<T: 'static> TableSlice<T> {
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures out@ == huffman_spec::slice_view(self),
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    #[inline]
+    pub(super) fn as_slice(&self) -> &[T] {
+        match self {
+            Self::Owned(v) => v.as_slice(),
+            Self::Static(s) => s,
+        }
+    }
+
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures out == huffman_spec::slice_view(self).len(),
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    #[inline]
+    pub(super) fn len(&self) -> usize {
+        self.as_slice().len()
+    }
+
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures out == if index < huffman_spec::slice_view(self).len() {
+            Some(&huffman_spec::slice_view(self)[index as int])
+        } else {
+            None
+        },
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    #[inline]
+    pub(super) fn get(&self, index: usize) -> Option<&T> {
+        self.as_slice().get(index)
+    }
+
+    #[cfg(test)]
+    pub(super) fn is_empty(&self) -> bool {
+        self.as_slice().is_empty()
+    }
+}
+
+#[derive(Debug)]
+#[cfg_attr(verus_keep_ghost, verus_verify)]
+pub(crate) struct LongPrefixTables {
+    pub(crate) length_count: [u32; MAX_PREFIX_LEN + 1],
+    pub(crate) first_code: [WideCode; MAX_PREFIX_LEN + 1],
+    pub(crate) first_line: [u32; MAX_PREFIX_LEN + 1],
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -286,14 +344,72 @@ impl HuffmanLines<'_> {
 #[derive(Debug)]
 #[cfg_attr(verus_keep_ghost, verus_verify)]
 pub(crate) struct HuffmanTable {
-    lines: Vec<HuffmanLine>,
-    ordered_lines: Vec<u32>,
-    length_count: [u32; MAX_PREFIX_LEN + 1],
-    first_code: [WideCode; MAX_PREFIX_LEN + 1],
-    first_line: [u32; MAX_PREFIX_LEN + 1],
-    prefix_lookup: Vec<u16>,
-    prefer_prefix_lookup: bool,
-    max_prefix_len: u8,
+    pub(crate) lines: TableSlice<HuffmanLine>,
+    pub(crate) ordered_lines: TableSlice<u32>,
+    pub(crate) short_length_count: [u32; SHORT_PREFIX_MAX + 1],
+    pub(crate) short_first_code: [u32; SHORT_PREFIX_MAX + 1],
+    pub(crate) short_first_line: [u32; SHORT_PREFIX_MAX + 1],
+    pub(crate) long_tables: Option<Box<LongPrefixTables>>,
+    pub(crate) prefix_lookup: TableSlice<u16>,
+    pub(crate) prefer_prefix_lookup: bool,
+    pub(crate) max_prefix_len: u8,
+}
+
+impl HuffmanTable {
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        requires length <= 255usize,
+        ensures out == huffman_spec::table_length_counts(self)[length as int],
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    #[inline]
+    pub(super) fn length_count_at(&self, length: usize) -> u32 {
+        if length <= SHORT_PREFIX_MAX {
+            self.short_length_count[length]
+        } else {
+            match &self.long_tables {
+                Some(long) => long.length_count[length],
+                None => 0,
+            }
+        }
+    }
+
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        requires length <= 255usize,
+        ensures out == huffman_spec::table_first_codes(self)[length as int],
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    #[inline]
+    pub(super) fn first_code_at(&self, length: usize) -> WideCode {
+        if length <= SHORT_PREFIX_MAX {
+            WideCode {
+                limbs: [u64::from(self.short_first_code[length]), 0, 0, 0],
+            }
+        } else {
+            match &self.long_tables {
+                Some(long) => long.first_code[length],
+                None => WideCode {
+                    limbs: [0, 0, 0, 0],
+                },
+            }
+        }
+    }
+
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        requires length <= 255usize,
+        ensures out == huffman_spec::table_first_lines(self)[length as int],
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    #[inline]
+    pub(super) fn first_line_at(&self, length: usize) -> u32 {
+        if length <= SHORT_PREFIX_MAX {
+            self.short_first_line[length]
+        } else {
+            match &self.long_tables {
+                Some(long) => long.first_line[length],
+                None => 0,
+            }
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -387,7 +503,10 @@ fn standard_lines(table: StandardHuffmanTable) -> StandardLines {
 }
 
 mod construction;
+mod construction_long;
 mod decoding;
+mod lookup;
+mod standard_static;
 mod tables;
 mod validation;
 mod wide;
@@ -396,9 +515,9 @@ mod wide;
 #[allow(unused_imports)]
 use self::{
     decoding::{
-        build_prefix_lookup, canonical_first_code, canonical_range_fits, decode_line,
-        next_prefix_length, peek_prefix,
+        canonical_first_code, canonical_range_fits, decode_line, next_prefix_length, peek_prefix,
     },
+    lookup::{build_prefix_lookup, build_prefix_lookup_short},
     tables::{
         TABLE_A, TABLE_B, TABLE_C, TABLE_D, TABLE_E, TABLE_F, TABLE_G, TABLE_H, TABLE_I, TABLE_J,
         TABLE_K, TABLE_L, TABLE_M, TABLE_N, TABLE_O,

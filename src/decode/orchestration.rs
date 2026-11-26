@@ -16,6 +16,44 @@ use super::{decode_properties, decode_spec};
 use vstd::prelude::*;
 
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures
+        out.0 <= segments@.len(),
+        out.1 <= segments@.len(),
+        out.2 <= segments@.len(),
+        out.3 <= segments@.len(),
+))]
+fn count_resource_segments(segments: &[ParsedSegment<'_>]) -> (usize, usize, usize, usize) {
+    let mut patterns = 0_usize;
+    let mut symbols = 0_usize;
+    let mut tables = 0_usize;
+    let mut buffers = 0_usize;
+    let mut index = 0_usize;
+    #[cfg_attr(verus_keep_ghost, verus_spec(
+        invariant
+            index <= segments@.len(),
+            patterns <= index,
+            symbols <= index,
+            tables <= index,
+            buffers <= index,
+        decreases segments@.len() - index,
+    ))]
+    while index < segments.len() {
+        match segments[index].header.segment_type {
+            SegmentType::PatternDictionary => patterns += 1,
+            SegmentType::SymbolDictionary => symbols += 1,
+            SegmentType::Tables => tables += 1,
+            SegmentType::IntermediateTextRegion
+            | SegmentType::IntermediateHalftoneRegion
+            | SegmentType::IntermediateGenericRegion
+            | SegmentType::IntermediateGenericRefinementRegion => buffers += 1,
+            _ => {}
+        }
+        index += 1;
+    }
+    (patterns, symbols, tables, buffers)
+}
+
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
     ensures match out {
         Ok(resources) =>
             decode_spec::pattern_store_valid(&resources.patterns)
@@ -28,30 +66,38 @@ pub(super) fn decode_global_resources(
     limits: &Limits,
 ) -> Result<InitialResources, DecodeError> {
     let (_info, segments) = parse_embedded_document(input, limits, None)?;
+    let (pattern_count, symbol_count, table_count, _buffer_count) =
+        count_resource_segments(&segments);
     let mut resources = InitialResources {
         patterns: Vec::new(),
         symbols: Vec::new(),
         tables: Vec::new(),
     };
-    let requested_bytes = allocation_size::<(u32, Vec<Bitmap>)>(segments.len())?;
-    resources
-        .patterns
-        .try_reserve(segments.len())
-        .map_err(|_| DecodeError::Allocation { requested_bytes })?;
-    let symbol_bytes = allocation_size::<(u32, SymbolResource)>(segments.len())?;
-    resources
-        .symbols
-        .try_reserve(segments.len())
-        .map_err(|_| DecodeError::Allocation {
-            requested_bytes: symbol_bytes,
-        })?;
-    let table_bytes = allocation_size::<(u32, HuffmanTable)>(segments.len())?;
-    resources
-        .tables
-        .try_reserve(segments.len())
-        .map_err(|_| DecodeError::Allocation {
-            requested_bytes: table_bytes,
-        })?;
+    if pattern_count != 0 {
+        let requested_bytes = allocation_size::<(u32, Vec<Bitmap>)>(pattern_count)?;
+        resources
+            .patterns
+            .try_reserve(pattern_count)
+            .map_err(|_| DecodeError::Allocation { requested_bytes })?;
+    }
+    if symbol_count != 0 {
+        let symbol_bytes = allocation_size::<(u32, SymbolResource)>(symbol_count)?;
+        resources
+            .symbols
+            .try_reserve(symbol_count)
+            .map_err(|_| DecodeError::Allocation {
+                requested_bytes: symbol_bytes,
+            })?;
+    }
+    if table_count != 0 {
+        let table_bytes = allocation_size::<(u32, HuffmanTable)>(table_count)?;
+        resources
+            .tables
+            .try_reserve(table_count)
+            .map_err(|_| DecodeError::Allocation {
+                requested_bytes: table_bytes,
+            })?;
+    }
     let mut retained = RetainedBudget::new();
     let mut work = DecodeWork::new(structural_work(input.len(), &segments)?, limits)?;
     let mut segment_index = 0_usize;
@@ -123,20 +169,26 @@ macro_rules! decode_segments_body {
         let initial_resources = $initial_resources;
         let sink = $sink;
         let implicit_ends = crate::document::standalone::has_missing_end($recoveries);
+        let (pattern_count, symbol_count, table_count, buffer_count) =
+            count_resource_segments(segments);
         let mut pages: Vec<(u32, RuntimePage)> = Vec::new();
-        let page_allocation = allocation_size::<(u32, RuntimePage)>(info.pages().len())?;
-        pages
-            .try_reserve(info.pages().len())
-            .map_err(|_| DecodeError::Allocation {
-                requested_bytes: page_allocation,
-            })?;
+        if !info.pages().is_empty() {
+            let page_allocation = allocation_size::<(u32, RuntimePage)>(info.pages().len())?;
+            pages
+                .try_reserve(info.pages().len())
+                .map_err(|_| DecodeError::Allocation {
+                    requested_bytes: page_allocation,
+                })?;
+        }
         let mut buffers = Vec::new();
-        let buffer_allocation = allocation_size::<(u32, RegionBuffer)>(segments.len())?;
-        buffers
-            .try_reserve(segments.len())
-            .map_err(|_| DecodeError::Allocation {
-                requested_bytes: buffer_allocation,
-            })?;
+        if buffer_count != 0 {
+            let buffer_allocation = allocation_size::<(u32, RegionBuffer)>(buffer_count)?;
+            buffers
+                .try_reserve(buffer_count)
+                .map_err(|_| DecodeError::Allocation {
+                    requested_bytes: buffer_allocation,
+                })?;
+        }
         let initial_resources = match initial_resources {
             Some(resources) => resources,
             None => InitialResources {
@@ -150,24 +202,30 @@ macro_rules! decode_segments_body {
             mut symbols,
             mut tables,
         } = initial_resources;
-        let pattern_allocation = allocation_size::<(u32, Vec<Bitmap>)>(segments.len())?;
-        patterns
-            .try_reserve(segments.len())
-            .map_err(|_| DecodeError::Allocation {
-                requested_bytes: pattern_allocation,
-            })?;
-        let table_allocation = allocation_size::<(u32, HuffmanTable)>(segments.len())?;
-        tables
-            .try_reserve(segments.len())
-            .map_err(|_| DecodeError::Allocation {
-                requested_bytes: table_allocation,
-            })?;
-        let symbol_allocation = allocation_size::<(u32, SymbolResource)>(segments.len())?;
-        symbols
-            .try_reserve(segments.len())
-            .map_err(|_| DecodeError::Allocation {
-                requested_bytes: symbol_allocation,
-            })?;
+        if pattern_count != 0 {
+            let pattern_allocation = allocation_size::<(u32, Vec<Bitmap>)>(pattern_count)?;
+            patterns
+                .try_reserve(pattern_count)
+                .map_err(|_| DecodeError::Allocation {
+                    requested_bytes: pattern_allocation,
+                })?;
+        }
+        if table_count != 0 {
+            let table_allocation = allocation_size::<(u32, HuffmanTable)>(table_count)?;
+            tables
+                .try_reserve(table_count)
+                .map_err(|_| DecodeError::Allocation {
+                    requested_bytes: table_allocation,
+                })?;
+        }
+        if symbol_count != 0 {
+            let symbol_allocation = allocation_size::<(u32, SymbolResource)>(symbol_count)?;
+            symbols
+                .try_reserve(symbol_count)
+                .map_err(|_| DecodeError::Allocation {
+                    requested_bytes: symbol_allocation,
+                })?;
+        }
         let mut retained = RetainedBudget::new();
         retained.retain(initial_retained_bytes, limits)?;
         let mut cumulative_work = DecodeWork::new(initial_work, limits)?;

@@ -24,7 +24,7 @@
   "model_classifications": {
     "review": "author-navigation-only-not-independent-normative-approval",
     "registry_sha256": "0cfdfb077ac4bb7a7fd4abfb8cb7c482a7f9bd87fbd84a77d3b2bcf6711a6de2",
-    "project_source_sha256": "ca998a158763cb9097570ceac5b6261fd578582cc72dd3f5da47ea246c384af5",
+    "project_source_sha256": "b29203670eeeea543cc33cd833cc7184b1b6c8101e9a1dfc11cfd7c6678f8766",
     "families": [
       {
         "file": "specs/huffman_lookup.rs",
@@ -1601,6 +1601,29 @@
         "justification": "Initialized immutable real decision traces, numeric terminal-prefix/fill enclosures, context agreement and pre-final-DS saved provenance.",
         "ambiguity": "",
         "caveats": "Author navigation only; no independent normative approval or full decoded-output proof."
+      },
+      {
+        "file": "specs/arithmetic/packed.rs",
+        "members": [
+          "spec::context_index",
+          "spec::context_mps",
+          "spec::packed_context"
+        ],
+        "classification": "representation-invariant",
+        "justification": "Pure linear projections between packed 1-byte ArithmeticContext storage and (state_index, mps) components for src/arithmetic.rs contracts; none determines decoded symbols or normative acceptance.",
+        "ambiguity": ""
+      },
+      {
+        "file": "specs/huffman/compact.rs",
+        "members": [
+          "spec::slice_view",
+          "spec::table_first_codes",
+          "spec::table_first_lines",
+          "spec::table_length_counts"
+        ],
+        "classification": "proof-support",
+        "justification": "Pure sequence projections exposing owned/static TableSlice storage and compact inline/spilled Huffman tables uniformly to existing canonical-assignment and fallback specifications.",
+        "ambiguity": ""
       }
     ]
   },
@@ -2238,11 +2261,11 @@
     }
   ],
   "bindings": {
-    "proofs/model_support/arithmetic.rs": "2a564c7a80acf17401f877352abba023be522d3e1b3a4ef0b0c3dba1ddaa56bb",
+    "proofs/model_support/arithmetic.rs": "568ed2df4847ad3465e93349e6e6c9ef9243e8d351cd22b02cff9ae71ef9ed51",
     "proofs/model_support/decode.rs": "67e54d341dcb57f6b4ad8b2c8a489fa52928fd4f7e3c39406139c46dc3d5c2b4",
     "proofs/model_support/document.rs": "12e615aa25f644d11f071da534edba6f39218c754c87e96048da1fcdce9cdff3",
     "proofs/model_support/halftone.rs": "1966e1682a8068045c19e10d8c6db92caf6551f710d16ead37814fb9014e7ecf",
-    "proofs/model_support/huffman.rs": "0eea371c344f65c8f9be5ba1022ee4dc5245acb5976ec1931e0aca5e4b26a788",
+    "proofs/model_support/huffman.rs": "6d5b0be562033d4ea5dcc5383f306d5e970584a13ef134cce4471218da26924a",
     "proofs/model_support/mmr.rs": "16bc3d8d0434cab9d062321962daf75341d8d6c286c60d801749c79c4bc6a04b",
     "proofs/production_impl/arithmetic.rs": "148363e9dafb0e525849b40bec56bd99da825284c613ceb2f34f23114fe76bd1",
     "proofs/production_impl/bitmap.rs": "7eabe6eecfd5f87785c542a34b8dc7ccfe6158af7543334754d5e417b981c479",
@@ -2255,38 +2278,38 @@
     "proofs/production_impl/segment_header.rs": "8951757eb8f9baf48e1d9258992cc896481c6ad53a2fb9169742a686327dbcb0",
     "proofs/production_impl/symbol_text.rs": "a827fdb4a5ecc66b032756603fec076d00537e852c506fcc0948e323574cf7eb",
     "proofs/shared/bitmap.rs": "23b05abecff52de3ecd806a3dce30459ad3cf96dc150b11658c05731e768f4ec",
-    "proofs/spec_properties/arithmetic.rs": "a43e10db2c92bd58127314f9307993264998373a6f71cb0dd66b8402020e68b0",
+    "proofs/spec_properties/arithmetic.rs": "b7b295aa683b29142722d573c73f5a2f94cd97ed29102f1ec9eef2796fb857be",
     "proofs/spec_properties/mmr.rs": "16035dc09a1720c7677dcf3f57fd5e92cec44efd3af3c672716a2614e6e7844c",
-    "proofs/spec_properties/readers.rs": "01efdc55fd62e5bc34b97275a23d6b683af934d6739a7e284f08f991af883fd3",
-    "specs/arithmetic.rs": "0d576d753574c2b2412ce8442aa3a3e50cd1b7b95be18347a8e62a6832b9b94a",
+    "proofs/spec_properties/readers.rs": "599ebd5fd161e1ff76faa1d35ab8866d792ffec9d4e4985cf7acfbe4b8133e8a",
+    "specs/arithmetic.rs": "c5f01faf6459ef2d86e6ce902bedbadfd44e8ce86c0b3d078c667d32cbf32ca5",
     "specs/bitmap.rs": "9d4da6608d7ee55fdf0ab7d8d47f6105e75e656c1f31589610d47a67a61218cf",
     "specs/decode.rs": "e5adb89969d49d5645634d5e11fee81394f64e684657efb38ef5867d95bef1a0",
     "specs/document.rs": "0618fbd140a6f6c9a90356a100b167aaa7c55da8f05b1d885794056022a15351",
     "specs/document/framing.rs": "815fa1d8b2c881edc03a56f514c61c04f4ce56095ed1c44c4edd97e9cf72fe36",
     "specs/file_header.rs": "d7bfe82359473ce879ac27879ccdac8130a401bacb8a9fd69fe1b3571e86d599",
-    "specs/generic_region.rs": "2f618e54b049854b14490b1a1182d298815cd024b3ed10e8272449395149f981",
+    "specs/generic_region.rs": "f1e5ebda066fa7d1f67948457077507996b3dfb8d86064dd602ba14b49b1eeff",
     "specs/generic_region/framing.rs": "23db47cf183d7f2c490db16611119d5fe1e485b4800cb6af9904516032c6ccea",
     "specs/halftone.rs": "580ff49badf098ed19f963189610c2a4627b1ce4a1be9c96b67347283edb5bb3",
-    "specs/huffman.rs": "bfdd9bdffea52f9aad86712963f9ebdd003d0dd35cac19789093f1c25499cb34",
-    "specs/huffman_lookup.rs": "bd6fe3ee36de79103836d6fc9fc411b03ca0b304ce4915d0f730c2301b483766",
+    "specs/huffman.rs": "4d8ff2642590af8f10854db76293d5a5b7a09d0487507145717f3c4f41d6b5c1",
+    "specs/huffman_lookup.rs": "4349cd280f9afb9bc95f3895193ff44e55389811645996c7b8034005d437691c",
     "specs/mmr.rs": "6333d8553b47d1bd6bcc996c0d0f3d0216d3f4d3eeff9c07e34a4dfeea5bb49c",
     "specs/mod.rs": "34f81994f8b77e618a7d48d4552175d09cf3be633307166227c13ce94a06ba21",
     "specs/readers.rs": "ee10b54a7ee8dce323488bf8ef5229fbbf1d5811888a3364cda8f2cc187ba251",
     "specs/segments.rs": "dc288038574b7f902a15752e58096ef504d0253a0f308950474278ca2104e451",
-    "specs/symbol_text.rs": "010c79a4dc72384287574679e85c12e3de7073be0a3f42f8b061b67e302ca24d",
-    "specs/symbol_text/arithmetic_codec.rs": "c96145d1428fd0edda0b93437f15e15592e9f7476d8465dbd55feb071d1a866c",
+    "specs/symbol_text.rs": "d84fc702904bee6f7f3bead54ee8859878adc78f8287b92434c7549f2a2cc0f6",
+    "specs/symbol_text/arithmetic_codec.rs": "3cd43b78103353dc59a018562cdfe2338cdf7a869d83ba35fd0b0e3f146c03d9",
     "specs/symbol_text/dictionary.rs": "f7994737d95cefbca3e6067754190b160ddb8c85900a17edf672b4f8d80882b2",
     "specs/symbol_text/huffman_codec.rs": "75292125cfe9663534f1c13f5bdac9538e712c48c53c7cdd425596e9ef65bed2",
     "specs/symbol_text/symbol_ids.rs": "a08f24685e8ef5f95e98b5bb953ad18a1b6dbbffd754ca48f09931f36a87aacc",
-    "src/arithmetic.rs": "a8e0ad666b2ea1750413da9601f665b197c2be0d012bd77c115539ee7c6ba971",
-    "src/arithmetic/decoding.rs": "537afa619108dc6ce7773688683d85eb5b4251dbb75a939c92223746b7a90fd5",
+    "src/arithmetic.rs": "1c69a467424f0e32c4751f7e9db0dce1e1ffb3e8f6ed6a90c48f4303e8cfac80",
+    "src/arithmetic/decoding.rs": "3b5d505c8a6ee0648c614e612b6ad716f84047c20c0d70276a7e3e717e0617d5",
     "src/arithmetic/integers.rs": "ca1828b214769e1192785acc2dd369e0776f38654f74885dbfc32bd0025fc350",
-    "src/arithmetic/refill.rs": "737ee41e1e4bfd62104fd48dcc612ff83ba9cc1b6b0ec1ca0e741909ce505769",
-    "src/arithmetic/tests.rs": "b6aeabc70cd42500a42eb4c319717cbc5cc540f57bc4908138fb021486adc1df",
-    "src/arithmetic/tests/context_state.rs": "cf1908a60d5aa6cf91d8522644169a9eebe2521c0bd114f3950b29df5900566f",
-    "src/arithmetic/tests/decoder_registers.rs": "eb973972578c2b74f0d2d5a390d2b169807f3ce970d7908d1b5453cf6156121d",
+    "src/arithmetic/refill.rs": "7c3b1461c6fb47f050790bbf78221958737e9f7912e9ac189f81bec57ae70b21",
+    "src/arithmetic/tests.rs": "2beb39484aac38e93b73c087dc6671a30482dc985a17f99f50c04874a46d4e07",
+    "src/arithmetic/tests/context_state.rs": "5ce1ccc138ed9113282b0d60dcbae139891f7387511cd05a9600978c80ad2ac7",
+    "src/arithmetic/tests/decoder_registers.rs": "8eb22b48eb071ab39137c29a7c48726e44cd9c98782dc6836d37d31110d91fb4",
     "src/arithmetic/tests/integer_procedures.rs": "0004c5bc599217400bd463c3c2efd859d8fb5d7689c6e957b096a7e42c062d26",
-    "src/bitmap.rs": "7151eb22ac6ebf41ed4cb75d3698e43eab4277dbf6667dc8c7fd699a48988e94",
+    "src/bitmap.rs": "4745be6888685e76dea200d1c618067421feb6fbfa090d93ac329103d0fbdd2f",
     "src/bitmap/access.rs": "ce458c26068422e717e32672c57eda03168d8118806d39ffaed278622e74fae3",
     "src/bitmap/operators.rs": "ca7c9f926f1c71d74bfc938798dfdf8ab22c53fee7e1843ca6def5d3bd86729d",
     "src/bitmap/storage.rs": "8f6ce10586869f2b0ec85214156dcd6ead236b88f7465f107f54df90698524e4",
@@ -2308,18 +2331,18 @@
     "src/document/tests/container_inspection.rs": "2ec6cd3bd75bda1c40165a09d767a85fb78359a10dbcb689ce3ea4d0b46a04af",
     "src/document/tests/payload_windows.rs": "96c85ffdb008808b7c63951c13564ec683bd327f1a4a95ebb27672905da5d0cc",
     "src/file_header.rs": "9011f761698f3772c953980e2d2d56ed5ece4f792c8e318ca89a0e0f8d326e11",
-    "src/generic_region.rs": "4a5a3c10fe65a03ff47874993cf8b2359be5c60acfc2e9e04ba43692c0567501",
-    "src/generic_region/contexts.rs": "3e86887633490b1d135db2f9b1f8aa9f92e097e43f22f8b29dd1ed3521ed66cb",
-    "src/generic_region/generic.rs": "3ee87782e68a4116568f88e2f31dc53b4acd4ef90ead17b2e73241a9d19c3161",
+    "src/generic_region.rs": "bd9a610d98ad74598b82efd852260d1b7221d2937f2f1487c19c035796f4b424",
+    "src/generic_region/contexts.rs": "5f7501747070f97eac5b905161f5511cbc2da95233737d65ada796fa8d1a985b",
+    "src/generic_region/generic.rs": "94bc99018f7276787d330ed07856a4b8beab434899a3eaf27913a4dc2ac52f12",
     "src/generic_region/headers.rs": "10a0bc319a6b79e0172b018433327edd5635cb44338e9e5c4fa061c65e7d0c7e",
-    "src/generic_region/refinement.rs": "defb4386d60cf2b85b7de320ce5c8a53e83d4483ee30668e0cc3ab5a54e7b35c",
+    "src/generic_region/refinement.rs": "2af9a40b783c3ad74ee0dca9012f999cfd81734f491812784782d7bfa8870632",
     "src/generic_region/segments.rs": "3e7bbcb7bb7074ff16ce6024f94814a22ab4d010b0bb43dbb4ac250b66506837",
     "src/generic_region/support.rs": "f564fa0bda614940d4592b8958b236a1c8978ed56cf1ee9102e745f20ce62f16",
-    "src/generic_region/tests/diagnostics.rs": "53850441984da91d10fcff41c144041ddb2102d03742aeadfac62b1fb40b01db",
+    "src/generic_region/tests/diagnostics.rs": "e9da25dc92483a7dbf4064643a245784c0aaa67ebb4ee15c0186351bfbbd3161",
     "src/generic_region/tests/headers_and_prediction.rs": "4dcb5015504f8a05453f8aef00a5e7129ddf84632b1585bb1a2b9faff691f8c0",
-    "src/generic_region/tests/raster_parity.rs": "a10224aebcc8c0864ad093f51a6b9eb3a7c7de2af2e7e4865481d8c4e123bbd9",
-    "src/generic_region/tests/segment_framing.rs": "4ff6c9ec3a4c8461bb3ce3b8984ff33fa17a519dd2c6ded48a97ab6141cc1208",
-    "src/generic_region/tests/sessions_and_snapshots.rs": "92c96e4fcabdaf1613585544c2914c2c666a84a07a664d8482db79c58bb0b970",
+    "src/generic_region/tests/raster_parity.rs": "c1c98c7941a717d947524632fb103f3188fc0b417af2692a037775546c31250b",
+    "src/generic_region/tests/segment_framing.rs": "a1b917761da0aa493981fefc77167ad010a51145a487b73f2dec2ba6ff059f90",
+    "src/generic_region/tests/sessions_and_snapshots.rs": "72dd73c6a1b74faf5f7a3a82bf9e445fa0bf0931b6bd0fbab6a5814178f760a7",
     "src/halftone.rs": "369f406e7d3f19d9bc62b808b5c9f22a15af99c242e3a8cc498bdfc6f545892f",
     "src/halftone/headers.rs": "363497a0fdf003435987f0fa64e793d7d61d7d9de4a65c58c0e66571394cdda0",
     "src/halftone/planes.rs": "258a96ced30025a880f5f66efaee7144166c1a8f02f525d6d4458ecfe1bcbad9",
@@ -2327,13 +2350,14 @@
     "src/halftone/tests/codec_state.rs": "a067d9517f9b1719b1368b9d5854ce61a1c8ce66b3c6dfa3e231d8ea632e1c46",
     "src/halftone/tests/geometry_and_render.rs": "50ebcfb2172af2966ded4e3a15c9a8cca701d52611b18b95ec4cb44e372c4bd6",
     "src/halftone/tests/headers_and_patterns.rs": "ef5f90a9b1eaf32619dc22c6f49b5d6d6ccbf32f9bdacfc6507f29c15efa9f70",
-    "src/huffman.rs": "a4bde5b0db72e4bdbecadbd9d78211f5a8057c800abc7e37e93904b5b7e69dd0",
-    "src/huffman/construction.rs": "cf4691f446ac0449b15d7e51fc4693b2629125b61d1cae3046f8de79acfc7ebf",
-    "src/huffman/decoding.rs": "dbdbb05884b0820c4d48576835a64e086f39623d2e74a07cb94d6bd309ca85ef",
-    "src/huffman/tests/cache_map.rs": "fe783f19e825db4ed6383318912179f9a58a9026df14480d4ab350b83438239e",
-    "src/huffman/tests/canonical_decoding.rs": "1c445c3d01557bf09170fdb0ad9e6b8bd1c9af5de22750a3bc46eea942975868",
-    "src/huffman/tests/fallback_state.rs": "f2785678ac694d7c40760693b376d641872f90388b5933b6d8a3e1ac4e5a45e0",
-    "src/huffman/tests/table_validation.rs": "28ff5abb2c4122c028272529b559077a6eb9c7c8ce489f489e2fa7b808821966",
+    "src/huffman.rs": "de2ba74bab04d5402e9eaef47eafe06ba9d64b75fe8a23b98ff8d01289a514cb",
+    "src/huffman/construction.rs": "8728adcc51ed382b7e19297b28556790e909a8212833cbfa0578a9df51701fdb",
+    "src/huffman/decoding.rs": "8282179614cce90de920bc4cab19b0ae47fd8a0a8a9c3f6348641949abb7fe76",
+    "src/huffman/lookup.rs": "62bdb3eb62a463db6123d6cbe0a775bac8e974d2fae4c515c949e44552438868",
+    "src/huffman/tests/cache_map.rs": "e8931fc6d4c3b1300877574416598ae90aa3826dd5ab15ecea6ca2778274b044",
+    "src/huffman/tests/canonical_decoding.rs": "7085a3ce7d8d35c445bdc9b4a74d54e67d16fa31a74a8f1703076434ed79262c",
+    "src/huffman/tests/fallback_state.rs": "42c05791b257ecbd7e80fc3b23450456fdf438714de52666bee9e6d3eb30cba6",
+    "src/huffman/tests/table_validation.rs": "a64c7a044e62f0453c436bb819066dd861c5d2078c2c3c9ba6de86fa90991ec9",
     "src/huffman/tests/wide_arithmetic.rs": "251462094b4817ff83394bb62072184b63796988e9606d75f29200eb1a1d8ca9",
     "src/huffman/validation.rs": "4d8612ef0cba9f16a12ae61886d225ab07766d74b21d727660405021a4f807ca",
     "src/huffman/wide.rs": "4f37abac40efc66f0c3eaa2637d211eaca5a5ea4fa7a14d7aadb07fbe2a8f0b0",
@@ -2348,18 +2372,18 @@
     "src/mmr/tests/normative_decode.rs": "348fff90ffa25826a8b86c4604e7006dfaaf5224201f0928c8d87523e74a2dc8",
     "src/mmr/tests/prefix_codes.rs": "cde4c16a1e7947a1dd7710d3c4a8b308d5d178bef35a6ecb70c2fad2481434e2",
     "src/mmr/tests/transition_cache.rs": "9694dc1674f651d821c3a40de0b2c052fc06d9c67f7a558a7856f6d917be41b2",
-    "src/reader.rs": "9c64e44f1def255f1f7f285ada7608146d55dfb8d65bf31fca6464c2998f634f",
+    "src/reader.rs": "66e1e1f4cdd7ecca119a94c9132c2dc32ddeceed800a7dbffd216756152251e5",
     "src/reader/tests.rs": "ff4f56ae43d4aea472a4d3ab04862edc802bf2d4413bb8de7646a1adf9cf9f47",
     "src/segment_data.rs": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
     "src/segment_data/tests.rs": "7b082bcee501bd86382474823db6af59afb56842b7d053c3de8b77d2e5edfc15",
     "src/segment_header.rs": "ec5047080fa67fd0a8dd28e8101b972aeb23e3d10939906e1c059674ebaa528d",
     "src/segment_header/tests.rs": "41f4c9c942b49bc2d4d7c8588ac99ab655475803849836854afd349eee0d463c",
-    "src/symbol_text.rs": "3bdf11ab2da830a6cbcb53d97972cc93030258947679b347dbbea0b817d587d4",
+    "src/symbol_text.rs": "38e4313301b3b3222094c0899f097dabee4f17ddb60135360687098f7028ee96",
     "src/symbol_text/bitmap.rs": "d872783ab5e9768ba4064ca309700f089e31b3ca799425edc6a5d7471efc40b2",
     "src/symbol_text/codebook.rs": "3ad3dd4131dbb7343a3267f32718d4c5278f029c1b90937f45d06363b8defbcc",
-    "src/symbol_text/codec.rs": "d6da4c1b3b7c33b057029976d43691ca3666ba72a04e4f5cbcc52339d9d4805a",
-    "src/symbol_text/codec/arithmetic.rs": "041f67c8c84b3387a1b2e5dec0d3ae7d8754abf060e036013d2780e43d37c284",
-    "src/symbol_text/codec/huffman.rs": "24532382735e221606ac614a4ff24a9ac30ce9d4bc5abc5c01aa74e4fff7cf71",
+    "src/symbol_text/codec.rs": "37626dc6a6cfbd54c59fef8969c6953b09811ea5b3532c83cd0940a4f84a8d75",
+    "src/symbol_text/codec/arithmetic.rs": "a774b57bf12d2bafaadd9d20d962437fa2c13f48e0181ff6c253465097d4e090",
+    "src/symbol_text/codec/huffman.rs": "d4fcfd89bbd2a45fc364460587023fc9edde5006c49a85e6e28d401af7cc9101",
     "src/symbol_text/codec/refinement.rs": "71d5bb90d828932191eba96f52982c1f7adc24433cb5e4d21dc721b3f6997d83",
     "src/symbol_text/codec/symbols.rs": "01f2f2d2739c42ce2ed5fe4ed170451082478dcfc7f405b73ac9f6a819ce3248",
     "src/symbol_text/dictionary.rs": "8b24e5591a74737e2a5b2e44400ec7d467eead766b473869b419d7cfbc999b64",
@@ -2368,24 +2392,24 @@
     "src/symbol_text/dictionary/huffman.rs": "db75bd5f0b7703b2bec0493bb0f534049e5bddf5ea91e228ef93eac68b06a40e",
     "src/symbol_text/headers.rs": "69da74f1ff5627d013f327d5c152d49582c7bb82462fc70b48b82159b9e8d987",
     "src/symbol_text/placement.rs": "6fe7228afc13c0735fcfe0d9359e07e03dfdd5a6883ba8d79523dcfde8885e5d",
-    "src/symbol_text/tables.rs": "b6752eff62f1aa306879e95ed6903df4bc1fd21a843e4e2d52be8e60e1758594",
+    "src/symbol_text/tables.rs": "abf743005ad20f1a52477d0efe249981b8119160109ecf93ff4ac737d5c3c82c",
     "src/symbol_text/tests/arithmetic_composition.rs": "8749f6561c7b3030deafa47358bd499514821726851cb296d4f00b2ff2110120",
     "src/symbol_text/tests/codec_and_exports.rs": "4215ca5d6af0d628d33fb5b9818d0c0012f8ef09dddf4b5a73f8db467f02540f",
     "src/symbol_text/tests/dictionary_dispatch.rs": "632ca48342adb2713092cecab915ee9f67eb3610dc92a2764cb429773a103f82",
     "src/symbol_text/tests/dictionary_dispatch/huffman_aggregation.rs": "0349534fe6854219a69f33105ed9fdf5cdfe63d0298002bdc4a6098c43afcc8b",
     "src/symbol_text/tests/flags_and_tables.rs": "ac4e3ee2b5aadda78ebbe2c7804584f49a48a96816c85fa37adb99aa2a0113fe",
-    "src/symbol_text/tests/huffman_fields.rs": "5c93de28ea3e786db07de325f86e7ea3bc375febf7920925af1ad02b630685ac",
-    "src/symbol_text/tests/huffman_symbol_ids.rs": "5ac3e343aa6aec7670d0d689dae58733cb29afe77ee0f7843d52401dac940ce0",
+    "src/symbol_text/tests/huffman_fields.rs": "98227199ddeedb5b928c5bdca8055fefac9dcb29557f60a4c8125ec591beeb2e",
+    "src/symbol_text/tests/huffman_symbol_ids.rs": "5082529046322cbc8e95ea305193da1f9edf05d32fbf881bb03f3e384be450c4",
     "src/symbol_text/tests/placement_render.rs": "5d07c12827335abdba47df041992ea76e1b12d1a2ae1fb598ba3d4ecba1350b1",
     "src/symbol_text/tests/placement_state.rs": "4842dd4690593cf25b854787030a1e99f93c5611801899a22fce35f9625c75e3",
     "src/symbol_text/tests/resource_accounting.rs": "e86bd903f4dc80efd45a424a60ab182b2fded216601163ccb01dd78488b76ab4",
     "src/symbol_text/tests/text_termination.rs": "b9f9a7f38eedd3d792acc7838b8ed96c445fea786751fc0e0124222e454211e3",
     "src/symbol_text/text.rs": "02bb1a60f754d4f426e8054e03d84ba6363cd75ece55705ee8ffda180e619d8a",
+    "src/symbol_text/text/segment.rs": "a29166557a81d2dcd888c7101973b552c73a6ebd611453f5d81a118689e8651b",
     "tests/catalog_contracts.rs": "d4eb4fd3d554494fcd99fa58def0eaa542fca7f97ff32c2083cfa0d3e1545da2",
     "tests/spec_header.rs": "6c8d30477d3be9080827bf0eab191739ab4fe844fe856c60020eb53a50cbcdda",
     "tests/traceability_organization.rs": "967cd92362829cc4258db0ab7300a8f28b53055dbd61489c3c3262ee6d539b5f",
-    "tests/traceability_semantics.rs": "e7189d9cb70fa9b021b221f02942d90e64e9f96f9d38040edf4fa8599dfaa5f9",
-    "src/symbol_text/text/segment.rs": "a29166557a81d2dcd888c7101973b552c73a6ebd611453f5d81a118689e8651b"
+    "tests/traceability_semantics.rs": "e7189d9cb70fa9b021b221f02942d90e64e9f96f9d38040edf4fa8599dfaa5f9"
   },
   "definitions": {
     "mmr-mode-table-entry": {
@@ -9258,7 +9282,7 @@
         "huffman::construction::HuffmanTable::new_symbol_ids",
         "huffman::construction::HuffmanTable::standard",
         "huffman::construction::HuffmanTable::from_encoded",
-        "huffman::decoding::build_prefix_lookup",
+        "huffman::lookup::build_prefix_lookup",
         "huffman::wide::WideCode::zero"
       ],
       "models": [
@@ -9344,7 +9368,7 @@
           ]
         },
         {
-          "runtime": "huffman::decoding::build_prefix_lookup",
+          "runtime": "huffman::lookup::build_prefix_lookup",
           "section": "ensures",
           "tokens": [
             "lookup@.len() == 256",
@@ -11154,8 +11178,8 @@
           "runtime": "arithmetic::ArithmeticContext::reset",
           "section": "ensures",
           "tokens": [
-            "final(self).state_index == 0",
-            "final(self).mps == 0"
+            "arithmetic_spec::context_index(*final(self)) == 0",
+            "arithmetic_spec::context_mps(*final(self)) == 0"
           ]
         }
       ],
@@ -11201,8 +11225,8 @@
           "section": "ensures",
           "tokens": [
             "final(contexts)@.len() == old(contexts)@.len()",
-            "final(contexts)@[index].state_index == 0",
-            "final(contexts)@[index].mps == 0"
+            "arithmetic_spec::context_index(final(contexts)@[index]) == 0",
+            "arithmetic_spec::context_mps(final(contexts)@[index]) == 0"
           ]
         }
       ],
@@ -14198,16 +14222,16 @@
           "section": "ensures",
           "tokens": [
             "contexts.storage_bytes as nat == contexts.contexts@.len() * 2",
-            "contexts.contexts@[index].state_index == 0",
-            "contexts.contexts@[index].mps == 0"
+            "crate::arithmetic::arithmetic_spec::context_index(contexts.contexts@[index]) == 0",
+            "crate::arithmetic::arithmetic_spec::context_mps(contexts.contexts@[index]) == 0"
           ]
         },
         {
           "runtime": "generic_region::contexts::GenericContexts::reset",
           "section": "ensures",
           "tokens": [
-            "final(self).contexts@[index].state_index == 0",
-            "final(self).contexts@[index].mps == 0",
+            "crate::arithmetic::arithmetic_spec::context_index(final(self).contexts@[index]) == 0",
+            "crate::arithmetic::arithmetic_spec::context_mps(final(self).contexts@[index]) == 0",
             "Err(_) => final(self).contexts@ == old(self).contexts@"
           ]
         },
@@ -14233,16 +14257,16 @@
           "section": "ensures",
           "tokens": [
             "contexts.storage_bytes as nat == contexts.contexts@.len() * 2",
-            "contexts.contexts@[index].state_index == 0",
-            "contexts.contexts@[index].mps == 0"
+            "crate::arithmetic::arithmetic_spec::context_index(contexts.contexts@[index]) == 0",
+            "crate::arithmetic::arithmetic_spec::context_mps(contexts.contexts@[index]) == 0"
           ]
         },
         {
           "runtime": "generic_region::contexts::RefinementContexts::reset",
           "section": "ensures",
           "tokens": [
-            "final(self).contexts@[index].state_index == 0",
-            "final(self).contexts@[index].mps == 0",
+            "crate::arithmetic::arithmetic_spec::context_index(final(self).contexts@[index]) == 0",
+            "crate::arithmetic::arithmetic_spec::context_mps(final(self).contexts@[index]) == 0",
             "Err(_) => final(self).contexts@ == old(self).contexts@"
           ]
         },
@@ -15049,7 +15073,7 @@
           "section": "ensures",
           "tokens": [
             "out <= 1 ==> out == arithmetic_spec::exchange_decision(false, old(self).interval, qe, old_mps,)",
-            "final(context).state_index == arithmetic_spec::exchange_index(false, old(self).interval, qe, state.next_mps, state.next_lps,)"
+            "arithmetic_spec::context_index(*final(context)) == arithmetic_spec::exchange_index(false, old(self).interval, qe, state.next_mps, state.next_lps,)"
           ]
         }
       ],
@@ -15109,7 +15133,7 @@
           "section": "ensures",
           "tokens": [
             "out <= 1 ==> out == arithmetic_spec::exchange_decision(false, old(self).interval, qe, old_mps,)",
-            "final(context).state_index == arithmetic_spec::exchange_index(false, old(self).interval, qe, state.next_mps, state.next_lps,)"
+            "arithmetic_spec::context_index(*final(context)) == arithmetic_spec::exchange_index(false, old(self).interval, qe, state.next_mps, state.next_lps,)"
           ]
         }
       ],
@@ -15169,7 +15193,7 @@
           "section": "ensures",
           "tokens": [
             "out <= 1 ==> out == arithmetic_spec::exchange_decision(false, old(self).interval, qe, old_mps,)",
-            "final(context).state_index == arithmetic_spec::exchange_index(false, old(self).interval, qe, state.next_mps, state.next_lps,)"
+            "arithmetic_spec::context_index(*final(context)) == arithmetic_spec::exchange_index(false, old(self).interval, qe, state.next_mps, state.next_lps,)"
           ]
         }
       ],
@@ -15228,7 +15252,7 @@
           "runtime": "arithmetic::decoding::ArithmeticDecoder::decode_upper_signal",
           "section": "ensures",
           "tokens": [
-            "final(context).mps == arithmetic_spec::exchange_mps(false, old(self).interval, qe, state.switch_mps, old(context).mps, old_mps,)"
+            "arithmetic_spec::context_mps(*final(context)) == arithmetic_spec::exchange_mps(false, old(self).interval, qe, state.switch_mps, arithmetic_spec::context_mps(*old(context)), old_mps,)"
           ]
         }
       ],
@@ -15288,7 +15312,7 @@
           "section": "ensures",
           "tokens": [
             "out <= 1 ==> out == arithmetic_spec::exchange_decision(false, old(self).interval, qe, old_mps,)",
-            "final(context).state_index == arithmetic_spec::exchange_index(false, old(self).interval, qe, state.next_mps, state.next_lps,)"
+            "arithmetic_spec::context_index(*final(context)) == arithmetic_spec::exchange_index(false, old(self).interval, qe, state.next_mps, state.next_lps,)"
           ]
         }
       ],
@@ -15348,7 +15372,7 @@
           "section": "ensures",
           "tokens": [
             "out <= 1 ==> out == arithmetic_spec::exchange_decision(true, old(self).interval, qe, old_mps,)",
-            "final(context).state_index == arithmetic_spec::exchange_index(true, old(self).interval, qe, state.next_mps, state.next_lps,)"
+            "arithmetic_spec::context_index(*final(context)) == arithmetic_spec::exchange_index(true, old(self).interval, qe, state.next_mps, state.next_lps,)"
           ]
         }
       ],
@@ -15408,7 +15432,7 @@
           "section": "ensures",
           "tokens": [
             "out <= 1 ==> out == arithmetic_spec::exchange_decision(true, old(self).interval, qe, old_mps,)",
-            "final(context).state_index == arithmetic_spec::exchange_index(true, old(self).interval, qe, state.next_mps, state.next_lps,)"
+            "arithmetic_spec::context_index(*final(context)) == arithmetic_spec::exchange_index(true, old(self).interval, qe, state.next_mps, state.next_lps,)"
           ]
         }
       ],
@@ -15468,7 +15492,7 @@
           "section": "ensures",
           "tokens": [
             "out <= 1 ==> out == arithmetic_spec::exchange_decision(true, old(self).interval, qe, old_mps,)",
-            "final(context).state_index == arithmetic_spec::exchange_index(true, old(self).interval, qe, state.next_mps, state.next_lps,)"
+            "arithmetic_spec::context_index(*final(context)) == arithmetic_spec::exchange_index(true, old(self).interval, qe, state.next_mps, state.next_lps,)"
           ]
         }
       ],
@@ -15527,7 +15551,7 @@
           "runtime": "arithmetic::decoding::ArithmeticDecoder::decode_lower_signal",
           "section": "ensures",
           "tokens": [
-            "final(context).mps == arithmetic_spec::exchange_mps(true, old(self).interval, qe, state.switch_mps, old(context).mps, old_mps,)"
+            "arithmetic_spec::context_mps(*final(context)) == arithmetic_spec::exchange_mps(true, old(self).interval, qe, state.switch_mps, arithmetic_spec::context_mps(*old(context)), old_mps,)"
           ]
         }
       ],
@@ -15587,7 +15611,7 @@
           "section": "ensures",
           "tokens": [
             "out <= 1 ==> out == arithmetic_spec::exchange_decision(true, old(self).interval, qe, old_mps,)",
-            "final(context).state_index == arithmetic_spec::exchange_index(true, old(self).interval, qe, state.next_mps, state.next_lps,)"
+            "arithmetic_spec::context_index(*final(context)) == arithmetic_spec::exchange_index(true, old(self).interval, qe, state.next_mps, state.next_lps,)"
           ]
         }
       ],

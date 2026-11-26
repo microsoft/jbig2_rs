@@ -98,11 +98,8 @@ pub(crate) open spec fn bitmap_bytes(tracker: &super::ResourceTracker) -> u64 {
 // Mapping: no registered requirement/locator mapping.
 // Fidelity: unresolved; no independent normative approval.
 pub(crate) open spec fn work_charge_effect(
-    before: &super::ResourceTracker,
-    after: &super::ResourceTracker,
-    units: u64,
-    limits: &crate::Limits,
-    accepted: bool,
+    before: &super::ResourceTracker, after: &super::ResourceTracker,
+    units: u64, limits: &crate::Limits, accepted: bool,
 ) -> bool {
     let total = work_units(before) as nat + units as nat;
     bitmap_bytes(after) == bitmap_bytes(before)
@@ -333,9 +330,12 @@ pub(super) open spec fn codec_valid(codec: &super::SymbolCodec) -> bool {
     match codec {
         super::SymbolCodec::Arithmetic(arithmetic) =>
             arithmetic_codec_valid(&arithmetic),
-        super::SymbolCodec::Huffman(huffman) => {
+        super::SymbolCodec::Huffman(huffman) =>
             crate::huffman::huffman_spec::reader_valid(&huffman.reader)
-        },
+            && (match &huffman.refinement {
+                Some(c) => crate::generic_region::generic_region_spec::refinement_contexts_valid(c),
+                None => true,
+            }),
     }
 }
 

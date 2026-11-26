@@ -98,7 +98,7 @@ impl Bitmap {
             (width == 0 || height == 0) ==> final(self).data@ == old(self).data@,
             (width == 0 || height == 0) ==> out.is_ok(),
     ))]
-    #[allow(clippy::too_many_arguments, clippy::too_many_lines)]
+    #[allow(clippy::too_many_arguments, clippy::unnecessary_wraps)]
     fn compose_region_chunked(
         &mut self,
         source: &Self,
@@ -110,206 +110,20 @@ impl Bitmap {
         height: u32,
         operator: CombinationOperator,
     ) -> Result<(), MalformedError> {
-        #[cfg(verus_keep_ghost)]
-        proof! {
-            crate::views::bitmap_fields(self);
-            crate::views::bitmap_fields(source);
-        }
-        let Some(source_end_x) = source_x.checked_add(width) else {
-            return Err(MalformedError::IntegerOverflow);
-        };
-        let Some(source_end_y) = source_y.checked_add(height) else {
-            return Err(MalformedError::IntegerOverflow);
-        };
-        let Some(destination_end_x) = destination_x.checked_add(width) else {
-            return Err(MalformedError::IntegerOverflow);
-        };
-        let Some(destination_end_y) = destination_y.checked_add(height) else {
-            return Err(MalformedError::IntegerOverflow);
-        };
-        if source_end_x > source.width
-            || source_end_y > source.height
-            || destination_end_x > self.width
-            || destination_end_y > self.height
-        {
-            return Err(MalformedError::IntegerOverflow);
-        }
         if width == 0 || height == 0 {
             return Ok(());
         }
-        let destination_column =
-            usize::try_from(destination_x / 8).map_err(|_error| MalformedError::IntegerOverflow)?;
-        let destination_shift = destination_x % 8;
-        #[cfg(verus_keep_ghost)]
-        proof! {
-            vstd::arithmetic::div_mod::lemma_mod_bound(destination_x as int, 8);
-            assert(destination_shift < 8);
-        }
-        #[cfg_attr(verus_keep_ghost, verus_spec(
-            invariant
-                crate::spec::bitmap::storage_valid(source),
-                self.width == old(self).width,
-                self.height == old(self).height,
-                self.stride == old(self).stride,
-                self.data@.len() == old(self).data@.len(),
-                row <= height,
-                width > 0,
-                height > 0,
-                destination_shift < 8,
-                source_x as nat + width as nat <= source.width as nat,
-                source_y as nat + height as nat <= source.height as nat,
-                destination_x as nat + width as nat <= self.width as nat,
-                destination_y as nat + height as nat <= self.height as nat,
-            decreases height - row,
-        ))]
-        for row in 0..height {
-            let source_row = usize::try_from(
-                source_y
-                    .checked_add(row)
-                    .ok_or(MalformedError::IntegerOverflow)?,
-            )
-            .map_err(|_error| MalformedError::IntegerOverflow)?
-            .checked_mul(source.stride)
-            .ok_or(MalformedError::IntegerOverflow)?;
-            let destination_row = usize::try_from(
-                destination_y
-                    .checked_add(row)
-                    .ok_or(MalformedError::IntegerOverflow)?,
-            )
-            .map_err(|_error| MalformedError::IntegerOverflow)?
-            .checked_mul(self.stride)
-            .and_then(|offset| offset.checked_add(destination_column))
-            .ok_or(MalformedError::IntegerOverflow)?;
-
-            let mut source_bit = source_x;
-            let mut remaining = width;
-            let mut destination_index = destination_row;
-            if destination_shift != 0 {
-                let head_bits = remaining.min(8 - destination_shift);
-                let source_byte = source_row
-                    .checked_add(
-                        usize::try_from(source_bit / 8)
-                            .map_err(|_error| MalformedError::IntegerOverflow)?,
-                    )
-                    .ok_or(MalformedError::IntegerOverflow)?;
-                let source_value =
-                    read_shifted_tail(&source.data, source_byte, source_bit % 8, head_bits)
-                        .ok_or(MalformedError::IntegerOverflow)?
-                        >> destination_shift;
-                let destination_value = *self
-                    .data
-                    .get(destination_index)
-                    .ok_or(MalformedError::IntegerOverflow)?;
-                let mask = (0xFF_u8 >> destination_shift)
-                    & (0xFF_u8 << (8 - destination_shift - head_bits));
-                let combined = operator.apply_byte(destination_value, source_value);
-                let destination_byte = self
-                    .data
-                    .get_mut(destination_index)
-                    .ok_or(MalformedError::IntegerOverflow)?;
-                *destination_byte = (destination_value & !mask) | (combined & mask);
-                source_bit = source_bit
-                    .checked_add(head_bits)
-                    .ok_or(MalformedError::IntegerOverflow)?;
-                remaining = remaining
-                    .checked_sub(head_bits)
-                    .ok_or(MalformedError::IntegerOverflow)?;
-                destination_index = destination_index
-                    .checked_add(1)
-                    .ok_or(MalformedError::IntegerOverflow)?;
-            }
-
-            #[cfg_attr(verus_keep_ghost, verus_spec(
-                invariant
-                    remaining <= width,
-                    self.data@.len() == old(self).data@.len(),
-                    width > 0,
-                    height > 0,
-                decreases remaining,
-            ))]
-            while remaining >= 64 {
-                let source_byte = source_row
-                    .checked_add(
-                        usize::try_from(source_bit / 8)
-                            .map_err(|_error| MalformedError::IntegerOverflow)?,
-                    )
-                    .ok_or(MalformedError::IntegerOverflow)?;
-                let source_chunk = read_shifted_chunk(&source.data, source_byte, source_bit % 8)
-                    .ok_or(MalformedError::IntegerOverflow)?;
-                let destination_chunk = read_chunk(&self.data, destination_index)
-                    .ok_or(MalformedError::IntegerOverflow)?;
-                if !write_chunk(
-                    &mut self.data,
-                    destination_index,
-                    operator.apply_chunk(destination_chunk, source_chunk),
-                ) {
-                    return Err(MalformedError::IntegerOverflow);
-                }
-                source_bit = source_bit
-                    .checked_add(64)
-                    .ok_or(MalformedError::IntegerOverflow)?;
-                remaining -= 64;
-                destination_index = destination_index
-                    .checked_add(8)
-                    .ok_or(MalformedError::IntegerOverflow)?;
-            }
-            #[cfg_attr(verus_keep_ghost, verus_spec(
-                invariant
-                    remaining <= width,
-                    self.data@.len() == old(self).data@.len(),
-                    width > 0,
-                    height > 0,
-                decreases remaining,
-            ))]
-            while remaining >= 8 {
-                let source_byte = source_row
-                    .checked_add(
-                        usize::try_from(source_bit / 8)
-                            .map_err(|_error| MalformedError::IntegerOverflow)?,
-                    )
-                    .ok_or(MalformedError::IntegerOverflow)?;
-                let source_value = read_shifted_byte(&source.data, source_byte, source_bit % 8)
-                    .ok_or(MalformedError::IntegerOverflow)?;
-                let destination_value = *self
-                    .data
-                    .get(destination_index)
-                    .ok_or(MalformedError::IntegerOverflow)?;
-                let destination_byte = self
-                    .data
-                    .get_mut(destination_index)
-                    .ok_or(MalformedError::IntegerOverflow)?;
-                *destination_byte = operator.apply_byte(destination_value, source_value);
-                source_bit = source_bit
-                    .checked_add(8)
-                    .ok_or(MalformedError::IntegerOverflow)?;
-                remaining -= 8;
-                destination_index = destination_index
-                    .checked_add(1)
-                    .ok_or(MalformedError::IntegerOverflow)?;
-            }
-            if remaining != 0 {
-                let source_byte = source_row
-                    .checked_add(
-                        usize::try_from(source_bit / 8)
-                            .map_err(|_error| MalformedError::IntegerOverflow)?,
-                    )
-                    .ok_or(MalformedError::IntegerOverflow)?;
-                let source_value =
-                    read_shifted_tail(&source.data, source_byte, source_bit % 8, remaining)
-                        .ok_or(MalformedError::IntegerOverflow)?;
-                let destination_value = *self
-                    .data
-                    .get(destination_index)
-                    .ok_or(MalformedError::IntegerOverflow)?;
-                let mask = 0xFF_u8 << (8 - remaining);
-                let combined = operator.apply_byte(destination_value, source_value);
-                let destination_byte = self
-                    .data
-                    .get_mut(destination_index)
-                    .ok_or(MalformedError::IntegerOverflow)?;
-                *destination_byte = (destination_value & !mask) | (combined & mask);
-            }
-        }
+        super::fast_compose::compose_rect_fast(
+            self,
+            source,
+            source_x,
+            source_y,
+            destination_x,
+            destination_y,
+            width,
+            height,
+            operator,
+        );
         Ok(())
     }
 
