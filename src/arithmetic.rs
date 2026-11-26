@@ -50,29 +50,47 @@ struct QeState {
     switch_mps: bool,
 }
 
-/// An arithmetic probability context.
+/// An arithmetic probability context packed into a single byte:
+/// `packed = (state_index << 1) | mps`, valid iff `packed < 94`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[repr(C)]
+#[repr(transparent)]
 #[cfg_attr(verus_keep_ghost, verus_verify)]
 pub(crate) struct ArithmeticContext {
-    pub(crate) state_index: u8,
-    pub(crate) mps: u8,
+    pub(crate) packed: u8,
 }
 
 impl ArithmeticContext {
     /// Returns a context in the default `I = 0, MPS = 0` state.
     #[cfg_attr(verus_keep_ghost, verus_spec(out =>
         ensures
-            out.state_index == 0,
-            out.mps == 0,
+            out.packed == 0,
+            arithmetic_spec::context_index(out) == 0,
+            arithmetic_spec::context_mps(out) == 0,
             arithmetic_spec::context_valid(out),
     ))]
     #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     pub(crate) const fn new() -> Self {
-        Self {
-            state_index: 0,
-            mps: 0,
-        }
+        Self { packed: 0 }
+    }
+
+    /// Constructs a context directly from its packed byte representation.
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures out.packed == packed,
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    #[inline]
+    pub(crate) const fn from_packed(packed: u8) -> Self {
+        Self { packed }
+    }
+
+    /// Returns the raw packed byte `(state_index << 1) | mps`.
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures out == self.packed,
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    #[inline]
+    pub(crate) const fn packed(self) -> u8 {
+        self.packed
     }
 
     /// Constructs a validated context, for restoring saved statistics.
@@ -81,8 +99,9 @@ impl ArithmeticContext {
             Ok(context) =>
                 state_index < 47
                 && mps <= 1
-                && context.state_index == state_index
-                && context.mps == mps,
+                && arithmetic_spec::context_valid(context)
+                && arithmetic_spec::context_index(context) == state_index
+                && arithmetic_spec::context_mps(context) == mps,
             Err(error) => (state_index >= 47 || mps > 1)
                 && error == ArithmeticError::InvalidContextState { state_index, mps },
         },
@@ -92,14 +111,41 @@ impl ArithmeticContext {
         if state_index >= 47 || mps > 1 {
             return Err(ArithmeticError::InvalidContextState { state_index, mps });
         }
-        Ok(Self { state_index, mps })
+        let packed = (state_index << 1) | mps;
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            assert(packed == add(mul(state_index, 2), mps)) by (bit_vector)
+                requires state_index < 47, mps <= 1, packed == ((state_index << 1) | mps);
+        }
+        Ok(Self { packed })
+    }
+
+    /// Updates both state index and MPS from validated components.
+    #[cfg_attr(verus_keep_ghost, verus_spec(
+        requires state_index < 47, mps <= 1,
+        ensures
+            arithmetic_spec::context_valid(*final(self)),
+            arithmetic_spec::context_index(*final(self)) == state_index,
+            arithmetic_spec::context_mps(*final(self)) == mps,
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    #[inline]
+    pub(crate) fn set_state_and_mps(&mut self, state_index: u8, mps: u8) {
+        let packed = (state_index << 1) | mps;
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            assert(packed == add(mul(state_index, 2), mps)) by (bit_vector)
+                requires state_index < 47, mps <= 1, packed == ((state_index << 1) | mps);
+        }
+        self.packed = packed;
     }
 
     /// Restores the default probability state.
     #[cfg_attr(verus_keep_ghost, verus_spec(
         ensures
-            final(self).state_index == 0,
-            final(self).mps == 0,
+            final(self).packed == 0,
+            arithmetic_spec::context_index(*final(self)) == 0,
+            arithmetic_spec::context_mps(*final(self)) == 0,
             arithmetic_spec::context_valid(*final(self)),
     ))]
     #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
@@ -109,20 +155,32 @@ impl ArithmeticContext {
 
     /// Returns the Table E.1 state index.
     #[cfg_attr(verus_keep_ghost, verus_spec(out =>
-        ensures out == self.state_index,
+        ensures out == arithmetic_spec::context_index(self),
     ))]
     #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    #[inline]
     pub(crate) const fn state_index(self) -> u8 {
-        self.state_index
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            let p = self.packed;
+            assert((p >> 1) == p / 2u8) by (bit_vector);
+        }
+        self.packed >> 1
     }
 
     /// Returns the current more-probable symbol.
     #[cfg_attr(verus_keep_ghost, verus_spec(out =>
-        ensures out == self.mps,
+        ensures out == arithmetic_spec::context_mps(self),
     ))]
     #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    #[inline]
     pub(crate) const fn mps(self) -> u8 {
-        self.mps
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            let p = self.packed;
+            assert((p & 1) == p % 2u8) by (bit_vector);
+        }
+        self.packed & 1
     }
 }
 
@@ -140,8 +198,8 @@ impl Default for ArithmeticContext {
         forall|index: int| 0 <= index < final(contexts)@.len() ==>
             arithmetic_spec::context_valid(final(contexts)@[index]),
         forall|index: int| 0 <= index < final(contexts)@.len() ==>
-            final(contexts)@[index].state_index == 0
-            && final(contexts)@[index].mps == 0,
+            arithmetic_spec::context_index(final(contexts)@[index]) == 0
+            && arithmetic_spec::context_mps(final(contexts)@[index]) == 0,
 ))]
 pub(crate) fn reset_contexts(contexts: &mut [ArithmeticContext]) {
     let mut index = 0;
@@ -152,8 +210,8 @@ pub(crate) fn reset_contexts(contexts: &mut [ArithmeticContext]) {
             forall|completed: int| 0 <= completed < index ==>
                 arithmetic_spec::context_valid(contexts@[completed]),
             forall|completed: int| 0 <= completed < index ==>
-                contexts@[completed].state_index == 0
-                && contexts@[completed].mps == 0,
+                arithmetic_spec::context_index(contexts@[completed]) == 0
+                && arithmetic_spec::context_mps(contexts@[completed]) == 0,
         decreases contexts@.len() - index,
     ))]
     while index < contexts.len() {
@@ -314,6 +372,7 @@ fn unexpected_eof(offset: usize, needed: usize, remaining: usize) -> ArithmeticE
 mod certainty;
 mod certified_integers;
 mod decoding;
+mod fast;
 mod integers;
 mod probability;
 mod refill;
@@ -323,6 +382,8 @@ pub(crate) use certainty::certainty_spec;
 pub(crate) use certainty::PrefixCertainty;
 
 use probability::QE_STATES;
+#[allow(unused_imports)]
+pub(crate) use probability::{NEXT_MPS_PACKED, QE_PACKED_VALS};
 
 #[cfg(test)]
 mod tests;

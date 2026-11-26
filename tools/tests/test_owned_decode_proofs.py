@@ -46,7 +46,7 @@ class OwnedDecodeProofTests(unittest.TestCase):
         self.assertIn("arithmetic_spec::decoder_valid(&session.decoder)", weaker)
         self.assertIn("matches!(state, GenericRegionState::Arithmetic { .. })", weaker)
         self.assertIn("Err(_) => true", weaker)
-        self.assertIn("state_index: 47, mps: 0", case["replacement"])
+        self.assertIn("packed: 94", case["replacement"])
         self.assertIn("if !session.contexts.contexts.is_empty()", case["replacement"])
         self.assertIn("owned_arithmetic_planes_match_checked_banks", case["native_test"])
 

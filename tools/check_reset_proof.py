@@ -16,18 +16,19 @@ ROOT = Path(__file__).resolve().parents[1]
 ASSIGNMENT = "contexts[index] = ArithmeticContext::new();"
 ZERO_CLAUSES = (
     """forall|index: int| 0 <= index < final(contexts)@.len() ==>
-        final(contexts)@[index].state_index == 0
-        && final(contexts)@[index].mps == 0,""",
+        arithmetic_spec::context_index(final(contexts)@[index]) == 0
+        && arithmetic_spec::context_mps(final(contexts)@[index]) == 0,""",
     """forall|completed: int| 0 <= completed < index ==>
-        contexts@[completed].state_index == 0
-        && contexts@[completed].mps == 0,""",
+        arithmetic_spec::context_index(contexts@[completed]) == 0
+        && arithmetic_spec::context_mps(contexts@[completed]) == 0,""",
 )
 
 
 def mutated_reset(source: str, state_index: int, mps: int) -> str:
     if source.count(ASSIGNMENT) != 1:
         raise ValueError("batch-reset assignment is missing or ambiguous")
-    replacement = f"contexts[index] = ArithmeticContext {{ state_index: {state_index}, mps: {mps} }};"
+    packed = (state_index << 1) | mps
+    replacement = f"contexts[index] = ArithmeticContext {{ packed: {packed} }};"
     return source.replace(ASSIGNMENT, replacement, 1)
 
 

@@ -43,8 +43,8 @@ pub(crate) open spec fn probability_validation_result(
                 crate::arithmetic::arithmetic_spec::context_valid(contexts[before]))
             && error == super::GenericRegionError::Decode(
                 crate::DecodeError::Malformed(crate::MalformedError::InvalidArithmeticContextState {
-                    state_index: contexts[index].state_index,
-                    mps: contexts[index].mps,
+                    state_index: crate::arithmetic::arithmetic_spec::context_index(contexts[index]),
+                    mps: crate::arithmetic::arithmetic_spec::context_mps(contexts[index]),
                 }),
             ),
     }

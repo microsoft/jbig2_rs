@@ -51,7 +51,7 @@ pub(crate) fn decode_arithmetic_refinement(
         Err(error) => return Err(GenericRegionError::Decode(error.into_decode())),
     };
     let mut cumulative_work = 0;
-    let bitmap = decode_refinement_on(
+    let bitmap = decode_refinement_on_validated(
         &mut decoder,
         &mut contexts,
         RefinementArithmeticCall {
@@ -99,6 +99,47 @@ pub(crate) fn decode_refinement_on(
 ) -> Result<Bitmap, GenericRegionError> {
     validate_refinement_context_layout(contexts.template, &contexts.contexts)?;
     validate_probability_states(&contexts.contexts)?;
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        reveal(generic_region_spec::refinement_contexts_valid);
+    }
+    decode_refinement_on_validated(
+        decoder,
+        contexts,
+        call,
+        reference,
+        parameters,
+        limits,
+        cumulative_work,
+    )
+}
+
+/// Reuse a refinement context bank whose validity was established at creation
+/// or checked restore.
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    requires
+        crate::arithmetic::arithmetic_spec::decoder_valid(old(decoder)),
+        generic_region_spec::refinement_contexts_valid(old(contexts)),
+        crate::spec::bitmap::storage_valid(reference),
+    ensures match out {
+        Ok(bitmap) =>
+            crate::spec::bitmap::storage_valid(&bitmap)
+            && crate::arithmetic::arithmetic_spec::decoder_valid(final(decoder))
+            && generic_region_spec::refinement_contexts_valid(final(contexts)),
+        Err(_) => true,
+    },
+))]
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn decode_refinement_on_validated(
+    decoder: &mut ArithmeticDecoder<'_>,
+    contexts: &mut RefinementContexts,
+    call: RefinementArithmeticCall,
+    reference: &Bitmap,
+    parameters: RefinementParameters,
+    limits: &Limits,
+    cumulative_work: &mut u64,
+) -> Result<Bitmap, GenericRegionError> {
+    validate_refinement_context_layout(contexts.template, &contexts.contexts)?;
     if contexts.template == RefinementTemplate::Template0 {
         validate_target_adaptive(1, call.adaptive[0])?;
     }
@@ -118,7 +159,7 @@ pub(crate) fn decode_refinement_on(
     }
     *cumulative_work = next_work;
 
-    decode_refinement_with(
+    super::fast_refinement::decode_refinement_fast(
         &mut bitmap,
         reference,
         contexts.template,

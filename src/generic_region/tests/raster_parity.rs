@@ -490,3 +490,241 @@ fn specialized_refinement_kernels_match_scalar_oracle_randomized() {
         assert_decoder_state_eq(&optimized_decoder, &oracle_decoder);
     }
 }
+
+#[test]
+#[allow(clippy::too_many_lines)]
+fn fast_packed_generic_decoders_match_scalar_oracle_across_all_layouts_and_mps_skips() {
+    let limits = Limits::default();
+    let mut state = 0x2490_feed_cafe_babe_u64;
+    let sparse_zero = vec![0x00_u8; 256];
+    let sparse_one = vec![0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0xac];
+    let random_coded = arithmetic_bytes(&mut state);
+    let streams: [&[u8]; 3] = [&sparse_zero, &sparse_one, &random_coded];
+
+    for template in [
+        GenericTemplate::Template0,
+        GenericTemplate::Template1,
+        GenericTemplate::Template2,
+        GenericTemplate::Template3,
+    ] {
+        let adaptive = generic_header(8, 8, template, false, false).adaptive;
+        for (width, height) in [(0, 3), (1, 4), (7, 4), (8, 4), (9, 5), (32, 6), (65, 5)] {
+            let skip_mask = random_bitmap(width, height, &mut state);
+            for (use_skip, typical) in [(false, false), (false, true), (true, false), (true, true)]
+            {
+                let skip = use_skip.then_some(&skip_mask);
+                for coded in streams {
+                    let mut fast_dec = ArithmeticDecoder::new(coded).expect("decoder");
+                    let mut oracle_dec = ArithmeticDecoder::new(coded).expect("decoder");
+                    let mut fast_ctx =
+                        vec![ArithmeticContext::new(); generic_context_count(template)];
+                    let mut oracle_ctx = fast_ctx.clone();
+                    let mut fast_bmp = Bitmap::blank(width, height, &limits).expect("bitmap");
+                    let mut oracle_bmp = Bitmap::blank(width, height, &limits).expect("bitmap");
+
+                    let handled = crate::generic_region::fast::try_decode_generic(
+                        &mut fast_bmp,
+                        height,
+                        template,
+                        false,
+                        &adaptive,
+                        typical,
+                        skip,
+                        &mut fast_dec,
+                        &mut fast_ctx,
+                    )
+                    .expect("fast generic");
+                    assert!(handled);
+                    decode_generic_with(
+                        &mut oracle_bmp,
+                        height,
+                        template,
+                        false,
+                        &adaptive,
+                        typical,
+                        skip,
+                        &mut oracle_dec,
+                        &mut oracle_ctx,
+                    )
+                    .expect("oracle generic");
+                    assert_eq!(fast_bmp, oracle_bmp);
+                    assert_eq!(fast_ctx, oracle_ctx);
+                    assert_decoder_state_eq(&fast_dec, &oracle_dec);
+                }
+            }
+        }
+    }
+
+    for pw in [1_i32, 4, 7, 8, 9, 16, 24, 25, 31, 32, 33, 64, 128] {
+        let mut adaptive = generic_header(8, 8, GenericTemplate::Template0, false, false).adaptive;
+        adaptive[0] = TemplateOffset::new(-pw, 0);
+        for (width, height) in [(1, 3), (33, 5), (140, 4)] {
+            for typical in [false, true] {
+                for coded in streams {
+                    let mut fast_dec = ArithmeticDecoder::new(coded).expect("decoder");
+                    let mut oracle_dec = ArithmeticDecoder::new(coded).expect("decoder");
+                    let mut fast_ctx = vec![ArithmeticContext::new(); 65_536];
+                    let mut oracle_ctx = fast_ctx.clone();
+                    let mut fast_bmp = Bitmap::blank(width, height, &limits).expect("bitmap");
+                    let mut oracle_bmp = Bitmap::blank(width, height, &limits).expect("bitmap");
+
+                    let handled = crate::generic_region::fast::try_decode_generic(
+                        &mut fast_bmp,
+                        height,
+                        GenericTemplate::Template0,
+                        false,
+                        &adaptive,
+                        typical,
+                        None,
+                        &mut fast_dec,
+                        &mut fast_ctx,
+                    )
+                    .expect("fast pattern");
+                    assert!(handled);
+                    decode_generic_with(
+                        &mut oracle_bmp,
+                        height,
+                        GenericTemplate::Template0,
+                        false,
+                        &adaptive,
+                        typical,
+                        None,
+                        &mut oracle_dec,
+                        &mut oracle_ctx,
+                    )
+                    .expect("oracle pattern");
+                    assert_eq!(fast_bmp, oracle_bmp);
+                    assert_eq!(fast_ctx, oracle_ctx);
+                    assert_decoder_state_eq(&fast_dec, &oracle_dec);
+                }
+            }
+        }
+    }
+
+    let mut custom_at = generic_header(8, 8, GenericTemplate::Template0, false, false).adaptive;
+    custom_at[0] = TemplateOffset::new(-37, 0);
+    custom_at[1] = TemplateOffset::new(-5, 0);
+    custom_at[2] = TemplateOffset::new(5, -3);
+    custom_at[3] = TemplateOffset::new(-7, -2);
+    let skip_mask = random_bitmap(75, 6, &mut state);
+    for (use_skip, typical) in [(false, false), (true, true)] {
+        let skip = use_skip.then_some(&skip_mask);
+        let mut fast_dec = ArithmeticDecoder::new(&random_coded).expect("decoder");
+        let mut oracle_dec = ArithmeticDecoder::new(&random_coded).expect("decoder");
+        let mut fast_ctx = vec![ArithmeticContext::new(); 65_536];
+        let mut oracle_ctx = fast_ctx.clone();
+        let mut fast_bmp = Bitmap::blank(75, 6, &limits).expect("bitmap");
+        let mut oracle_bmp = Bitmap::blank(75, 6, &limits).expect("bitmap");
+        let handled = crate::generic_region::fast::try_decode_generic(
+            &mut fast_bmp,
+            6,
+            GenericTemplate::Template0,
+            false,
+            &custom_at,
+            typical,
+            skip,
+            &mut fast_dec,
+            &mut fast_ctx,
+        )
+        .expect("fast custom");
+        assert!(handled);
+        decode_generic_with(
+            &mut oracle_bmp,
+            6,
+            GenericTemplate::Template0,
+            false,
+            &custom_at,
+            typical,
+            skip,
+            &mut oracle_dec,
+            &mut oracle_ctx,
+        )
+        .expect("oracle custom");
+        assert_eq!(fast_bmp, oracle_bmp);
+        assert_eq!(fast_ctx, oracle_ctx);
+        assert_decoder_state_eq(&fast_dec, &oracle_dec);
+    }
+}
+
+#[test]
+#[allow(clippy::too_many_lines)]
+fn fast_packed_refinement_decoders_match_scalar_oracle_across_geometries_and_skips() {
+    let limits = Limits::default();
+    let mut state = 0x2500_cafe_beef_1234_u64;
+    let sparse_zero = vec![0x00_u8; 256];
+    let sparse_one = vec![0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0xac];
+    let random_coded = arithmetic_bytes(&mut state);
+    let streams: [&[u8]; 3] = [&sparse_zero, &sparse_one, &random_coded];
+
+    let all_zero_ref = Bitmap::blank(41, 8, &limits).expect("blank ref");
+    let all_one_ref = Bitmap::filled(41, 8, true, &limits).expect("filled ref");
+    let mixed_ref = random_bitmap(41, 8, &mut state);
+    let refs: [&Bitmap; 3] = [&all_zero_ref, &all_one_ref, &mixed_ref];
+
+    let configs: [(RefinementTemplate, [TemplateOffset; 2]); 3] = [
+        (
+            RefinementTemplate::Template0,
+            [TemplateOffset::new(-1, -1); 2],
+        ),
+        (
+            RefinementTemplate::Template1,
+            [TemplateOffset::new(-1, -1); 2],
+        ),
+        (
+            RefinementTemplate::Template0,
+            [TemplateOffset::new(-11, 0), TemplateOffset::new(3, -2)],
+        ),
+    ];
+
+    for (template, adaptive) in configs {
+        for (width, height) in [(0, 3), (1, 4), (7, 5), (8, 5), (9, 5), (41, 6)] {
+            for (dx, dy) in [(0, 0), (3, -1), (-5, 2), (17, 0)] {
+                let params = RefinementParameters {
+                    reference_dx: dx,
+                    reference_dy: dy,
+                };
+                for typical in [false, true] {
+                    for reference in refs {
+                        for coded in streams {
+                            let mut fast_dec = ArithmeticDecoder::new(coded).expect("decoder");
+                            let mut oracle_dec = ArithmeticDecoder::new(coded).expect("decoder");
+                            let mut fast_ctx =
+                                vec![ArithmeticContext::new(); refinement_context_count(template)];
+                            let mut oracle_ctx = fast_ctx.clone();
+                            let mut fast_bmp =
+                                Bitmap::blank(width, height, &limits).expect("bitmap");
+                            let mut oracle_bmp =
+                                Bitmap::blank(width, height, &limits).expect("bitmap");
+
+                            crate::generic_region::fast_refinement::decode_refinement_fast(
+                                &mut fast_bmp,
+                                reference,
+                                template,
+                                adaptive,
+                                typical,
+                                params,
+                                &mut fast_dec,
+                                &mut fast_ctx,
+                            )
+                            .expect("fast refine");
+                            decode_refinement_with(
+                                &mut oracle_bmp,
+                                reference,
+                                template,
+                                adaptive,
+                                typical,
+                                params,
+                                &mut oracle_dec,
+                                &mut oracle_ctx,
+                            )
+                            .expect("oracle refine");
+                            assert_eq!(fast_bmp, oracle_bmp);
+                            assert_eq!(fast_ctx, oracle_ctx);
+                            assert_decoder_state_eq(&fast_dec, &oracle_dec);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

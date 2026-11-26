@@ -15,6 +15,11 @@ pub(in crate::symbol_text) open spec fn arithmetic_codec_valid(
         && integer_contexts_valid(&arithmetic.integers)
         && arithmetic_contexts_valid(arithmetic.iaid@)
         && prefix_valid(arithmetic)
+        && match &arithmetic.refinement {
+            Some(contexts) =>
+                crate::generic_region::generic_region_spec::refinement_contexts_valid(contexts),
+            None => true,
+        }
 }
 
 // Model navigation: spec::prefix_valid [representation-invariant]

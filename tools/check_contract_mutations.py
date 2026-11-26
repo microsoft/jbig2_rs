@@ -531,8 +531,8 @@ MUTATIONS = tuple(
     {
         "id": "generic-probability-state-validation-skipped",
         "file": "src/generic_region.rs",
-        "before": "if let Err(error) = ArithmeticContext::from_state(context.state_index(), context.mps()) {",
-        "after": "if let Err(error) = ArithmeticContext::from_state(0, 0) {",
+        "before": "if context.packed() >= 94 {",
+        "after": "if false {",
         "target": "lib",
         "test": "generic_region::tests::diagnostics::probability_state_validation_matches_all_raw_fields_and_first_error",
     },

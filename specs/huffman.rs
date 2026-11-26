@@ -5,6 +5,10 @@
 
 use vstd::prelude::*;
 
+#[path = "huffman/compact.rs"]
+mod compact;
+pub(crate) use compact::{slice_view, table_first_codes, table_first_lines, table_length_counts};
+
 verus! {
 
 // Model navigation: spec::zero_padding_before_prefix [project-policy]
@@ -29,12 +33,12 @@ pub(crate) open spec fn zero_padding_before_prefix(
 // Mapping: no registered requirement/locator mapping.
 // Fidelity: unresolved; no independent normative approval.
 pub(crate) closed spec fn prefix_count(table: &super::HuffmanTable, length: int) -> u32 {
-    table.length_count@[length]
+    table_length_counts(table)[length]
 }
 
 pub(super) proof fn prefix_count_definition(table: &super::HuffmanTable)
     ensures forall|length: int| 0 <= length < 256 ==>
-        prefix_count(table, length) == table.length_count@[length],
+        prefix_count(table, length) == table_length_counts(table)[length],
 {
     reveal(prefix_count);
 }
@@ -453,13 +457,13 @@ pub(super) open spec fn assignment_prefix(
 pub(crate) closed spec fn assignment_contents(
     lines: Seq<super::HuffmanLine>, table: &super::HuffmanTable,
 ) -> bool {
-    table.lines@ == lines
-        && histogram(lines, table.length_count@, lines.len())
+    slice_view(&table.lines) == lines
+        && histogram(lines, table_length_counts(table), lines.len())
         && 1 <= table.max_prefix_len <= 255
-        && table.length_count@[table.max_prefix_len as int] > 0
+        && table_length_counts(table)[table.max_prefix_len as int] > 0
         && (forall|length: int| table.max_prefix_len < length < 256 ==>
-            table.length_count@[length] == 0)
-        && table.ordered_lines@.len()
+            table_length_counts(table)[length] == 0)
+        && slice_view(&table.ordered_lines).len()
             == ordered_before(lines, table.max_prefix_len as nat + 1).len()
 }
 
@@ -471,11 +475,11 @@ pub(crate) closed spec fn assignment_contents(
 pub(crate) closed spec fn assignment_codes(
     lines: Seq<super::HuffmanLine>, table: &super::HuffmanTable,
 ) -> bool {
-    table.first_code@[0].limbs@ == seq![0u64, 0u64, 0u64, 0u64]
+    table_first_codes(table)[0].limbs@ == seq![0u64, 0u64, 0u64, 0u64]
         && forall|length: int| 1 <= length <= table.max_prefix_len ==>
-            #[trigger] first_prefix(lines, length as nat) == Some(table.first_code@[length])
-            && (table.length_count@[length] > 0 ==>
-                canonical_range_fits(table.first_code@[length], table.length_count@[length], length as usize))
+            #[trigger] first_prefix(lines, length as nat) == Some(table_first_codes(table)[length])
+            && (table_length_counts(table)[length] > 0 ==>
+                canonical_range_fits(table_first_codes(table)[length], table_length_counts(table)[length], length as usize))
 }
 
 // Model navigation: spec::assignment_starts [project-result-model]
@@ -487,8 +491,8 @@ pub(crate) closed spec fn assignment_starts(
     lines: Seq<super::HuffmanLine>, table: &super::HuffmanTable,
 ) -> bool {
     forall|length: int| 1 <= length <= table.max_prefix_len
-        && table.length_count@[length] > 0 ==>
-            table.first_line@[length] == ordered_before(lines, length as nat).len()
+        && table_length_counts(table)[length] > 0 ==>
+            table_first_lines(table)[length] == ordered_before(lines, length as nat).len()
 }
 
 // Model navigation: spec::assignment_order [project-result-model]
@@ -499,7 +503,7 @@ pub(crate) closed spec fn assignment_starts(
 pub(crate) closed spec fn assignment_order(
     lines: Seq<super::HuffmanLine>, table: &super::HuffmanTable,
 ) -> bool {
-    table.ordered_lines@ == ordered_before(lines, table.max_prefix_len as nat + 1)
+    slice_view(&table.ordered_lines) == ordered_before(lines, table.max_prefix_len as nat + 1)
 }
 
 // Model navigation: spec::canonical_assignment [project-result-model]
@@ -586,32 +590,32 @@ pub(super) closed spec fn fallback_run(
                         ))), next,
                     ),
                     Some(prefix) => match small_distance_from(
-                        prefix, table.first_code@[length as int], table.length_count@[length as int],
+                        prefix, table_first_codes(table)[length as int], table_length_counts(table)[length as int],
                     ) {
                         None => fallback_run(table, bytes, next, (length + 1) as usize, prefix),
                         Some(distance) => {
-                            let ordered = table.first_line@[length as int] as nat + distance as nat;
+                            let ordered = table_first_lines(table)[length as int] as nat + distance as nat;
                             if ordered > u32::MAX {
                                 (
                                     Err(super::HuffmanError::Decode(crate::DecodeError::Malformed(
                                         crate::MalformedError::IntegerOverflow,
                                     ))), next,
                                 )
-                            } else if ordered >= table.ordered_lines@.len() {
+                            } else if ordered >= slice_view(&table.ordered_lines).len() {
                                 (
                                     Err(super::HuffmanError::InvalidTable(
                                         super::HuffmanTableError::InvalidCode,
                                     )), next,
                                 )
                             } else {
-                                let index = table.ordered_lines@[ordered as int] as nat;
-                                if index >= table.lines@.len() {
+                                let index = slice_view(&table.ordered_lines)[ordered as int] as nat;
+                                if index >= slice_view(&table.lines).len() {
                                     (
                                         Err(super::HuffmanError::InvalidTable(
                                             super::HuffmanTableError::InvalidCode,
                                         )), next,
                                     )
-                                } else { line_state(table.lines@[index as int], bytes, next) }
+                                } else { line_state(slice_view(&table.lines)[index as int], bytes, next) }
                             }
                         },
                     },
@@ -640,17 +644,17 @@ pub(crate) closed spec fn decode_state(
             let second = bytes[(index + 1) as int] as u16;
             ((((first << 8) | second) >> ((8 - offset) as usize)) & 0xff) as u8
         };
-        let entry = if (prefix as nat) < table.prefix_lookup@.len() {
-            table.prefix_lookup@[prefix as int]
+        let entry = if (prefix as nat) < slice_view(&table.prefix_lookup).len() {
+            slice_view(&table.prefix_lookup)[prefix as int]
         } else { 0u16 };
         if entry == 0 {
             fallback_run(table, bytes, position, 1, super::WideCode { limbs: [0u64, 0, 0, 0] })
         } else {
             let index = entry as int - 1;
-            if index >= table.lines@.len() {
+            if index >= slice_view(&table.lines).len() {
                 (Err(super::HuffmanError::InvalidTable(super::HuffmanTableError::InvalidCode)), position)
             } else {
-                let line = table.lines@[index];
+                let line = slice_view(&table.lines)[index];
                 if line.prefix_len > super::PREFIX_LOOKUP_BITS {
                     (Err(super::HuffmanError::InvalidTable(super::HuffmanTableError::InvalidCode)), position)
                 } else { line_state(line, bytes, (position + line.prefix_len as nat) as usize) }
@@ -685,17 +689,17 @@ pub(crate) closed spec fn cached_decode_outcome(
             let second = before.bytes@[(index + 1) as int] as u16;
             ((((first << 8) | second) >> ((8 - offset) as usize)) & 0xff) as u8
         };
-        let entry = if (prefix as nat) < table.prefix_lookup@.len() {
-            table.prefix_lookup@[prefix as int]
+        let entry = if (prefix as nat) < slice_view(&table.prefix_lookup).len() {
+            slice_view(&table.prefix_lookup)[prefix as int]
         } else { 0u16 };
         entry != 0 ==> {
             let line_index = entry as int - 1;
             &&& after.bytes@ == before.bytes@
-            &&& if line_index >= table.lines@.len() {
+            &&& if line_index >= slice_view(&table.lines).len() {
                 out == Err(super::HuffmanError::InvalidTable(super::HuffmanTableError::InvalidCode))
                     && after.bit_position == before.bit_position
             } else {
-                let line = table.lines@[line_index];
+                let line = slice_view(&table.lines)[line_index];
                 if line.prefix_len > super::PREFIX_LOOKUP_BITS {
                     out == Err(super::HuffmanError::InvalidTable(super::HuffmanTableError::InvalidCode))
                         && after.bit_position == before.bit_position
@@ -742,8 +746,8 @@ pub(crate) closed spec fn cached_decode_outcome(
 // Mapping: no registered requirement/locator mapping.
 // Fidelity: unresolved; no independent normative approval.
 pub(crate) closed spec fn table_has_oob(table: &super::HuffmanTable) -> bool {
-    exists|index: int| 0 <= index < table.lines@.len()
-        && table.lines@[index].kind == super::LineKind::OutOfBand
+    exists|index: int| 0 <= index < slice_view(&table.lines).len()
+        && slice_view(&table.lines)[index].kind == super::LineKind::OutOfBand
 }
 
 }

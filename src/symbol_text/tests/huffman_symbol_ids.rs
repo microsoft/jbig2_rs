@@ -441,7 +441,8 @@ fn table_integer_fields_preserve_selection_results_errors_cursor_and_frames() {
                                 },
                             );
                             if matches!(binding, Binding::Standard) {
-                                actual.tables.standard_tables.a = Some(Box::new(table(family)));
+                                actual.tables.standard_tables.a =
+                                    Some(Box::leak(Box::new(table(family))));
                             }
                             let (expected, end) =
                                 if matches!(binding, Binding::Missing | Binding::MissingStandard) {

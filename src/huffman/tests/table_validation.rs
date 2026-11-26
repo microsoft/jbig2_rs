@@ -52,14 +52,17 @@ fn raw_canonical_assignment_matches_numeric_histogram_and_stable_order() {
                 continue;
             }
             let table = result.expect("numeric prefix allocation fits");
-            assert_eq!(table.lines, lines);
-            assert_eq!(table.length_count, counts);
+            assert_eq!(table.lines.as_slice(), lines.as_slice());
+            for (len, &expected_count) in counts.iter().enumerate() {
+                assert_eq!(table.length_count_at(len), expected_count);
+            }
             assert_eq!(
-                table.ordered_lines,
+                table.ordered_lines.as_slice(),
                 expected_order
                     .iter()
                     .map(|&i| u32::try_from(i).unwrap())
                     .collect::<Vec<_>>()
+                    .as_slice()
             );
             let maximum = usize::from(table.max_prefix_len);
             assert_eq!(
@@ -67,13 +70,13 @@ fn raw_canonical_assignment_matches_numeric_histogram_and_stable_order() {
                 usize::from(lines[*expected_order.last().unwrap()].prefix_len)
             );
             for length in 1..=maximum {
-                assert_eq!(table.first_code[length].limbs, [first[length], 0, 0, 0]);
+                assert_eq!(table.first_code_at(length).limbs, [first[length], 0, 0, 0]);
                 let start = expected_order
                     .iter()
                     .take_while(|&&index| usize::from(lines[index].prefix_len) < length)
                     .count();
                 if counts[length] != 0 {
-                    assert_eq!(usize::try_from(table.first_line[length]).unwrap(), start);
+                    assert_eq!(usize::try_from(table.first_line_at(length)).unwrap(), start);
                 }
                 for (rank, &index) in expected_order
                     .iter()
@@ -130,7 +133,7 @@ fn symbol_length_source_matches_materialized_line_oracle() {
     let specialized =
         HuffmanTable::new_symbol_ids(&lengths, &Limits::default()).expect("specialized table");
     let materialized = HuffmanTable::new(&lines, &Limits::default()).expect("materialized table");
-    assert_eq!(specialized.lines.capacity(), materialized.lines.capacity());
+    assert_eq!(specialized.lines.len(), materialized.lines.len());
     for prefix in 0_u16..=u16::MAX {
         let bytes = prefix.to_be_bytes();
         let mut specialized_reader = bit_reader(&bytes);
@@ -548,6 +551,65 @@ fn open_ranges_reject_values_outside_i32() {
             MalformedError::IntegerOverflow
         )))
     ));
+}
+
+#[test]
+fn standard_tables_match_static_tables_across_all_annex_b_variants() {
+    let limits = Limits::default();
+    let probe_bytes = [0x00, 0x55, 0xaa, 0xff, 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc];
+    for (variant, lines) in [
+        (StandardHuffmanTable::A, StandardLines::A),
+        (StandardHuffmanTable::B, StandardLines::B),
+        (StandardHuffmanTable::C, StandardLines::C),
+        (StandardHuffmanTable::D, StandardLines::D),
+        (StandardHuffmanTable::E, StandardLines::E),
+        (StandardHuffmanTable::F, StandardLines::F),
+        (StandardHuffmanTable::G, StandardLines::G),
+        (StandardHuffmanTable::H, StandardLines::H),
+        (StandardHuffmanTable::I, StandardLines::I),
+        (StandardHuffmanTable::J, StandardLines::J),
+        (StandardHuffmanTable::K, StandardLines::K),
+        (StandardHuffmanTable::L, StandardLines::L),
+        (StandardHuffmanTable::M, StandardLines::M),
+        (StandardHuffmanTable::N, StandardLines::N),
+        (StandardHuffmanTable::O, StandardLines::O),
+    ] {
+        let dynamic = HuffmanTable::from_line_source(HuffmanLines::Standard(lines), &limits)
+            .expect("dynamic standard table");
+        let cloned = HuffmanTable::standard(variant, &limits).expect("cloned standard table");
+        let static_table =
+            HuffmanTable::standard_static(variant, &limits).expect("static standard table");
+        assert_eq!(dynamic.lines.len(), static_table.lines.len());
+        assert_eq!(cloned.lines.len(), static_table.lines.len());
+        assert_eq!(dynamic.max_prefix_len, static_table.max_prefix_len);
+        assert_eq!(
+            dynamic.prefer_prefix_lookup,
+            static_table.prefer_prefix_lookup
+        );
+        assert_eq!(dynamic.lines.as_slice(), static_table.lines.as_slice());
+        assert_eq!(
+            dynamic.ordered_lines.as_slice(),
+            static_table.ordered_lines.as_slice()
+        );
+        assert_eq!(dynamic.short_length_count, static_table.short_length_count);
+        assert_eq!(dynamic.short_first_code, static_table.short_first_code);
+        assert_eq!(dynamic.short_first_line, static_table.short_first_line);
+        assert_eq!(
+            dynamic.prefix_lookup.as_slice(),
+            static_table.prefix_lookup.as_slice()
+        );
+        for offset in 0..16 {
+            let mut r_dyn = bit_reader(&probe_bytes);
+            let mut r_sta = bit_reader(&probe_bytes);
+            r_dyn.bit_position = offset;
+            r_sta.bit_position = offset;
+            assert_eq!(
+                dynamic.decode(&mut r_dyn).ok(),
+                static_table.decode(&mut r_sta).ok()
+            );
+            assert_eq!(r_dyn.bit_position, r_sta.bit_position);
+        }
+    }
 }
 
 #[test]

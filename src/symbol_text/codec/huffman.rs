@@ -4,7 +4,7 @@
 use super::*;
 #[cfg(not(verus_keep_ghost))]
 use super::{
-    bit_reader, decode_refinement_on, normalized_bounded_arithmetic,
+    bit_reader, decode_refinement_on_validated, normalized_bounded_arithmetic,
     validate_bounded_arithmetic_marker, ArithmeticDecoder, BitReader, Bitmap, EntropyInteger,
     HuffmanCodec, HuffmanFieldTables, HuffmanValue, IntegerField, Limits, MalformedError,
     RefinementArithmeticCall, RefinementContexts, RefinementParameters, RefinementRequest,
@@ -248,11 +248,24 @@ impl HuffmanCodec<'_> {
     #[cfg_attr(verus_keep_ghost, verus_spec(out =>
         requires
             crate::huffman::huffman_spec::reader_valid(&old(self).reader),
+            match &old(self).refinement {
+                Some(contexts) =>
+                    crate::generic_region::generic_region_spec::refinement_contexts_valid(contexts),
+                None => true,
+            },
             crate::spec::bitmap::storage_valid(request.reference),
         ensures
             crate::huffman::huffman_spec::reader_valid(&final(self).reader),
             match out {
-                Ok(bitmap) => crate::spec::bitmap::storage_valid(&bitmap),
+                Ok(bitmap) =>
+                    crate::spec::bitmap::storage_valid(&bitmap)
+                        && match &final(self).refinement {
+                            Some(contexts) =>
+                                crate::generic_region::generic_region_spec::refinement_contexts_valid(
+                                    contexts,
+                                ),
+                            None => true,
+                        },
                 Err(_) => true,
             },
     ))]
@@ -321,7 +334,7 @@ impl HuffmanCodec<'_> {
                 "missing Huffman refinement contexts",
             ))?;
         let mut decoder = ArithmeticDecoder::new(normalized.bytes())?;
-        let bitmap = decode_refinement_on(
+        let bitmap = decode_refinement_on_validated(
             &mut decoder,
             contexts,
             call,

@@ -4,9 +4,8 @@
 use super::*;
 #[cfg(not(verus_keep_ghost))]
 use super::{
-    try_reserve, BitReader, DecodeError, HuffmanError, HuffmanLine, HuffmanTable,
-    HuffmanTableError, HuffmanValue, LineKind, MalformedError, WideCode, MAX_PREFIX_LEN,
-    PREFIX_LOOKUP_BITS, PREFIX_LOOKUP_SIZE,
+    BitReader, DecodeError, HuffmanError, HuffmanLine, HuffmanTable, HuffmanTableError,
+    HuffmanValue, LineKind, MalformedError, WideCode, PREFIX_LOOKUP_BITS, SHORT_PREFIX_MAX,
 };
 
 impl HuffmanTable {
@@ -43,11 +42,12 @@ impl HuffmanTable {
             invariant 1 <= length <= remaining + 1, remaining < 8,
                 huffman_spec::reader_valid(reader),
                 remaining as int == reader.bytes@.len() * 8 - reader.bit_position,
-                forall|done: int| 1 <= done < length ==> self.length_count@[done] == 0,
+                forall|done: int| 1 <= done < length ==>
+                    huffman_spec::table_length_counts(self)[done] == 0,
             decreases remaining + 1 - length,
         ))]
         while length <= remaining {
-            if self.length_count[length] != 0 {
+            if self.length_count_at(length) != 0 {
                 #[cfg(verus_keep_ghost)]
                 proof! {
                     huffman_spec::prefix_count_definition(self);
@@ -114,18 +114,20 @@ impl HuffmanTable {
     ))]
     #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     pub(crate) fn has_oob(&self) -> bool {
+        let lines_slice = self.lines.as_slice();
         let mut index = 0;
         let mut found = false;
         #[cfg_attr(verus_keep_ghost, verus_spec(
             invariant
-                index <= self.lines@.len(),
+                index <= lines_slice@.len(),
+                lines_slice@ == huffman_spec::slice_view(&self.lines),
                 found == exists|line_index: int|
                     0 <= line_index < index
-                    && self.lines@[line_index].kind == LineKind::OutOfBand,
-            decreases self.lines@.len() - index,
+                    && lines_slice@[line_index].kind == LineKind::OutOfBand,
+            decreases lines_slice@.len() - index,
         ))]
-        while index < self.lines.len() {
-            match self.lines[index].kind {
+        while index < lines_slice.len() {
+            match lines_slice[index].kind {
                 LineKind::OutOfBand => found = true,
                 LineKind::Normal | LineKind::Lower | LineKind::Upper => {}
             }
@@ -203,10 +205,149 @@ impl HuffmanTable {
             ).1,
     ))]
     #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    #[allow(
+        clippy::too_many_lines,
+        clippy::cast_possible_truncation,
+        clippy::manual_range_contains
+    )]
     pub(super) fn decode_fallback(
         &self,
         reader: &mut BitReader<'_>,
     ) -> Result<HuffmanValue, HuffmanError> {
+        let max_len = usize::from(self.max_prefix_len);
+        let start_pos = reader.bit_position;
+        let byte_idx = start_pos / 8;
+        if self.long_tables.is_none()
+            && max_len >= 1
+            && max_len <= SHORT_PREFIX_MAX
+            && reader.bytes.len() >= byte_idx + 8
+        {
+            let b = reader.bytes;
+            let word = (u64::from(b[byte_idx]) << 56)
+                | (u64::from(b[byte_idx + 1]) << 48)
+                | (u64::from(b[byte_idx + 2]) << 40)
+                | (u64::from(b[byte_idx + 3]) << 32)
+                | (u64::from(b[byte_idx + 4]) << 24)
+                | (u64::from(b[byte_idx + 5]) << 16)
+                | (u64::from(b[byte_idx + 6]) << 8)
+                | u64::from(b[byte_idx + 7]);
+            let bit_off = (start_pos % 8) as u32;
+            let mut code32 = 0_u32;
+            let mut length = 1_usize;
+            #[cfg(verus_keep_ghost)]
+            proof! {
+                reveal(huffman_spec::reader_valid);
+                assert((1u64 << 0u64) == 1u64) by (bit_vector);
+                huffman_spec::fallback_run_definition(
+                    self, reader.bytes@, start_pos, 1, WideCode { limbs: [0u64, 0, 0, 0] },
+                );
+            }
+            #[cfg_attr(verus_keep_ghost, verus_spec(
+                invariant
+                    huffman_spec::reader_valid(reader),
+                    huffman_spec::reader_valid(old(reader)),
+                    reader.bytes@ == old(reader).bytes@,
+                    reader.bit_position == start_pos,
+                    start_pos == old(reader).bit_position,
+                    byte_idx == start_pos / 8,
+                    bit_off == (start_pos % 8) as u32,
+                    byte_idx + 8 <= reader.bytes@.len(),
+                    word == ((((reader.bytes@[byte_idx as int] as u64) << 56u64)
+                        | ((reader.bytes@[(byte_idx + 1) as int] as u64) << 48u64)
+                        | ((reader.bytes@[(byte_idx + 2) as int] as u64) << 40u64)
+                        | ((reader.bytes@[(byte_idx + 3) as int] as u64) << 32u64)
+                        | ((reader.bytes@[(byte_idx + 4) as int] as u64) << 24u64)
+                        | ((reader.bytes@[(byte_idx + 5) as int] as u64) << 16u64)
+                        | ((reader.bytes@[(byte_idx + 6) as int] as u64) << 8u64)
+                        | (reader.bytes@[(byte_idx + 7) as int] as u64))),
+                    1 <= length <= max_len + 1,
+                    max_len == self.max_prefix_len as usize,
+                    1 <= max_len <= 32,
+                    self.long_tables.is_none(),
+                    length <= 32 ==> (code32 as u64) < (1u64 << ((length - 1) as u64)),
+                    huffman_spec::fallback_run(
+                        self, old(reader).bytes@, old(reader).bit_position,
+                        1, WideCode { limbs: [0u64, 0, 0, 0] },
+                    ) == huffman_spec::fallback_run(
+                        self, reader.bytes@, (start_pos + length - 1) as usize,
+                        length, WideCode { limbs: [code32 as u64, 0, 0, 0] },
+                    ),
+                decreases max_len + 1 - length,
+            ))]
+            while length <= max_len {
+                #[allow(unused_variables)]
+                let cur_pos = start_pos + (length - 1);
+                let k = bit_off + (length - 1) as u32;
+                let bit = ((word >> (63 - k)) & 1) as u32;
+                #[cfg(verus_keep_ghost)]
+                let prev_code = code32;
+                code32 = (code32 << 1) | bit;
+                #[cfg(verus_keep_ghost)]
+                proof! {
+                    reveal(huffman_spec::reader_valid);
+                    huffman_spec::fallback_run_definition(
+                        self, reader.bytes@, cur_pos, length,
+                        WideCode { limbs: [prev_code as u64, 0, 0, 0] },
+                    );
+                    crate::reader_properties::u64_word_bit_at(
+                        reader.bytes@, byte_idx as nat, k, word,
+                    );
+                    reveal_with_fuel(crate::spec::readers::bits_value, 2);
+                    assert(bit as nat == crate::spec::readers::bits_value(
+                        reader.bytes@, cur_pos as nat, 1,
+                    ));
+                    assert(prev_code <= 0x7fff_ffffu32 && bit <= 1u32) by (bit_vector)
+                        requires
+                            1usize <= length <= 32usize,
+                            (prev_code as u64) < (1u64 << ((length - 1) as u64)),
+                            bit == (((word >> sub(63u64, k as u64)) & 1u64) as u32);
+                    huffman_spec::short_append_bit_matches(prev_code, bit);
+                    if length < 32 {
+                        assert((code32 as u64) < (1u64 << (length as u64))) by (bit_vector)
+                            requires
+                                1usize <= length < 32usize,
+                                (prev_code as u64) < (1u64 << ((length - 1) as u64)),
+                                bit <= 1u32,
+                                code32 == ((prev_code << 1u32) | bit);
+                    }
+                    huffman_spec::short_distance_matches(
+                        code32,
+                        self.short_first_code@[length as int],
+                        self.short_length_count@[length as int],
+                    );
+                }
+                let count = self.short_length_count[length];
+                let first = self.short_first_code[length];
+                if count != 0 && code32 >= first && code32 - first < count {
+                    let distance = code32 - first;
+                    reader.bit_position = start_pos + length;
+                    let fast_ordered_index = self.short_first_line[length]
+                        .checked_add(distance)
+                        .ok_or(MalformedError::IntegerOverflow)?
+                        as usize;
+                    let line_index = *self
+                        .ordered_lines
+                        .get(fast_ordered_index)
+                        .ok_or(HuffmanError::InvalidTable(HuffmanTableError::InvalidCode))?;
+                    let line = self
+                        .lines
+                        .get(line_index as usize)
+                        .ok_or(HuffmanError::InvalidTable(HuffmanTableError::InvalidCode))?;
+                    return decode_line(*line, reader);
+                }
+                length += 1;
+            }
+            reader.bit_position = start_pos + max_len;
+            #[cfg(verus_keep_ghost)]
+            proof! {
+                huffman_spec::fallback_run_definition(
+                    self, reader.bytes@, reader.bit_position, length,
+                    WideCode { limbs: [code32 as u64, 0, 0, 0] },
+                );
+            }
+            return Err(HuffmanError::InvalidTable(HuffmanTableError::InvalidCode));
+        }
+
         let mut code = WideCode { limbs: [0; 4] };
         let mut length = 1_usize;
         #[cfg(verus_keep_ghost)]
@@ -260,12 +401,12 @@ impl HuffmanTable {
             code = code
                 .append_bit(bit)
                 .ok_or(MalformedError::IntegerOverflow)?;
-            let count = self.length_count[length];
-            if let Some(distance) = code.small_distance_from(self.first_code[length], count) {
-                let ordered_index = self.first_line[length]
-                    .checked_add(distance)
-                    .ok_or(MalformedError::IntegerOverflow)?
-                    as usize;
+            let count = self.length_count_at(length);
+            if let Some(distance) = code.small_distance_from(self.first_code_at(length), count) {
+                let ordered_index =
+                    self.first_line_at(length)
+                        .checked_add(distance)
+                        .ok_or(MalformedError::IntegerOverflow)? as usize;
                 let line_index = *self
                     .ordered_lines
                     .get(ordered_index)
@@ -298,12 +439,12 @@ impl HuffmanTable {
             code = code
                 .append_bit(bit)
                 .ok_or(MalformedError::IntegerOverflow)?;
-            let count = self.length_count[length];
-            if let Some(distance) = code.small_distance_from(self.first_code[length], count) {
-                let ordered_index = self.first_line[length]
-                    .checked_add(distance)
-                    .ok_or(MalformedError::IntegerOverflow)?
-                    as usize;
+            let count = self.length_count_at(length);
+            if let Some(distance) = code.small_distance_from(self.first_code_at(length), count) {
+                let ordered_index =
+                    self.first_line_at(length)
+                        .checked_add(distance)
+                        .ok_or(MalformedError::IntegerOverflow)? as usize;
                 let line_index = *self
                     .ordered_lines
                     .get(ordered_index)
@@ -326,215 +467,19 @@ impl HuffmanTable {
             return None;
         }
 
-        let first = usize::try_from(self.first_line[length]).ok()?;
-        let count = usize::try_from(self.length_count[length]).ok()?;
+        let first = usize::try_from(self.first_line_at(length)).ok()?;
+        let count = usize::try_from(self.length_count_at(length)).ok()?;
         let within_length = self
             .ordered_lines
+            .as_slice()
             .get(first..first.checked_add(count)?)?
             .iter()
             .position(|&candidate| usize::try_from(candidate).ok() == Some(line_index))?;
-        let code = self.first_code[length].checked_add_small(u32::try_from(within_length).ok()?)?;
+        let code = self
+            .first_code_at(length)
+            .checked_add_small(u32::try_from(within_length).ok()?)?;
         Some((code, line.prefix_len))
     }
-}
-
-#[cfg_attr(verus_keep_ghost, verus_spec(out =>
-    ensures match out {
-        Ok(lookup) =>
-            lookup@.len() == 256
-                && (huffman_lookup_spec::fast_shape(length_count@) ==>
-                    forall|prefix: int| 0 <= prefix < 256 ==>
-                        #[trigger] lookup@[prefix] == huffman_lookup_spec::fast_slot(
-                            first_code@[8], length_count@[8], first_line@[8], ordered_lines@,
-                            prefix as u8, if maximum_length >= 8 { length_count@[8] } else { 0u32 },
-                        )),
-        Err(_) => true,
-    },
-))]
-// Loop contracts and ghost proofs account for the additional source lines.
-#[allow(
-    clippy::cast_possible_truncation,
-    clippy::redundant_closure,
-    clippy::too_many_lines
-)]
-pub(super) fn build_prefix_lookup(
-    length_count: &[u32; MAX_PREFIX_LEN + 1],
-    first_code: &[WideCode; MAX_PREFIX_LEN + 1],
-    first_line: &[u32; MAX_PREFIX_LEN + 1],
-    ordered_lines: &[u32],
-    maximum_length: usize,
-) -> Result<Vec<u16>, HuffmanError> {
-    let mut lookup = Vec::new();
-    try_reserve::<u16>(&mut lookup, PREFIX_LOOKUP_SIZE)?;
-    lookup.resize(PREFIX_LOOKUP_SIZE, 0);
-    #[cfg(verus_keep_ghost)]
-    proof! {
-        assert(PREFIX_LOOKUP_SIZE == 256) by (bit_vector);
-        assert(lookup@.len() == 256);
-        assert forall|prefix: int| 0 <= prefix < 256 implies lookup@[prefix] == 0 by {
-        }
-    }
-    let lookup_length = maximum_length.min(usize::from(PREFIX_LOOKUP_BITS));
-    let mut length = 1_usize;
-    #[cfg_attr(verus_keep_ghost, verus_spec(
-        invariant
-            lookup@.len() == PREFIX_LOOKUP_SIZE,
-            lookup@.len() == 256,
-            lookup_length <= PREFIX_LOOKUP_BITS as usize,
-            1 <= length,
-            length <= lookup_length + 1,
-            huffman_lookup_spec::fast_shape(length_count@) ==>
-                forall|prefix: int| 0 <= prefix < 256 ==>
-                    #[trigger] lookup@[prefix] == huffman_lookup_spec::fast_slot(
-                        first_code@[8], length_count@[8], first_line@[8], ordered_lines@,
-                        prefix as u8, if length <= 8 { 0u32 } else { length_count@[8] },
-                    ),
-        decreases lookup_length + 1 - length,
-    ))]
-    while length <= lookup_length {
-        let count = length_count[length];
-        let mut distance = 0_u32;
-        #[cfg_attr(verus_keep_ghost, verus_spec(
-            invariant
-                lookup@.len() == PREFIX_LOOKUP_SIZE,
-                lookup@.len() == 256,
-                lookup_length <= PREFIX_LOOKUP_BITS as usize,
-                1 <= length,
-                length <= lookup_length,
-                distance <= count,
-                count == length_count@[length as int],
-                huffman_lookup_spec::fast_shape(length_count@) ==>
-                    (length == 8 || count == 0),
-                huffman_lookup_spec::fast_shape(length_count@) ==>
-                    forall|prefix: int| 0 <= prefix < 256 ==>
-                        #[trigger] lookup@[prefix] == huffman_lookup_spec::fast_slot(
-                            first_code@[8], length_count@[8], first_line@[8], ordered_lines@,
-                            prefix as u8, distance,
-                        ),
-            decreases count - distance,
-        ))]
-        while distance < count {
-            let code = first_code[length]
-                .checked_add_small(distance)
-                .ok_or(HuffmanTableError::Oversubscribed)
-                .map_err(|error| HuffmanError::InvalidTable(error))?;
-            if code.limbs[1] != 0
-                || code.limbs[2] != 0
-                || code.limbs[3] != 0
-                || code.limbs[0] > u64::from(u8::MAX)
-                || distance > u32::from(u8::MAX)
-            {
-                return Err(HuffmanError::InvalidTable(
-                    HuffmanTableError::Oversubscribed,
-                ));
-            }
-            #[cfg(verus_keep_ghost)]
-            proof! {
-                if huffman_lookup_spec::fast_shape(length_count@) {
-                    huffman_lookup_spec::small_code_value(
-                        first_code@[8], distance, code,
-                    );
-                }
-            }
-            let suffix_bits = usize::from(PREFIX_LOOKUP_BITS) - length;
-            let repeats = 1_usize << suffix_bits;
-            let code = usize::try_from(code.limbs[0])
-                .map_err(|_| HuffmanError::InvalidTable(HuffmanTableError::Oversubscribed))?;
-            let first_prefix = code << suffix_bits;
-            let ordered_index = first_line[length]
-                .checked_add(distance)
-                .ok_or(MalformedError::IntegerOverflow)?;
-            let line_index = *ordered_lines
-                .get(ordered_index as usize)
-                .ok_or(HuffmanError::InvalidTable(HuffmanTableError::InvalidCode))?;
-            if line_index >= u32::from(u16::MAX) {
-                #[cfg(verus_keep_ghost)]
-                proof! {
-                    if huffman_lookup_spec::fast_shape(length_count@) {
-                        assert(line_index as int + 1 > u16::MAX);
-                        huffman_lookup_spec::advance_slot(
-                            first_code@[8], count, first_line@[8], ordered_lines@,
-                            distance, code as u8, 0u16,
-                        );
-                    }
-                }
-                distance += 1;
-                continue;
-            }
-            let encoded_line = (line_index + 1) as u16;
-            #[cfg(verus_keep_ghost)]
-            proof! {
-                if huffman_lookup_spec::fast_shape(length_count@) {
-                    assert(length == 8);
-                    assert(suffix_bits == 0);
-                    assert((1usize << 0usize) == 1usize) by (bit_vector);
-                    assert((code << 0usize) == code) by (bit_vector);
-                    assert(repeats == 1);
-                    assert(first_prefix == code);
-                }
-            }
-            let mut suffix = 0_usize;
-            #[cfg_attr(verus_keep_ghost, verus_spec(
-                invariant
-                    lookup@.len() == PREFIX_LOOKUP_SIZE,
-                    lookup_length <= PREFIX_LOOKUP_BITS as usize,
-                    1 <= length,
-                    length <= lookup_length,
-                    suffix <= repeats,
-                    lookup@.len() == 256,
-                    distance < count,
-                    count == length_count@[length as int],
-                    code <= 255,
-                    ordered_index as int == first_line@[length as int] as int + distance as int,
-                    ordered_index < ordered_lines@.len(),
-                    line_index == ordered_lines@[ordered_index as int],
-                    encoded_line as int == line_index as int + 1,
-                    huffman_lookup_spec::fast_shape(length_count@) ==>
-                        (length == 8 && repeats == 1 && first_prefix == code),
-                    huffman_lookup_spec::fast_shape(length_count@) ==> (
-                        first_code@[8].limbs@[1] == 0
-                        && first_code@[8].limbs@[2] == 0
-                        && first_code@[8].limbs@[3] == 0
-                        && first_code@[8].limbs@[0] as int + distance as int == code as int
-                    ),
-                    huffman_lookup_spec::fast_shape(length_count@) ==>
-                        forall|prefix: int| 0 <= prefix < 256 ==>
-                            #[trigger] lookup@[prefix] == huffman_lookup_spec::fast_slot(
-                                first_code@[8], length_count@[8], first_line@[8], ordered_lines@,
-                                prefix as u8,
-                                if suffix == 0 { distance } else { (distance + 1) as u32 },
-                            ),
-                decreases repeats - suffix,
-            ))]
-            while suffix < repeats {
-                let index = first_prefix
-                    .checked_add(suffix)
-                    .ok_or(MalformedError::IntegerOverflow)?;
-                let slot = lookup.get_mut(index).ok_or(HuffmanError::InvalidTable(
-                    HuffmanTableError::Oversubscribed,
-                ))?;
-                if *slot != 0 {
-                    return Err(HuffmanError::InvalidTable(
-                        HuffmanTableError::Oversubscribed,
-                    ));
-                }
-                *slot = encoded_line;
-                #[cfg(verus_keep_ghost)]
-                proof! {
-                    if huffman_lookup_spec::fast_shape(length_count@) {
-                        huffman_lookup_spec::advance_slot(
-                            first_code@[8], count, first_line@[8], ordered_lines@,
-                            distance, code as u8, encoded_line,
-                        );
-                    }
-                }
-                suffix += 1;
-            }
-            distance += 1;
-        }
-        length += 1;
-    }
-    Ok(lookup)
 }
 
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>

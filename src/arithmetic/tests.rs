@@ -346,31 +346,30 @@ fn decision_numeric_oracle<'a>(
     initial: &ArithmeticDecoder<'a>,
     context: ArithmeticContext,
 ) -> (u8, ArithmeticDecoder<'a>, ArithmeticContext) {
-    let row = QE_STATES[usize::from(context.state_index)];
+    let row = QE_STATES[usize::from(context.state_index())];
     let qe = u32::from(row.qe);
     let reduced = initial.interval - qe;
     let lower = u64::from(initial.code) / 65_536 < u64::from(qe);
     let fast = !lower && reduced >= MIN_INTERVAL;
     let mps_route = (lower && reduced < qe) || (!lower && reduced >= qe);
     let decision = if fast || mps_route {
-        context.mps
+        context.mps()
     } else {
-        1 - context.mps
+        1 - context.mps()
     };
-    let next_context = ArithmeticContext {
-        state_index: if fast {
-            context.state_index
-        } else if mps_route {
-            row.next_mps
-        } else {
-            row.next_lps
-        },
-        mps: if !fast && !mps_route && row.switch_mps {
-            decision
-        } else {
-            context.mps
-        },
+    let next_index = if fast {
+        context.state_index()
+    } else if mps_route {
+        row.next_mps
+    } else {
+        row.next_lps
     };
+    let next_mps = if !fast && !mps_route && row.switch_mps {
+        decision
+    } else {
+        context.mps()
+    };
+    let next_context = ArithmeticContext::from_state(next_index, next_mps).unwrap();
     let code = u64::from(initial.code) - if lower { 0 } else { u64::from(qe) * 65_536 };
     let mut next = refill_fixture(
         initial.bytes,

@@ -414,7 +414,7 @@ fn known_length_normalization_reports_exact_errors_before_bitmap_mutation() {
         assert_eq!(direct.bytes(), before);
     }
 
-    let context_bytes = 1024 * u64::try_from(std::mem::size_of::<ArithmeticContext>()).unwrap();
+    let context_bytes = 1024 * 2_u64;
     let limited = Limits {
         max_decoder_managed_memory_bytes: 2,
         ..limits
