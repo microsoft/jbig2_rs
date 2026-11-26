@@ -78,7 +78,7 @@ fn production_cache_maps_sparse_codes_and_rejects_invalid_metadata() {
 fn assert_flat_cache(table: &HuffmanTable, length: u8, count: usize) {
     assert!(table.prefer_prefix_lookup);
     assert_eq!(table.prefix_lookup.len(), 256);
-    for (prefix, &entry) in table.prefix_lookup.iter().enumerate() {
+    for (prefix, &entry) in table.prefix_lookup.as_slice().iter().enumerate() {
         let expected = if length == 8 && prefix < count {
             u16::try_from(prefix + 1).unwrap()
         } else {
@@ -107,6 +107,7 @@ fn raw_symbol_id_and_standard_constructors_keep_their_production_cache_map() {
         let table = HuffmanTable::standard(standard, &limits).unwrap();
         let minimum = table
             .lines
+            .as_slice()
             .iter()
             .map(|line| line.prefix_len)
             .filter(|&length| length != 0)

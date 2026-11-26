@@ -105,7 +105,7 @@ pub(crate) proof fn single_byte_bits_value(
     }
 }
 
-proof fn u64_word_bit_at(
+pub(crate) proof fn u64_word_bit_at(
     bytes: Seq<u8>,
     byte_idx: nat,
     k: u32,

@@ -45,14 +45,14 @@ pub(super) open spec fn fast_slot(
 pub(crate) closed spec fn table_lookup_valid(table: &super::HuffmanTable) -> bool {
     if table.prefer_prefix_lookup {
         table.max_prefix_len >= 8
-            && fast_shape(table.length_count@)
-            && table.prefix_lookup@.len() == 256
+            && fast_shape(super::huffman_spec::table_length_counts(table))
+            && super::huffman_spec::slice_view(&table.prefix_lookup).len() == 256
             && forall|prefix: int| 0 <= prefix < 256 ==>
-                #[trigger] table.prefix_lookup@[prefix] == fast_slot(
-                    table.first_code@[8], table.length_count@[8], table.first_line@[8],
-                    table.ordered_lines@, prefix as u8, table.length_count@[8],
+                #[trigger] super::huffman_spec::slice_view(&table.prefix_lookup)[prefix] == fast_slot(
+                    super::huffman_spec::table_first_codes(table)[8], super::huffman_spec::table_length_counts(table)[8], super::huffman_spec::table_first_lines(table)[8],
+                    super::huffman_spec::slice_view(&table.ordered_lines), prefix as u8, super::huffman_spec::table_length_counts(table)[8],
                 )
-    } else { table.prefix_lookup@.len() == 0 }
+    } else { super::huffman_spec::slice_view(&table.prefix_lookup).len() == 0 }
 }
 
 pub(super) proof fn small_code_value(
@@ -111,14 +111,14 @@ pub(super) proof fn table_lookup_definition()
         #[trigger] table_lookup_valid(table) == (
             if table.prefer_prefix_lookup {
                 table.max_prefix_len >= 8
-                    && fast_shape(table.length_count@)
-                    && table.prefix_lookup@.len() == 256
+                    && fast_shape(super::huffman_spec::table_length_counts(table))
+                    && super::huffman_spec::slice_view(&table.prefix_lookup).len() == 256
                     && forall|prefix: int| 0 <= prefix < 256 ==>
-                        #[trigger] table.prefix_lookup@[prefix] == fast_slot(
-                            table.first_code@[8], table.length_count@[8], table.first_line@[8],
-                            table.ordered_lines@, prefix as u8, table.length_count@[8],
+                        #[trigger] super::huffman_spec::slice_view(&table.prefix_lookup)[prefix] == fast_slot(
+                            super::huffman_spec::table_first_codes(table)[8], super::huffman_spec::table_length_counts(table)[8], super::huffman_spec::table_first_lines(table)[8],
+                            super::huffman_spec::slice_view(&table.ordered_lines), prefix as u8, super::huffman_spec::table_length_counts(table)[8],
                         )
-            } else { table.prefix_lookup@.len() == 0 }),
+            } else { super::huffman_spec::slice_view(&table.prefix_lookup).len() == 0 }),
 {
     reveal(table_lookup_valid);
 }

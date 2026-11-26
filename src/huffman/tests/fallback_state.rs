@@ -73,10 +73,10 @@ fn scalar_fallback(
         position += 1;
         if let Some(distance) = scalar_distance(
             &prefix,
-            table.first_code[length],
-            table.length_count[length],
+            table.first_code_at(length),
+            table.length_count_at(length),
         ) {
-            let ordered = u64::from(table.first_line[length]) + u64::from(distance);
+            let ordered = u64::from(table.first_line_at(length)) + u64::from(distance);
             if ordered > u64::from(u32::MAX) {
                 return (
                     Err(HuffmanError::Decode(DecodeError::Malformed(
@@ -113,32 +113,31 @@ fn scalar_fallback(
 fn scalar_assignment(lines: &[HuffmanLine]) -> HuffmanTable {
     let maximum = lines.iter().map(|line| line.prefix_len).max().unwrap();
     assert!(maximum < 128);
-    let mut table = HuffmanTable {
-        lines: lines.to_vec(),
-        ordered_lines: Vec::new(),
-        length_count: [0; MAX_PREFIX_LEN + 1],
-        first_code: [WideCode::zero(); MAX_PREFIX_LEN + 1],
-        first_line: [0; MAX_PREFIX_LEN + 1],
-        prefix_lookup: Vec::new(),
-        prefer_prefix_lookup: false,
-        max_prefix_len: maximum,
-    };
+    let mut table = HuffmanTable::test_empty(lines.to_vec(), Vec::new(), maximum);
     for line in lines {
         if line.prefix_len != 0 {
-            table.length_count[usize::from(line.prefix_len)] += 1;
+            let l = usize::from(line.prefix_len);
+            let cur = table.length_count_at(l);
+            table.set_test_count(l, cur + 1);
         }
     }
     let mut first = 0_u128;
+    let mut ordered = Vec::new();
     for length in 1..=usize::from(maximum) {
-        first = (first + u128::from(table.length_count[length - 1])) * 2;
-        table.first_code[length].limbs = [
-            u64::try_from(first & u128::from(u64::MAX)).unwrap(),
-            u64::try_from(first >> 64).unwrap(),
-            0,
-            0,
-        ];
-        table.first_line[length] = u32::try_from(table.ordered_lines.len()).unwrap();
-        table.ordered_lines.extend(
+        first = (first + u128::from(table.length_count_at(length - 1))) * 2;
+        table.set_test_first_code(
+            length,
+            WideCode {
+                limbs: [
+                    u64::try_from(first & u128::from(u64::MAX)).unwrap(),
+                    u64::try_from(first >> 64).unwrap(),
+                    0,
+                    0,
+                ],
+            },
+        );
+        table.set_test_first_line(length, u32::try_from(ordered.len()).unwrap());
+        ordered.extend(
             lines
                 .iter()
                 .enumerate()
@@ -146,6 +145,7 @@ fn scalar_assignment(lines: &[HuffmanLine]) -> HuffmanTable {
                 .map(|(index, _)| u32::try_from(index).unwrap()),
         );
     }
+    table.ordered_lines = TableSlice::Owned(ordered);
     table
 }
 
@@ -155,7 +155,7 @@ fn standard_prefix_selection_matches_independent_numeric_assignment_and_frames()
     let mut checked = 0;
     for standard in ALL_STANDARD_TABLES {
         let mut actual = HuffmanTable::standard(standard, &limits).unwrap();
-        let reference = scalar_assignment(&actual.lines);
+        let reference = scalar_assignment(actual.lines.as_slice());
         force_prefix_lookup(&mut actual);
         for word in 0_u16..1024 {
             let [high, low] = (word << 6).to_be_bytes();
@@ -218,26 +218,21 @@ fn longest_literal_prefixes_keep_complete_success_truncation_and_miss_state() {
 
 #[test]
 fn fallback_metadata_errors_and_wide_bucket_selection_match_scalar_state() {
-    let mut table = HuffmanTable {
-        lines: vec![HuffmanLine::normal(17, 1, 0), HuffmanLine::out_of_band(1)],
-        ordered_lines: vec![0, 1],
-        length_count: [0; MAX_PREFIX_LEN + 1],
-        first_code: [WideCode::zero(); MAX_PREFIX_LEN + 1],
-        first_line: [0; MAX_PREFIX_LEN + 1],
-        prefix_lookup: Vec::new(),
-        prefer_prefix_lookup: false,
-        max_prefix_len: 1,
-    };
+    let mut table = HuffmanTable::test_empty(
+        vec![HuffmanLine::normal(17, 1, 0), HuffmanLine::out_of_band(1)],
+        vec![0, 1],
+        1,
+    );
     let mut outcomes = [0_usize; 4];
     let mut checked = 0;
     for maximum in [0, 1, 8, 31, 64, 127, 255] {
         table.max_prefix_len = maximum;
         for bound in [0, 1, 2, u32::MAX] {
-            table.length_count[usize::from(maximum)] = bound;
+            table.set_test_count(usize::from(maximum), bound);
             for first in [0, u32::MAX] {
-                table.first_line[usize::from(maximum)] = first;
+                table.set_test_first_line(usize::from(maximum), first);
                 for mapping in [vec![], vec![0, 1], vec![u32::MAX, 0]] {
-                    table.ordered_lines = mapping;
+                    table.ordered_lines = TableSlice::Owned(mapping);
                     for seed in [0_u8, 0xff, 0xa5] {
                         let bytes = [seed; 33];
                         for count in [0, 1, 8, 16, 32, 33] {
@@ -269,9 +264,9 @@ fn fallback_metadata_errors_and_wide_bucket_selection_match_scalar_state() {
                     }
                 }
             }
-            table.length_count[usize::from(maximum)] = 0;
+            table.set_test_count(usize::from(maximum), 0);
         }
-        table.first_line[usize::from(maximum)] = 0;
+        table.set_test_first_line(usize::from(maximum), 0);
     }
     assert!(outcomes.into_iter().all(|count| count > 0));
     assert_eq!(checked, 8_064);
@@ -279,22 +274,19 @@ fn fallback_metadata_errors_and_wide_bucket_selection_match_scalar_state() {
 
 #[test]
 fn nonzero_long_prefixes_select_the_given_wide_code_and_ordered_line() {
-    let mut table = HuffmanTable {
-        lines: vec![HuffmanLine::normal(91, 1, 0), HuffmanLine::normal(23, 1, 0)],
-        ordered_lines: vec![1],
-        length_count: [0; MAX_PREFIX_LEN + 1],
-        first_code: [WideCode::zero(); MAX_PREFIX_LEN + 1],
-        first_line: [0; MAX_PREFIX_LEN + 1],
-        prefix_lookup: Vec::new(),
-        prefer_prefix_lookup: false,
-        max_prefix_len: 1,
-    };
+    let mut table = HuffmanTable::test_empty(
+        vec![HuffmanLine::normal(91, 1, 0), HuffmanLine::normal(23, 1, 0)],
+        vec![1],
+        1,
+    );
     let mut checked = 0;
     for length in [31_u8, 32, 63, 64, 65, 127, 128, 129, 254, 255] {
         table.max_prefix_len = length;
-        table.length_count[usize::from(length)] = 1;
+        table.set_test_count(usize::from(length), 1);
         let high = usize::from(length - 1);
-        table.first_code[usize::from(length)].limbs[high / 64] = 1 << (high % 64);
+        let mut fc = WideCode::zero();
+        fc.limbs[high / 64] = 1 << (high % 64);
+        table.set_test_first_code(usize::from(length), fc);
         for start in [0, 1, 7] {
             let mut bytes = [0_u8; 33];
             bytes[start / 8] |= 0x80 >> (start % 8);
@@ -307,7 +299,7 @@ fn nonzero_long_prefixes_select_the_given_wide_code_and_ordered_line() {
             assert_eq!(position, reader.bit_position);
             checked += 1;
         }
-        table.length_count[usize::from(length)] = 0;
+        table.set_test_count(usize::from(length), 0);
     }
     assert_eq!(checked, 30);
 }

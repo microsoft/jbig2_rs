@@ -539,21 +539,21 @@ enum MaterializedHuffmanTable<'a> {
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
 struct StandardHuffmanTables {
-    a: Option<Box<HuffmanTable>>,
-    b: Option<Box<HuffmanTable>>,
-    c: Option<Box<HuffmanTable>>,
-    d: Option<Box<HuffmanTable>>,
-    e: Option<Box<HuffmanTable>>,
-    f: Option<Box<HuffmanTable>>,
-    g: Option<Box<HuffmanTable>>,
-    h: Option<Box<HuffmanTable>>,
-    i: Option<Box<HuffmanTable>>,
-    j: Option<Box<HuffmanTable>>,
-    k: Option<Box<HuffmanTable>>,
-    l: Option<Box<HuffmanTable>>,
-    m: Option<Box<HuffmanTable>>,
-    n: Option<Box<HuffmanTable>>,
-    o: Option<Box<HuffmanTable>>,
+    a: Option<&'static HuffmanTable>,
+    b: Option<&'static HuffmanTable>,
+    c: Option<&'static HuffmanTable>,
+    d: Option<&'static HuffmanTable>,
+    e: Option<&'static HuffmanTable>,
+    f: Option<&'static HuffmanTable>,
+    g: Option<&'static HuffmanTable>,
+    h: Option<&'static HuffmanTable>,
+    i: Option<&'static HuffmanTable>,
+    j: Option<&'static HuffmanTable>,
+    k: Option<&'static HuffmanTable>,
+    l: Option<&'static HuffmanTable>,
+    m: Option<&'static HuffmanTable>,
+    n: Option<&'static HuffmanTable>,
+    o: Option<&'static HuffmanTable>,
 }
 
 #[cfg_attr(verus_keep_ghost, verus_verify)]
