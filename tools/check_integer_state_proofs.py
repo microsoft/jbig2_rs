@@ -37,7 +37,13 @@ if sign == 0 {
 PAYLOAD_RETURN = runtime_function(
     ROOT, "arithmetic", "ArithmeticDecoder::decode_integer_bits",
 )["body_text"]
-SIGN = "let sign = self.decode_integer_bit(&mut previous, contexts)?;"
+SIGN = """let sign = self.decode_integer_bit_cached(
+    &mut previous,
+    contexts,
+    &mut interval,
+    &mut code,
+    &mut mq_bit_count,
+)?;"""
 
 
 def case(identity, function, site, replacement, control):
@@ -73,7 +79,13 @@ CASES = (
     ),
     case(
         "integer_partial_error_rewinds_input", "decode_integer", SIGN,
-        """let sign = match self.decode_integer_bit(&mut previous, contexts) {
+        """let sign = match self.decode_integer_bit_cached(
+            &mut previous,
+            contexts,
+            &mut interval,
+            &mut code,
+            &mut mq_bit_count,
+        ) {
             Ok(sign) => sign,
             Err(error) => {
                 self.byte_position = 0;
