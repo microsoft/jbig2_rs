@@ -359,3 +359,75 @@ fn scalar_generic_fallback_handles_extended_and_non_nominal_templates() {
         ));
     }
 }
+
+#[test]
+fn generic_contexts_scratch_reuses_capacity_zeroes_entries_and_enforces_limits() {
+    let limits = Limits::default();
+    let mut scratch = Vec::new();
+    let mut first =
+        GenericContexts::from_scratch(GenericTemplate::Template0, false, &limits, &mut scratch)
+            .expect("first template0");
+    assert_eq!(first.contexts.len(), 65_536);
+    let initial_cap = first.contexts.capacity();
+    let initial_ptr = first.contexts.as_ptr();
+    first.contexts[0] = ArithmeticContext::from_state(7, 1).unwrap();
+    first.contexts[65_535] = ArithmeticContext::from_state(12, 1).unwrap();
+    first.into_scratch(&mut scratch);
+    assert_eq!(scratch.capacity(), initial_cap);
+
+    // Reuse same 64 KiB allocation for Template 1 (8 KiB) then Template 0 (64 KiB).
+    let second =
+        GenericContexts::from_scratch(GenericTemplate::Template1, false, &limits, &mut scratch)
+            .expect("reused template1");
+    assert_eq!(second.contexts.len(), 8_192);
+    assert_eq!(second.contexts.as_ptr(), initial_ptr);
+    assert_eq!(second.contexts[0], ArithmeticContext::new());
+    second.into_scratch(&mut scratch);
+
+    let third =
+        GenericContexts::from_scratch(GenericTemplate::Template0, false, &limits, &mut scratch)
+            .expect("reused template0");
+    assert_eq!(third.contexts.len(), 65_536);
+    assert_eq!(third.contexts.as_ptr(), initial_ptr);
+    assert_eq!(third.contexts[0], ArithmeticContext::new());
+    assert_eq!(third.contexts[65_535], ArithmeticContext::new());
+    third.into_scratch(&mut scratch);
+
+    // Managed-memory limit is still enforced even when scratch already has capacity.
+    let tight = Limits {
+        max_decoder_managed_memory_bytes: 1024,
+        ..limits
+    };
+    assert!(
+        GenericContexts::from_scratch(GenericTemplate::Template0, false, &tight, &mut scratch)
+            .is_err()
+    );
+    assert_eq!(scratch.capacity(), initial_cap);
+
+    // Scratch-backed session returns buffer on ArithmeticDecoder::new error too.
+    assert!(GenericArithmeticSession::new_from_scratch(
+        &[0xff, 0xac],
+        GenericTemplate::Template0,
+        false,
+        &limits,
+        &mut scratch,
+    )
+    .is_ok());
+
+    // Direct and owned arithmetic helpers reject MMR headers before decoding.
+    let mut mmr_header = generic_header(4, 4, GenericTemplate::Template0, false, false);
+    mmr_header.mmr = true;
+    assert!(decode_arithmetic_generic(&[0xff, 0xac], &mmr_header, 4, None, &limits).is_err());
+    let mut target = Bitmap::blank(4, 4, &limits).expect("target");
+    assert!(
+        crate::generic_region::segments::decode_arithmetic_generic_into_with_scratch(
+            &[0xff, 0xac],
+            &mmr_header,
+            4,
+            &limits,
+            &mut target,
+            &mut scratch,
+        )
+        .is_err()
+    );
+}

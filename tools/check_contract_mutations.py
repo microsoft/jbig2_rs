@@ -449,11 +449,11 @@ MUTATIONS = tuple(
         "file": "src/generic_region.rs",
         "before": (
             "normalized.push(ARITHMETIC_TERMINATOR[1]);\n"
-            "    decode_arithmetic_generic(&normalized, header, rows, None, limits)"
+            "    decode_arithmetic_generic_with_scratch(&normalized, header, rows, None, limits, generic_scratch)"
         ),
         "after": (
             "normalized.push(0xab);\n"
-            "    decode_arithmetic_generic(&normalized, header, rows, None, limits)"
+            "    decode_arithmetic_generic_with_scratch(&normalized, header, rows, None, limits, generic_scratch)"
         ),
         "target": "lib",
         "test": "generic_region::tests::segment_framing::known_length_normalization_preserves_zero_row_bitmap_geometry",
@@ -463,11 +463,25 @@ MUTATIONS = tuple(
         "file": "src/generic_region.rs",
         "before": (
             "normalized.push(ARITHMETIC_TERMINATOR[1]);\n"
-            "    decode_arithmetic_generic_into(&normalized, header, rows, limits, bitmap)"
+            "    decode_arithmetic_generic_into_with_scratch(\n"
+            "        &normalized,\n"
+            "        header,\n"
+            "        rows,\n"
+            "        limits,\n"
+            "        bitmap,\n"
+            "        generic_scratch,\n"
+            "    )"
         ),
         "after": (
             "normalized.push(0xab);\n"
-            "    decode_arithmetic_generic_into(&normalized, header, rows, limits, bitmap)"
+            "    decode_arithmetic_generic_into_with_scratch(\n"
+            "        &normalized,\n"
+            "        header,\n"
+            "        rows,\n"
+            "        limits,\n"
+            "        bitmap,\n"
+            "        generic_scratch,\n"
+            "    )"
         ),
         "target": "lib",
         "test": "generic_region::tests::segment_framing::known_length_normalization_preserves_zero_row_bitmap_geometry",

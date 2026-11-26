@@ -4,8 +4,8 @@
 use super::*;
 #[cfg(not(verus_keep_ghost))]
 use super::{
-    ArithmeticContext, ArithmeticDecoder, ArithmeticError, MalformedError, INTEGER_CONTEXT_COUNT,
-    MIN_INTERVAL, NEXT_MPS_PACKED, QE_PACKED_VALS,
+    ArithmeticContext, ArithmeticDecoder, ArithmeticError, INTEGER_CONTEXT_COUNT, MIN_INTERVAL,
+    NEXT_MPS_PACKED, QE_PACKED_VALS,
 };
 
 impl ArithmeticDecoder<'_> {
@@ -551,6 +551,10 @@ impl ArithmeticDecoder<'_> {
     ) -> Result<u32, ArithmeticError> {
         let mut value = 0_u32;
         let mut remaining = bit_count;
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            assert(0u64 < (1u64 << 0u64)) by (bit_vector);
+        }
         #[cfg_attr(verus_keep_ghost, verus_spec(
             invariant
                 arithmetic_spec::decoder_valid(&ArithmeticDecoder {
@@ -565,9 +569,11 @@ impl ArithmeticDecoder<'_> {
                 self.bytes == old(self).bytes,
                 self.bytes@ == old(self).bytes@,
                 *previous <= 511,
+                bit_count <= 32,
                 forall|index: int| 0 <= index < contexts@.len() ==>
                     arithmetic_spec::context_valid(contexts@[index]),
                 remaining <= bit_count,
+                remaining > 0 ==> (value as u64) < (1u64 << ((bit_count - remaining) as u64)),
                 arithmetic_spec::integer_bits_run(
                     ArithmeticDecoder {
                         bytes: old(self).bytes,
@@ -654,19 +660,22 @@ impl ArithmeticDecoder<'_> {
                     return Err(error);
                 }
             };
-            let Some(shifted) = value.checked_mul(2) else {
-                self.interval = *interval;
-                self.code = *code;
-                self.bit_count = *mq_bit_count;
-                return Err(ArithmeticError::Malformed(MalformedError::IntegerOverflow));
-            };
-            let Some(next_value) = shifted.checked_add(u32::from(bit)) else {
-                self.interval = *interval;
-                self.code = *code;
-                self.bit_count = *mq_bit_count;
-                return Err(ArithmeticError::Malformed(MalformedError::IntegerOverflow));
-            };
-            value = next_value;
+            #[cfg(verus_keep_ghost)]
+            proof! {
+                let k = (bit_count - remaining) as u64;
+                assert(
+                    (value as u64) * 2 + (bit as u64) <= u32::MAX as u64
+                    && (((value << 1u32) | (bit as u32)) as u64) == (value as u64) * 2 + (bit as u64)
+                    && (remaining > 1 ==> ((value as u64) * 2 + (bit as u64)) < (1u64 << add(k, 1u64)))
+                ) by (bit_vector)
+                    requires
+                        0 < remaining <= bit_count,
+                        bit_count <= 32,
+                        k == sub(bit_count as u64, remaining as u64),
+                        (value as u64) < (1u64 << k),
+                        bit <= 1u8;
+            }
+            value = (value << 1) | u32::from(bit);
             remaining -= 1;
             #[cfg(verus_keep_ghost)]
             proof! {
