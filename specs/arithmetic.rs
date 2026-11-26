@@ -5,6 +5,10 @@
 
 use vstd::prelude::*;
 
+#[path = "arithmetic/packed.rs"]
+mod packed;
+pub(crate) use packed::{context_index, context_mps, packed_context};
+
 verus! {
 
 // Model navigation: spec::context_valid [representation-invariant]
@@ -15,7 +19,7 @@ verus! {
 pub(crate) open spec fn context_valid(
     context: super::ArithmeticContext,
 ) -> bool {
-    context.state_index < 47 && context.mps <= 1
+    context.packed < 94
 }
 
 // Model navigation: spec::exchange_is_mps [project-result-model]
@@ -409,8 +413,8 @@ pub(crate) closed spec fn decision_state(
 {
     decision_registers(
         decoder,
-        super::QE_STATES@[context.state_index as int].qe as u32,
-        entry_decision(decoder.interval, decoder.code, context.state_index, context.mps),
+        super::QE_STATES@[context_index(context) as int].qe as u32,
+        entry_decision(decoder.interval, decoder.code, context_index(context), context_mps(context)),
     )
 }
 
@@ -490,10 +494,10 @@ pub(crate) open spec fn context_after_decision(
 ) -> super::ArithmeticContext
     recommends decoder_valid(decoder), context_valid(context),
 {
-    super::ArithmeticContext {
-        state_index: entry_index(decoder.interval, decoder.code, context.state_index),
-        mps: entry_mps(decoder.interval, decoder.code, context.state_index, context.mps),
-    }
+    packed_context(
+        entry_index(decoder.interval, decoder.code, context_index(context)),
+        entry_mps(decoder.interval, decoder.code, context_index(context), context_mps(context)),
+    )
 }
 
 // Model navigation: spec::integer_bit_state [project-result-model]
@@ -777,9 +781,7 @@ pub(crate) open spec fn iaid_state<'a>(
 // Purpose: Private decoder projections and the interval-doubling termination measure.
 // Mapping: no registered requirement/locator mapping.
 // Fidelity: unresolved; no independent normative approval.
-pub(crate) open spec fn decoder_marker(
-    decoder: &super::ArithmeticDecoder,
-) -> Option<super::ArithmeticMarker> {
+pub(crate) open spec fn decoder_marker(decoder: &super::ArithmeticDecoder) -> Option<super::ArithmeticMarker> {
     decoder.marker
 }
 
@@ -787,9 +789,7 @@ pub(crate) open spec fn decoder_marker(
 // Purpose: Private decoder projections and the interval-doubling termination measure.
 // Mapping: no registered requirement/locator mapping.
 // Fidelity: unresolved; no independent normative approval.
-pub(crate) open spec fn decoder_byte_position(
-    decoder: &super::ArithmeticDecoder,
-) -> usize {
+pub(crate) open spec fn decoder_byte_position(decoder: &super::ArithmeticDecoder) -> usize {
     decoder.byte_position
 }
 

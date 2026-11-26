@@ -73,10 +73,7 @@ fn checked_generic_boundary_still_rejects_an_unused_invalid_probability_state() 
     let header = generic_header(1, 1, template, false, false);
     let mut contexts = GenericContexts::new(template, false, &limits).unwrap();
     let last = contexts.contexts.len() - 1;
-    contexts.contexts[last] = ArithmeticContext {
-        state_index: 47,
-        mps: 0,
-    };
+    contexts.contexts[last] = ArithmeticContext::from_packed(94);
     let before = contexts.contexts.clone();
     let coded = [0xff, 0xac];
     let mut decoder = ArithmeticDecoder::new(&coded).unwrap();
@@ -116,7 +113,7 @@ fn assert_invalid_probability(result: &Result<(), GenericRegionError>) {
 #[test]
 fn fresh_context_banks_have_exact_metadata_and_zero_probability_states() {
     let limits = Limits::default();
-    assert_eq!(core::mem::size_of::<ArithmeticContext>(), 2);
+    assert_eq!(core::mem::size_of::<ArithmeticContext>(), 1);
     for (template, count) in [
         (GenericTemplate::Template0, 65_536),
         (GenericTemplate::Template1, 8_192),
@@ -161,14 +158,8 @@ fn generic_context_rejections_preserve_full_bank_and_metadata() {
         assert_eq!(snapshot.extended_template, extended);
         assert_eq!(snapshot.storage_bytes, bank.storage_bytes);
         assert_eq!(snapshot.contexts, bank.contexts);
-        snapshot.contexts[7] = ArithmeticContext {
-            state_index: 47,
-            mps: 0,
-        };
-        snapshot.contexts[9] = ArithmeticContext {
-            state_index: 0,
-            mps: 2,
-        };
+        snapshot.contexts[7] = ArithmeticContext::from_packed(94);
+        snapshot.contexts[9] = ArithmeticContext::from_packed(95);
         bank.storage_bytes = 73;
         let before = bank.contexts.clone();
         assert_invalid_probability(&bank.restore(&snapshot, &limits));
@@ -176,12 +167,9 @@ fn generic_context_rejections_preserve_full_bank_and_metadata() {
         assert_eq!(bank.template, GenericTemplate::Template3);
         assert_eq!(bank.extended_template, extended);
         assert_eq!(bank.storage_bytes, 73);
-        bank.contexts[7] = ArithmeticContext {
-            state_index: 47,
-            mps: 0,
-        };
+        bank.contexts[7] = ArithmeticContext::from_packed(94);
         assert_invalid_probability(&bank.try_snapshot(&limits).map(|_| ()));
-        assert_eq!(bank.contexts[7].state_index, 47);
+        assert_eq!(bank.contexts[7].state_index(), 47);
         bank.reset().unwrap();
         assert!(bank
             .contexts
@@ -213,26 +201,17 @@ fn refinement_context_rejections_preserve_full_bank_and_metadata() {
     assert_eq!(snapshot.template, bank.template);
     assert_eq!(snapshot.storage_bytes, bank.storage_bytes);
     assert_eq!(snapshot.contexts, bank.contexts);
-    snapshot.contexts[7] = ArithmeticContext {
-        state_index: 47,
-        mps: 0,
-    };
-    snapshot.contexts[9] = ArithmeticContext {
-        state_index: 0,
-        mps: 2,
-    };
+    snapshot.contexts[7] = ArithmeticContext::from_packed(94);
+    snapshot.contexts[9] = ArithmeticContext::from_packed(95);
     bank.storage_bytes = 73;
     let before = bank.contexts.clone();
     assert_invalid_probability(&bank.restore(&snapshot, &limits));
     assert_eq!(bank.contexts, before);
     assert_eq!(bank.template, RefinementTemplate::Template1);
     assert_eq!(bank.storage_bytes, 73);
-    bank.contexts[7] = ArithmeticContext {
-        state_index: 47,
-        mps: 0,
-    };
+    bank.contexts[7] = ArithmeticContext::from_packed(94);
     assert_invalid_probability(&bank.try_snapshot(&limits).map(|_| ()));
-    assert_eq!(bank.contexts[7].state_index, 47);
+    assert_eq!(bank.contexts[7].state_index(), 47);
     bank.reset().unwrap();
     assert!(bank
         .contexts

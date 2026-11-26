@@ -140,20 +140,21 @@ fn successful_decisions_and_contexts_cover_every_probability_row_and_route() {
                     } else {
                         1 - old_mps
                     };
-                    let expected = ArithmeticContext {
-                        state_index: if fast {
+                    let expected = ArithmeticContext::from_state(
+                        if fast {
                             u8::try_from(index).unwrap()
                         } else if mps_route {
                             state.next_mps
                         } else {
                             state.next_lps
                         },
-                        mps: if !fast && !mps_route && state.switch_mps {
+                        if !fast && !mps_route && state.switch_mps {
                             1 - old_mps
                         } else {
                             old_mps
                         },
-                    };
+                    )
+                    .unwrap();
                     let mut decoder = decision_fixture(&bytes, interval, code, 8);
                     let mut context =
                         ArithmeticContext::from_state(u8::try_from(index).unwrap(), old_mps)
@@ -193,8 +194,8 @@ fn exchange_context_update_precedes_truncation_and_keeps_supplied_mps_distinct()
                         decoder.decode_upper_signal(&mut context, state, qe, supplied_mps)
                     };
                     assert_eq!(result, RASTER_SIGNAL_EOF);
-                    assert_eq!(context.state_index, expected_index);
-                    assert_eq!(context.mps, expected_mps);
+                    assert_eq!(context.state_index(), expected_index);
+                    assert_eq!(context.mps(), expected_mps);
                 }
             }
         }
@@ -215,20 +216,21 @@ fn entry_errors_preserve_context_updates_input_and_exact_partial_registers() {
                         let lower = upper < qe;
                         let fast = !lower && reduced >= MIN_INTERVAL;
                         let mps_route = (lower && reduced < qe) || (!lower && reduced >= qe);
-                        let expected_context = ArithmeticContext {
-                            state_index: if fast {
+                        let expected_context = ArithmeticContext::from_state(
+                            if fast {
                                 u8::try_from(index).unwrap()
                             } else if mps_route {
                                 state.next_mps
                             } else {
                                 state.next_lps
                             },
-                            mps: if !fast && !mps_route && state.switch_mps {
+                            if !fast && !mps_route && state.switch_mps {
                                 1 - old_mps
                             } else {
                                 old_mps
                             },
-                        };
+                        )
+                        .unwrap();
                         for checked in [false, true] {
                             let mut decoder = decision_fixture(&bytes, interval, code, 0);
                             let mut context = ArithmeticContext::from_state(

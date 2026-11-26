@@ -16,18 +16,18 @@ BASELINE_GROUPS = (("arithmetic", (
     "ArithmeticDecoder::decode_signal", "ArithmeticDecoder::decode_upper_signal",
     "ArithmeticDecoder::signal_error",
 )),)
-CONTEXT_POST = """final(context).state_index == arithmetic_spec::entry_index(
-    old(self).interval, old(self).code, old(context).state_index,
+CONTEXT_POST = """arithmetic_spec::context_index(*final(context)) == arithmetic_spec::entry_index(
+    old(self).interval, old(self).code, arithmetic_spec::context_index(*old(context)),
 ),
-final(context).mps == arithmetic_spec::entry_mps(
-    old(self).interval, old(self).code, old(context).state_index, old(context).mps,
+arithmetic_spec::context_mps(*final(context)) == arithmetic_spec::entry_mps(
+    old(self).interval, old(self).code, arithmetic_spec::context_index(*old(context)), arithmetic_spec::context_mps(*old(context)),
 ),"""
 SIGNAL_DECISION = """out <= 1 ==> out == arithmetic_spec::entry_decision(
-    old(self).interval, old(self).code, old(context).state_index, old(context).mps,
+    old(self).interval, old(self).code, arithmetic_spec::context_index(*old(context)), arithmetic_spec::context_mps(*old(context)),
 ),"""
 SIGNAL_POST = SIGNAL_DECISION + "\n" + CONTEXT_POST
 CHECKED_POST = """&& decision == arithmetic_spec::entry_decision(
-    old(self).interval, old(self).code, old(context).state_index, old(context).mps,
+    old(self).interval, old(self).code, arithmetic_spec::context_index(*old(context)), arithmetic_spec::context_mps(*old(context)),
 )"""
 CHECKED_STATE_DECISION = "&& decision == arithmetic_spec::decision_state(old(self), *old(context)).0"
 FRAME = """final(self).bytes@ == old(self).bytes@,
@@ -80,11 +80,11 @@ def error_case(identity, change, controls):
 
 
 def exchange_post(lower):
-    return f"""final(context).state_index == arithmetic_spec::exchange_index(
+    return f"""arithmetic_spec::context_index(*final(context)) == arithmetic_spec::exchange_index(
     {lower}, old(self).interval, qe, state.next_mps, state.next_lps,
 ),
-final(context).mps == arithmetic_spec::exchange_mps(
-    {lower}, old(self).interval, qe, state.switch_mps, old(context).mps, old_mps,
+arithmetic_spec::context_mps(*final(context)) == arithmetic_spec::exchange_mps(
+    {lower}, old(self).interval, qe, state.switch_mps, arithmetic_spec::context_mps(*old(context)), old_mps,
 ),"""
 
 
@@ -119,7 +119,7 @@ Ok(1 - signal)""",
         "function": f"ArithmeticDecoder::decode_{side}_signal",
         "site": site,
         "replacement": site.replace(
-            "if signal == 0 {", "if signal != 0 { context.state_index = 0; }\nif signal == 0 {",
+            "if signal == 0 {", "if signal != 0 { context.set_state_and_mps(0, context.mps()); }\nif signal == 0 {",
         ),
         "controls": ((exchange_post(lower), ""),),
     }
@@ -128,22 +128,24 @@ Ok(1 - signal)""",
 let signal = self.renormalize_signal();
 if signal == 0 {"""),
         ("upper", "false", """decision = old_mps;
-context.state_index = state.next_mps;
+context.set_state_and_mps(state.next_mps, prior_mps);
 }
 let signal = self.renormalize_signal();
 if signal == 0 {"""),
     )
 ) + (
     error_case(
-        "entry_error_discards_context_index", "context.state_index = 0;",
+        "entry_error_discards_context_index", "context.set_state_and_mps(0, context.mps());",
         ((SIGNAL_POST, SIGNAL_POST.replace(
-            "final(context).state_index ==", "out <= 1 ==> final(context).state_index ==",
+            "arithmetic_spec::context_index(*final(context)) ==",
+            "out <= 1 ==> arithmetic_spec::context_index(*final(context)) ==",
         )),),
     ),
     error_case(
-        "entry_error_discards_mps", "context.mps = 0;",
+        "entry_error_discards_mps", "context.set_state_and_mps(context.state_index(), 0);",
         ((SIGNAL_POST, SIGNAL_POST.replace(
-            "final(context).mps ==", "out <= 1 ==> final(context).mps ==",
+            "arithmetic_spec::context_mps(*final(context)) ==",
+            "out <= 1 ==> arithmetic_spec::context_mps(*final(context)) ==",
         )),),
     ),
     error_case(

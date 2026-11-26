@@ -6,7 +6,7 @@ use super::{
     RefinementContextSnapshot, RefinementContexts, RefinementTemplate, MAX_GENERIC_CONTEXTS,
     MAX_REFINEMENT_CONTEXTS,
 };
-use crate::arithmetic::{reset_contexts, ArithmeticContext, ArithmeticError};
+use crate::arithmetic::{reset_contexts, ArithmeticContext};
 use crate::{DecodeError, LimitExceeded, LimitKind, Limits, MalformedError};
 #[cfg(verus_keep_ghost)]
 use vstd::prelude::*;
@@ -77,8 +77,8 @@ impl GenericContexts {
                 && generic_region_spec::generic_contexts_valid(&contexts)
                 && contexts.storage_bytes as nat == contexts.contexts@.len() * 2
                 && (forall|index: int| 0 <= index < contexts.contexts@.len() ==>
-                    contexts.contexts@[index].state_index == 0
-                        && contexts.contexts@[index].mps == 0),
+                    crate::arithmetic::arithmetic_spec::context_index(contexts.contexts@[index]) == 0
+                        && crate::arithmetic::arithmetic_spec::context_mps(contexts.contexts@[index]) == 0),
             Err(_) => true,
         },
     ))]
@@ -108,8 +108,8 @@ impl GenericContexts {
             final(self).contexts@.len() == old(self).contexts@.len(),
             match out {
                 Ok(()) => forall|index: int| 0 <= index < final(self).contexts@.len() ==>
-                    final(self).contexts@[index].state_index == 0
-                        && final(self).contexts@[index].mps == 0,
+                    crate::arithmetic::arithmetic_spec::context_index(final(self).contexts@[index]) == 0
+                        && crate::arithmetic::arithmetic_spec::context_mps(final(self).contexts@[index]) == 0,
                 Err(_) => final(self).contexts@ == old(self).contexts@,
             },
     ))]
@@ -272,8 +272,8 @@ impl RefinementContexts {
                 && generic_region_spec::refinement_contexts_valid(&contexts)
                 && contexts.storage_bytes as nat == contexts.contexts@.len() * 2
                 && (forall|index: int| 0 <= index < contexts.contexts@.len() ==>
-                    contexts.contexts@[index].state_index == 0
-                        && contexts.contexts@[index].mps == 0),
+                    crate::arithmetic::arithmetic_spec::context_index(contexts.contexts@[index]) == 0
+                        && crate::arithmetic::arithmetic_spec::context_mps(contexts.contexts@[index]) == 0),
             Err(_) => true,
         },
     ))]
@@ -300,8 +300,8 @@ impl RefinementContexts {
             final(self).contexts@.len() == old(self).contexts@.len(),
             match out {
                 Ok(()) => forall|index: int| 0 <= index < final(self).contexts@.len() ==>
-                    final(self).contexts@[index].state_index == 0
-                        && final(self).contexts@[index].mps == 0,
+                    crate::arithmetic::arithmetic_spec::context_index(final(self).contexts@[index]) == 0
+                        && crate::arithmetic::arithmetic_spec::context_mps(final(self).contexts@[index]) == 0,
                 Err(_) => final(self).contexts@ == old(self).contexts@,
             },
     ))]
@@ -474,7 +474,7 @@ pub(super) fn validate_refinement_context_layout(
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
     ensures match out {
         Ok(()) => forall|index: int| 0 <= index < contexts@.len() ==>
-            contexts@[index].state_index < 47 && contexts@[index].mps <= 1,
+            crate::arithmetic::arithmetic_spec::context_valid(contexts@[index]),
         Err(_) => true,
     },
     generic_region_spec::probability_validation_result(contexts@, out),
@@ -487,31 +487,18 @@ pub(super) fn validate_probability_states(
         invariant
             index <= contexts@.len(),
             forall|completed: int| 0 <= completed < index ==>
-                contexts@[completed].state_index < 47
-                    && contexts@[completed].mps <= 1,
+                crate::arithmetic::arithmetic_spec::context_valid(contexts@[completed]),
         decreases contexts@.len() - index,
     ))]
     while index < contexts.len() {
         let context = contexts[index];
-        if let Err(error) = ArithmeticContext::from_state(context.state_index(), context.mps()) {
-            let error = match error {
-                ArithmeticError::Malformed(error) => DecodeError::Malformed(error),
-                ArithmeticError::InvalidContextState { state_index, mps } => {
-                    DecodeError::Malformed(MalformedError::InvalidArithmeticContextState {
-                        state_index,
-                        mps,
-                    })
-                }
-                ArithmeticError::InsufficientContexts { required, actual } => {
-                    DecodeError::Malformed(MalformedError::InsufficientArithmeticContexts {
-                        required,
-                        actual,
-                    })
-                }
-                ArithmeticError::InvalidIaidCodeLength(length) => {
-                    DecodeError::Malformed(MalformedError::InvalidIaidCodeLength(length))
-                }
-            };
+        if context.packed() >= 94 {
+            let state_index = context.state_index();
+            let mps = context.mps();
+            let error = DecodeError::Malformed(MalformedError::InvalidArithmeticContextState {
+                state_index,
+                mps,
+            });
             return Err(GenericRegionError::Decode(error));
         }
         index += 1;
@@ -621,8 +608,9 @@ pub(super) fn try_copy_contexts(
         Ok(contexts) =>
             contexts@.len() == count
             && forall|index: int| 0 <= index < contexts@.len() ==>
-                contexts@[index].state_index == 0
-                && contexts@[index].mps == 0,
+                crate::arithmetic::arithmetic_spec::context_valid(contexts@[index])
+                && crate::arithmetic::arithmetic_spec::context_index(contexts@[index]) == 0
+                && crate::arithmetic::arithmetic_spec::context_mps(contexts@[index]) == 0,
         Err(_) => true,
     },
 ))]

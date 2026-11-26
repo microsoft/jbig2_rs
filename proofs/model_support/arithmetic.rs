@@ -35,8 +35,10 @@ pub(super) proof fn decision_model_equations(
     requires decoder_valid(decoder), context_valid(context),
     ensures decision_state(decoder, context) == decision_registers(
         decoder,
-        super::QE_STATES@[context.state_index as int].qe as u32,
-        entry_decision(decoder.interval, decoder.code, context.state_index, context.mps),
+        super::QE_STATES@[context_index(context) as int].qe as u32,
+        entry_decision(
+            decoder.interval, decoder.code, context_index(context), context_mps(context),
+        ),
     ),
 {
     reveal(decision_state);
