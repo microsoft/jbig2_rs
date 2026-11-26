@@ -5,7 +5,7 @@ use super::*;
 #[cfg(not(verus_keep_ghost))]
 use super::{
     unexpected_eof, ArithmeticContext, ArithmeticDecoder, ArithmeticError, MalformedError, QeState,
-    MIN_INTERVAL, QE_PACKED_VALS, QE_STATES, RASTER_SIGNAL_EOF, RASTER_SIGNAL_OVERFLOW,
+    MIN_INTERVAL, NEXT_MPS_PACKED, QE_PACKED_VALS, QE_STATES, RASTER_SIGNAL_EOF,
 };
 
 impl<'a> ArithmeticDecoder<'a> {
@@ -215,11 +215,25 @@ impl<'a> ArithmeticDecoder<'a> {
             assert(value >= qe << 16) by (bit_vector)
                 requires value >> 16 >= qe, qe <= 0xffff;
         }
-        let Some(code) = self.code.checked_sub(qe << 16) else {
-            return RASTER_SIGNAL_OVERFLOW;
-        };
-        self.code = code;
+        self.code -= qe << 16;
         if self.interval >= MIN_INTERVAL {
+            return old_mps;
+        }
+        if self.interval >= 0x4000
+            && self.interval >= qe
+            && self.bit_count != 0
+            && (self.code & 0x8000_0000) == 0
+        {
+            #[cfg(verus_keep_ghost)]
+            proof! {
+                crate::arithmetic::arithmetic_shared::inline_mps_renorm_matches(
+                    old(self), *old(context), qe, self.interval, self.code,
+                );
+            }
+            self.interval <<= 1;
+            self.code <<= 1;
+            self.bit_count -= 1;
+            *context = ArithmeticContext::from_packed(NEXT_MPS_PACKED[usize::from(packed) & 0x7f]);
             return old_mps;
         }
 

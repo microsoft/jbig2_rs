@@ -500,3 +500,103 @@ fn normalization_byte_pairs_and_partial_errors_match_wide_numeric_oracle() {
         }
     }
 }
+
+#[test]
+fn decode_bit_cached_matches_oracle_across_all_fast_and_slow_routes() {
+    let bytes = [0x11, 0x22, 0xff, 0x90];
+    for (index, row) in QE_STATES.iter().copied().enumerate() {
+        let qe = u32::from(row.qe);
+        for mps in 0..=1 {
+            let initial_ctx =
+                ArithmeticContext::from_state(u8::try_from(index).unwrap(), mps).unwrap();
+            for interval in [
+                MIN_INTERVAL,
+                (MIN_INTERVAL + qe).min(0xffff),
+                (0x4000 + qe).max(MIN_INTERVAL),
+                (2 * qe).max(MIN_INTERVAL),
+                0xffff,
+            ] {
+                for code in [
+                    0,
+                    qe << 16,
+                    (qe << 16).saturating_add(0x7fff_0000),
+                    0x8000_0000 | (qe << 16),
+                    u32::MAX,
+                ] {
+                    for bit_count in [0, 1, 8] {
+                        let mut cached_dec = refill_fixture(&bytes, 0, code, bit_count, None);
+                        cached_dec.interval = interval;
+                        let mut oracle_dec = refill_fixture(&bytes, 0, code, bit_count, None);
+                        oracle_dec.interval = interval;
+                        let mut cached_ctx = initial_ctx;
+                        let mut oracle_ctx = initial_ctx;
+                        let mut a = cached_dec.interval;
+                        let mut c = cached_dec.code;
+                        let mut bc = cached_dec.bit_count;
+                        let sig =
+                            cached_dec.decode_bit_cached(&mut cached_ctx, &mut a, &mut c, &mut bc);
+                        cached_dec.interval = a;
+                        cached_dec.code = c;
+                        cached_dec.bit_count = bc;
+                        let oracle_sig = oracle_dec.decode_signal(&mut oracle_ctx);
+                        assert_eq!(sig, oracle_sig);
+                        assert_eq!(cached_ctx, oracle_ctx);
+                        assert_eq!(cached_dec.interval, oracle_dec.interval);
+                        assert_eq!(cached_dec.code, oracle_dec.code);
+                        assert_eq!(cached_dec.bit_count, oracle_dec.bit_count);
+                        assert_eq!(cached_dec.byte_position, oracle_dec.byte_position);
+                        assert_eq!(cached_dec.current_byte, oracle_dec.current_byte);
+                        assert_eq!(cached_dec.marker, oracle_dec.marker);
+                    }
+                }
+            }
+        }
+    }
+}
+
+#[test]
+fn try_skip_byte_mps_matches_eight_oracle_decisions_across_all_states() {
+    let bytes = [0x00, 0x00, 0x00];
+    let mut skipped_count = 0usize;
+    for (index, row) in QE_STATES.iter().copied().enumerate() {
+        let qe = u32::from(row.qe);
+        let qe8 = qe << 3;
+        for mps in 0..=1 {
+            let ctx = ArithmeticContext::from_state(u8::try_from(index).unwrap(), mps).unwrap();
+            let boundary_a = (MIN_INTERVAL + qe8).min(0xffff);
+            let boundary_c = qe8.min(0xffff) << 16;
+            for expected_mps in 0..=1 {
+                for interval in [
+                    MIN_INTERVAL,
+                    boundary_a.saturating_sub(1).max(MIN_INTERVAL),
+                    boundary_a,
+                    0xffff,
+                ] {
+                    for code in [0, boundary_c.saturating_sub(1), boundary_c, 0xffff_ffff] {
+                        let mut a = interval;
+                        let mut c = code;
+                        let skipped =
+                            ArithmeticDecoder::try_skip_byte_mps(ctx, expected_mps, &mut a, &mut c);
+                        if skipped {
+                            skipped_count += 1;
+                            let mut oracle = refill_fixture(&bytes, 0, code, 8, None);
+                            oracle.interval = interval;
+                            let mut oracle_ctx = ctx;
+                            for _ in 0..8 {
+                                let bit = oracle.decode_checked_oracle(&mut oracle_ctx).unwrap();
+                                assert_eq!(bit, expected_mps);
+                            }
+                            assert_eq!(oracle_ctx, ctx);
+                            assert_eq!(a, oracle.interval);
+                            assert_eq!(c, oracle.code);
+                        } else {
+                            assert_eq!(a, interval);
+                            assert_eq!(c, code);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    assert!(skipped_count > 0);
+}
