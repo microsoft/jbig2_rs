@@ -1120,6 +1120,7 @@ def check_current_scope(root, ledger, report):
         (scope["profile"], scope["crate_version"], scope["release_branch"]) not in {
             ("0.2-partial-verus", "0.2.0", "release/0.2"),
             ("0.3-partial-verus", "0.3.0", "release/0.3"),
+            ("0.3-partial-verus", "0.3.1", "release/0.3"),
         }
         or scope["crate_version"] != package["version"]
         or package.get("publish") != ["crates-io"]
