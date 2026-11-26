@@ -12,7 +12,7 @@ use crate::arithmetic::{
 };
 use crate::bitmap::{Bitmap, CombinationOperator, RowBlit};
 use crate::generic_region::{
-    decode_generic_on_validated, decode_refinement_on, GenericArithmeticCall,
+    decode_generic_on_validated, decode_refinement_on_validated, GenericArithmeticCall,
     GenericContextSnapshot, GenericContexts, GenericRegionError, GenericTemplate,
     RefinementArithmeticCall, RefinementContextSnapshot, RefinementContexts, RefinementParameters,
     RefinementTemplate, TemplateOffset,
