@@ -93,7 +93,7 @@
     "src/arithmetic/certified_integers.rs": "e24e91ffefdeb3607c83d96ab382d0a1489ff3df0fbfe0ce6594e17200317489",
     "src/arithmetic/decoding.rs": "3b5d505c8a6ee0648c614e612b6ad716f84047c20c0d70276a7e3e717e0617d5",
     "src/arithmetic/fast.rs": "5ac12cb01a955d54646cb1a3bb168a63a5cb98a0857d6050f466c8d4b34deac9",
-    "src/arithmetic/integers.rs": "e9f6491791e79068a8ae29c3df34c10e9814c732aaec8d1f6904ebf491799820",
+    "src/arithmetic/integers.rs": "2004940e3ec8392bba498c4c64f32816872b700489241f1ccfd01d1fd1a4ceb3",
     "src/arithmetic/probability.rs": "7ccb50593b03995e4f3a2b9b038f1d7ab37c54a2acdc7dc9dad1a78ba2d85235",
     "src/arithmetic/refill.rs": "7c3b1461c6fb47f050790bbf78221958737e9f7912e9ac189f81bec57ae70b21",
     "src/arithmetic/tests/context_state.rs": "5ce1ccc138ed9113282b0d60dcbae139891f7387511cd05a9600978c80ad2ac7",
@@ -307,7 +307,7 @@
     "tools/evidence.py": "1286345e1679a72362fc4cc60f3ef1d6294b19df4edcea7c6d0f74970d117571",
     "tools/verify_provenance.py": "0d9be7e393273d59adf5d38adeb828cb8299d63365412dee3e61f565d7ee9aed",
     "validation/source-provenance.json": "95e21a8330540c2f1be6ae7446764a97047ee6cd9412516775da935f3c3b8571",
-    "validation/conformance/expected-differences.json": "c7e716354d9048b1353db0de558245a6b06e7f8023874d620fe2cd2bc52a7982",
+    "validation/conformance/expected-differences.json": "ad7b23bc8d2c426ad45c4011e6e2e7fc3b87ccdb9ffae8b0ad688206cae372c8",
     "validation/conformance/fetch_itu.py": "ef7d846d05440ff052581de0d04caaa76f6e9cc9582ee1b9fb8baff34b89e86b",
     "tools/tests/test_conformance_acquisition.py": "57535afa7a966244302b51554c3dd6dc1fc00dac11fec7f33f49906fe35258f7",
     "tools/check_workflows.py": "7f08562416cb20d73d0eeb92dcb287fd339cf670f4235d35d4c29bfaad25a196",
@@ -356,7 +356,7 @@
     "binary_sha256": "68289ba2197f70baebe72f0cc72f500ac67622a8e51d0d7086a08186a71496fa",
     "harness_files_sha256": {
       "benchmarks/hayro-comparison/Cargo.toml": "7dc1d4322bfac82560726eba18320b0868cd3333ea0e97ed03186596beb9215a",
-      "benchmarks/hayro-comparison/Cargo.lock": "b0067741ab9e0e3f9c07378ad2cb31806dc5cca17301beb4365df7465cc2a548",
+      "benchmarks/hayro-comparison/Cargo.lock": "a0e62259e9a2ac60c67fabb9feef2048f17c47f74b0aaaf7dda7433f59f7b4e5",
       "benchmarks/hayro-comparison/src/main.rs": "07d096c955ca2a5e318888f84f92f727a99f6681bfc9f346e434e1de24b26ca3",
       "benchmarks/generated.rs": "2a41a4622c7a07f3eed50a56b822e93e70f8072aa490dd7b0368e1f6c22acc26",
       "benchmarks/timing.rs": "e1d6820361b43398693c8f5be39f9f6a241b475566286ac6a89df12a413370ac"

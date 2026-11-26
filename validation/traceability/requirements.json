@@ -30,7 +30,7 @@
   "model_classifications": {
     "review": "author-navigation-only-not-independent-normative-approval",
     "registry_sha256": "0cfdfb077ac4bb7a7fd4abfb8cb7c482a7f9bd87fbd84a77d3b2bcf6711a6de2",
-    "project_source_sha256": "3962f65ff7254e582df0148a64976e2f4864d630281648a13c93283c3c4c5c9a",
+    "project_source_sha256": "ba8806058fb2561d2f212a24c3db8698e4352bc7dd1796d097a448fb83b2105a",
     "families": [
       {
         "file": "specs/huffman_lookup.rs",
@@ -2309,7 +2309,7 @@
     "specs/symbol_text/symbol_ids.rs": "a08f24685e8ef5f95e98b5bb953ad18a1b6dbbffd754ca48f09931f36a87aacc",
     "src/arithmetic.rs": "1c69a467424f0e32c4751f7e9db0dce1e1ffb3e8f6ed6a90c48f4303e8cfac80",
     "src/arithmetic/decoding.rs": "3b5d505c8a6ee0648c614e612b6ad716f84047c20c0d70276a7e3e717e0617d5",
-    "src/arithmetic/integers.rs": "e9f6491791e79068a8ae29c3df34c10e9814c732aaec8d1f6904ebf491799820",
+    "src/arithmetic/integers.rs": "2004940e3ec8392bba498c4c64f32816872b700489241f1ccfd01d1fd1a4ceb3",
     "src/arithmetic/refill.rs": "7c3b1461c6fb47f050790bbf78221958737e9f7912e9ac189f81bec57ae70b21",
     "src/arithmetic/tests.rs": "2beb39484aac38e93b73c087dc6671a30482dc985a17f99f50c04874a46d4e07",
     "src/arithmetic/tests/context_state.rs": "5ce1ccc138ed9113282b0d60dcbae139891f7387511cd05a9600978c80ad2ac7",
