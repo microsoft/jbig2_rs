@@ -3,7 +3,10 @@
 #[cfg(verus_keep_ghost)]
 use super::*;
 #[cfg(not(verus_keep_ghost))]
-use super::{ArithmeticContext, ArithmeticDecoder, MIN_INTERVAL, NEXT_MPS_PACKED, QE_PACKED_VALS};
+use super::{
+    ArithmeticContext, ArithmeticDecoder, ArithmeticError, MalformedError, INTEGER_CONTEXT_COUNT,
+    MIN_INTERVAL, NEXT_MPS_PACKED, QE_PACKED_VALS,
+};
 
 impl ArithmeticDecoder<'_> {
     #[cfg_attr(verus_keep_ghost, verus_spec(out =>
@@ -287,5 +290,404 @@ impl ArithmeticDecoder<'_> {
         } else {
             false
         }
+    }
+
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        requires
+            arithmetic_spec::decoder_valid(&ArithmeticDecoder {
+                bytes: old(self).bytes,
+                byte_position: old(self).byte_position,
+                current_byte: old(self).current_byte,
+                code: *old(code),
+                interval: *old(interval),
+                bit_count: *old(bit_count),
+                marker: old(self).marker,
+            }),
+            arithmetic_spec::context_valid(*old(context)),
+        ensures
+            arithmetic_spec::context_valid(*final(context)),
+            final(self).bytes == old(self).bytes,
+            final(self).bytes@ == old(self).bytes@,
+            ({
+                let snap_old = ArithmeticDecoder {
+                    bytes: old(self).bytes,
+                    byte_position: old(self).byte_position,
+                    current_byte: old(self).current_byte,
+                    code: *old(code),
+                    interval: *old(interval),
+                    bit_count: *old(bit_count),
+                    marker: old(self).marker,
+                };
+                let snap_final = ArithmeticDecoder {
+                    bytes: final(self).bytes,
+                    byte_position: final(self).byte_position,
+                    current_byte: final(self).current_byte,
+                    code: *final(code),
+                    interval: *final(interval),
+                    bit_count: *final(bit_count),
+                    marker: final(self).marker,
+                };
+                let ds = arithmetic_spec::decision_state(&snap_old, *old(context));
+                &&& *final(context) == arithmetic_spec::context_after_decision(&snap_old, *old(context))
+                &&& *final(interval) == ds.1
+                &&& final(self).byte_position == ds.2
+                &&& final(self).current_byte == ds.3
+                &&& *final(code) == ds.4
+                &&& *final(bit_count) == ds.5
+                &&& final(self).marker == ds.6
+                &&& out.is_ok() == (ds.0 <= 1)
+                &&& match out {
+                    Ok(bit) => bit <= 1 && bit == ds.0 && arithmetic_spec::decoder_valid(&snap_final),
+                    Err(error) => arithmetic_spec::decoder_state_valid(final(self))
+                        && *final(self) == snap_final
+                        && error == arithmetic_spec::error_for_signal(final(self), ds.0),
+                }
+            }),
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    #[allow(clippy::inline_always)]
+    #[inline(always)]
+    pub(super) fn decode_bit_cached_result(
+        &mut self,
+        context: &mut ArithmeticContext,
+        interval: &mut u32,
+        code: &mut u32,
+        bit_count: &mut u8,
+    ) -> Result<u8, ArithmeticError> {
+        #[cfg(verus_keep_ghost)]
+        proof_decl! {
+            let ghost snap_old = ArithmeticDecoder {
+                bytes: self.bytes,
+                byte_position: self.byte_position,
+                current_byte: self.current_byte,
+                code: *code,
+                interval: *interval,
+                bit_count: *bit_count,
+                marker: self.marker,
+            };
+            let ghost old_ctx = *context;
+        }
+        let signal = self.decode_bit_cached(context, interval, code, bit_count);
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            assert(arithmetic_spec::context_valid(*context));
+            assert(arithmetic_spec::context_valid(
+                arithmetic_spec::context_after_decision(&snap_old, old_ctx)
+            ));
+            assert(*context == arithmetic_spec::context_after_decision(&snap_old, old_ctx)) by {
+                let c_spec = arithmetic_spec::context_after_decision(&snap_old, old_ctx);
+                assert(arithmetic_spec::context_index(*context) == arithmetic_spec::context_index(c_spec));
+                assert(arithmetic_spec::context_mps(*context) == arithmetic_spec::context_mps(c_spec));
+                assert(context.packed / 2 == c_spec.packed / 2);
+                assert(context.packed % 2 == c_spec.packed % 2);
+                assert(context.packed == c_spec.packed);
+            };
+        }
+        if signal <= 1 {
+            Ok(signal)
+        } else {
+            Err(self.signal_error(signal))
+        }
+    }
+
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        requires
+            arithmetic_spec::decoder_valid(&ArithmeticDecoder {
+                bytes: old(self).bytes,
+                byte_position: old(self).byte_position,
+                current_byte: old(self).current_byte,
+                code: *old(code),
+                interval: *old(interval),
+                bit_count: *old(bit_count),
+                marker: old(self).marker,
+            }),
+            *old(previous) <= 511,
+            forall|index: int| 0 <= index < old(contexts)@.len() ==>
+                arithmetic_spec::context_valid(old(contexts)@[index]),
+        ensures
+            *final(previous) <= 511,
+            forall|index: int| 0 <= index < final(contexts)@.len() ==>
+                arithmetic_spec::context_valid(final(contexts)@[index]),
+            final(self).bytes == old(self).bytes,
+            final(self).bytes@ == old(self).bytes@,
+            ({
+                let snap_old = ArithmeticDecoder {
+                    bytes: old(self).bytes,
+                    byte_position: old(self).byte_position,
+                    current_byte: old(self).current_byte,
+                    code: *old(code),
+                    interval: *old(interval),
+                    bit_count: *old(bit_count),
+                    marker: old(self).marker,
+                };
+                let snap_final = ArithmeticDecoder {
+                    bytes: final(self).bytes,
+                    byte_position: final(self).byte_position,
+                    current_byte: final(self).current_byte,
+                    code: *final(code),
+                    interval: *final(interval),
+                    bit_count: *final(bit_count),
+                    marker: final(self).marker,
+                };
+                let step = arithmetic_spec::integer_step_state(
+                    snap_old, old(contexts)@, *old(previous),
+                );
+                &&& out == step.0
+                &&& snap_final == step.1
+                &&& final(contexts)@ == step.2
+                &&& *final(previous) == step.3
+                &&& match out {
+                    Ok(decision) => decision <= 1 && arithmetic_spec::decoder_valid(&snap_final),
+                    Err(_) => arithmetic_spec::decoder_state_valid(final(self))
+                        && *final(self) == snap_final,
+                }
+            }),
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    #[allow(clippy::inline_always)]
+    #[inline(always)]
+    pub(super) fn decode_integer_bit_cached(
+        &mut self,
+        previous: &mut u16,
+        contexts: &mut [ArithmeticContext; INTEGER_CONTEXT_COUNT],
+        interval: &mut u32,
+        code: &mut u32,
+        bit_count: &mut u8,
+    ) -> Result<u8, ArithmeticError> {
+        let prior = *previous;
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            assert(prior & 511 == prior) by (bit_vector)
+                requires prior <= 511;
+        }
+        let context_index = usize::from(prior & 0x01ff);
+        let decision =
+            self.decode_bit_cached_result(&mut contexts[context_index], interval, code, bit_count)?;
+        let shifted = prior * 2 + u16::from(decision);
+        *previous = if prior < 256 {
+            shifted
+        } else {
+            (shifted & 511) | 256
+        };
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            if prior < 256 {
+                assert(prior <= 255);
+                assert(decision <= 1);
+                assert(shifted == prior * 2 + decision as u16);
+                assert(shifted <= 511);
+            } else {
+                assert((shifted & 511) | 256 <= 511) by (bit_vector);
+            }
+        }
+        Ok(decision)
+    }
+
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        requires
+            arithmetic_spec::decoder_valid(&ArithmeticDecoder {
+                bytes: old(self).bytes,
+                byte_position: old(self).byte_position,
+                current_byte: old(self).current_byte,
+                code: *old(code),
+                interval: *old(interval),
+                bit_count: *old(mq_bit_count),
+                marker: old(self).marker,
+            }),
+            *old(previous) <= 511,
+            bit_count <= 32,
+            forall|index: int| 0 <= index < old(contexts)@.len() ==>
+                arithmetic_spec::context_valid(old(contexts)@[index]),
+        ensures
+            *final(previous) <= 511,
+            forall|index: int| 0 <= index < final(contexts)@.len() ==>
+                arithmetic_spec::context_valid(final(contexts)@[index]),
+            final(self).bytes == old(self).bytes,
+            final(self).bytes@ == old(self).bytes@,
+            ({
+                let snap_old = ArithmeticDecoder {
+                    bytes: old(self).bytes,
+                    byte_position: old(self).byte_position,
+                    current_byte: old(self).current_byte,
+                    code: *old(code),
+                    interval: *old(interval),
+                    bit_count: *old(mq_bit_count),
+                    marker: old(self).marker,
+                };
+                let snap_final = ArithmeticDecoder {
+                    bytes: final(self).bytes,
+                    byte_position: final(self).byte_position,
+                    current_byte: final(self).current_byte,
+                    code: *final(code),
+                    interval: *final(interval),
+                    bit_count: *final(mq_bit_count),
+                    marker: final(self).marker,
+                };
+                let run = arithmetic_spec::integer_bits_run(
+                    snap_old, old(contexts)@, *old(previous), bit_count, 0,
+                );
+                &&& out == run.0
+                &&& snap_final == run.1
+                &&& final(contexts)@ == run.2
+                &&& *final(previous) == run.3
+                &&& match out {
+                    Ok(_) => arithmetic_spec::decoder_valid(&snap_final),
+                    Err(_) => arithmetic_spec::decoder_state_valid(final(self))
+                        && *final(self) == snap_final,
+                }
+            }),
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    #[allow(clippy::inline_always, clippy::too_many_lines)]
+    #[inline(always)]
+    pub(super) fn decode_integer_bits_cached(
+        &mut self,
+        previous: &mut u16,
+        bit_count: u8,
+        contexts: &mut [ArithmeticContext; INTEGER_CONTEXT_COUNT],
+        interval: &mut u32,
+        code: &mut u32,
+        mq_bit_count: &mut u8,
+    ) -> Result<u32, ArithmeticError> {
+        let mut value = 0_u32;
+        let mut remaining = bit_count;
+        #[cfg_attr(verus_keep_ghost, verus_spec(
+            invariant
+                arithmetic_spec::decoder_valid(&ArithmeticDecoder {
+                    bytes: self.bytes,
+                    byte_position: self.byte_position,
+                    current_byte: self.current_byte,
+                    code: *code,
+                    interval: *interval,
+                    bit_count: *mq_bit_count,
+                    marker: self.marker,
+                }),
+                self.bytes == old(self).bytes,
+                self.bytes@ == old(self).bytes@,
+                *previous <= 511,
+                forall|index: int| 0 <= index < contexts@.len() ==>
+                    arithmetic_spec::context_valid(contexts@[index]),
+                remaining <= bit_count,
+                arithmetic_spec::integer_bits_run(
+                    ArithmeticDecoder {
+                        bytes: old(self).bytes,
+                        byte_position: old(self).byte_position,
+                        current_byte: old(self).current_byte,
+                        code: *old(code),
+                        interval: *old(interval),
+                        bit_count: *old(mq_bit_count),
+                        marker: old(self).marker,
+                    },
+                    old(contexts)@,
+                    *old(previous),
+                    bit_count,
+                    0,
+                ) == arithmetic_spec::integer_bits_run(
+                    ArithmeticDecoder {
+                        bytes: self.bytes,
+                        byte_position: self.byte_position,
+                        current_byte: self.current_byte,
+                        code: *code,
+                        interval: *interval,
+                        bit_count: *mq_bit_count,
+                        marker: self.marker,
+                    },
+                    contexts@,
+                    *previous,
+                    remaining,
+                    value,
+                ),
+            decreases remaining,
+        ))]
+        while remaining != 0 {
+            #[cfg(verus_keep_ghost)]
+            proof_decl! {
+                let ghost before = ArithmeticDecoder {
+                    bytes: self.bytes,
+                    byte_position: self.byte_position,
+                    current_byte: self.current_byte,
+                    code: *code,
+                    interval: *interval,
+                    bit_count: *mq_bit_count,
+                    marker: self.marker,
+                };
+                let ghost before_contexts = contexts@;
+                let ghost before_previous = *previous;
+                let ghost before_remaining = remaining;
+                let ghost before_value = value;
+            }
+            #[cfg(verus_keep_ghost)]
+            proof! {
+                reveal_with_fuel(arithmetic_spec::integer_bits_run, 1);
+            }
+            let bit = match self.decode_integer_bit_cached(
+                previous,
+                contexts,
+                interval,
+                code,
+                mq_bit_count,
+            ) {
+                Ok(bit) => bit,
+                Err(error) => {
+                    #[cfg(verus_keep_ghost)]
+                    proof! {
+                        assert(
+                            arithmetic_spec::integer_bits_run(
+                                ArithmeticDecoder {
+                                    bytes: old(self).bytes,
+                                    byte_position: old(self).byte_position,
+                                    current_byte: old(self).current_byte,
+                                    code: *old(code),
+                                    interval: *old(interval),
+                                    bit_count: *old(mq_bit_count),
+                                    marker: old(self).marker,
+                                },
+                                old(contexts)@,
+                                *old(previous),
+                                bit_count,
+                                0,
+                            ) == arithmetic_spec::integer_bits_run(
+                                before, before_contexts, before_previous, before_remaining, before_value,
+                            )
+                        );
+                    }
+                    return Err(error);
+                }
+            };
+            let Some(shifted) = value.checked_mul(2) else {
+                self.interval = *interval;
+                self.code = *code;
+                self.bit_count = *mq_bit_count;
+                return Err(ArithmeticError::Malformed(MalformedError::IntegerOverflow));
+            };
+            let Some(next_value) = shifted.checked_add(u32::from(bit)) else {
+                self.interval = *interval;
+                self.code = *code;
+                self.bit_count = *mq_bit_count;
+                return Err(ArithmeticError::Malformed(MalformedError::IntegerOverflow));
+            };
+            value = next_value;
+            remaining -= 1;
+            #[cfg(verus_keep_ghost)]
+            proof! {
+                let after = ArithmeticDecoder {
+                    bytes: self.bytes,
+                    byte_position: self.byte_position,
+                    current_byte: self.current_byte,
+                    code: *code,
+                    interval: *interval,
+                    bit_count: *mq_bit_count,
+                    marker: self.marker,
+                };
+                assert(
+                    arithmetic_spec::integer_bits_run(
+                        before, before_contexts, before_previous, before_remaining, before_value,
+                    ) == arithmetic_spec::integer_bits_run(
+                        after, contexts@, *previous, remaining, value,
+                    )
+                );
+            }
+        }
+        Ok(value)
     }
 }

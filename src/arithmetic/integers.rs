@@ -30,7 +30,7 @@ impl ArithmeticDecoder<'_> {
             final(contexts)@ == arithmetic_spec::integer_state(*old(self), old(contexts)@).2,
     ))]
     #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
-    #[allow(clippy::cast_possible_wrap)]
+    #[allow(clippy::cast_possible_wrap, clippy::too_many_lines)]
     pub(crate) fn decode_integer(
         &mut self,
         contexts: &mut [ArithmeticContext; INTEGER_CONTEXT_COUNT],
@@ -40,23 +40,77 @@ impl ArithmeticDecoder<'_> {
             reveal_with_fuel(arithmetic_spec::integer_selection_state, 6);
         }
         let mut previous = 1_u16;
-        let sign = self.decode_integer_bit(&mut previous, contexts)?;
+        let mut interval = self.interval;
+        let mut code = self.code;
+        let mut mq_bit_count = self.bit_count;
+        let sign = self.decode_integer_bit_cached(
+            &mut previous,
+            contexts,
+            &mut interval,
+            &mut code,
+            &mut mq_bit_count,
+        )?;
 
-        let (bit_count, offset) = if self.decode_integer_bit(&mut previous, contexts)? == 0 {
+        let (bit_count, offset) = if self.decode_integer_bit_cached(
+            &mut previous,
+            contexts,
+            &mut interval,
+            &mut code,
+            &mut mq_bit_count,
+        )? == 0
+        {
             (2, 0_u64)
-        } else if self.decode_integer_bit(&mut previous, contexts)? == 0 {
+        } else if self.decode_integer_bit_cached(
+            &mut previous,
+            contexts,
+            &mut interval,
+            &mut code,
+            &mut mq_bit_count,
+        )? == 0
+        {
             (4, 4)
-        } else if self.decode_integer_bit(&mut previous, contexts)? == 0 {
+        } else if self.decode_integer_bit_cached(
+            &mut previous,
+            contexts,
+            &mut interval,
+            &mut code,
+            &mut mq_bit_count,
+        )? == 0
+        {
             (6, 20)
-        } else if self.decode_integer_bit(&mut previous, contexts)? == 0 {
+        } else if self.decode_integer_bit_cached(
+            &mut previous,
+            contexts,
+            &mut interval,
+            &mut code,
+            &mut mq_bit_count,
+        )? == 0
+        {
             (8, 84)
-        } else if self.decode_integer_bit(&mut previous, contexts)? == 0 {
+        } else if self.decode_integer_bit_cached(
+            &mut previous,
+            contexts,
+            &mut interval,
+            &mut code,
+            &mut mq_bit_count,
+        )? == 0
+        {
             (12, 340)
         } else {
             (32, 4436)
         };
 
-        let magnitude_bits = self.decode_integer_bits(&mut previous, bit_count, contexts)?;
+        let magnitude_bits = self.decode_integer_bits_cached(
+            &mut previous,
+            bit_count,
+            contexts,
+            &mut interval,
+            &mut code,
+            &mut mq_bit_count,
+        )?;
+        self.interval = interval;
+        self.code = code;
+        self.bit_count = mq_bit_count;
         let magnitude = offset
             .checked_add(u64::from(magnitude_bits))
             .ok_or(ArithmeticError::Malformed(MalformedError::IntegerOverflow))?;
@@ -121,7 +175,7 @@ impl ArithmeticDecoder<'_> {
                         final(contexts)@[index] == old(contexts)@[index],
     ))]
     #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
-    #[allow(clippy::cast_possible_truncation)]
+    #[allow(clippy::cast_possible_truncation, clippy::too_many_lines)]
     pub(crate) fn decode_iaid(
         &mut self,
         code_length: u8,
@@ -144,34 +198,103 @@ impl ArithmeticDecoder<'_> {
             });
         }
 
+        let (ctxs, _rest) = contexts.split_at_mut(required);
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            assert(required >= 1) by (bit_vector)
+                requires
+                    code_length <= 31,
+                    required == 1usize << code_length;
+            assert(ext_equal(ctxs@ + _rest@, old(contexts)@));
+            assert(ctxs@[0] == old(contexts)@[0]);
+            assert(
+                ArithmeticDecoder {
+                    bytes: self.bytes,
+                    byte_position: self.byte_position,
+                    current_byte: self.current_byte,
+                    code: self.code,
+                    interval: self.interval,
+                    bit_count: self.bit_count,
+                    marker: self.marker,
+                } == *old(self)
+            );
+        }
+        let mut interval = self.interval;
+        let mut code = self.code;
+        let mut mq_bit_count = self.bit_count;
         let mut previous = 1_usize;
         let mut remaining = code_length;
+        let mut loop_error: Option<ArithmeticError> = None;
         #[cfg(verus_keep_ghost)]
         production_iaid_prefix_bounds!(initial, previous, code_length, remaining);
         #[cfg_attr(verus_keep_ghost, verus_spec(
             invariant
-                arithmetic_spec::decoder_valid(self),
+                loop_error.is_none() ==> arithmetic_spec::decoder_valid(&ArithmeticDecoder {
+                    bytes: self.bytes,
+                    byte_position: self.byte_position,
+                    current_byte: self.current_byte,
+                    code,
+                    interval,
+                    bit_count: mq_bit_count,
+                    marker: self.marker,
+                }),
+                loop_error.is_some() ==> {
+                    &&& arithmetic_spec::decoder_state_valid(self)
+                    &&& self.interval == interval
+                    &&& self.code == code
+                    &&& self.bit_count == mq_bit_count
+                    &&& arithmetic_spec::iaid_run(*old(self), old(contexts)@, 1, code_length, required)
+                        == (Err(loop_error.unwrap()), *self, ctxs@ + _rest@)
+                },
+                self.bytes == old(self).bytes,
+                self.bytes@ == old(self).bytes@,
                 code_length <= MAX_IAID_CODE_LENGTH,
                 required == 1usize << code_length,
+                required >= 1,
                 context_count == old(contexts)@.len(),
-                contexts@.len() == context_count,
-                forall|index: int| 0 <= index < contexts@.len() ==>
-                    arithmetic_spec::context_valid(contexts@[index]),
+                ctxs@.len() == required,
+                _rest@.len() == context_count - required,
+                _rest@ == old(contexts)@.subrange(required as int, context_count as int),
+                forall|index: int| 0 <= index < ctxs@.len() ==>
+                    arithmetic_spec::context_valid(ctxs@[index]),
+                forall|index: int| 0 <= index < _rest@.len() ==>
+                    arithmetic_spec::context_valid(_rest@[index]),
                 remaining <= code_length,
                 required <= context_count,
-                (previous as u64) >> ((code_length - remaining) as u64) == 1,
-                forall|index: int| 0 <= index < contexts@.len()
-                    && (index == 0 || index >= required) ==>
-                        contexts@[index] == old(contexts)@[index],
-                arithmetic_spec::iaid_run(*old(self), old(contexts)@, 1, code_length, required)
-                    == arithmetic_spec::iaid_run(*self, contexts@, previous, remaining, required),
-            decreases remaining,
+                loop_error.is_none() ==> (previous as u64) >> ((code_length - remaining) as u64) == 1,
+                ctxs@[0] == old(contexts)@[0],
+                loop_error.is_none() ==>
+                    arithmetic_spec::iaid_run(*old(self), old(contexts)@, 1, code_length, required)
+                        == arithmetic_spec::iaid_run(
+                            ArithmeticDecoder {
+                                bytes: self.bytes,
+                                byte_position: self.byte_position,
+                                current_byte: self.current_byte,
+                                code,
+                                interval,
+                                bit_count: mq_bit_count,
+                                marker: self.marker,
+                            },
+                            ctxs@ + _rest@,
+                            previous,
+                            remaining,
+                            required,
+                        ),
+            decreases remaining, if loop_error.is_none() { 1int } else { 0int },
         ))]
-        while remaining != 0 {
+        while remaining != 0 && loop_error.is_none() {
             #[cfg(verus_keep_ghost)]
             proof_decl! {
-                let ghost before = *self;
-                let ghost before_contexts = contexts@;
+                let ghost before = ArithmeticDecoder {
+                    bytes: self.bytes,
+                    byte_position: self.byte_position,
+                    current_byte: self.current_byte,
+                    code,
+                    interval,
+                    bit_count: mq_bit_count,
+                    marker: self.marker,
+                };
+                let ghost before_contexts = ctxs@ + _rest@;
                 let ghost before_previous = previous;
                 let ghost before_remaining = remaining;
             }
@@ -185,38 +308,105 @@ impl ArithmeticDecoder<'_> {
                         required == 1usize << code_length,
                         (previous as u64) >> ((code_length - remaining) as u64) == 1;
             }
-            if previous >= context_count {
-                return Err(ArithmeticError::InsufficientContexts {
-                    required,
-                    actual: context_count,
-                });
+            match self.decode_bit_cached_result(
+                &mut ctxs[previous],
+                &mut interval,
+                &mut code,
+                &mut mq_bit_count,
+            ) {
+                Ok(decision) => {
+                    let Some(shifted) = previous.checked_mul(2) else {
+                        self.interval = interval;
+                        self.code = code;
+                        self.bit_count = mq_bit_count;
+                        loop_error =
+                            Some(ArithmeticError::Malformed(MalformedError::IntegerOverflow));
+                        continue;
+                    };
+                    let Some(next_previous) = shifted.checked_add(usize::from(decision)) else {
+                        self.interval = interval;
+                        self.code = code;
+                        self.bit_count = mq_bit_count;
+                        loop_error =
+                            Some(ArithmeticError::Malformed(MalformedError::IntegerOverflow));
+                        continue;
+                    };
+                    previous = next_previous;
+                    remaining -= 1;
+                    #[cfg(verus_keep_ghost)]
+                    production_iaid_prefix_bounds!(
+                        advance,
+                        previous,
+                        before_previous,
+                        decision,
+                        code_length,
+                        remaining,
+                        before_remaining
+                    );
+                    #[cfg(verus_keep_ghost)]
+                    proof! {
+                        let after = ArithmeticDecoder {
+                            bytes: self.bytes,
+                            byte_position: self.byte_position,
+                            current_byte: self.current_byte,
+                            code,
+                            interval,
+                            bit_count: mq_bit_count,
+                            marker: self.marker,
+                        };
+                        let after_contexts = ctxs@ + _rest@;
+                        assert(ext_equal(
+                            after_contexts,
+                            before_contexts.update(
+                                before_previous as int,
+                                arithmetic_spec::context_after_decision(&before, before_contexts[before_previous as int]),
+                            ),
+                        ));
+                        assert(
+                            arithmetic_spec::iaid_run(
+                                before, before_contexts, before_previous, before_remaining, required,
+                            ) == arithmetic_spec::iaid_run(after, after_contexts, previous, remaining, required)
+                        );
+                    }
+                }
+                Err(error) => {
+                    #[cfg(verus_keep_ghost)]
+                    proof! {
+                        assert(ext_equal(
+                            ctxs@ + _rest@,
+                            before_contexts.update(
+                                before_previous as int,
+                                arithmetic_spec::context_after_decision(
+                                    &before,
+                                    before_contexts[before_previous as int],
+                                ),
+                            ),
+                        ));
+                    }
+                    loop_error = Some(error);
+                }
             }
-            let decision = self.decode(&mut contexts[previous])?;
-            let shifted = previous
-                .checked_mul(2)
-                .ok_or(ArithmeticError::Malformed(MalformedError::IntegerOverflow))?;
-            previous = shifted
-                .checked_add(usize::from(decision))
-                .ok_or(ArithmeticError::Malformed(MalformedError::IntegerOverflow))?;
-            remaining -= 1;
-            #[cfg(verus_keep_ghost)]
-            production_iaid_prefix_bounds!(
-                advance,
-                previous,
-                before_previous,
-                decision,
-                code_length,
-                remaining,
-                before_remaining
+        }
+        if let Some(error) = loop_error {
+            return Err(error);
+        }
+        self.interval = interval;
+        self.code = code;
+        self.bit_count = mq_bit_count;
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            assert(remaining == 0);
+            assert(
+                ArithmeticDecoder {
+                    bytes: self.bytes,
+                    byte_position: self.byte_position,
+                    current_byte: self.current_byte,
+                    code,
+                    interval,
+                    bit_count: mq_bit_count,
+                    marker: self.marker,
+                } == *self
             );
-            #[cfg(verus_keep_ghost)]
-            proof! {
-                assert(
-                    arithmetic_spec::iaid_run(
-                        before, before_contexts, before_previous, before_remaining, required,
-                    ) == arithmetic_spec::iaid_run(*self, contexts@, previous, remaining, required)
-                );
-            }
         }
         let value = previous
             .checked_sub(required)
@@ -359,56 +549,20 @@ impl ArithmeticDecoder<'_> {
         bit_count: u8,
         contexts: &mut [ArithmeticContext; INTEGER_CONTEXT_COUNT],
     ) -> Result<u32, ArithmeticError> {
-        let mut value = 0_u32;
-        let mut remaining = bit_count;
-        #[cfg_attr(verus_keep_ghost, verus_spec(
-            invariant
-                arithmetic_spec::decoder_valid(self),
-                self.bytes == old(self).bytes,
-                self.bytes@ == old(self).bytes@,
-                *previous <= 511,
-                forall|index: int| 0 <= index < contexts@.len() ==>
-                    arithmetic_spec::context_valid(contexts@[index]),
-                remaining <= bit_count,
-                arithmetic_spec::integer_bits_run(
-                    *old(self), old(contexts)@, *old(previous), bit_count, 0,
-                ) == arithmetic_spec::integer_bits_run(
-                    *self, contexts@, *previous, remaining, value,
-                ),
-            decreases remaining,
-        ))]
-        while remaining != 0 {
-            #[cfg(verus_keep_ghost)]
-            proof_decl! {
-                let ghost before = *self;
-                let ghost before_contexts = contexts@;
-                let ghost before_previous = *previous;
-                let ghost before_remaining = remaining;
-                let ghost before_value = value;
-            }
-            #[cfg(verus_keep_ghost)]
-            proof! {
-                reveal_with_fuel(arithmetic_spec::integer_bits_run, 1);
-            }
-            let bit = self.decode_integer_bit(previous, contexts)?;
-            let shifted = value
-                .checked_mul(2)
-                .ok_or(ArithmeticError::Malformed(MalformedError::IntegerOverflow))?;
-            value = shifted
-                .checked_add(u32::from(bit))
-                .ok_or(ArithmeticError::Malformed(MalformedError::IntegerOverflow))?;
-            remaining -= 1;
-            #[cfg(verus_keep_ghost)]
-            proof! {
-                assert(
-                    arithmetic_spec::integer_bits_run(
-                        before, before_contexts, before_previous, before_remaining, before_value,
-                    ) == arithmetic_spec::integer_bits_run(
-                        *self, contexts@, *previous, remaining, value,
-                    )
-                );
-            }
-        }
+        let mut interval = self.interval;
+        let mut code = self.code;
+        let mut mq_bit_count = self.bit_count;
+        let value = self.decode_integer_bits_cached(
+            previous,
+            bit_count,
+            contexts,
+            &mut interval,
+            &mut code,
+            &mut mq_bit_count,
+        )?;
+        self.interval = interval;
+        self.code = code;
+        self.bit_count = mq_bit_count;
         Ok(value)
     }
 }
