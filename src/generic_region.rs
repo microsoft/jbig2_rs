@@ -67,7 +67,8 @@ pub(crate) use refinement::{
 #[allow(unused_imports)]
 pub(crate) use segments::{
     decode_generic_region_segment, decode_generic_region_segment_into,
-    decode_generic_region_segment_reused,
+    decode_generic_region_segment_into_with_scratch, decode_generic_region_segment_reused,
+    decode_generic_region_segment_reused_with_scratch,
 };
 #[allow(unused_imports)]
 pub(crate) use support::{enforce_managed_memory, integer_overflow, word_byte};

@@ -112,7 +112,7 @@
       "source_files_sha256": {
         "src/arithmetic.rs": "1c69a467424f0e32c4751f7e9db0dce1e1ffb3e8f6ed6a90c48f4303e8cfac80",
         "src/arithmetic/decoding.rs": "3b5d505c8a6ee0648c614e612b6ad716f84047c20c0d70276a7e3e717e0617d5",
-        "src/arithmetic/integers.rs": "ca1828b214769e1192785acc2dd369e0776f38654f74885dbfc32bd0025fc350",
+        "src/arithmetic/integers.rs": "2004940e3ec8392bba498c4c64f32816872b700489241f1ccfd01d1fd1a4ceb3",
         "src/arithmetic/probability.rs": "7ccb50593b03995e4f3a2b9b038f1d7ab37c54a2acdc7dc9dad1a78ba2d85235",
         "src/arithmetic/refill.rs": "7c3b1461c6fb47f050790bbf78221958737e9f7912e9ac189f81bec57ae70b21",
         "src/arithmetic/tests.rs": "2beb39484aac38e93b73c087dc6671a30482dc985a17f99f50c04874a46d4e07",
@@ -159,7 +159,7 @@
       "source_files_sha256": {
         "src/arithmetic.rs": "1c69a467424f0e32c4751f7e9db0dce1e1ffb3e8f6ed6a90c48f4303e8cfac80",
         "src/arithmetic/decoding.rs": "3b5d505c8a6ee0648c614e612b6ad716f84047c20c0d70276a7e3e717e0617d5",
-        "src/arithmetic/integers.rs": "ca1828b214769e1192785acc2dd369e0776f38654f74885dbfc32bd0025fc350",
+        "src/arithmetic/integers.rs": "2004940e3ec8392bba498c4c64f32816872b700489241f1ccfd01d1fd1a4ceb3",
         "src/arithmetic/probability.rs": "7ccb50593b03995e4f3a2b9b038f1d7ab37c54a2acdc7dc9dad1a78ba2d85235",
         "src/arithmetic/refill.rs": "7c3b1461c6fb47f050790bbf78221958737e9f7912e9ac189f81bec57ae70b21",
         "src/arithmetic/tests.rs": "2beb39484aac38e93b73c087dc6671a30482dc985a17f99f50c04874a46d4e07",
@@ -206,7 +206,7 @@
       "source_files_sha256": {
         "src/arithmetic.rs": "1c69a467424f0e32c4751f7e9db0dce1e1ffb3e8f6ed6a90c48f4303e8cfac80",
         "src/arithmetic/decoding.rs": "3b5d505c8a6ee0648c614e612b6ad716f84047c20c0d70276a7e3e717e0617d5",
-        "src/arithmetic/integers.rs": "ca1828b214769e1192785acc2dd369e0776f38654f74885dbfc32bd0025fc350",
+        "src/arithmetic/integers.rs": "2004940e3ec8392bba498c4c64f32816872b700489241f1ccfd01d1fd1a4ceb3",
         "src/arithmetic/probability.rs": "7ccb50593b03995e4f3a2b9b038f1d7ab37c54a2acdc7dc9dad1a78ba2d85235",
         "src/arithmetic/refill.rs": "7c3b1461c6fb47f050790bbf78221958737e9f7912e9ac189f81bec57ae70b21",
         "src/arithmetic/tests.rs": "2beb39484aac38e93b73c087dc6671a30482dc985a17f99f50c04874a46d4e07",
@@ -253,7 +253,7 @@
       "source_files_sha256": {
         "src/arithmetic.rs": "1c69a467424f0e32c4751f7e9db0dce1e1ffb3e8f6ed6a90c48f4303e8cfac80",
         "src/arithmetic/decoding.rs": "3b5d505c8a6ee0648c614e612b6ad716f84047c20c0d70276a7e3e717e0617d5",
-        "src/arithmetic/integers.rs": "ca1828b214769e1192785acc2dd369e0776f38654f74885dbfc32bd0025fc350",
+        "src/arithmetic/integers.rs": "2004940e3ec8392bba498c4c64f32816872b700489241f1ccfd01d1fd1a4ceb3",
         "src/arithmetic/probability.rs": "7ccb50593b03995e4f3a2b9b038f1d7ab37c54a2acdc7dc9dad1a78ba2d85235",
         "src/arithmetic/refill.rs": "7c3b1461c6fb47f050790bbf78221958737e9f7912e9ac189f81bec57ae70b21",
         "src/arithmetic/tests.rs": "2beb39484aac38e93b73c087dc6671a30482dc985a17f99f50c04874a46d4e07",
@@ -300,7 +300,7 @@
       "source_files_sha256": {
         "src/arithmetic.rs": "1c69a467424f0e32c4751f7e9db0dce1e1ffb3e8f6ed6a90c48f4303e8cfac80",
         "src/arithmetic/decoding.rs": "3b5d505c8a6ee0648c614e612b6ad716f84047c20c0d70276a7e3e717e0617d5",
-        "src/arithmetic/integers.rs": "ca1828b214769e1192785acc2dd369e0776f38654f74885dbfc32bd0025fc350",
+        "src/arithmetic/integers.rs": "2004940e3ec8392bba498c4c64f32816872b700489241f1ccfd01d1fd1a4ceb3",
         "src/arithmetic/probability.rs": "7ccb50593b03995e4f3a2b9b038f1d7ab37c54a2acdc7dc9dad1a78ba2d85235",
         "src/arithmetic/refill.rs": "7c3b1461c6fb47f050790bbf78221958737e9f7912e9ac189f81bec57ae70b21",
         "src/arithmetic/tests.rs": "2beb39484aac38e93b73c087dc6671a30482dc985a17f99f50c04874a46d4e07",

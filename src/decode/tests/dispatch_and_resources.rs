@@ -459,3 +459,47 @@ fn global_stream_with_tables_segment_pre_reserves_and_stores_table() {
     assert_eq!(globals.tables.len(), 1);
     assert_eq!(globals.tables[0].0, 0);
 }
+
+#[test]
+fn direct_generic_page_index_admits_xor_only_on_pristine_zero_page() {
+    let generous = Limits::default();
+    let mut header = symbol_reference_segment(&[]).header;
+    header.segment_type = SegmentType::ImmediateGenericRegion;
+    let mut payload = Vec::new();
+    for value in [9_u32, 1_u32, 0_u32, 0_u32] {
+        payload.extend_from_slice(&value.to_be_bytes());
+    }
+    payload.extend_from_slice(&[2_u8, 6_u8, 0xff, 0]); // operator=2 (Xor), template=3, flags=6
+    let segment = ParsedSegment {
+        header,
+        payload: &payload,
+        data: ParsedData::Other,
+    };
+    let work = DecodeWork { used: 0 };
+
+    // Pristine zero page with combination override accepts Xor directly.
+    let mut zero_page = runtime_test_page(9, 1, false, true, CombinationOperator::Or, &generous);
+    zero_page.combination_override = true;
+    let pages = vec![(1, zero_page)];
+    assert_eq!(
+        direct_generic_page_index(&segment, &pages, &work, &generous),
+        Some(0)
+    );
+
+    // Pristine zero page with default_operator == Xor accepts Xor directly.
+    let xor_default = runtime_test_page(9, 1, false, true, CombinationOperator::Xor, &generous);
+    let pages = vec![(1, xor_default)];
+    assert_eq!(
+        direct_generic_page_index(&segment, &pages, &work, &generous),
+        Some(0)
+    );
+
+    // Non-zero default pixel page rejects Xor (1 ^ x != x).
+    let mut one_page = runtime_test_page(9, 1, true, true, CombinationOperator::Xor, &generous);
+    one_page.combination_override = true;
+    let pages = vec![(1, one_page)];
+    assert_eq!(
+        direct_generic_page_index(&segment, &pages, &work, &generous),
+        None
+    );
+}
