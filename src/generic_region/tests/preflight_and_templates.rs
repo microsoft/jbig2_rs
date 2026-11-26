@@ -272,3 +272,90 @@ fn raw_context_descriptors_match_literal_sampling_and_history_masks() {
         }
     }
 }
+
+#[test]
+fn scalar_generic_fallback_handles_extended_and_non_nominal_templates() {
+    let limits = Limits::default();
+    let coded = arithmetic_bytes(&mut 0x9988_7766_5544_3322);
+    for (template, extended, adaptive) in [
+        (
+            GenericTemplate::Template0,
+            true,
+            [
+                TemplateOffset::new(-2, 0),
+                TemplateOffset::new(0, -2),
+                TemplateOffset::new(-2, -1),
+                TemplateOffset::new(-1, -2),
+                TemplateOffset::new(1, -2),
+                TemplateOffset::new(2, -1),
+                TemplateOffset::new(-3, 0),
+                TemplateOffset::new(-4, 0),
+                TemplateOffset::new(2, -2),
+                TemplateOffset::new(3, -1),
+                TemplateOffset::new(-2, -2),
+                TemplateOffset::new(-3, -1),
+            ],
+        ),
+        (
+            GenericTemplate::Template1,
+            false,
+            [
+                TemplateOffset::new(2, -1),
+                TemplateOffset::new(0, 0),
+                TemplateOffset::new(0, 0),
+                TemplateOffset::new(0, 0),
+                TemplateOffset::new(0, 0),
+                TemplateOffset::new(0, 0),
+                TemplateOffset::new(0, 0),
+                TemplateOffset::new(0, 0),
+                TemplateOffset::new(0, 0),
+                TemplateOffset::new(0, 0),
+                TemplateOffset::new(0, 0),
+                TemplateOffset::new(0, 0),
+            ],
+        ),
+    ] {
+        let mut dec_owned = ArithmeticDecoder::new(&coded).expect("decoder");
+        let mut dec_into = ArithmeticDecoder::new(&coded).expect("decoder");
+        let mut ctx_owned =
+            GenericContexts::new(template, extended, &limits).expect("context bank");
+        let mut ctx_into = GenericContexts::new(template, extended, &limits).expect("context bank");
+        let call = GenericArithmeticCall {
+            width: 11,
+            height: 4,
+            adaptive,
+            typical_prediction: true,
+            skip: None,
+        };
+        let mut work_owned = 0_u64;
+        let owned = decode_generic_on(
+            &mut dec_owned,
+            &mut ctx_owned,
+            call,
+            4,
+            &limits,
+            &mut work_owned,
+        )
+        .expect("scalar owned fallback");
+        let mut target = Bitmap::blank(11, 4, &limits).expect("target bitmap");
+        let mut work_into = 0_u64;
+        decode_generic_on_into(
+            &mut dec_into,
+            &mut ctx_into,
+            call,
+            4,
+            &limits,
+            &mut work_into,
+            &mut target,
+        )
+        .expect("scalar into fallback");
+        assert_eq!(owned, target);
+        assert_eq!(ctx_owned.contexts, ctx_into.contexts);
+        assert_decoder_state_eq(&dec_owned, &dec_into);
+        assert!(!crate::generic_region::support::sample_signed(
+            &target,
+            None,
+            Some(0)
+        ));
+    }
+}

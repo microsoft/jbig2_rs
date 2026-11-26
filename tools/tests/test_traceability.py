@@ -2593,7 +2593,7 @@ class TraceabilityTests(unittest.TestCase):
             {claim["runtime"] for claim in assignment["functional_evidence"]},
             {'huffman::construction::HuffmanTable::from_line_source', 'huffman::construction::HuffmanTable::new',
              'huffman::construction::HuffmanTable::new_symbol_ids', 'huffman::construction::HuffmanTable::standard',
-             'huffman::construction::HuffmanTable::from_encoded', 'huffman::decoding::build_prefix_lookup',
+             'huffman::construction::HuffmanTable::from_encoded', 'huffman::lookup::build_prefix_lookup',
              'huffman::wide::WideCode::zero'},
         )
         for name in (
@@ -2770,8 +2770,8 @@ class TraceabilityTests(unittest.TestCase):
         tokens = " ".join(
             token for claim in requirement["functional_evidence"] for token in claim["tokens"]
         )
-        self.assertIn("state_index == 0", tokens)
-        self.assertIn("mps == 0", tokens)
+        self.assertIn("context_index(", tokens)
+        self.assertIn("context_mps(", tokens)
 
 
 if __name__ == "__main__":

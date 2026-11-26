@@ -441,3 +441,21 @@ fn owned_page_collector_rejects_allocated_counter_overflow_without_mutation() {
     assert_eq!(collector.bitmap_bytes, 0);
     assert!(collector.pages.is_empty());
 }
+
+#[test]
+fn global_stream_with_tables_segment_pre_reserves_and_stores_table() {
+    let mut table_payload = vec![0x12, 0, 0, 0, 0, 0, 0, 0, 2];
+    table_payload.push(0b0110_0010);
+    let mut stream = Vec::new();
+    stream.extend_from_slice(&0_u32.to_be_bytes());
+    stream.push(53); // SegmentType::Tables
+    stream.push(0); // 0 referred segments
+    stream.push(0); // page 0 (global)
+    stream.extend_from_slice(&u32::try_from(table_payload.len()).unwrap().to_be_bytes());
+    stream.extend_from_slice(&table_payload);
+
+    let limits = Limits::default();
+    let globals = super::orchestration::decode_global_resources(&stream, &limits).unwrap();
+    assert_eq!(globals.tables.len(), 1);
+    assert_eq!(globals.tables[0].0, 0);
+}

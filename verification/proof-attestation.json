@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "verified_exact_project_scope_with_reviewed_limits",
   "source_revision": "3e275d1a2bfddb95a25c801ae37a277500849ce8",
-  "scope": "Fresh pinned whole verification of exact supplied Huffman cache/field lookup and concrete/enum integer-adapter composition. Each supplied custom/standard/absent field binding yields its exact signed integer, OOB or converted error and complete consumed cursor, with unchanged reader bytes and all table/strip/ID/refinement metadata. Missing bindings consume no input. Existing arithmetic/literal contracts and all770 native production declaration bodies are unchanged from accepted main775e57f; no stronger precondition, assumption, trusted body, runtime/proof substitution or reviewed limitation is added. Prior owned-halftone/export and strict/Compatibility/RGB behavior, limits, bi-level matrix, host-build profiles and1050-second CI guard remain. These project-result contracts do not derive normative header selectors, approve Annex B entries, complete statement enumeration, establish full rendered streams or grant external-validation readiness.",
+  "scope": "Fresh pinned whole-crate Verus verification of all verified performance optimizations (#247-#252): 1-byte packed ArithmeticContext, single-shot leading_zeros renormalization and 3-register cached MQ fast path, direct packed-byte generic/pattern/custom/refinement decoders with 8-pixel MPS/LTP skips, validated refinement context reuse, operator- and alignment-specialized bitmap composition, exact segment-type pre-reservation, multi-path BitReader::read_bits, compact HuffmanTable with static .rodata Annex B tables A-O, linear bucket construction, and u64 fallback decoding. Zero unsafe code, zero runtime-proof divergences, unchanged 20 reviewed verifier limitations, and all 784 verified production functions / 1,709 obligations pass with 0 errors.",
   "toolchain": {
     "manifest": "config/toolchain.json",
     "verus_version": "0.2026.10.04.426d8b0",
@@ -11,8 +11,8 @@
   },
   "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-issue135-fields CARGO_INCREMENTAL=0 cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/issue135-20261125/final/expanded\" --output-json",
   "result": {
-    "verified_obligations": 1532,
-    "verified_production_functions": 750,
+    "verified_obligations": 1709,
+    "verified_production_functions": 784,
     "errors": 0,
     "proof_build_compiles": true,
     "exact_production_source_compiles": true,
@@ -24,8 +24,8 @@
     "runtime_proof_divergences": 0,
     "incomplete_functions": 0
   },
-  "production_proof_coverage_sha256": "8e751e8122f8d8d1a17d40fe37ca1b0132748e5a793361d8f655d8e47dbce98a",
-  "proof_dispositions_sha256": "0743e3eba8f677f1d891f669cee2929238ae73613896d4f0f0a3ef7329bb7faa",
+  "production_proof_coverage_sha256": "e510fb23b3a502189856bd579f35e76d9d95e1c3980d574e96b5e1c632f1a785",
+  "proof_dispositions_sha256": "12bfab442850abd48ddf8801b3b3c56dcb0fc33545b95892a6f03030df47258e",
   "standard_library_boundary": {
     "manifest": "verification/stdlib/review.json",
     "manifest_sha256": "5f007f853c6caad16d6d318bde996373c6a6f886e8949cd0df62612e5408a92c",
@@ -33,7 +33,7 @@
     "review_kind": "delegated_engineering_review",
     "normative_approval": false
   },
-  "current_evidence_note": "Exact750 direct verified functions and unchanged20 reviewed limitations retain whole1532/0 with stronger field-result contracts and refreshed source-bound coverage. All770 production declaration bodies match accepted main775e57f; MSRV643 native tests plus one doctest pass, with16 existing ignored tests. Five new contrasts form a separate complete huffman-field-selection group, preserving the original64-group/505-contrast historical scopes and all prior queries as current65/510. Selective literal negative controls retain the new table guarantees; table controls retain literal/arithmetic semantics, reader validity, metadata frames and the other result/cursor component. Actual Cargo profiles, root invalidation, roles, concurrency, pinned tools/resource settings and1050-second guard remain. Require complete same-run protected CI on the final head; local diagnostics are not canonical acceptance. Original N2/LLVM24/PDFium qualification remains the prior published measurement, not a new binary/timing claim. No backport, publication, normative approval or readiness grant.",
+  "current_evidence_note": "784 direct verified production functions and unchanged 20 reviewed limitations pass fresh pinned whole-crate Verus (1,709 verified obligations, 0 errors, 0 runtime-proof divergences). MSRV 1.88.0 tests (649 tests + 1 doctest), Rust 1.89.0 clippy -D warnings, rustfmt, runtime audit, traceability, provenance, and pinned LLVM coverage (93.47% lines / 88.05% regions / 86.34% branches) all pass. Hosted clean-runner exact-129/133 paired benchmarks measured 2.86x overall geomean speedup on x86-64 (run 45828548264, ratio 0.3496) and 2.74x on native Neoverse-N2 ARM64 (run 45828553596, ratio 0.3655) with 0/492 correctness differences. Require complete same-run protected CI on the final PR head.",
   "host_build_dependency_ci_repair": {
     "baseline_source": "470aaa6e556443872a77784dece82ebab0bafb4f",
     "preserved_rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/45410252328",
@@ -129,7 +129,7 @@
     "destination_shard": 4,
     "measured_group_seconds": 92.39983617400003,
     "projected_source_shard_seconds": 1034.037577418,
-    "projected_destination_shard_seconds": 875.938735740,
+    "projected_destination_shard_seconds": 875.93873574,
     "complete_owned_profile_envelope_maximum_seconds": 1045.988282866,
     "conservative_destination_shard_seconds": 1021.836501295,
     "guard_seconds_unchanged": 1050,
