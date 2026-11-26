@@ -31,7 +31,17 @@ fn decode_generic_segment_oracle(
     limits: &Limits,
     mmr_scratch: &mut MmrScratch,
 ) -> Result<(), DecodeError> {
-    decode_generic_segment_buffered(segment, pages, buffers, retained, work, limits, mmr_scratch)
+    let mut generic_scratch = Vec::new();
+    decode_generic_segment_buffered(
+        segment,
+        pages,
+        buffers,
+        retained,
+        work,
+        limits,
+        mmr_scratch,
+        &mut generic_scratch,
+    )
 }
 
 #[cfg(test)]
@@ -271,6 +281,7 @@ fn assert_direct_page_matches_oracle(
     let mut oracle_work = DecodeWork::new(0, limits).expect("oracle work");
     let mut direct_scratch = MmrScratch::default();
     let mut oracle_scratch = MmrScratch::default();
+    let mut direct_generic_scratch = Vec::new();
     let direct = decode_generic_segment(
         segment,
         &mut direct_pages,
@@ -279,6 +290,7 @@ fn assert_direct_page_matches_oracle(
         &mut direct_work,
         limits,
         &mut direct_scratch,
+        &mut direct_generic_scratch,
     );
     let oracle = decode_generic_segment_oracle(
         segment,

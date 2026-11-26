@@ -44,7 +44,14 @@ pub(crate) fn decode_generic_with_colour(
     } else {
         None
     };
-    let bitmap = decode_known_bitmap(&payload[header_length..coded_end], &header, limits, scratch)?;
+    let mut generic_scratch = Vec::new();
+    let bitmap = decode_known_bitmap(
+        &payload[header_length..coded_end],
+        &header,
+        limits,
+        scratch,
+        &mut generic_scratch,
+    )?;
     let rows = header.region.height;
     Ok((
         DecodedGenericRegion {

@@ -99,6 +99,48 @@ impl GenericContexts {
         })
     }
 
+    /// Allocate or reuse a scratch statistics buffer compatible with `template`.
+    ///
+    /// Enforces the same managed-memory limits as [`Self::new`] before reusing
+    /// any existing allocation capacity, and zeroes all `count` entries.
+    #[cfg_attr(verus_keep_ghost, verus_spec(result =>
+        ensures match result {
+            Ok(contexts) =>
+                contexts.template == template
+                && contexts.extended_template == extended_template
+                && generic_region_spec::generic_contexts_valid(&contexts)
+                && contexts.storage_bytes as nat == contexts.contexts@.len() * 2
+                && (forall|index: int| 0 <= index < contexts.contexts@.len() ==>
+                    crate::arithmetic::arithmetic_spec::context_index(contexts.contexts@[index]) == 0
+                        && crate::arithmetic::arithmetic_spec::context_mps(contexts.contexts@[index]) == 0),
+            Err(_) => true,
+        },
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
+    pub(crate) fn from_scratch(
+        template: GenericTemplate,
+        extended_template: bool,
+        limits: &Limits,
+        scratch: &mut Vec<ArithmeticContext>,
+    ) -> Result<Self, GenericRegionError> {
+        let count = generic_context_count(template);
+        let storage_bytes = context_storage_bytes(count)?;
+        let contexts = allocate_contexts_from_scratch(count, 0, limits, scratch)?;
+        Ok(Self {
+            template,
+            extended_template,
+            contexts,
+            storage_bytes,
+        })
+    }
+
+    /// Return the underlying context buffer to `scratch` for reuse within the
+    /// same document decode.
+    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    pub(crate) fn into_scratch(self, scratch: &mut Vec<ArithmeticContext>) {
+        *scratch = self.contexts;
+    }
+
     /// Reset all contexts to `I = 0, MPS = 0`.
     #[cfg_attr(verus_keep_ghost, verus_spec(out =>
         ensures
@@ -619,13 +661,37 @@ pub(super) fn allocate_contexts(
     bitmap_bytes: u64,
     limits: &Limits,
 ) -> Result<Vec<ArithmeticContext>, GenericRegionError> {
+    let mut scratch = Vec::new();
+    allocate_contexts_from_scratch(count, bitmap_bytes, limits, &mut scratch)
+}
+
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match out {
+        Ok(contexts) =>
+            contexts@.len() == count
+            && forall|index: int| 0 <= index < contexts@.len() ==>
+                crate::arithmetic::arithmetic_spec::context_valid(contexts@[index])
+                && crate::arithmetic::arithmetic_spec::context_index(contexts@[index]) == 0
+                && crate::arithmetic::arithmetic_spec::context_mps(contexts@[index]) == 0,
+        Err(_) => true,
+    },
+))]
+pub(super) fn allocate_contexts_from_scratch(
+    count: usize,
+    bitmap_bytes: u64,
+    limits: &Limits,
+    scratch: &mut Vec<ArithmeticContext>,
+) -> Result<Vec<ArithmeticContext>, GenericRegionError> {
     if count > MAX_GENERIC_CONTEXTS.max(MAX_REFINEMENT_CONTEXTS) {
         return Err(MalformedError::IntegerOverflow.into());
     }
     let context_bytes = context_storage_bytes(count)?;
     enforce_managed_memory(context_bytes, bitmap_bytes, limits)?;
     let mut contexts = Vec::new();
+    std::mem::swap(&mut contexts, scratch);
+    contexts.clear();
     if contexts.try_reserve(count).is_err() {
+        *scratch = contexts;
         return Err(DecodeError::Allocation {
             requested_bytes: context_bytes,
         }

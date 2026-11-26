@@ -2,9 +2,9 @@
   "schema_version": 1,
   "scope_version": 1,
   "status": "layout_rebound_ratchet_release_goals_met",
-  "policy": "Refreshed pinned LLVM coverage ratchet after verified performance optimizations (#247-#252) replacing src/generic_row_ring.rs with direct packed-byte generic/refinement/composition/Huffman fast paths. Every surviving file is non-regressing against its prior reviewed floor, every new runtime file is locked to its fresh pinned LLVM measurement, and overall line/region/branch coverage increased (93.47% lines, 88.05% regions, 86.34% branches) with all release goals met.",
+  "policy": "Refreshed pinned LLVM coverage ratchet after verified performance optimizations #253 and #254 (document-scoped GenericContexts scratch reuse across generic/pattern/halftone, pristine-page XOR direct decode, and register-cached MQ decode_integer/decode_iaid). Added src/halftone/scratch.rs (100% lines/regions/branches) and moved decode_arithmetic_generic_with_scratch to segments.rs to respect the 800-line file budget. Overall coverage increased on all three metrics (93.59% lines, 88.21% regions, 86.43% branches) with all release goals met.",
   "source_revision": "e781aff6c5de6cba4924dfde52dc78d4c78dc15a",
-  "source_sha256": "2d316b876152add96af4933680824c915096d0dde3a09a12d3483a87a4a41509",
+  "source_sha256": "df527b92622ebf4be7a39401485741c60cf2915d1e2f9a7a93469de8af7d6507",
   "test_source_sha256": "70b01cd7a9fd05e8ebf80b341fc9f9a4a6f4c2b079517dae30a2ec07ba8191c2",
   "toolchain": {
     "rust_toolchain": "nightly-2026-10-12",
@@ -18,16 +18,16 @@
   },
   "totals": {
     "lines": {
-      "covered": 16163,
-      "count": 17292
+      "covered": 16557,
+      "count": 17692
     },
     "regions": {
-      "covered": 15870,
-      "count": 18023
+      "covered": 16097,
+      "count": 18249
     },
     "branches": {
-      "covered": 3319,
-      "count": 3844
+      "covered": 3343,
+      "count": 3868
     }
   },
   "files": {
@@ -89,29 +89,29 @@
     },
     "src/arithmetic/fast.rs": {
       "lines": {
-        "covered": 66,
-        "count": 66
+        "covered": 120,
+        "count": 120
       },
       "regions": {
-        "covered": 68,
-        "count": 68
+        "covered": 111,
+        "count": 111
       },
       "branches": {
-        "covered": 18,
-        "count": 18
+        "covered": 24,
+        "count": 24
       }
     },
     "src/arithmetic/integers.rs": {
       "lines": {
-        "covered": 99,
-        "count": 104
+        "covered": 161,
+        "count": 162
       },
       "regions": {
-        "covered": 103,
-        "count": 111
+        "covered": 143,
+        "count": 146
       },
       "branches": {
-        "covered": 28,
+        "covered": 29,
         "count": 30
       }
     },
@@ -313,16 +313,16 @@
     },
     "src/decode/dispatch.rs": {
       "lines": {
-        "covered": 415,
-        "count": 495
+        "covered": 449,
+        "count": 536
       },
       "regions": {
-        "covered": 375,
-        "count": 499
+        "covered": 390,
+        "count": 515
       },
       "branches": {
-        "covered": 69,
-        "count": 90
+        "covered": 76,
+        "count": 98
       }
     },
     "src/decode/dispatch/references.rs": {
@@ -341,12 +341,12 @@
     },
     "src/decode/orchestration.rs": {
       "lines": {
-        "covered": 143,
-        "count": 160
+        "covered": 145,
+        "count": 162
       },
       "regions": {
-        "covered": 114,
-        "count": 146
+        "covered": 116,
+        "count": 148
       },
       "branches": {
         "covered": 10,
@@ -551,12 +551,12 @@
     },
     "src/generic_region/colour.rs": {
       "lines": {
-        "covered": 29,
-        "count": 30
+        "covered": 36,
+        "count": 37
       },
       "regions": {
-        "covered": 23,
-        "count": 28
+        "covered": 25,
+        "count": 30
       },
       "branches": {
         "covered": 5,
@@ -565,12 +565,12 @@
     },
     "src/generic_region/contexts.rs": {
       "lines": {
-        "covered": 284,
-        "count": 294
+        "covered": 314,
+        "count": 325
       },
       "regions": {
-        "covered": 243,
-        "count": 253
+        "covered": 268,
+        "count": 280
       },
       "branches": {
         "covered": 38,
@@ -663,16 +663,16 @@
     },
     "src/generic_region/generic.rs": {
       "lines": {
-        "covered": 369,
-        "count": 395
+        "covered": 348,
+        "count": 373
       },
       "regions": {
-        "covered": 326,
-        "count": 363
+        "covered": 293,
+        "count": 324
       },
       "branches": {
-        "covered": 50,
-        "count": 64
+        "covered": 39,
+        "count": 46
       }
     },
     "src/generic_region/generic_context.rs": {
@@ -719,16 +719,16 @@
     },
     "src/generic_region/segments.rs": {
       "lines": {
-        "covered": 313,
-        "count": 322
+        "covered": 468,
+        "count": 480
       },
       "regions": {
-        "covered": 294,
-        "count": 323
+        "covered": 391,
+        "count": 427
       },
       "branches": {
-        "covered": 92,
-        "count": 100
+        "covered": 111,
+        "count": 126
       }
     },
     "src/generic_region/support.rs": {
@@ -747,16 +747,16 @@
     },
     "src/halftone.rs": {
       "lines": {
-        "covered": 277,
-        "count": 278
+        "covered": 282,
+        "count": 283
       },
       "regions": {
-        "covered": 217,
-        "count": 223
+        "covered": 216,
+        "count": 222
       },
       "branches": {
-        "covered": 22,
-        "count": 22
+        "covered": 18,
+        "count": 18
       }
     },
     "src/halftone/headers.rs": {
@@ -813,6 +813,20 @@
       "branches": {
         "covered": 29,
         "count": 36
+      }
+    },
+    "src/halftone/scratch.rs": {
+      "lines": {
+        "covered": 66,
+        "count": 66
+      },
+      "regions": {
+        "covered": 37,
+        "count": 37
+      },
+      "branches": {
+        "covered": 6,
+        "count": 6
       }
     },
     "src/huffman.rs": {

@@ -32,15 +32,38 @@ RETURN = """if value > u32::MAX as usize {
     return Err(ArithmeticError::Malformed(MalformedError::IntegerOverflow));
 }
 Ok(value as u32)"""
-CALL = "let decision = self.decode(&mut contexts[previous])?;"
+CALL = """Err(error) => {
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        assert(ext_equal(
+            ctxs@ + _rest@,
+            before_contexts.update(
+                before_previous as int,
+                arithmetic_spec::context_after_decision(
+                    &before,
+                    before_contexts[before_previous as int],
+                ),
+            ),
+        ));
+    }
+    loop_error = Some(error);
+}"""
 
 
-def case(identity, site, replacement, control, *overlapping, native_test=None):
+ERR_INV = """&&& arithmetic_spec::iaid_run(*old(self), old(contexts)@, 1, code_length, required)
+    == (Err(loop_error.unwrap()), *self, ctxs@ + _rest@)"""
+ERR_INV_NO_RESULT = """&&& arithmetic_spec::iaid_run(*old(self), old(contexts)@, 1, code_length, required).1 == *self
+&&& arithmetic_spec::iaid_run(*old(self), old(contexts)@, 1, code_length, required).2 == ctxs@ + _rest@"""
+ERR_INV_NO_DECODER = """&&& arithmetic_spec::iaid_run(*old(self), old(contexts)@, 1, code_length, required).0 == Err(loop_error.unwrap())
+&&& arithmetic_spec::iaid_run(*old(self), old(contexts)@, 1, code_length, required).2 == ctxs@ + _rest@"""
+
+
+def case(identity, site, replacement, control, *overlapping, native_test=None, extra_controls=()):
     return {
         "id": identity, "file": "src/arithmetic/integers.rs", "module": "arithmetic",
         "function": "ArithmeticDecoder::decode_iaid",
         "site": site, "replacement": replacement,
-        "controls": tuple((clause, "") for clause in (control, *overlapping)),
+        "controls": tuple((clause, "") for clause in (control, *overlapping)) + extra_controls,
         **({"native_test": native_test} if native_test is not None else {}),
     }
 
@@ -63,24 +86,27 @@ CASES = (
     ),
     case(
         "iaid_masks_decision_eof_as_overflow", CALL,
-        """let decision = match self.decode(&mut contexts[previous]) {
-            Ok(decision) => decision,
-            Err(_error) => return Err(ArithmeticError::Malformed(MalformedError::IntegerOverflow)),
-        };""",
+        CALL.replace(
+            "Err(error) => {",
+            "Err(_error) => {",
+        ).replace(
+            "loop_error = Some(error);",
+            "loop_error = Some(ArithmeticError::Malformed(MalformedError::IntegerOverflow));",
+        ),
         RESULT,
+        extra_controls=((ERR_INV, ERR_INV_NO_RESULT),),
     ),
     case(
         "iaid_rewinds_partial_error_input", CALL,
-        """let decision = match self.decode(&mut contexts[previous]) {
-            Ok(decision) => decision,
-            Err(error) => {
-                self.byte_position = 0;
-                self.current_byte = self.bytes[0];
-                self.marker = None;
-                return Err(error);
-            }
-        };""",
+        CALL.replace(
+            "loop_error = Some(error);",
+            """self.byte_position = 0;
+            self.current_byte = self.bytes[0];
+            self.marker = None;
+            loop_error = Some(error);""",
+        ),
         DECODER,
+        extra_controls=((ERR_INV, ERR_INV_NO_DECODER),),
     ),
     case(
         "iaid_returns_the_excluded_upper_bound", RETURN,

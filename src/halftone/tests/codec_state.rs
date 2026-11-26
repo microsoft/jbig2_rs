@@ -283,6 +283,19 @@ fn arithmetic_state_rejects_mode_and_template_changes_without_consumption() {
 fn arithmetic_finalization_rejects_mismatched_extent_without_changing_the_session() {
     let coded = [0xff, 0xac];
     let limits = Limits::default();
+    let mut scratch = Vec::new();
+    let pat_state = new_pattern_arithmetic_state_from_scratch(
+        &coded,
+        GenericTemplate::Template3,
+        3,
+        &limits,
+        &mut scratch,
+    )
+    .unwrap();
+    pat_state.into_scratch(&mut scratch);
+    let _ = new_halftone_state(&[], false, GenericTemplate::Template3, 3, 1, &limits).unwrap();
+    let _ = new_halftone_state(&coded, true, GenericTemplate::Template3, 3, 2, &limits).unwrap();
+    let _ = new_halftone_state(&coded, false, GenericTemplate::Template3, 3, 2, &limits).unwrap();
     for pattern in [false, true] {
         let mut state = if pattern {
             new_pattern_arithmetic_state(&coded, GenericTemplate::Template3, 3, &limits).unwrap()
