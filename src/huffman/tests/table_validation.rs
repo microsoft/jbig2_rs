@@ -554,6 +554,65 @@ fn open_ranges_reject_values_outside_i32() {
 }
 
 #[test]
+fn standard_tables_match_static_tables_across_all_annex_b_variants() {
+    let limits = Limits::default();
+    let probe_bytes = [0x00, 0x55, 0xaa, 0xff, 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc];
+    for (variant, lines) in [
+        (StandardHuffmanTable::A, StandardLines::A),
+        (StandardHuffmanTable::B, StandardLines::B),
+        (StandardHuffmanTable::C, StandardLines::C),
+        (StandardHuffmanTable::D, StandardLines::D),
+        (StandardHuffmanTable::E, StandardLines::E),
+        (StandardHuffmanTable::F, StandardLines::F),
+        (StandardHuffmanTable::G, StandardLines::G),
+        (StandardHuffmanTable::H, StandardLines::H),
+        (StandardHuffmanTable::I, StandardLines::I),
+        (StandardHuffmanTable::J, StandardLines::J),
+        (StandardHuffmanTable::K, StandardLines::K),
+        (StandardHuffmanTable::L, StandardLines::L),
+        (StandardHuffmanTable::M, StandardLines::M),
+        (StandardHuffmanTable::N, StandardLines::N),
+        (StandardHuffmanTable::O, StandardLines::O),
+    ] {
+        let dynamic = HuffmanTable::from_line_source(HuffmanLines::Standard(lines), &limits)
+            .expect("dynamic standard table");
+        let cloned = HuffmanTable::standard(variant, &limits).expect("cloned standard table");
+        let static_table =
+            HuffmanTable::standard_static(variant, &limits).expect("static standard table");
+        assert_eq!(dynamic.lines.len(), static_table.lines.len());
+        assert_eq!(cloned.lines.len(), static_table.lines.len());
+        assert_eq!(dynamic.max_prefix_len, static_table.max_prefix_len);
+        assert_eq!(
+            dynamic.prefer_prefix_lookup,
+            static_table.prefer_prefix_lookup
+        );
+        assert_eq!(dynamic.lines.as_slice(), static_table.lines.as_slice());
+        assert_eq!(
+            dynamic.ordered_lines.as_slice(),
+            static_table.ordered_lines.as_slice()
+        );
+        assert_eq!(dynamic.short_length_count, static_table.short_length_count);
+        assert_eq!(dynamic.short_first_code, static_table.short_first_code);
+        assert_eq!(dynamic.short_first_line, static_table.short_first_line);
+        assert_eq!(
+            dynamic.prefix_lookup.as_slice(),
+            static_table.prefix_lookup.as_slice()
+        );
+        for offset in 0..16 {
+            let mut r_dyn = bit_reader(&probe_bytes);
+            let mut r_sta = bit_reader(&probe_bytes);
+            r_dyn.bit_position = offset;
+            r_sta.bit_position = offset;
+            assert_eq!(
+                dynamic.decode(&mut r_dyn).ok(),
+                static_table.decode(&mut r_sta).ok()
+            );
+            assert_eq!(r_dyn.bit_position, r_sta.bit_position);
+        }
+    }
+}
+
+#[test]
 fn honors_memory_and_stream_limits() {
     let limits = Limits {
         max_decoder_managed_memory_bytes: 1,

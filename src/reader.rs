@@ -253,9 +253,13 @@ impl BitReader<'_> {
     ))]
     #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     #[allow(clippy::cast_possible_truncation, clippy::too_many_lines)]
+    #[inline]
     pub(crate) fn read_bits(&mut self, count: u8) -> Result<u32, MalformedError> {
         if count > 32 {
             return Err(MalformedError::InvalidBitCount(count));
+        }
+        if count == 0 {
+            return Ok(0);
         }
         let total_bits = self
             .bytes
@@ -270,9 +274,6 @@ impl BitReader<'_> {
                 needed: u64::from(count),
                 remaining: remaining as u64,
             });
-        }
-        if count == 0 {
-            return Ok(0);
         }
 
         let byte_index = self.bit_position / 8;

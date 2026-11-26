@@ -81,6 +81,13 @@ FALLBACK_INVARIANT = """huffman_spec::fallback_run(
 ) == huffman_spec::fallback_run(
     self, reader.bytes@, reader.bit_position, length, code,
 ),"""
+FALLBACK_FAST_INVARIANT = """huffman_spec::fallback_run(
+    self, old(reader).bytes@, old(reader).bit_position,
+    1, WideCode { limbs: [0u64, 0, 0, 0] },
+) == huffman_spec::fallback_run(
+    self, reader.bytes@, (start_pos + length - 1) as usize,
+    length, WideCode { limbs: [code32 as u64, 0, 0, 0] },
+),"""
 LINE_VALUE = """out == huffman_spec::line_state(
     line, old(reader).bytes@, old(reader).bit_position,
 ).0,"""
@@ -148,7 +155,7 @@ RETURN = """Ok(Self {
 
 def output_case(identity, site_line, replacement_line, predicate):
     return {
-        "id": identity, "file": "src/huffman.rs", "module": "huffman",
+        "id": identity, "file": "src/huffman/construction.rs", "module": "huffman",
         "function": "HuffmanTable::from_line_source",
         "site": RETURN,
         "replacement": RETURN.replace(f"\n    {site_line},", f"\n    {replacement_line},"),
@@ -194,7 +201,10 @@ def fallback_case(identity, site, replacement, test):
         "id": identity, "file": FALLBACK["file"], "module": "huffman",
         "function": "HuffmanTable::decode_fallback", "site": FALLBACK_BODY,
         "replacement": replace_once(FALLBACK_BODY, site, replacement),
-        "controls": ((FALLBACK_VALUE, ""), (FALLBACK_CURSOR, ""), (FALLBACK_INVARIANT, "")),
+        "controls": (
+            (FALLBACK_VALUE, ""), (FALLBACK_CURSOR, ""),
+            (FALLBACK_INVARIANT, ""), (FALLBACK_FAST_INVARIANT, ""),
+        ),
         "native_test": "huffman::tests::fallback_state::" + test,
     }
 

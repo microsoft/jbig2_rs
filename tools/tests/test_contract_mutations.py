@@ -26,10 +26,11 @@ class ContractMutationTests(unittest.TestCase):
             with self.subTest(case=case["id"]):
                 source = source_text(TOOLS.parent, case["file"])
                 weaker = weakened_contract(replace_once(source, case["site"], case["replacement"]), case)
-                self.assertIn("Ok(lookup) => lookup@.len() == 256", weaker)
-                self.assertIn("code <= 255", weaker)
-                self.assertIn("distance < count", weaker)
-                self.assertNotIn("#[trigger] lookup@[prefix]", weaker)
+                builder_section = weaker[weaker.index("pub(super) fn build_prefix_lookup(") - 400 :]
+                self.assertIn("Ok(lookup) => lookup@.len() == 256", builder_section)
+                self.assertIn("code <= 255", builder_section)
+                self.assertIn("distance < count", builder_section)
+                self.assertNotIn("#[trigger] lookup@[prefix]", builder_section)
         constructor = next(case for case in HUFFMAN_CASES if case["id"] == "constructor_discards_its_production_cache")
         source = source_text(TOOLS.parent, constructor["file"])
         weaker = weakened_contract(replace_once(source, constructor["site"], constructor["replacement"]), constructor)
