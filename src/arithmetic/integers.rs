@@ -239,6 +239,7 @@ impl ArithmeticDecoder<'_> {
                     marker: self.marker,
                 }),
                 loop_error.is_some() ==> {
+                    &&& code_length > 0
                     &&& arithmetic_spec::decoder_state_valid(self)
                     &&& self.interval == interval
                     &&& self.code == code

@@ -4,7 +4,7 @@
   "status": "layout_rebound_ratchet_release_goals_met",
   "policy": "Refreshed pinned LLVM coverage ratchet after verified performance optimizations #253 and #254 (document-scoped GenericContexts scratch reuse across generic/pattern/halftone, pristine-page XOR direct decode, and register-cached MQ decode_integer/decode_iaid). Added src/halftone/scratch.rs (100% lines/regions/branches) and moved decode_arithmetic_generic_with_scratch to segments.rs to respect the 800-line file budget. Overall coverage increased on all three metrics (93.59% lines, 88.21% regions, 86.43% branches) with all release goals met.",
   "source_revision": "e781aff6c5de6cba4924dfde52dc78d4c78dc15a",
-  "source_sha256": "c92c13af8c5d391e424bba0d33c38f6fa29abea663d8170704f01a4f47f59617",
+  "source_sha256": "df527b92622ebf4be7a39401485741c60cf2915d1e2f9a7a93469de8af7d6507",
   "test_source_sha256": "70b01cd7a9fd05e8ebf80b341fc9f9a4a6f4c2b079517dae30a2ec07ba8191c2",
   "toolchain": {
     "rust_toolchain": "nightly-2026-10-12",
