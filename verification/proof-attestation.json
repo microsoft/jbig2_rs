@@ -24,7 +24,7 @@
     "runtime_proof_divergences": 0,
     "incomplete_functions": 0
   },
-  "production_proof_coverage_sha256": "79c095abb6ef7dae3370ee3d4249400081e62944b30ad5e282ab1b2175077897",
+  "production_proof_coverage_sha256": "98b4b021a88603b8d56900f5a68da79bf3fd721118bb0fa230b40dff6739ed23",
   "proof_dispositions_sha256": "6cad7e1291ff8da5fe39b56cc47ed00fc8de23f8a3a67b0e7090c3cd5d9d1843",
   "standard_library_boundary": {
     "manifest": "verification/stdlib/review.json",

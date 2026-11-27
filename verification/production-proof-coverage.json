@@ -6732,7 +6732,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "f1e3d8087d016455be98bdaba38fc29015b5648c4eee2d3c1809a18077a616a0",
+      "file_sha256": "a2ab772155e10a7615cb777c35bd48499e93b2942a6b7d2cc55e8b72097ca43e",
       "verus_functions": [
         "jbig2_rs_production::mmr::codes::append_code_bit"
       ]
@@ -6743,7 +6743,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "f1e3d8087d016455be98bdaba38fc29015b5648c4eee2d3c1809a18077a616a0",
+      "file_sha256": "a2ab772155e10a7615cb777c35bd48499e93b2942a6b7d2cc55e8b72097ca43e",
       "verus_functions": [
         "jbig2_rs_production::mmr::codes::decode_mode"
       ]
@@ -6754,7 +6754,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "f1e3d8087d016455be98bdaba38fc29015b5648c4eee2d3c1809a18077a616a0",
+      "file_sha256": "a2ab772155e10a7615cb777c35bd48499e93b2942a6b7d2cc55e8b72097ca43e",
       "verus_functions": [
         "jbig2_rs_production::mmr::codes::decode_horizontal_runs"
       ]
@@ -6765,7 +6765,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "f1e3d8087d016455be98bdaba38fc29015b5648c4eee2d3c1809a18077a616a0",
+      "file_sha256": "a2ab772155e10a7615cb777c35bd48499e93b2942a6b7d2cc55e8b72097ca43e",
       "verus_functions": [
         "jbig2_rs_production::mmr::codes::decode_run"
       ]
@@ -6776,7 +6776,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "f1e3d8087d016455be98bdaba38fc29015b5648c4eee2d3c1809a18077a616a0",
+      "file_sha256": "a2ab772155e10a7615cb777c35bd48499e93b2942a6b7d2cc55e8b72097ca43e",
       "verus_functions": [
         "jbig2_rs_production::mmr::codes::decode_run_code"
       ]
@@ -6787,7 +6787,7 @@
       "visibility": "pub(super)",
       "status": "verified",
       "disposition_reason": null,
-      "file_sha256": "f1e3d8087d016455be98bdaba38fc29015b5648c4eee2d3c1809a18077a616a0",
+      "file_sha256": "a2ab772155e10a7615cb777c35bd48499e93b2942a6b7d2cc55e8b72097ca43e",
       "verus_functions": [
         "jbig2_rs_production::mmr::codes::find_run_code"
       ]

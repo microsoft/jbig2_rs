@@ -662,6 +662,21 @@ pub(super) open spec fn run_code_eof_result(
         }
 }
 
+#[verifier::opaque]
+// Model navigation: spec::bounded_run_error_valid [proof-support]
+// Purpose: Opaque typed error classification for bounded T.6 run decoding.
+// Mapping: no registered requirement/locator mapping.
+// Fidelity: unresolved; no independent normative approval.
+pub(super) open spec fn bounded_run_error_valid(error: super::MmrError) -> bool {
+    match error {
+        super::MmrError::RunExceedsRow
+        | super::MmrError::Reader(crate::MalformedError::UnexpectedEof { .. })
+        | super::MmrError::InvalidRunCode { .. }
+        | super::MmrError::IntegerOverflow => true,
+        _ => false,
+    }
+}
+
 // Model navigation: spec::bounded_run_result [project-policy]
 // Purpose: Row-remainder bounding and overshoot rejection for decoded T.6 runs.
 // Audit: mmr-bounded-run-result
@@ -677,13 +692,7 @@ pub(super) open spec fn bounded_run_result(
 ) -> bool {
     match result {
         Ok(total) => total <= remaining,
-        Err(error) => match error {
-            super::MmrError::RunExceedsRow
-            | super::MmrError::Reader(crate::MalformedError::UnexpectedEof { .. })
-            | super::MmrError::InvalidRunCode { .. }
-            | super::MmrError::IntegerOverflow => true,
-            _ => false,
-        },
+        Err(error) => bounded_run_error_valid(error),
     }
 }
 
