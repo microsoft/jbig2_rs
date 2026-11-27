@@ -133,22 +133,26 @@ impl DictionaryClassState {
 
     #[cfg_attr(verus_keep_ghost, verus_spec(out =>
         requires symbol_text_spec::dictionary_state_valid(old(self)),
-        ensures match out {
-            Ok((width, height)) =>
-                symbol_text_spec::dictionary_state_valid(final(self))
-                && symbol_text_spec::work_units(final(resources))
-                    == symbol_text_spec::work_units(old(resources)) + 1
-                && symbol_text_spec::work_units(final(resources))
-                    <= limits.max_work_units
-                && final(self).class_open
-                && final(self).declared_new_symbols == old(self).declared_new_symbols
-                && final(self).decoded_symbols == old(self).decoded_symbols + 1
-                && final(self).decoded_symbols <= final(self).declared_new_symbols
-                && width == final(self).width
-                && height == final(self).height
-                && final(self).total_width <= limits.max_width,
-            Err(_) => true,
-        },
+        ensures
+            symbol_text_spec::dictionary::dictionary_add_symbol_transition(
+                old(self), final(self), width_delta, limits, out,
+            ),
+            match out {
+                Ok((width, height)) =>
+                    symbol_text_spec::dictionary_state_valid(final(self))
+                    && symbol_text_spec::work_units(final(resources))
+                        == symbol_text_spec::work_units(old(resources)) + 1
+                    && symbol_text_spec::work_units(final(resources))
+                        <= limits.max_work_units
+                    && final(self).class_open
+                    && final(self).declared_new_symbols == old(self).declared_new_symbols
+                    && final(self).decoded_symbols == old(self).decoded_symbols + 1
+                    && final(self).decoded_symbols <= final(self).declared_new_symbols
+                    && width == final(self).width
+                    && height == final(self).height
+                    && final(self).total_width <= limits.max_width,
+                Err(_) => true,
+            },
     ))]
     #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     pub(crate) fn add_symbol(

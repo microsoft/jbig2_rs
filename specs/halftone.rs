@@ -401,6 +401,80 @@ pub(super) open spec fn render_precedes(
     first_y < second_y || (first_y == second_y && first_x < second_x)
 }
 
+// Model navigation: spec::sliced_patterns_geometry [project-result-model]
+// Purpose: Extracted pattern count and per-pattern bitmap dimensions for collective pattern slicing.
+// Audit: halftone-sliced-patterns
+// REQUIREMENT CONTEXT: T88-PATTERN-EXTRACTION | ITU-T T.88 (08/2018) | 6.7.5 steps 3-4
+// Fidelity: unresolved; no independent normative approval.
+pub(crate) open spec fn sliced_patterns_geometry(
+    patterns: Seq<crate::Bitmap>,
+    header: super::PatternDictionaryHeader,
+) -> bool {
+    patterns.len() == header.gray_max as nat + 1
+        && forall|i: int| 0 <= i < patterns.len() ==> (
+            crate::views::bitmap_width(&#[trigger] patterns[i]) == header.pattern_width as u32
+                && crate::views::bitmap_height(&patterns[i]) == header.pattern_height as u32
+        )
+}
+
+// Model navigation: spec::gray_plane_xored [project-result-model]
+// Purpose: Exact bytewise Gray-code XOR reconstruction across halftone gray planes.
+// Audit: halftone-gray-plane-xor
+// REQUIREMENT CONTEXT: T88-HALFTONE-GRAY-RECONSTRUCTION | ITU-T T.88 (08/2018) | 6.6.5 step 4; C.5 steps 1-4
+// Fidelity: unresolved; no independent normative approval.
+pub(super) open spec fn gray_plane_xored(
+    before: &crate::Bitmap,
+    previous: &crate::Bitmap,
+    after: &crate::Bitmap,
+) -> bool {
+    after.width == before.width
+        && after.height == before.height
+        && after.stride == before.stride
+        && before.width == previous.width
+        && before.height == previous.height
+        && before.stride == previous.stride
+        && after.data@.len() == before.data@.len()
+        && before.data@.len() == previous.data@.len()
+        && forall|i: int| 0 <= i < after.data@.len() ==>
+            #[trigger] after.data@[i] == (before.data@[i] ^ previous.data@[i])
+}
+
+// Model navigation: spec::gray_indexes_geometry [project-result-model]
+// Purpose: Reconstructed halftone gray-index buffer length and zero-depth values.
+// Audit: halftone-gray-indexes-geometry
+// REQUIREMENT CONTEXT: T88-HALFTONE-GRAY-RECONSTRUCTION | ITU-T T.88 (08/2018) | 6.6.5 step 4; C.5 steps 1-4
+// Fidelity: unresolved; no independent normative approval.
+pub(crate) open spec fn gray_indexes_geometry(
+    indexes: Seq<u32>,
+    width: u32,
+    height: u32,
+    bit_depth: u8,
+) -> bool {
+    indexes.len() == width as nat * height as nat
+        && (bit_depth == 0 ==> forall|index: int| 0 <= index < indexes.len() ==> indexes[index] == 0)
+}
+
+// Model navigation: spec::clipped_pattern_frame [project-result-model]
+// Purpose: Clipped halftone pattern placement geometry preservation and wholly-outside no-op frame.
+// Audit: halftone-clipped-pattern-frame
+// REQUIREMENT CONTEXT: T88-HALFTONE-RENDER-ORDER | ITU-T T.88 (08/2018) | 6.6.5 steps 5-6; 6.6.5.2
+// Fidelity: unresolved; no independent normative approval.
+pub(super) open spec fn clipped_pattern_frame(
+    before: &crate::Bitmap,
+    pattern: &crate::Bitmap,
+    x: i64,
+    y: i64,
+    after: &crate::Bitmap,
+) -> bool {
+    crate::spec::bitmap::storage_valid(after)
+        && after.width == before.width
+        && after.height == before.height
+        && after.stride == before.stride
+        && after.data@.len() == before.data@.len()
+        && (wholly_outside(x, y, pattern.width, pattern.height, before.width, before.height)
+            ==> after.data@ == before.data@)
+}
+
 }
 
 // Preserve the logical owner and private-field access of the model bridge.

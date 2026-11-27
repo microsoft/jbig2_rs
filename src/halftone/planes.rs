@@ -96,6 +96,7 @@ pub(crate) fn decode_pattern_dictionary(
     ensures match out {
         Ok(patterns) =>
             halftone_spec::bitmaps_valid(patterns@)
+                && halftone_spec::sliced_patterns_geometry(patterns@, header)
                 && halftone_spec::work_valid(final(work)),
         Err(_) => true,
     },
@@ -167,6 +168,10 @@ pub(crate) fn slice_collective_bitmap(
             pattern_index <= pattern_count,
             patterns@.len() == pattern_index,
             halftone_spec::bitmaps_valid(patterns@),
+            forall|i: int| 0 <= i < patterns@.len() ==> (
+                crate::views::bitmap_width(&#[trigger] patterns@[i]) == pattern_width
+                    && crate::views::bitmap_height(&patterns@[i]) == pattern_height
+            ),
             raw_pattern_width == header.pattern_width,
             raw_pattern_height == header.pattern_height,
             raw_pattern_width > 0,
@@ -183,6 +188,10 @@ pub(crate) fn slice_collective_bitmap(
     ))]
     for pattern_index in 0..pattern_count {
         let mut pattern = Bitmap::blank(pattern_width, pattern_height, limits)?;
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            crate::views::bitmap_fields(&pattern);
+        }
         let source_x = pattern_index
             .checked_mul(u64::from(pattern_width))
             .ok_or(MalformedError::IntegerOverflow)?;
@@ -216,7 +225,28 @@ pub(crate) fn slice_collective_bitmap(
             pattern_height,
             CombinationOperator::Replace,
         )?;
+        #[cfg(verus_keep_ghost)]
+        proof_decl! {
+            let ghost prev_patterns = patterns@;
+        }
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            crate::views::bitmap_fields(&pattern);
+        }
         patterns.push(pattern);
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            assert forall|i: int| 0 <= i < patterns@.len() implies (
+                crate::views::bitmap_width(&#[trigger] patterns@[i]) == pattern_width
+                    && crate::views::bitmap_height(&patterns@[i]) == pattern_height
+            ) by {
+                if i < prev_patterns.len() {
+                    assert(patterns@[i] == prev_patterns[i]);
+                } else {
+                    assert(patterns@[i] == pattern);
+                }
+            }
+        }
     }
     Ok(patterns)
 }
@@ -330,7 +360,9 @@ pub(super) const fn gray_to_binary_bit(coded: bool, previous: Option<bool>) -> b
         crate::spec::bitmap::storage_valid(old(current)),
         crate::spec::bitmap::storage_valid(previous),
     ensures match out {
-        Ok(()) => crate::spec::bitmap::storage_valid(final(current)),
+        Ok(()) =>
+            crate::spec::bitmap::storage_valid(final(current))
+                && halftone_spec::gray_plane_xored(old(current), previous, final(current)),
         Err(_) => true,
     },
 ))]
@@ -356,8 +388,15 @@ pub(super) fn xor_gray_plane_bytes(
             current.width == old(current).width,
             current.height == old(current).height,
             current.stride == old(current).stride,
+            current.width == previous.width,
+            current.height == previous.height,
+            current.stride == previous.stride,
             current.data@.len() == old(current).data@.len(),
             current.data@.len() == previous.data@.len(),
+            forall|j: int| 0 <= j < index ==>
+                #[trigger] current.data@[j] == (old(current).data@[j] ^ previous.data@[j]),
+            forall|j: int| index <= j < current.data@.len() ==>
+                #[trigger] current.data@[j] == old(current).data@[j],
         decreases current.data@.len() - index,
     ))]
     while index < current.data.len() {
@@ -422,6 +461,7 @@ pub(super) fn accumulate_gray_byte(
         Ok(indexes) =>
             halftone_spec::decoder_state_valid(final(decoder))
                 && halftone_spec::work_valid(final(work))
+                && halftone_spec::gray_indexes_geometry(indexes@, width, height, bit_depth)
                 && (bit_depth == 0 ==> (
                     *final(decoder) == *old(decoder)
                     && *final(work) == *old(work)

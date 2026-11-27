@@ -412,10 +412,14 @@ impl RetainedBudget {
     requires
         decode_spec::region_buffers_valid(old(buffers)),
         crate::spec::bitmap::storage_valid(&bitmap),
-    ensures match out {
-        Ok(()) => decode_spec::region_buffers_valid(final(buffers)),
-        Err(_) => true,
-    },
+    ensures
+        decode_spec::buffer_insertion_result(
+            old(buffers)@, final(buffers)@, number, region, bitmap, out,
+        ),
+        match out {
+            Ok(()) => decode_spec::region_buffers_valid(final(buffers)),
+            Err(_) => true,
+        },
 ))]
 pub(super) fn insert_buffer(
     buffers: &mut RegionBuffers,
@@ -426,7 +430,9 @@ pub(super) fn insert_buffer(
     limits: &Limits,
 ) -> Result<(), DecodeError> {
     if region_buffer_index(buffers, number).is_some() {
-        return Err(MalformedError::DuplicateSegmentNumber(number).into());
+        return Err(DecodeError::Malformed(
+            MalformedError::DuplicateSegmentNumber(number),
+        ));
     }
     let requested_bytes = allocation_size::<(u32, RegionBuffer)>(1)?;
     if buffers.try_reserve(1).is_err() {

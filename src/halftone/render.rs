@@ -346,7 +346,9 @@ pub(crate) fn decode_halftone_region(
     requires
         crate::spec::bitmap::storage_valid(old(destination)),
         crate::spec::bitmap::storage_valid(pattern),
-    ensures crate::spec::bitmap::storage_valid(final(destination)),
+    ensures
+        crate::spec::bitmap::storage_valid(final(destination)),
+        halftone_spec::clipped_pattern_frame(old(destination), pattern, x, y, final(destination)),
 ))]
 pub(super) fn render_clipped_pattern(
     destination: &mut Bitmap,
@@ -374,6 +376,8 @@ pub(super) fn render_clipped_pattern(
     }
     #[cfg(verus_keep_ghost)]
     proof! {
+        crate::views::bitmap_fields(destination);
+        crate::views::bitmap_fields(pattern);
         reveal(halftone_spec::clipped_axis_valid);
         assert(0 <= destination_x_start < destination_x_end);
         assert(destination_x_end <= destination_width);
@@ -385,6 +389,9 @@ pub(super) fn render_clipped_pattern(
         assert(destination_y_end <= bottom);
         assert(right == x + pattern_width_i64);
         assert(bottom == y + pattern_height_i64);
+        assert(!halftone_spec::wholly_outside(
+            x, y, pattern.width, pattern.height, destination.width, destination.height,
+        ));
     }
 
     let source_x = u32::try_from(

@@ -629,6 +629,130 @@ pub(super) open spec fn exact_eofb(
     crate::spec::readers::bits_value(bytes, start, 24) == super::EOFB
 }
 
+// Model navigation: spec::run_code_eof_result [project-policy]
+// Purpose: Truncated horizontal run-code EOF and typed error boundary for T.6 decoding.
+// Audit: mmr-truncated-run-code
+// REQUIREMENT CONTEXT: T6-POLICY-TRUNCATED-HORIZONTAL | ITU-T T.6 (1988) | 2.2.3.3; 2.2.4 (syntax context; typed error is project API policy)
+// Fidelity: unresolved; no independent normative approval.
+pub(super) open spec fn run_code_eof_result(
+    black: bool,
+    bytes: Seq<u8>,
+    start: nat,
+    end: nat,
+    result: Result<super::RunCode, super::MmrError>,
+) -> bool {
+    (start == bytes.len() * 8 ==> (
+        result == Err(super::MmrError::Reader(crate::MalformedError::UnexpectedEof {
+            offset: start as u64,
+            needed: 1,
+            remaining: 0,
+        }))
+        && end == start
+    ))
+        && match result {
+            Ok(_) => true,
+            Err(error) => match error {
+                super::MmrError::Reader(crate::MalformedError::UnexpectedEof { .. }) => true,
+                super::MmrError::InvalidRunCode { bit_offset, black: err_black } =>
+                    bit_offset as nat == start && err_black == black,
+                super::MmrError::IntegerOverflow => true,
+                _ => false,
+            },
+        }
+}
+
+// Model navigation: spec::bounded_run_result [project-policy]
+// Purpose: Row-remainder bounding and overshoot rejection for decoded T.6 runs.
+// Audit: mmr-bounded-run-result
+// REQUIREMENT CONTEXT: T6-POLICY-RUN-OVERSHOOT | ITU-T T.6 (1988) | 2.2.5.2 (line-extent context; typed error is project API policy)
+// Fidelity: unresolved; no independent normative approval.
+pub(super) open spec fn bounded_run_result(
+    black: bool,
+    bytes: Seq<u8>,
+    start: nat,
+    end: nat,
+    remaining: u32,
+    result: Result<u32, super::MmrError>,
+) -> bool {
+    match result {
+        Ok(total) => total <= remaining,
+        Err(error) => match error {
+            super::MmrError::RunExceedsRow
+            | super::MmrError::Reader(crate::MalformedError::UnexpectedEof { .. })
+            | super::MmrError::InvalidRunCode { .. }
+            | super::MmrError::IntegerOverflow => true,
+            _ => false,
+        },
+    }
+}
+
+// Model navigation: spec::finish_block_eofb_policy [project-policy]
+// Purpose: Complete EOFB marker, truncation, trailing-data and zero-padding classification for bounded blocks.
+// Audit: mmr-finish-block-eofb-policy
+// REQUIREMENT CONTEXT: T6-POLICY-TRUNCATED-EOFB | ITU-T T.6 (1988) | 2.4.1.1 (marker context; typed error is project API policy)
+// Fidelity: unresolved; no independent normative approval.
+pub(super) open spec fn finish_block_eofb_policy(
+    bytes: Seq<u8>,
+    start: nat,
+    end: nat,
+    policy: super::EofbPolicy,
+    result: Result<(), super::MmrError>,
+) -> bool {
+    match policy {
+        super::EofbPolicy::Optional => result == Ok(()) && end == start,
+        super::EofbPolicy::Required => {
+            let remaining = (bytes.len() * 8 - start) as int;
+            if remaining < 24 {
+                result == Err(super::MmrError::MissingEofb) && end == start
+            } else if !exact_eofb(bytes, start) {
+                result == Err(super::MmrError::InvalidEofb) && end == start + 24
+            } else if remaining - 24 > 7 {
+                result == Err(super::MmrError::TrailingData) && end == start + 24
+            } else if remaining - 24 > 0
+                && crate::spec::readers::bits_value(bytes, start + 24, (remaining - 24) as nat) != 0
+            {
+                result == Err(super::MmrError::NonZeroEofbPadding) && end == bytes.len() * 8
+            } else {
+                result == Ok(())
+                    && end == bytes.len() * 8
+                    && exact_eofb(bytes, start)
+                    && required_eofb_prefix(bytes, start, end)
+            }
+        }
+    }
+}
+
+// Model navigation: spec::finish_prefix_eofb_policy [project-policy]
+// Purpose: Complete EOFB marker, truncation and byte-alignment padding classification for required prefixes.
+// Audit: mmr-finish-prefix-eofb-policy
+// REQUIREMENT CONTEXT: T6-POLICY-TRUNCATED-EOFB | ITU-T T.6 (1988) | 2.4.1.1 (marker context; typed error is project API policy)
+// Fidelity: unresolved; no independent normative approval.
+pub(super) open spec fn finish_prefix_eofb_policy(
+    bytes: Seq<u8>,
+    start: nat,
+    end: nat,
+    result: Result<(), super::MmrError>,
+) -> bool {
+    let remaining = (bytes.len() * 8 - start) as int;
+    if remaining < 24 {
+        result == Err(super::MmrError::MissingEofb) && end == start
+    } else if !exact_eofb(bytes, start) {
+        result == Err(super::MmrError::InvalidEofb) && end == start + 24
+    } else {
+        let after_marker = start + 24;
+        let padding: nat = if after_marker % 8 == 0 { 0 } else { (8 - (after_marker % 8)) as nat };
+        if bytes.len() * 8 < after_marker + padding {
+            result == Err(super::MmrError::MissingEofb) && end == after_marker
+        } else {
+            end == after_marker + padding
+                && match result {
+                    Ok(()) => true,
+                    Err(error) => error == super::MmrError::NonZeroEofbPadding,
+                }
+        }
+    }
+}
+
 }
 
 // Private helper preconditions still use mmr_spec::transition_prefix_valid.

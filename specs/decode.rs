@@ -483,6 +483,33 @@ pub(super) open spec fn auxiliary_page_result(
     }
 }
 
+// Model navigation: spec::buffer_insertion_result [project-result-model]
+// Purpose: Auxiliary intermediate-region buffer insertion, segment-number association and duplicate rejection.
+// Audit: decode-buffer-insertion
+// REQUIREMENT CONTEXT: T88-INTERMEDIATE-AUXILIARY-STORAGE | ITU-T T.88 (08/2018) | 8.2 step 5b
+// Fidelity: unresolved; no independent normative approval.
+pub(super) open spec fn buffer_insertion_result(
+    before: Seq<(u32, super::RegionBuffer)>,
+    after: Seq<(u32, super::RegionBuffer)>,
+    number: u32,
+    region: crate::segment_data::RegionInfo,
+    bitmap: crate::Bitmap,
+    result: Result<(), crate::DecodeError>,
+) -> bool {
+    ((exists|i: int| 0 <= i < before.len() && before[i].0 == number) ==> (
+        result == Err(crate::DecodeError::Malformed(
+            crate::MalformedError::DuplicateSegmentNumber(number),
+        ))
+        && after == before
+    ))
+        && match result {
+            Ok(()) =>
+                (forall|i: int| 0 <= i < before.len() ==> before[i].0 != number)
+                    && after == before.push((number, super::RegionBuffer { region, bitmap })),
+            Err(_) => after == before,
+        }
+}
+
 }
 
 // Preserve the logical owner and private-field access of the model bridges.

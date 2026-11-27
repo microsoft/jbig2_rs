@@ -341,19 +341,24 @@ pub(super) fn prepare_placement<'a>(
         crate::spec::bitmap::storage_valid(old(destination)),
         crate::spec::bitmap::storage_valid(source),
         symbol_text_spec::work_units(old(resources)) <= limits.max_work_units,
-    ensures match out {
-        Ok(()) =>
-            crate::spec::bitmap::storage_valid(final(destination))
-                && crate::views::bitmap_width(final(destination))
-                    == crate::views::bitmap_width(old(destination))
-                && crate::views::bitmap_height(final(destination))
-                    == crate::views::bitmap_height(old(destination))
-                && symbol_text_spec::work_units(final(resources))
-                    <= limits.max_work_units
-                && symbol_text_spec::bitmap_bytes(final(resources))
-                    == symbol_text_spec::bitmap_bytes(old(resources)),
-        Err(_) => true,
-    },
+    ensures
+        symbol_text_spec::dictionary::clipped_composition_frame(
+            old(destination), source, placement, old(resources),
+            final(destination), final(resources), limits, out,
+        ),
+        match out {
+            Ok(()) =>
+                crate::spec::bitmap::storage_valid(final(destination))
+                    && crate::views::bitmap_width(final(destination))
+                        == crate::views::bitmap_width(old(destination))
+                    && crate::views::bitmap_height(final(destination))
+                        == crate::views::bitmap_height(old(destination))
+                    && symbol_text_spec::work_units(final(resources))
+                        <= limits.max_work_units
+                    && symbol_text_spec::bitmap_bytes(final(resources))
+                        == symbol_text_spec::bitmap_bytes(old(resources)),
+            Err(_) => true,
+        },
 ))]
 pub(crate) fn compose_placement(
     destination: &mut Bitmap,
