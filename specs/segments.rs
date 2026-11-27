@@ -477,4 +477,26 @@ pub(crate) open spec fn profiles_payload_fields(bytes: Seq<u8>, profiles: Seq<u3
         #[trigger] profiles[index] == be_u32_at(bytes, 4 + index * 4)
 }
 
+// Model navigation: spec::colour_page_rejected [project-policy]
+// Purpose: Explicit bi-level profile rejection when page-information bit 7 is set.
+// Audit: segment-colour-page-rejected
+// REQUIREMENT CONTEXT: T88-PROFILE-COLOUR-PAGE-REJECTION | ITU-T T.88 (08/2018) | 7.4.8.5 bit 7 (syntax context; rejection is project policy)
+// Fidelity: unresolved; no independent normative approval.
+pub(crate) open spec fn colour_page_rejected(
+    payload: Seq<u8>,
+    limits: crate::Limits,
+    allow_colour: bool,
+) -> bool {
+    !allow_colour
+        && payload.len() == 19
+        && ((be_u32_at(payload, 4) == u32::MAX && be_u32_at(payload, 0) <= limits.max_width)
+            || (be_u32_at(payload, 4) != u32::MAX
+                && dimensions_within_limits(
+                    be_u32_at(payload, 0),
+                    be_u32_at(payload, 4),
+                    limits,
+                )))
+        && (payload[16] & 0x80u8 != 0)
+}
+
 }

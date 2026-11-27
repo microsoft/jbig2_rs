@@ -463,6 +463,26 @@ pub(super) open spec fn dispatch_class(segment_type: crate::segment_header::Segm
     }
 }
 
+// Model navigation: spec::auxiliary_page_result [project-result-model]
+// Purpose: Intermediate auxiliary-buffer page permission and rejection equivalence.
+// Audit: decode-auxiliary-page-result
+// REQUIREMENT CONTEXT: T88-INTERMEDIATE-AUXILIARY-PERMISSION | ITU-T T.88 (08/2018) | 7.4.8.5 bit 5; 8.2 step 5b
+// Fidelity: unresolved; no independent normative approval.
+pub(super) open spec fn auxiliary_page_result(
+    auxiliary_allowed: bool,
+    result: Result<(), crate::DecodeError>,
+) -> bool {
+    if auxiliary_allowed {
+        result == Ok(())
+    } else {
+        result == Err(crate::DecodeError::Malformed(
+            crate::MalformedError::InvalidPageState(
+                "intermediate region on page that forbids auxiliary buffers",
+            ),
+        ))
+    }
+}
+
 }
 
 // Preserve the logical owner and private-field access of the model bridges.

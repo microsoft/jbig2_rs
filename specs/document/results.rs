@@ -5,7 +5,8 @@ verus! {
 
 // Model navigation: spec::global_parse_result [project-result-model]
 // Purpose: Owned global input bytes, successful admission and first stream-limit error.
-// Mapping: no registered requirement/locator mapping.
+// Audit: document-global-parse-result
+// REQUIREMENT CONTEXT: T88-PROFILE-REUSABLE-GLOBALS | ITU-T T.88 (08/2018) | D.3; 7.3.2 (embedded/resource context; reusable API is project policy)
 // Fidelity: unresolved; no independent normative approval.
 pub open spec fn global_parse_result(
     input: Seq<u8>,

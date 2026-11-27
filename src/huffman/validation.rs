@@ -79,7 +79,9 @@ pub(super) fn encoded_table_fields(flags: u8) -> (bool, u8, u8) {
     (flags & 1 != 0, prefix_bits, range_bits)
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out.is_ok() ==> final(lines)@ == old(lines)@.push(line),
+))]
 pub(super) fn push_parsed_line(
     lines: &mut Vec<HuffmanLine>,
     line: HuffmanLine,

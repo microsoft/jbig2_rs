@@ -150,7 +150,13 @@ pub(super) fn parse_generic_region_header_with_colour(
 }
 
 /// Parse a generic-refinement region data header and return its byte length.
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match out {
+        Ok((header, header_len)) =>
+            generic_region_spec::refinement_adaptive_fields(payload@, &header, header_len),
+        Err(_) => true,
+    },
+))]
 pub(crate) fn parse_refinement_region_header(
     payload: &[u8],
     limits: &Limits,
@@ -165,10 +171,17 @@ pub(crate) fn parse_refinement_region_header(
     let template = RefinementTemplate::from_flags(flags);
     let typical_prediction = flags & 0x02 != 0;
     let mut adaptive = [TemplateOffset { x: 0, y: 0 }; 2];
-    if template == RefinementTemplate::Template0 {
-        adaptive[0] = read_offset(&mut reader)?;
-        adaptive[1] = read_offset(&mut reader)?;
-        validate_target_adaptive(1, adaptive[0])?;
+    match template {
+        RefinementTemplate::Template0 => {
+            adaptive[0] = read_offset(&mut reader)?;
+            adaptive[1] = read_offset(&mut reader)?;
+            validate_target_adaptive(1, adaptive[0])?;
+        }
+        RefinementTemplate::Template1 => {}
+    }
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        assert(adaptive@.len() == 2);
     }
     Ok((
         RefinementRegionHeader {
@@ -186,7 +199,20 @@ pub(crate) fn parse_refinement_region_header(
     ensures
         final(reader).bytes@ == old(reader).bytes@,
         final(reader).position <= final(reader).bytes@.len(),
-        out.is_ok() ==> final(reader).position == old(reader).position + 2,
+        match out {
+            Ok(offset) =>
+                final(reader).position == old(reader).position + 2
+                && old(reader).position + 2 <= old(reader).bytes@.len()
+                && offset == TemplateOffset {
+                    x: generic_region_spec::signed_offset_value(
+                        old(reader).bytes@[old(reader).position as int],
+                    ),
+                    y: generic_region_spec::signed_offset_value(
+                        old(reader).bytes@[(old(reader).position + 1) as int],
+                    ),
+                },
+            Err(_) => true,
+        },
 ))]
 pub(super) fn read_offset(
     reader: &mut ByteReader<'_>,

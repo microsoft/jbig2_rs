@@ -26,8 +26,13 @@ pub(super) fn sample_bitmap(bitmap: &Bitmap, x: u32, y: u32, offset: TemplateOff
     sample_signed(bitmap, sample_x, sample_y)
 }
 
-#[cfg_attr(verus_keep_ghost, verus_spec(
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires crate::spec::bitmap::storage_valid(bitmap),
+    ensures out == match (x, y) {
+        (Some(xv), Some(yv)) =>
+            super::generic_region_spec::bitmap_pixel_at(bitmap, xv as int, yv as int),
+        _ => false,
+    },
 ))]
 #[allow(
     clippy::cast_lossless,

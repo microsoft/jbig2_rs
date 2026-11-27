@@ -489,10 +489,21 @@ impl HuffmanTable {
     /// `bytes` is exactly one code table segment payload, including at most
     /// seven zero padding bits after the final table line.
     #[cfg_attr(verus_keep_ghost, verus_spec(out =>
-        ensures match out {
-            Ok(table) => huffman_lookup_spec::table_lookup_valid(&table),
-            Err(_) => true,
-        },
+        ensures
+            match out {
+                Ok(table) =>
+                    huffman_lookup_spec::table_lookup_valid(&table)
+                    && huffman_spec::encoded_normal_lines_valid(bytes@, &table)
+                    && huffman_spec::encoded_special_lines_valid(bytes@, &table),
+                Err(_) => true,
+            },
+            huffman_spec::encoded_header_reserved_rejected(bytes@, *limits) ==>
+                out == Err(HuffmanError::InvalidTable(HuffmanTableError::ReservedFlags(bytes@[0]))),
+            huffman_spec::encoded_header_bounds_rejected(bytes@, *limits) ==>
+                out == Err(HuffmanError::InvalidTable(HuffmanTableError::InvalidBounds {
+                    low: crate::spec::segments::be_u32_at(bytes@, 1) as i32,
+                    high: crate::spec::segments::be_u32_at(bytes@, 5) as i32,
+                })),
     ))]
     #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     #[allow(clippy::cast_possible_wrap, clippy::too_many_lines)]
@@ -533,12 +544,17 @@ impl HuffmanTable {
             return Err(MalformedError::IntegerOverflow.into());
         }
         let mut encoded_lines = bit_reader(encoded_bytes);
-        let mut lines = Vec::new();
+        let mut lines: Vec<HuffmanLine> = Vec::new();
         let mut current = i64::from(low);
         let high_i64 = i64::from(high);
 
         #[cfg_attr(verus_keep_ghost, verus_spec(
             invariant
+                bytes@.len() >= 9,
+                (bytes@[0] & 0x80u8) == 0,
+                low < high,
+                low == crate::spec::segments::be_u32_at(bytes@, 1) as i32,
+                high == crate::spec::segments::be_u32_at(bytes@, 5) as i32,
                 low as int <= current,
                 current <= high_i64,
                 high_i64 == high as int,
@@ -548,6 +564,32 @@ impl HuffmanTable {
                 prefix_bits <= 8,
                 range_bits <= 8,
                 huffman_spec::reader_valid(&encoded_lines),
+                forall|i: int| 0 <= i < lines@.len() ==> {
+                    &&& lines@[i].kind == LineKind::Normal
+                    &&& lines@[i].range_len <= 32
+                    &&& (i + 1 < lines@.len() ==>
+                        lines@[i + 1].range_low as int
+                            == lines@[i].range_low as int + (1i64 << (lines@[i].range_len as i64)) as int)
+                },
+            invariant_except_break
+                lines@.len() == 0 ==> current == low as int,
+                lines@.len() > 0 ==> {
+                    &&& lines@[0].range_low == low as i64
+                    &&& lines@[lines@.len() - 1].range_low as int
+                        + (1i64 << (lines@[lines@.len() - 1].range_len as i64)) as int == current as int
+                },
+            ensures
+                lines@.len() >= 1,
+                lines@[0].range_low == low as i64,
+                forall|i: int| 0 <= i < lines@.len() ==> {
+                    &&& lines@[i].kind == LineKind::Normal
+                    &&& lines@[i].range_len <= 32
+                    &&& (i + 1 < lines@.len() ==>
+                        lines@[i + 1].range_low as int
+                            == lines@[i].range_low as int + (1i64 << (lines@[i].range_len as i64)) as int)
+                },
+                lines@[lines@.len() - 1].range_low as int
+                    + (1i64 << (lines@[lines@.len() - 1].range_len as i64)) as int >= high as int,
             decreases high_i64 - current,
         ))]
         while current < high_i64 {
@@ -619,7 +661,14 @@ impl HuffmanTable {
             }
         }
 
-        Self::new(&lines, limits)
+        let result = Self::new(&lines, limits);
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            if result.is_ok() {
+                huffman_spec::canonical_assignment_definition();
+            }
+        }
+        result
     }
 
     /// Returns a static precomputed Annex B standard table after enforcing

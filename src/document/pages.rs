@@ -527,7 +527,15 @@ impl PageState {
     }
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures
+        out.is_ok() == document_spec::page_association_valid(header.segment_type, header.page_association),
+        !document_spec::page_association_valid(header.segment_type, header.page_association) ==>
+            out == Err(DecodeError::Malformed(MalformedError::InvalidPageAssociation {
+                segment: header.number,
+                page: header.page_association,
+            })),
+))]
 pub(super) fn validate_page_association(header: &SegmentHeader) -> Result<(), DecodeError> {
     let must_have_page = matches!(
         header.segment_type,
