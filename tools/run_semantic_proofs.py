@@ -144,7 +144,7 @@ PORTABLE_ROBUST_SHARD_ALLOCATION = {
     "public-decode-results": 5,
     "black-span": 4,
     "error-wrappers-basic": 3,
-    "huffman-field-selection": 6,
+    "huffman-field-selection": 12,
 }
 RECEIPT_SCHEMA = 3
 CHECKS = (

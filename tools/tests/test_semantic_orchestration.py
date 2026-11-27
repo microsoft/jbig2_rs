@@ -669,15 +669,15 @@ class SemanticOrchestrationTests(unittest.TestCase):
         added = [row for role in current for row in role if row[0] == identity]
         self.assertEqual(len(added), 1)
         self.assertEqual(added[0][2], len(FIELD_CASES))
-        self.assertIn(added[0], current[2 + 6])
+        self.assertIn(added[0], current[2 + 12])
         rows = [{"id": row[0], "status": "passed", "seconds": 1}
                 for role in previous for row in role]
         with self.assertRaisesRegex(ValueError, "every complete current-profile group"):
             runner.measured_shard_seconds(rows)
         rows.append({"id": identity, "status": "passed", "seconds": 1})
         baseline = runner.measured_shard_seconds(rows)
-        rows[-1]["seconds"] += 1050 - baseline[6]
-        self.assertEqual(runner.measured_shard_seconds(rows)[6], 1050)
+        rows[-1]["seconds"] += 1050 - baseline[12]
+        self.assertEqual(runner.measured_shard_seconds(rows)[12], 1050)
         rows[-1]["seconds"] += 1
         with self.assertRaisesRegex(ValueError, "1050-second guard"):
             runner.measured_shard_seconds(rows)
