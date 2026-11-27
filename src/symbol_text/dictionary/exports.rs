@@ -161,6 +161,10 @@ impl DictionaryClassState {
         limits: &Limits,
         resources: &mut ResourceTracker,
     ) -> Result<(u32, u32), SymbolTextError> {
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            reveal(symbol_text_spec::dictionary::dictionary_add_symbol_transition);
+        }
         if !self.class_open {
             return Err(SymbolTextError::InvalidState("no open height class"));
         }

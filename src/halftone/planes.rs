@@ -108,6 +108,10 @@ pub(crate) fn slice_collective_bitmap(
     limits: &Limits,
     work: &mut WorkBudget,
 ) -> Result<Vec<Bitmap>, HalftoneError> {
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        reveal(halftone_spec::sliced_patterns_geometry);
+    }
     validate_pattern_header(header)?;
     let raw_pattern_width = header.pattern_width;
     let raw_pattern_height = header.pattern_height;
@@ -372,6 +376,7 @@ pub(super) fn xor_gray_plane_bytes(
 ) -> Result<(), HalftoneError> {
     #[cfg(verus_keep_ghost)]
     proof! {
+        reveal(halftone_spec::gray_plane_xored);
         crate::views::bitmap_fields(current);
     }
     if current.width != previous.width
@@ -483,6 +488,10 @@ pub(crate) fn decode_gray_planes(
     limits: &Limits,
     work: &mut WorkBudget,
 ) -> Result<Vec<u32>, HalftoneError> {
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        reveal(halftone_spec::gray_indexes_geometry);
+    }
     if bit_depth > 32 {
         return Err(HalftoneError::InvalidGrayBitDepth(bit_depth));
     }

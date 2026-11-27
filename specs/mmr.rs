@@ -629,6 +629,7 @@ pub(super) open spec fn exact_eofb(
     crate::spec::readers::bits_value(bytes, start, 24) == super::EOFB
 }
 
+#[verifier::opaque]
 // Model navigation: spec::run_code_eof_result [project-policy]
 // Purpose: Truncated horizontal run-code EOF and typed error boundary for T.6 decoding.
 // Audit: mmr-truncated-run-code
@@ -661,6 +662,7 @@ pub(super) open spec fn run_code_eof_result(
         }
 }
 
+#[verifier::opaque]
 // Model navigation: spec::bounded_run_result [project-policy]
 // Purpose: Row-remainder bounding and overshoot rejection for decoded T.6 runs.
 // Audit: mmr-bounded-run-result
@@ -686,6 +688,7 @@ pub(super) open spec fn bounded_run_result(
     }
 }
 
+#[verifier::opaque]
 // Model navigation: spec::finish_block_eofb_policy [project-policy]
 // Purpose: Complete EOFB marker, truncation, trailing-data and zero-padding classification for bounded blocks.
 // Audit: mmr-finish-block-eofb-policy
@@ -722,6 +725,7 @@ pub(super) open spec fn finish_block_eofb_policy(
     }
 }
 
+#[verifier::opaque]
 // Model navigation: spec::finish_prefix_eofb_policy [project-policy]
 // Purpose: Complete EOFB marker, truncation and byte-alignment padding classification for required prefixes.
 // Audit: mmr-finish-prefix-eofb-policy

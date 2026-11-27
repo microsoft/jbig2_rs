@@ -160,6 +160,7 @@ pub(crate) open spec fn dictionary_state_valid(
         && state.width <= state.total_width
 }
 
+#[verifier::opaque]
 // Model navigation: spec::dictionary_add_symbol_transition [project-result-model]
 // Purpose: Height-class open-state guard, symbol-count bound and width/total-width recurrences.
 // Audit: dictionary-add-symbol-transition
@@ -197,6 +198,7 @@ pub(crate) open spec fn dictionary_add_symbol_transition(
         }
 }
 
+#[verifier::opaque]
 // Model navigation: spec::clipped_composition_frame [project-result-model]
 // Purpose: Clipped text symbol placement work accounting, dimension preservation and empty-overlap frame.
 // Audit: text-clipped-composition-frame

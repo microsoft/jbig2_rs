@@ -223,6 +223,11 @@ pub(super) fn decode_run(
     black: bool,
     remaining: u32,
 ) -> Result<u32, MmrError> {
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        reveal(mmr_spec::bounded_run_result);
+        reveal(mmr_spec::run_code_eof_result);
+    }
     let mut total = 0_u32;
     let mut makeup_count = 0_u32;
     #[cfg(verus_keep_ghost)]
@@ -251,6 +256,11 @@ pub(super) fn decode_run(
         decreases max_makeups + 1 - makeup_count,
     ))]
     loop {
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            reveal(mmr_spec::bounded_run_result);
+            reveal(mmr_spec::run_code_eof_result);
+        }
         #[cfg(verus_keep_ghost)]
         proof_decl! {
             let ghost before_codes = codes;
@@ -321,6 +331,10 @@ pub(super) fn decode_run_code(
     reader: &mut BitReader<'_>,
     black: bool,
 ) -> Result<RunCode, MmrError> {
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        reveal(mmr_spec::run_code_eof_result);
+    }
     let run_index = if black {
         &BLACK_RUN_INDEX
     } else {
@@ -343,6 +357,10 @@ pub(super) fn decode_run_code(
         decreases MAX_RUN_CODE_BITS + 1 - length,
     ))]
     while length <= MAX_RUN_CODE_BITS {
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            reveal(mmr_spec::run_code_eof_result);
+        }
         #[cfg(verus_keep_ghost)]
         proof_decl! {
             let ghost previous_prefix = prefix;
@@ -377,6 +395,10 @@ pub(super) fn decode_run_code(
             return Ok(code);
         }
         length = length.checked_add(1).ok_or(MmrError::IntegerOverflow)?;
+    }
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        reveal(mmr_spec::run_code_eof_result);
     }
     Err(MmrError::InvalidRunCode {
         bit_offset: start,

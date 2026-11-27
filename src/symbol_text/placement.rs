@@ -368,6 +368,10 @@ pub(crate) fn compose_placement(
     limits: &Limits,
     resources: &mut ResourceTracker,
 ) -> Result<(), SymbolTextError> {
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        reveal(symbol_text_spec::dictionary::clipped_composition_frame);
+    }
     let Some(prepared) = prepare_placement(destination, source, placement, limits, resources)?
     else {
         return Ok(());

@@ -357,6 +357,10 @@ pub(super) fn render_clipped_pattern(
     y: i64,
     operator: CombinationOperator,
 ) -> Result<(), HalftoneError> {
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        reveal(halftone_spec::clipped_pattern_frame);
+    }
     let pattern_width = pattern.width();
     let pattern_height = pattern.height();
     let destination_width = destination.width();

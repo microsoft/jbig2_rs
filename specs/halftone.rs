@@ -401,6 +401,7 @@ pub(super) open spec fn render_precedes(
     first_y < second_y || (first_y == second_y && first_x < second_x)
 }
 
+#[verifier::opaque]
 // Model navigation: spec::sliced_patterns_geometry [project-result-model]
 // Purpose: Extracted pattern count and per-pattern bitmap dimensions for collective pattern slicing.
 // Audit: halftone-sliced-patterns
@@ -417,6 +418,7 @@ pub(crate) open spec fn sliced_patterns_geometry(
         )
 }
 
+#[verifier::opaque]
 // Model navigation: spec::gray_plane_xored [project-result-model]
 // Purpose: Exact bytewise Gray-code XOR reconstruction across halftone gray planes.
 // Audit: halftone-gray-plane-xor
@@ -439,6 +441,7 @@ pub(super) open spec fn gray_plane_xored(
             #[trigger] after.data@[i] == (before.data@[i] ^ previous.data@[i])
 }
 
+#[verifier::opaque]
 // Model navigation: spec::gray_indexes_geometry [project-result-model]
 // Purpose: Reconstructed halftone gray-index buffer length and zero-depth values.
 // Audit: halftone-gray-indexes-geometry
@@ -454,6 +457,7 @@ pub(crate) open spec fn gray_indexes_geometry(
         && (bit_depth == 0 ==> forall|index: int| 0 <= index < indexes.len() ==> indexes[index] == 0)
 }
 
+#[verifier::opaque]
 // Model navigation: spec::clipped_pattern_frame [project-result-model]
 // Purpose: Clipped halftone pattern placement geometry preservation and wholly-outside no-op frame.
 // Audit: halftone-clipped-pattern-frame

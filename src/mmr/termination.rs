@@ -34,6 +34,10 @@ use super::{BitReader, EofbPolicy, MmrError, EOFB};
         },
 ))]
 pub(super) fn finish_block(reader: &mut BitReader<'_>, policy: EofbPolicy) -> Result<(), MmrError> {
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        reveal(mmr_spec::finish_block_eofb_policy);
+    }
     if let EofbPolicy::Optional = policy {
         return Ok(());
     }
@@ -89,6 +93,10 @@ pub(super) fn finish_block(reader: &mut BitReader<'_>, policy: EofbPolicy) -> Re
         },
 ))]
 pub(super) fn finish_required_prefix(reader: &mut BitReader<'_>) -> Result<(), MmrError> {
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        reveal(mmr_spec::finish_prefix_eofb_policy);
+    }
     if remaining_bits(reader)? < 24 {
         return Err(MmrError::MissingEofb);
     }

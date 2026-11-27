@@ -483,6 +483,7 @@ pub(super) open spec fn auxiliary_page_result(
     }
 }
 
+#[verifier::opaque]
 // Model navigation: spec::buffer_insertion_result [project-result-model]
 // Purpose: Auxiliary intermediate-region buffer insertion, segment-number association and duplicate rejection.
 // Audit: decode-buffer-insertion

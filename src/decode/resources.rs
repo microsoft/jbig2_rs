@@ -429,6 +429,10 @@ pub(super) fn insert_buffer(
     retained: &mut RetainedBudget,
     limits: &Limits,
 ) -> Result<(), DecodeError> {
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        reveal(decode_spec::buffer_insertion_result);
+    }
     if region_buffer_index(buffers, number).is_some() {
         return Err(DecodeError::Malformed(
             MalformedError::DuplicateSegmentNumber(number),
