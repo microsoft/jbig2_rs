@@ -411,7 +411,9 @@ pub(super) const REFINEMENT_TEMPLATE_1: [RefinementSlot; 10] = [
     reference_slot_const!(1, 1),
 ];
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out == generic_region_spec::refinement_adaptive_selected(adaptive@, number, nominal),
+))]
 pub(super) fn refinement_adaptive_offset(
     adaptive: [TemplateOffset; 2],
     number: u8,
@@ -582,8 +584,9 @@ pub(super) fn refinement_prediction_cached(
     }
 }
 
-#[cfg_attr(verus_keep_ghost, verus_spec(
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires crate::spec::bitmap::storage_valid(reference),
+    ensures out == generic_region_spec::refinement_predicted_pixel(reference, x, y, parameters),
 ))]
 pub(super) fn refinement_prediction(
     reference: &Bitmap,
@@ -606,8 +609,11 @@ pub(super) fn refinement_prediction(
     Some(common)
 }
 
-#[cfg_attr(verus_keep_ghost, verus_spec(
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires crate::spec::bitmap::storage_valid(bitmap),
+    ensures out == generic_region_spec::refinement_reference_pixel(
+        bitmap, x, y, offset.x as int, offset.y as int, parameters,
+    ),
 ))]
 #[allow(clippy::cast_lossless)]
 pub(super) fn sample_reference(
@@ -617,11 +623,7 @@ pub(super) fn sample_reference(
     offset: TemplateOffset,
     parameters: RefinementParameters,
 ) -> bool {
-    let reference_x = (x as i64)
-        .checked_sub(parameters.reference_dx as i64)
-        .and_then(|value| value.checked_add(offset.x as i64));
-    let reference_y = (y as i64)
-        .checked_sub(parameters.reference_dy as i64)
-        .and_then(|value| value.checked_add(offset.y as i64));
-    sample_signed(bitmap, reference_x, reference_y)
+    let reference_x = (x as i64) - (parameters.reference_dx as i64) + (offset.x as i64);
+    let reference_y = (y as i64) - (parameters.reference_dy as i64) + (offset.y as i64);
+    sample_signed(bitmap, Some(reference_x), Some(reference_y))
 }

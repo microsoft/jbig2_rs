@@ -23,6 +23,10 @@ pub use results::global_parse_result;
 mod catalogs;
 pub(crate) use catalogs::{reference_total, reference_total_monotone};
 
+#[path = "document/scope.rs"]
+mod scope;
+pub(crate) use scope::{page_association_valid, palette_segment_rejected, reference_link_in_scope};
+
 #[path = "document/reference_types.rs"]
 mod reference_types;
 pub(crate) use reference_types::*;

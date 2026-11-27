@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "verified_exact_project_scope_with_reviewed_limits",
   "source_revision": "3e275d1a2bfddb95a25c801ae37a277500849ce8",
-  "scope": "Fresh pinned whole-crate Verus verification of all verified performance optimizations (#247-#254), including document-scoped GenericContexts scratch reuse across generic, pattern, and halftone segments, pristine-page XOR direct generic decode (#253), and register-cached MQ fast paths in ArithmeticDecoder::decode_integer and decode_iaid (#254). Zero unsafe code, zero runtime-proof divergences, unchanged 20 reviewed verifier limitations, and all 799 verified production functions / 1,732 obligations pass with 0 errors.",
+  "scope": "Fresh pinned whole-crate Verus verification including all 12 former safety_only requirements upgraded to functional_contract (0 safety_only remaining across all 266 requirements: 164 functional_contract / 102 state_preservation / 0 safety_only). Zero unsafe code, zero runtime-proof divergences, unchanged 20 reviewed verifier limitations, and all 799 verified production functions / 1,732 obligations pass with 0 errors.",
   "toolchain": {
     "manifest": "config/toolchain.json",
     "verus_version": "0.2026.10.04.426d8b0",
@@ -24,7 +24,7 @@
     "runtime_proof_divergences": 0,
     "incomplete_functions": 0
   },
-  "production_proof_coverage_sha256": "310dd8f61dbf7c9819a3f41359a5048e2da9505e8bbb46670de8f0846d60c975",
+  "production_proof_coverage_sha256": "e72aee5d09a0512998c5b13a050da8672e614a72aebc465b914f0485839114f5",
   "proof_dispositions_sha256": "6cad7e1291ff8da5fe39b56cc47ed00fc8de23f8a3a67b0e7090c3cd5d9d1843",
   "standard_library_boundary": {
     "manifest": "verification/stdlib/review.json",

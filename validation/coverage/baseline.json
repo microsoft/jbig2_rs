@@ -4,7 +4,7 @@
   "status": "layout_rebound_ratchet_release_goals_met",
   "policy": "Refreshed pinned LLVM coverage ratchet after verified performance optimizations #253 and #254 (document-scoped GenericContexts scratch reuse across generic/pattern/halftone, pristine-page XOR direct decode, and register-cached MQ decode_integer/decode_iaid). Added src/halftone/scratch.rs (100% lines/regions/branches) and moved decode_arithmetic_generic_with_scratch to segments.rs to respect the 800-line file budget. Overall coverage increased on all three metrics (93.59% lines, 88.21% regions, 86.43% branches) with all release goals met.",
   "source_revision": "e781aff6c5de6cba4924dfde52dc78d4c78dc15a",
-  "source_sha256": "df527b92622ebf4be7a39401485741c60cf2915d1e2f9a7a93469de8af7d6507",
+  "source_sha256": "3de0eeacf4b36561a23418cb81b875a59234b8ea3323860d7e83cdf9dcf95155",
   "test_source_sha256": "70b01cd7a9fd05e8ebf80b341fc9f9a4a6f4c2b079517dae30a2ec07ba8191c2",
   "toolchain": {
     "rust_toolchain": "nightly-2026-10-12",
@@ -18,16 +18,16 @@
   },
   "totals": {
     "lines": {
-      "covered": 16557,
-      "count": 17692
+      "covered": 16554,
+      "count": 17689
     },
     "regions": {
-      "covered": 16097,
-      "count": 18249
+      "covered": 16094,
+      "count": 18246
     },
     "branches": {
-      "covered": 3343,
-      "count": 3868
+      "covered": 3341,
+      "count": 3866
     }
   },
   "files": {
@@ -699,18 +699,18 @@
         "count": 142
       },
       "branches": {
-        "covered": 28,
-        "count": 30
+        "covered": 26,
+        "count": 28
       }
     },
     "src/generic_region/refinement.rs": {
       "lines": {
-        "covered": 313,
-        "count": 329
+        "covered": 309,
+        "count": 325
       },
       "regions": {
-        "covered": 399,
-        "count": 433
+        "covered": 395,
+        "count": 429
       },
       "branches": {
         "covered": 44,
@@ -845,12 +845,12 @@
     },
     "src/huffman/construction.rs": {
       "lines": {
-        "covered": 240,
-        "count": 266
+        "covered": 241,
+        "count": 267
       },
       "regions": {
-        "covered": 239,
-        "count": 285
+        "covered": 240,
+        "count": 286
       },
       "branches": {
         "covered": 55,

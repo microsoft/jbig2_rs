@@ -153,9 +153,12 @@ pub(crate) struct PageInformation {
                     payload@[16],
                     ((payload@[17] as u16) << 8) | payload@[18] as u16,
                 )
-                && crate::spec::segments::page_information_fields(payload@, info),
+                && crate::spec::segments::page_information_fields(payload@, info)
+                && payload@[16] & 0x80 == 0,
         Err(_) => true,
     },
+    crate::spec::segments::colour_page_rejected(payload@, *limits, false) ==>
+        out == Err(DecodeError::Unsupported(UnsupportedFeature::Colour)),
 ))]
 pub(crate) fn parse_page_information(
     payload: &[u8],
@@ -188,6 +191,8 @@ pub(crate) fn parse_page_information(
             && (colour ==> allow_colour),
         Err(_) => true,
     },
+    crate::spec::segments::colour_page_rejected(payload@, *limits, allow_colour) ==>
+        out == Err(DecodeError::Unsupported(UnsupportedFeature::Colour)),
 ))]
 pub(crate) fn parse_page_information_with_colour(
     payload: &[u8],

@@ -145,9 +145,16 @@ pub(super) fn count_total_references(segments: &[ParsedSegment<'_>]) -> Result<u
     Ok(total)
 }
 
-#[cfg_attr(verus_keep_ghost, verus_spec(
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires forall|entry: int| 0 <= entry < indexes@.len() ==>
         indexes@[entry].1 < segments@.len(),
+    ensures
+        out.is_ok() ==> forall|s: int, r: int|
+            0 <= s < segments@.len()
+            && 0 <= r < segments@[s].header.referred_segments@.len() ==>
+            document_spec::reference_link_in_scope(
+                segments@, indexes@, globals, s, segments@[s].header.referred_segments@[r],
+            ),
 ))]
 pub(super) fn validate_reference_links(
     segments: &[ParsedSegment<'_>],
@@ -160,6 +167,12 @@ pub(super) fn validate_reference_links(
             segment_index <= segments@.len(),
             forall|entry: int| 0 <= entry < indexes@.len() ==>
                 indexes@[entry].1 < segments@.len(),
+            forall|s: int, r: int|
+                0 <= s < segment_index
+                && 0 <= r < segments@[s].header.referred_segments@.len() ==>
+                document_spec::reference_link_in_scope(
+                    segments@, indexes@, globals, s, segments@[s].header.referred_segments@[r],
+                ),
         decreases segments@.len() - segment_index,
     ))]
     while segment_index < segments.len() {
@@ -167,9 +180,22 @@ pub(super) fn validate_reference_links(
         let mut reference_index = 0_usize;
         #[cfg_attr(verus_keep_ghost, verus_spec(
             invariant
+                segment_index < segments@.len(),
+                segment == &segments@[segment_index as int],
                 reference_index <= segment.header.referred_segments@.len(),
                 forall|entry: int| 0 <= entry < indexes@.len() ==>
                     indexes@[entry].1 < segments@.len(),
+                forall|s: int, r: int|
+                    0 <= s < segment_index
+                    && 0 <= r < segments@[s].header.referred_segments@.len() ==>
+                    document_spec::reference_link_in_scope(
+                        segments@, indexes@, globals, s, segments@[s].header.referred_segments@[r],
+                    ),
+                forall|r: int| 0 <= r < reference_index ==>
+                    document_spec::reference_link_in_scope(
+                        segments@, indexes@, globals, segment_index as int,
+                        segments@[segment_index as int].header.referred_segments@[r],
+                    ),
             decreases segment.header.referred_segments@.len() - reference_index,
         ))]
         while reference_index < segment.header.referred_segments.len() {
@@ -186,6 +212,17 @@ pub(super) fn validate_reference_links(
                     }
                     .into());
                 }
+                #[cfg(verus_keep_ghost)]
+                proof! {
+                    reveal(document_spec::reference_link_in_scope);
+                    assert(document_spec::reference_link_in_scope(
+                        segments@, indexes@, globals, segment_index as int, referred,
+                    )) by {
+                        if let Some(state) = globals {
+                            document_spec::global_fields(state);
+                        }
+                    };
+                }
                 reference_index += 1;
                 continue;
             };
@@ -199,6 +236,17 @@ pub(super) fn validate_reference_links(
                     page: segment.header.page_association,
                 }
                 .into());
+            }
+            #[cfg(verus_keep_ghost)]
+            proof! {
+                reveal(document_spec::reference_link_in_scope);
+                assert(document_spec::reference_link_in_scope(
+                    segments@, indexes@, globals, segment_index as int, referred,
+                )) by {
+                    assert(0 <= entry < indexes@.len());
+                    assert(indexes@[entry as int].0 == referred);
+                    assert(forall|prev: int| 0 <= prev < entry ==> indexes@[prev].0 != referred);
+                };
             }
             reference_index += 1;
         }

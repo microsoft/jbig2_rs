@@ -23,8 +23,8 @@
   },
   "model_classifications": {
     "review": "author-navigation-only-not-independent-normative-approval",
-    "registry_sha256": "0cfdfb077ac4bb7a7fd4abfb8cb7c482a7f9bd87fbd84a77d3b2bcf6711a6de2",
-    "project_source_sha256": "ba8806058fb2561d2f212a24c3db8698e4352bc7dd1796d097a448fb83b2105a",
+    "registry_sha256": "e1d8a01c77b42f7cfa44175950710eba653749317829701e0b588dee72cd4e3d",
+    "project_source_sha256": "d834ea94fba76ac72fbe2319b35500f6bfb5b7a86178914dca1764cd0ff6ace0",
     "families": [
       {
         "file": "specs/huffman_lookup.rs",
@@ -1624,6 +1624,85 @@
         "classification": "proof-support",
         "justification": "Pure sequence projections exposing owned/static TableSlice storage and compact inline/spilled Huffman tables uniformly to existing canonical-assignment and fallback specifications.",
         "ambiguity": ""
+      },
+      {
+        "file": "specs/decode.rs",
+        "members": [
+          "spec::auxiliary_page_result"
+        ],
+        "classification": "project-result-model",
+        "justification": "Intermediate auxiliary-buffer page permission and rejection equivalence on runtime pages.",
+        "ambiguity": ""
+      },
+      {
+        "file": "specs/document/scope.rs",
+        "members": [
+          "spec::page_association_valid",
+          "spec::reference_link_in_scope"
+        ],
+        "classification": "project-result-model",
+        "justification": "Page-zero/nonzero page-association and local/global reference-scope acceptance predicates.",
+        "ambiguity": ""
+      },
+      {
+        "file": "specs/document/scope.rs",
+        "members": [
+          "spec::palette_segment_rejected"
+        ],
+        "classification": "project-policy",
+        "justification": "Explicit bi-level profile rejection of colour palette segments with UnsupportedFeature::Colour.",
+        "ambiguity": ""
+      },
+      {
+        "file": "specs/segments.rs",
+        "members": [
+          "spec::colour_page_rejected"
+        ],
+        "classification": "project-policy",
+        "justification": "Explicit bi-level profile rejection when page-information bit 7 is set.",
+        "ambiguity": ""
+      },
+      {
+        "file": "specs/generic_region/refinement.rs",
+        "members": [
+          "spec::refinement_adaptive_fields",
+          "spec::refinement_adaptive_selected",
+          "spec::refinement_predicted_pixel"
+        ],
+        "classification": "project-result-model",
+        "justification": "Parsed refinement adaptive-pixel coordinates, slot selection and 3x3 uniform-neighbourhood typical prediction.",
+        "ambiguity": ""
+      },
+      {
+        "file": "specs/generic_region/refinement.rs",
+        "members": [
+          "spec::signed_offset_value",
+          "spec::bitmap_pixel_at",
+          "spec::refinement_reference_pixel"
+        ],
+        "classification": "proof-support",
+        "justification": "Signed offset byte decoding and white-padded reference-bitmap pixel sampling support.",
+        "ambiguity": ""
+      },
+      {
+        "file": "specs/huffman/encoded.rs",
+        "members": [
+          "spec::encoded_header_bounds_rejected",
+          "spec::encoded_normal_lines_valid",
+          "spec::encoded_special_lines_valid"
+        ],
+        "classification": "project-result-model",
+        "justification": "Encoded B.2 Huffman header bound ordering, normal-line partition and trailing special-line layout contracts.",
+        "ambiguity": ""
+      },
+      {
+        "file": "specs/huffman/encoded.rs",
+        "members": [
+          "spec::encoded_header_reserved_rejected"
+        ],
+        "classification": "project-policy",
+        "justification": "Reserved-bit header rejection policy for encoded B.2 Huffman tables.",
+        "ambiguity": ""
       }
     ]
   },
@@ -2283,19 +2362,23 @@
     "proofs/spec_properties/readers.rs": "599ebd5fd161e1ff76faa1d35ab8866d792ffec9d4e4985cf7acfbe4b8133e8a",
     "specs/arithmetic.rs": "c5f01faf6459ef2d86e6ce902bedbadfd44e8ce86c0b3d078c667d32cbf32ca5",
     "specs/bitmap.rs": "9d4da6608d7ee55fdf0ab7d8d47f6105e75e656c1f31589610d47a67a61218cf",
-    "specs/decode.rs": "e5adb89969d49d5645634d5e11fee81394f64e684657efb38ef5867d95bef1a0",
-    "specs/document.rs": "0618fbd140a6f6c9a90356a100b167aaa7c55da8f05b1d885794056022a15351",
+    "specs/decode.rs": "c6c5ec8a8ceeaef9a0b5c0ec48d0f2fbd441dadcc8e4a153f791ca44069c4db2",
+    "specs/document.rs": "e3382987d764109e8360f8ac195cc1022ef261ec957b831a11d1942e0f0cdc26",
     "specs/document/framing.rs": "815fa1d8b2c881edc03a56f514c61c04f4ce56095ed1c44c4edd97e9cf72fe36",
+    "specs/document/results.rs": "85542554b59fb2bd8f2a03d6e8d5843104eafc739567d380185edce5f8ef8cc2",
+    "specs/document/scope.rs": "6e6f38f6d401b652cbd63cef51df870439163bb6e8353e0ef0223ef09da1de6e",
     "specs/file_header.rs": "d7bfe82359473ce879ac27879ccdac8130a401bacb8a9fd69fe1b3571e86d599",
-    "specs/generic_region.rs": "f1e5ebda066fa7d1f67948457077507996b3dfb8d86064dd602ba14b49b1eeff",
+    "specs/generic_region.rs": "f943dc2ca526c8c6eea70d4137aace7322449f6963320365bd1b4314198d5ad9",
     "specs/generic_region/framing.rs": "23db47cf183d7f2c490db16611119d5fe1e485b4800cb6af9904516032c6ccea",
+    "specs/generic_region/refinement.rs": "d92b3690c1883cf6e383f15e093966b4e83e72d78ac88230d4d834c338bc4270",
     "specs/halftone.rs": "580ff49badf098ed19f963189610c2a4627b1ce4a1be9c96b67347283edb5bb3",
-    "specs/huffman.rs": "4d8ff2642590af8f10854db76293d5a5b7a09d0487507145717f3c4f41d6b5c1",
+    "specs/huffman.rs": "599ccf5cb555006962434d18bbb6dad8021d72bb3fed223be40c6705ed46a6cb",
+    "specs/huffman/encoded.rs": "7387ed85b522e6e96e03c12902fe8dc0383baf847511750fb9b51985ff39b07a",
     "specs/huffman_lookup.rs": "4349cd280f9afb9bc95f3895193ff44e55389811645996c7b8034005d437691c",
     "specs/mmr.rs": "6333d8553b47d1bd6bcc996c0d0f3d0216d3f4d3eeff9c07e34a4dfeea5bb49c",
     "specs/mod.rs": "34f81994f8b77e618a7d48d4552175d09cf3be633307166227c13ce94a06ba21",
     "specs/readers.rs": "ee10b54a7ee8dce323488bf8ef5229fbbf1d5811888a3364cda8f2cc187ba251",
-    "specs/segments.rs": "dc288038574b7f902a15752e58096ef504d0253a0f308950474278ca2104e451",
+    "specs/segments.rs": "e68fde26b0e2781621c8bc7b8b58db851d2605347fcb9d743bbd139ffe680831",
     "specs/symbol_text.rs": "d84fc702904bee6f7f3bead54ee8859878adc78f8287b92434c7549f2a2cc0f6",
     "specs/symbol_text/arithmetic_codec.rs": "3cd43b78103353dc59a018562cdfe2338cdf7a869d83ba35fd0b0e3f146c03d9",
     "specs/symbol_text/dictionary.rs": "f7994737d95cefbca3e6067754190b160ddb8c85900a17edf672b4f8d80882b2",
@@ -2318,15 +2401,15 @@
     "src/decode.rs": "e6725ca53c31b734aad9baefc5113e1256ae9013d28511de521e9d532d94dd41",
     "src/decode/api.rs": "49d45b828fd56924b7176ac54283e1fadc70f93bec1d45945095db975ee6082c",
     "src/decode/dispatch/references.rs": "52e7500e0cef622729c3b19f535c8d0824644b5a954dd373ffeadeb34e649c67",
-    "src/decode/rendering.rs": "5e53e7f0f966dde5c300ea4c1402bdfe7f3e875e12a675a20e3bfbeef8bd64e3",
+    "src/decode/rendering.rs": "4f242c47836a8c3eff5d3495510185ba24d99bdeca5cac0c9ed72f0fdffaccd0",
     "src/decode/resources.rs": "55f9ee8e2daa02d57b3778847780e98dd8e2b7cf0b7331d45f76e429011dfd1a",
     "src/decode/tests/container_routes.rs": "d84b63cd8fa430c1adec78535df904cf3521f33212cdefe8ee28241bc4c56b39",
     "src/decode/tests/direct_and_reuse.rs": "d46a5cbd0ee0791141d8b6115f090faa7a0315dc51437dcfb643dce6b58e116c",
     "src/decode/tests/symbol_resources.rs": "8b1f5260bcf7b6d300895b700ecbb10748742d0d124a563872710938fba26256",
     "src/document.rs": "e9ac0a112e6e6b195c7c7a22af5f3da1e685a5f19380109ea906770dd7aca6a5",
-    "src/document/pages.rs": "3a10ba252984750ca7fbf6add8445eaf785c6fdaabb7594b7cb1112c689679b6",
-    "src/document/parsing.rs": "27f627f0a93a08f9927c9515947be0a7fad019525b95ebff3f2cce1e71c750bc",
-    "src/document/references.rs": "69acd07c8e2da002936fa8826f054dd254aecaec34c6904514daaf760841b9e4",
+    "src/document/pages.rs": "6d00c61ccddaf890dad3b4e349aa7df26cc3bb512b1c41c3baf16a797a5f1af1",
+    "src/document/parsing.rs": "41056c45213a2886feaff0cd2781c9df514296527bd9afd32137a5ea1e28244d",
+    "src/document/references.rs": "cbb2ebe33d860900d4208ba17042a2eecec41ffa785eb9f4fc48a378f28b26b4",
     "src/document/tests.rs": "83c40558470af241ab9be812667f186de6b6dbffed8f3c8f03f5d5ab20923063",
     "src/document/tests/container_inspection.rs": "2ec6cd3bd75bda1c40165a09d767a85fb78359a10dbcb689ce3ea4d0b46a04af",
     "src/document/tests/payload_windows.rs": "96c85ffdb008808b7c63951c13564ec683bd327f1a4a95ebb27672905da5d0cc",
@@ -2334,10 +2417,10 @@
     "src/generic_region.rs": "31f116808eeceeba867c8977c26e40ed5e5421c9985e5b1213f12759a7da8ed6",
     "src/generic_region/contexts.rs": "1859f27b97f3fb17cc42305dc7c2cb447d30dab9043021b154f8ef679150fcde",
     "src/generic_region/generic.rs": "a0e03f03051b0562031e272f1006a9f9915697073d78f5fea8cdbe0b8ffe6636",
-    "src/generic_region/headers.rs": "10a0bc319a6b79e0172b018433327edd5635cb44338e9e5c4fa061c65e7d0c7e",
-    "src/generic_region/refinement.rs": "2af9a40b783c3ad74ee0dca9012f999cfd81734f491812784782d7bfa8870632",
+    "src/generic_region/headers.rs": "2ac80d3720a5c1ffb65759739f86676670c1d7b5e34f2745f17e1c4163ee3ba3",
+    "src/generic_region/refinement.rs": "d7e6c2cfa5ffd0ac8afdca6d72a1097e4c3b1320324810d362845eed0df5bea4",
     "src/generic_region/segments.rs": "13b07db995cca5d8bf60c230ae812acd8819ec8a156fb92dd96abd008ed0789d",
-    "src/generic_region/support.rs": "f564fa0bda614940d4592b8958b236a1c8978ed56cf1ee9102e745f20ce62f16",
+    "src/generic_region/support.rs": "57224d1292b27244ee56850a2974902a4e5f1f889a9205fec9b90d159ff9f540",
     "src/generic_region/tests/diagnostics.rs": "e9da25dc92483a7dbf4064643a245784c0aaa67ebb4ee15c0186351bfbbd3161",
     "src/generic_region/tests/headers_and_prediction.rs": "4dcb5015504f8a05453f8aef00a5e7129ddf84632b1585bb1a2b9faff691f8c0",
     "src/generic_region/tests/raster_parity.rs": "c1c98c7941a717d947524632fb103f3188fc0b417af2692a037775546c31250b",
@@ -2350,8 +2433,8 @@
     "src/halftone/tests/codec_state.rs": "693ea5475e054c580a3890437b0beee34ab67f6d6f88dee22c27b0484f159973",
     "src/halftone/tests/geometry_and_render.rs": "50ebcfb2172af2966ded4e3a15c9a8cca701d52611b18b95ec4cb44e372c4bd6",
     "src/halftone/tests/headers_and_patterns.rs": "ef5f90a9b1eaf32619dc22c6f49b5d6d6ccbf32f9bdacfc6507f29c15efa9f70",
-    "src/huffman.rs": "de2ba74bab04d5402e9eaef47eafe06ba9d64b75fe8a23b98ff8d01289a514cb",
-    "src/huffman/construction.rs": "8728adcc51ed382b7e19297b28556790e909a8212833cbfa0578a9df51701fdb",
+    "src/huffman.rs": "d45d5d7395466a0cb3e596a9db53defcbb12aacfcebfb456042ba0ffadd08948",
+    "src/huffman/construction.rs": "86ef14cba25e8cb532d16ff57b0ad3bd111fe6617e227ec660fde1b537e606b9",
     "src/huffman/decoding.rs": "8282179614cce90de920bc4cab19b0ae47fd8a0a8a9c3f6348641949abb7fe76",
     "src/huffman/lookup.rs": "62bdb3eb62a463db6123d6cbe0a775bac8e974d2fae4c515c949e44552438868",
     "src/huffman/tests/cache_map.rs": "e8931fc6d4c3b1300877574416598ae90aa3826dd5ab15ecea6ca2778274b044",
@@ -2359,7 +2442,7 @@
     "src/huffman/tests/fallback_state.rs": "42c05791b257ecbd7e80fc3b23450456fdf438714de52666bee9e6d3eb30cba6",
     "src/huffman/tests/table_validation.rs": "a64c7a044e62f0453c436bb819066dd861c5d2078c2c3c9ba6de86fa90991ec9",
     "src/huffman/tests/wide_arithmetic.rs": "251462094b4817ff83394bb62072184b63796988e9606d75f29200eb1a1d8ca9",
-    "src/huffman/validation.rs": "4d8612ef0cba9f16a12ae61886d225ab07766d74b21d727660405021a4f807ca",
+    "src/huffman/validation.rs": "2b5cebd5e24122d2fc7907ea7d4d7ba4ac4f9c3bec8e7852419f71f5517c05ab",
     "src/huffman/wide.rs": "4f37abac40efc66f0c3eaa2637d211eaca5a5ea4fa7a14d7aadb07fbe2a8f0b0",
     "src/lib.rs": "dfc6fc903517de7b5dbb685d73b49b43333dec4d44af7e2f00c7cf3ca9e4bb6f",
     "src/mmr.rs": "939bdd232275bf07a8d776bacd891001dacdd49c828cfbb0abcbd40fa4adf5bb",
@@ -2374,7 +2457,7 @@
     "src/mmr/tests/transition_cache.rs": "9694dc1674f651d821c3a40de0b2c052fc06d9c67f7a558a7856f6d917be41b2",
     "src/reader.rs": "66e1e1f4cdd7ecca119a94c9132c2dc32ddeceed800a7dbffd216756152251e5",
     "src/reader/tests.rs": "ff4f56ae43d4aea472a4d3ab04862edc802bf2d4413bb8de7646a1adf9cf9f47",
-    "src/segment_data.rs": "cb23e07c74224c0a689da9479b4e3c952df3185e5e1f78af6edced22eeabfdc9",
+    "src/segment_data.rs": "c4a1805994dcc2e2d862b0281478214d23f3567a12693860aba4a38f8e32228d",
     "src/segment_data/tests.rs": "7b082bcee501bd86382474823db6af59afb56842b7d053c3de8b77d2e5edfc15",
     "src/segment_header.rs": "ec5047080fa67fd0a8dd28e8101b972aeb23e3d10939906e1c059674ebaa528d",
     "src/segment_header/tests.rs": "41f4c9c942b49bc2d4d7c8588ac99ab655475803849836854afd349eee0d463c",
@@ -4652,6 +4735,180 @@
       ],
       "name": "final_marker_result",
       "role": "Exact existing project strict-framing/helper result policy; local driver support, not independent normative framing or full-stream/raster fidelity."
+    },
+    "decode-auxiliary-page-result": {
+      "kind": "spec",
+      "file": "specs/decode.rs",
+      "module_path": [
+        "decode",
+        "decode_spec"
+      ],
+      "name": "auxiliary_page_result",
+      "role": "Exact intermediate auxiliary-buffer permission and rejection equivalence on a runtime page."
+    },
+    "document-page-association-valid": {
+      "kind": "spec",
+      "file": "specs/document/scope.rs",
+      "module_path": [
+        "document",
+        "document_spec",
+        "scope"
+      ],
+      "name": "page_association_valid",
+      "role": "Exact segment-type page-zero and nonzero page-association acceptance predicate."
+    },
+    "document-reference-link-in-scope": {
+      "kind": "spec",
+      "file": "specs/document/scope.rs",
+      "module_path": [
+        "document",
+        "document_spec",
+        "scope"
+      ],
+      "name": "reference_link_in_scope",
+      "role": "Exact page-zero, same-page, cross-page and global import reference-scope predicate."
+    },
+    "document-palette-segment-rejected": {
+      "kind": "spec",
+      "file": "specs/document/scope.rs",
+      "module_path": [
+        "document",
+        "document_spec",
+        "scope"
+      ],
+      "name": "palette_segment_rejected",
+      "role": "Explicit bi-level profile rejection of colour palette segments with UnsupportedFeature::Colour."
+    },
+    "document-global-parse-result": {
+      "kind": "spec",
+      "file": "specs/document/results.rs",
+      "module_path": [
+        "document",
+        "document_spec",
+        "results"
+      ],
+      "name": "global_parse_result",
+      "role": "Owned global input bytes, successful admission and stream-limit enforcement for Decoder::parse_globals."
+    },
+    "segment-colour-page-rejected": {
+      "kind": "spec",
+      "file": "specs/segments.rs",
+      "module_path": [
+        "spec",
+        "segments"
+      ],
+      "name": "colour_page_rejected",
+      "role": "Explicit bi-level profile rejection predicate when page-information bit 7 is set."
+    },
+    "generic-signed-offset-value": {
+      "kind": "spec",
+      "file": "specs/generic_region/refinement.rs",
+      "module_path": [
+        "generic_region",
+        "generic_region_spec",
+        "refinement"
+      ],
+      "name": "signed_offset_value",
+      "role": "Signed two's-complement byte decoding for adaptive template offsets."
+    },
+    "refinement-adaptive-fields": {
+      "kind": "spec",
+      "file": "specs/generic_region/refinement.rs",
+      "module_path": [
+        "generic_region",
+        "generic_region_spec",
+        "refinement"
+      ],
+      "name": "refinement_adaptive_fields",
+      "role": "Parsed refinement adaptive-pixel coordinates, omitted Template 1 fields and target bounds."
+    },
+    "refinement-adaptive-selected": {
+      "kind": "spec",
+      "file": "specs/generic_region/refinement.rs",
+      "module_path": [
+        "generic_region",
+        "generic_region_spec",
+        "refinement"
+      ],
+      "name": "refinement_adaptive_selected",
+      "role": "Adaptive-slot coordinate selection for refinement context gathering."
+    },
+    "refinement-bitmap-pixel-at": {
+      "kind": "spec",
+      "file": "specs/generic_region/refinement.rs",
+      "module_path": [
+        "generic_region",
+        "generic_region_spec",
+        "refinement"
+      ],
+      "name": "bitmap_pixel_at",
+      "role": "Signed-coordinate bitmap sampling with white out-of-bounds default."
+    },
+    "refinement-reference-pixel": {
+      "kind": "spec",
+      "file": "specs/generic_region/refinement.rs",
+      "module_path": [
+        "generic_region",
+        "generic_region_spec",
+        "refinement"
+      ],
+      "name": "refinement_reference_pixel",
+      "role": "Aligned reference-bitmap pixel sampling for refinement typical prediction."
+    },
+    "refinement-predicted-pixel": {
+      "kind": "spec",
+      "file": "specs/generic_region/refinement.rs",
+      "module_path": [
+        "generic_region",
+        "generic_region_spec",
+        "refinement"
+      ],
+      "name": "refinement_predicted_pixel",
+      "role": "3x3 uniform-neighbourhood typical-prediction detector on aligned reference bitmap."
+    },
+    "huffman-encoded-reserved-rejected": {
+      "kind": "spec",
+      "file": "specs/huffman/encoded.rs",
+      "module_path": [
+        "huffman",
+        "huffman_spec",
+        "encoded"
+      ],
+      "name": "encoded_header_reserved_rejected",
+      "role": "Reserved-bit header rejection predicate for encoded B.2 Huffman tables."
+    },
+    "huffman-encoded-bounds-rejected": {
+      "kind": "spec",
+      "file": "specs/huffman/encoded.rs",
+      "module_path": [
+        "huffman",
+        "huffman_spec",
+        "encoded"
+      ],
+      "name": "encoded_header_bounds_rejected",
+      "role": "Signed lower/upper header bound ordering rejection predicate for encoded B.2 Huffman tables."
+    },
+    "huffman-encoded-normal-lines": {
+      "kind": "spec",
+      "file": "specs/huffman/encoded.rs",
+      "module_path": [
+        "huffman",
+        "huffman_spec",
+        "encoded"
+      ],
+      "name": "encoded_normal_lines_valid",
+      "role": "Contiguous normal-line partition and upper-bound coverage of encoded B.2 Huffman tables."
+    },
+    "huffman-encoded-special-lines": {
+      "kind": "spec",
+      "file": "specs/huffman/encoded.rs",
+      "module_path": [
+        "huffman",
+        "huffman_spec",
+        "encoded"
+      ],
+      "name": "encoded_special_lines_valid",
+      "role": "Lower, upper and optional OOB trailing special-line layout of encoded B.2 Huffman tables."
     }
   },
   "requirements": [
@@ -6167,7 +6424,9 @@
       "runtime": [
         "decode::rendering::require_auxiliary_page_state"
       ],
-      "models": [],
+      "models": [
+        "decode-auxiliary-page-result"
+      ],
       "proof_macros": [],
       "tests": [
         {
@@ -6175,16 +6434,24 @@
           "name": "intermediate_regions_require_page_auxiliary_permission"
         }
       ],
-      "strength": "safety_only",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "The verified guard has no postcondition for auxiliary permission or its exact InvalidPageState rejection.",
+      "scope_of_formal_result": "require_auxiliary_page_state proves exact permission/rejection equivalence: returns Ok(()) iff page.auxiliary_allowed is true, and otherwise returns Err(MalformedError::InvalidPageState(...)).",
       "assumptions": [
         "The page flag has already been propagated into auxiliary_allowed; this requirement does not cover every segment that may require an auxiliary buffer."
       ],
       "gaps": [
         "Prove permission/rejection equivalence, raw page-flag propagation and complete guarded dispatch for all intermediate/refinement types."
       ],
-      "functional_evidence": [],
+      "functional_evidence": [
+        {
+          "runtime": "decode::rendering::require_auxiliary_page_state",
+          "section": "ensures",
+          "tokens": [
+            "decode_spec::auxiliary_page_result(page.auxiliary_allowed, out)"
+          ]
+        }
+      ],
       "invariant_evidence": []
     },
     {
@@ -6303,7 +6570,9 @@
       "runtime": [
         "document::pages::validate_page_association"
       ],
-      "models": [],
+      "models": [
+        "document-page-association-valid"
+      ],
       "proof_macros": [],
       "tests": [
         {
@@ -6315,16 +6584,25 @@
           "name": "document::tests::container_inspection::embedded_page_resolves_reusable_globals_explicitly"
         }
       ],
-      "strength": "safety_only",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "The association validator is verified for safety without a postcondition characterizing allowed page-zero types.",
+      "scope_of_formal_result": "validate_page_association proves exact acceptance/rejection equivalence across all 15 page-scoped segment types (requiring page_association != 0) and EndOfFile (requiring page_association == 0), returning exact InvalidPageAssociation { segment, page } on violation.",
       "assumptions": [
         "T.88 page-independent association is not itself a PDF global-container definition; the project API supplies that reuse policy separately."
       ],
       "gaps": [
         "Prove exact allowed-type/page-association conditions and all typed rejection cases, including EOF association and every region/boundary type."
       ],
-      "functional_evidence": [],
+      "functional_evidence": [
+        {
+          "runtime": "document::pages::validate_page_association",
+          "section": "ensures",
+          "tokens": [
+            "document_spec::page_association_valid(header.segment_type, header.page_association)",
+            "MalformedError::InvalidPageAssociation"
+          ]
+        }
+      ],
       "invariant_evidence": []
     },
     {
@@ -6336,7 +6614,9 @@
       "runtime": [
         "document::references::validate_reference_links"
       ],
-      "models": [],
+      "models": [
+        "document-reference-link-in-scope"
+      ],
       "proof_macros": [],
       "tests": [
         {
@@ -6344,16 +6624,24 @@
           "name": "page_independent_resources_cannot_refer_to_page_scoped_resources"
         }
       ],
-      "strength": "safety_only",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "The helper verifies bounded index use conditional on valid index entries, but exports no complete scope/resolution postcondition.",
+      "scope_of_formal_result": "validate_reference_links proves that every referred segment in an accepted document resolves either to a local segment with page_association == 0 or matching page_association, or to an imported global segment in GlobalSegments.",
       "assumptions": [
         "The generated case uses dictionary resources and a real page-associated target; target existence and lifetime are separate constraints."
       ],
       "gaps": [
         "Prove page-zero/same-page/cross-page reference rules, successful global import lookup, complete errors and interaction with allowed reference types."
       ],
-      "functional_evidence": [],
+      "functional_evidence": [
+        {
+          "runtime": "document::references::validate_reference_links",
+          "section": "ensures",
+          "tokens": [
+            "document_spec::reference_link_in_scope("
+          ]
+        }
+      ],
       "invariant_evidence": []
     },
     {
@@ -6485,7 +6773,9 @@
         "segment_data::parse_page_information",
         "segment_data::parse_page_information_with_colour"
       ],
-      "models": [],
+      "models": [
+        "segment-colour-page-rejected"
+      ],
       "proof_macros": [],
       "tests": [
         {
@@ -6493,16 +6783,33 @@
           "name": "coloured_page_rejection_is_a_typed_profile_policy"
         }
       ],
-      "strength": "safety_only",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "Safe parser execution and successful uncoloured flags do not specify the exact Unsupported(Colour) error for coloured input.",
+      "scope_of_formal_result": "parse_page_information and parse_page_information_with_colour prove exact bit-7 colour flag detection and typed Err(DecodeError::Unsupported(UnsupportedFeature::Colour)) rejection whenever !allow_colour on valid-dimension 19-byte payloads.",
       "assumptions": [
         "Typed rejection is the support-matrix profile policy, not a requirement that a full T.88 colour decoder reject supported syntax."
       ],
       "gaps": [
         "Prove exact profile rejection and complete detection of all colour declarations; do not infer T.88 colour conformance from this exclusion."
       ],
-      "functional_evidence": [],
+      "functional_evidence": [
+        {
+          "runtime": "segment_data::parse_page_information",
+          "section": "ensures",
+          "tokens": [
+            "crate::spec::segments::colour_page_rejected(payload@, *limits, false)",
+            "UnsupportedFeature::Colour"
+          ]
+        },
+        {
+          "runtime": "segment_data::parse_page_information_with_colour",
+          "section": "ensures",
+          "tokens": [
+            "crate::spec::segments::colour_page_rejected(payload@, *limits, allow_colour)",
+            "colour == (payload@[16] & 0x80 != 0)"
+          ]
+        }
+      ],
       "invariant_evidence": []
     },
     {
@@ -6516,7 +6823,9 @@
       "runtime": [
         "document::parsing::parse_known_segment_data"
       ],
-      "models": [],
+      "models": [
+        "document-palette-segment-rejected"
+      ],
       "proof_macros": [],
       "tests": [
         {
@@ -6524,16 +6833,24 @@
           "name": "palette_segment_rejection_is_a_typed_profile_policy"
         }
       ],
-      "strength": "safety_only",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "The verified dispatch body has no typed palette-rejection postcondition; no palette component/colour decoding correctness is claimed.",
+      "scope_of_formal_result": "parse_known_segment_data proves that SegmentType::ColourPalette unconditionally returns Err(DecodeError::Unsupported(UnsupportedFeature::Colour)).",
       "assumptions": [
         "The project deliberately excludes palette decoding; T.88 defines a decoding procedure rather than this profile's unsupported error."
       ],
       "gaps": [
         "Prove exact dispatch/type/error propagation and all profile entry points; supporting colour would require a separately approved scope and complete 6.8/7.4.16 decomposition."
       ],
-      "functional_evidence": [],
+      "functional_evidence": [
+        {
+          "runtime": "document::parsing::parse_known_segment_data",
+          "section": "ensures",
+          "tokens": [
+            "document_spec::palette_segment_rejected(header.segment_type, out)"
+          ]
+        }
+      ],
       "invariant_evidence": []
     },
     {
@@ -6770,7 +7087,9 @@
       "runtime": [
         "document::Decoder::parse_globals"
       ],
-      "models": [],
+      "models": [
+        "document-global-parse-result"
+      ],
       "proof_macros": [],
       "tests": [
         {
@@ -6782,16 +7101,25 @@
           "name": "decode::tests::container_routes::embedded_text_uses_reusable_global_symbol_dictionary"
         }
       ],
-      "strength": "safety_only",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "Global parsing is verified for safe execution without an exported theorem for retained semantic contents, immutability across calls or decoded-page equivalence.",
+      "scope_of_formal_result": "Decoder::parse_globals proves exact stream-limit enforcement, preserved immutable input bytes, and matched segment-type/reference-depth catalog cardinality via document_spec::global_parse_result.",
       "assumptions": [
         "The support matrix requires a reusable immutable API. T.88 D.3 does not define PDF container reassembly; no PDF standards document has been acquired or cited as normative evidence."
       ],
       "gaps": [
         "Prove resource contents/count/type/import relations and repeated-call output equivalence; separately review container responsibilities and any future PDF normative source."
       ],
-      "functional_evidence": [],
+      "functional_evidence": [
+        {
+          "runtime": "document::Decoder::parse_globals",
+          "section": "ensures",
+          "tokens": [
+            "document_spec::global_parse_result(",
+            "document_spec::global_segment_count(&globals)"
+          ]
+        }
+      ],
       "invariant_evidence": []
     },
     {
@@ -7474,7 +7802,11 @@
         "generic_region::headers::parse_refinement_region_header",
         "generic_region::refinement::refinement_adaptive_offset"
       ],
-      "models": [],
+      "models": [
+        "generic-signed-offset-value",
+        "refinement-adaptive-fields",
+        "refinement-adaptive-selected"
+      ],
       "proof_macros": [],
       "tests": [
         {
@@ -7482,16 +7814,31 @@
           "name": "generic_region::tests::headers_and_prediction::parses_refinement_headers_and_nominal_adaptive_pixels"
         }
       ],
-      "strength": "safety_only",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "Verified parsing and offset selection do not export the adaptive coordinates, signed-byte interpretation or target/reference geometry relation.",
+      "scope_of_formal_result": "parse_refinement_region_header proves exact signed two's-complement GRAT byte decoding, 22-byte Template 0 / 18-byte zeroed Template 1 header lengths, and preceding-pixel validity of GRAT1; refinement_adaptive_offset proves exact slot selection.",
       "assumptions": [
         "Only the adaptive template uses the two fields; legal target history and reference-coordinate ranges require separate review."
       ],
       "gaps": [
         "Prove exact signed fields, omitted-field behavior, geometric restrictions and propagation into context gathering."
       ],
-      "functional_evidence": [],
+      "functional_evidence": [
+        {
+          "runtime": "generic_region::headers::parse_refinement_region_header",
+          "section": "ensures",
+          "tokens": [
+            "generic_region_spec::refinement_adaptive_fields(payload@, &header, header_len)"
+          ]
+        },
+        {
+          "runtime": "generic_region::refinement::refinement_adaptive_offset",
+          "section": "ensures",
+          "tokens": [
+            "generic_region_spec::refinement_adaptive_selected(adaptive@, number, nominal)"
+          ]
+        }
+      ],
       "invariant_evidence": []
     },
     {
@@ -7505,7 +7852,10 @@
         "generic_region::refinement::decode_arithmetic_refinement"
       ],
       "models": [
-        "bitmap-storage-valid"
+        "bitmap-storage-valid",
+        "refinement-bitmap-pixel-at",
+        "refinement-reference-pixel",
+        "refinement-predicted-pixel"
       ],
       "proof_macros": [],
       "tests": [
@@ -7518,16 +7868,24 @@
           "name": "generic_region::tests::segment_framing::bounded_refinement_uses_shared_arithmetic_decoder"
         }
       ],
-      "strength": "safety_only",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "The prediction helper has valid-storage preconditions but no prediction-result contract. Raster success promises valid storage, not the nine-pixel predicate or predicted output value.",
+      "scope_of_formal_result": "refinement_prediction proves exact 3x3 uniform-neighbourhood detection and predicted value on the aligned reference bitmap with white out-of-bounds default via refinement_predicted_pixel.",
       "assumptions": [
         "Randomized scalar-oracle agreement is runtime evidence, not independent proof of the reference neighbourhood or image-edge conventions."
       ],
       "gaps": [
         "Prove uniform-neighbourhood detection, predicted value, reference alignment, border behavior and conditional caller use under LTP."
       ],
-      "functional_evidence": [],
+      "functional_evidence": [
+        {
+          "runtime": "generic_region::refinement::refinement_prediction",
+          "section": "ensures",
+          "tokens": [
+            "generic_region_spec::refinement_predicted_pixel(reference, x, y, parameters)"
+          ]
+        }
+      ],
       "invariant_evidence": []
     },
     {
@@ -9151,7 +9509,9 @@
       "runtime": [
         "huffman::construction::HuffmanTable::from_encoded"
       ],
-      "models": [],
+      "models": [
+        "huffman-encoded-reserved-rejected"
+      ],
       "proof_macros": [],
       "tests": [
         {
@@ -9159,16 +9519,25 @@
           "name": "huffman::tests::table_validation::rejects_reserved_flags_and_nonzero_padding"
         }
       ],
-      "strength": "safety_only",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "The parser body is verified for safety; it has no rejection postcondition for reserved flags.",
+      "scope_of_formal_result": "HuffmanTable::from_encoded proves that any within-limit payload with flags bit 7 set returns Err(HuffmanError::InvalidTable(HuffmanTableError::ReservedFlags(bytes[0]))).",
       "assumptions": [
         "Only the reserved-flag part of the linked test backs this requirement; that test's separate zero-padding rule is not attributed to B.2.1."
       ],
       "gaps": [
         "Add a typed reserved-bit rejection contract and broader flag combinations; complete malformed-table policy remains open."
       ],
-      "functional_evidence": [],
+      "functional_evidence": [
+        {
+          "runtime": "huffman::construction::HuffmanTable::from_encoded",
+          "section": "ensures",
+          "tokens": [
+            "huffman_spec::encoded_header_reserved_rejected(bytes@, *limits)",
+            "HuffmanTableError::ReservedFlags(bytes@[0])"
+          ]
+        }
+      ],
       "invariant_evidence": []
     },
     {
@@ -9180,7 +9549,9 @@
       "runtime": [
         "huffman::construction::HuffmanTable::from_encoded"
       ],
-      "models": [],
+      "models": [
+        "huffman-encoded-bounds-rejected"
+      ],
       "proof_macros": [],
       "tests": [
         {
@@ -9192,16 +9563,25 @@
           "name": "huffman::tests::table_validation::rejects_invalid_bounds_and_range_length"
         }
       ],
-      "strength": "safety_only",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "Verified casts and bounded arithmetic, but no postcondition binds returned table bounds to signed big-endian input fields.",
+      "scope_of_formal_result": "HuffmanTable::from_encoded proves exact signed big-endian 32-bit HTLOW/HTHIGH decoding and Err(HuffmanTableError::InvalidBounds { low, high }) rejection whenever low >= high.",
       "assumptions": [
         "The named Annex B example is an existing test, not newly acquired or redistributed official vector content."
       ],
       "gaps": [
         "Add independent negative/extreme signed-bound tests and prove field interpretation, bound ordering and output correspondence."
       ],
-      "functional_evidence": [],
+      "functional_evidence": [
+        {
+          "runtime": "huffman::construction::HuffmanTable::from_encoded",
+          "section": "ensures",
+          "tokens": [
+            "huffman_spec::encoded_header_bounds_rejected(bytes@, *limits)",
+            "HuffmanTableError::InvalidBounds"
+          ]
+        }
+      ],
       "invariant_evidence": []
     },
     {
@@ -9213,7 +9593,9 @@
       "runtime": [
         "huffman::construction::HuffmanTable::from_encoded"
       ],
-      "models": [],
+      "models": [
+        "huffman-encoded-normal-lines"
+      ],
       "proof_macros": [],
       "tests": [
         {
@@ -9225,16 +9607,24 @@
           "name": "huffman::tests::table_validation::rejects_invalid_bounds_and_range_length"
         }
       ],
-      "strength": "safety_only",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "Loop invariants bound the current value and reader; no exported table-line sequence relation proves the B.2 recurrence.",
+      "scope_of_formal_result": "HuffmanTable::from_encoded proves that every accepted table starts at HTLOW, has at least one normal line with range_len <= 32, maintains exact contiguous range_low + 2^range_len transitions, and reaches or crosses HTHIGH.",
       "assumptions": [
         "Project rejection of a range partition that overshoots the supplied high bound is implementation policy pending normative review."
       ],
       "gaps": [
         "Prove the complete decoded line list and termination/partition relation; adjudicate whether the stricter overshoot rejection excludes otherwise permitted tables."
       ],
-      "functional_evidence": [],
+      "functional_evidence": [
+        {
+          "runtime": "huffman::construction::HuffmanTable::from_encoded",
+          "section": "ensures",
+          "tokens": [
+            "huffman_spec::encoded_normal_lines_valid(bytes@, &table)"
+          ]
+        }
+      ],
       "invariant_evidence": []
     },
     {
@@ -9246,7 +9636,9 @@
       "runtime": [
         "huffman::construction::HuffmanTable::from_encoded"
       ],
-      "models": [],
+      "models": [
+        "huffman-encoded-special-lines"
+      ],
       "proof_macros": [],
       "tests": [
         {
@@ -9258,16 +9650,24 @@
           "name": "huffman::tests::table_validation::parses_annex_b_example_table"
         }
       ],
-      "strength": "safety_only",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "The parser body is verified, without a postcondition for special-line order, bounds, range sizes or conditional presence.",
+      "scope_of_formal_result": "HuffmanTable::from_encoded proves exact trailing special-line layout: Lower at HTLOW-1 (32-bit), Upper at HTHIGH (32-bit), and optional OutOfBand (0-bit) iff HTOOB is set.",
       "assumptions": [
         "The supplied low/high fields and OOB flag are parsed before these lines; selected examples do not cover every special-line combination."
       ],
       "gaps": [
         "Prove returned special-line sequence and encoded-bit consumption; add absent/present OOB and extreme lower/upper parser cases."
       ],
-      "functional_evidence": [],
+      "functional_evidence": [
+        {
+          "runtime": "huffman::construction::HuffmanTable::from_encoded",
+          "section": "ensures",
+          "tokens": [
+            "huffman_spec::encoded_special_lines_valid(bytes@, &table)"
+          ]
+        }
+      ],
       "invariant_evidence": []
     },
     {

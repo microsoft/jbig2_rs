@@ -9,6 +9,13 @@ use vstd::prelude::*;
 mod compact;
 pub(crate) use compact::{slice_view, table_first_codes, table_first_lines, table_length_counts};
 
+#[path = "huffman/encoded.rs"]
+mod encoded;
+pub(crate) use encoded::{
+    encoded_header_bounds_rejected, encoded_header_reserved_rejected, encoded_normal_lines_valid,
+    encoded_special_lines_valid,
+};
+
 verus! {
 
 // Model navigation: spec::zero_padding_before_prefix [project-policy]

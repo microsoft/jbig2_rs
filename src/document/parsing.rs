@@ -432,10 +432,12 @@ pub(super) fn read_be_u32_at(bytes: &[u8], offset: usize) -> u32 {
 }
 
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
-    ensures match out {
-        Ok(data) => document_spec::known_segment_data_fields(header.segment_type, payload@, data),
-        Err(_) => true,
-    },
+    ensures
+        document_spec::palette_segment_rejected(header.segment_type, out),
+        match out {
+            Ok(data) => document_spec::known_segment_data_fields(header.segment_type, payload@, data),
+            Err(_) => true,
+        },
 ))]
 pub(super) fn parse_known_segment_data(
     header: &SegmentHeader,

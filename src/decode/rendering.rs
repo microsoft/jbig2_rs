@@ -326,7 +326,9 @@ pub(super) fn require_auxiliary_page(
     require_auxiliary_page_state(page)
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures decode_spec::auxiliary_page_result(page.auxiliary_allowed, out),
+))]
 pub(super) fn require_auxiliary_page_state(page: &RuntimePage) -> Result<(), DecodeError> {
     if !page.auxiliary_allowed {
         return Err(MalformedError::InvalidPageState(

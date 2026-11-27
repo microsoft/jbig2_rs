@@ -166,7 +166,14 @@ pub(crate) struct HuffmanLine {
 }
 
 impl HuffmanLine {
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures
+            out.prefix_len == prefix_len,
+            out.range_len == range_len,
+            out.range_low == range_low as i64,
+            out.kind == LineKind::Normal,
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     pub(crate) const fn normal(range_low: i32, prefix_len: u8, range_len: u8) -> Self {
         Self {
             prefix_len,
@@ -176,7 +183,14 @@ impl HuffmanLine {
         }
     }
 
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures
+            out.prefix_len == prefix_len,
+            out.range_len == 32,
+            out.range_low == range_low,
+            out.kind == LineKind::Lower,
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     pub(crate) const fn lower(range_low: i64, prefix_len: u8) -> Self {
         Self {
             prefix_len,
@@ -186,7 +200,14 @@ impl HuffmanLine {
         }
     }
 
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures
+            out.prefix_len == prefix_len,
+            out.range_len == 32,
+            out.range_low == range_low as i64,
+            out.kind == LineKind::Upper,
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     pub(crate) const fn upper(range_low: i32, prefix_len: u8) -> Self {
         Self {
             prefix_len,
@@ -196,7 +217,14 @@ impl HuffmanLine {
         }
     }
 
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures
+            out.prefix_len == prefix_len,
+            out.range_len == 0,
+            out.range_low == 0,
+            out.kind == LineKind::OutOfBand,
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     pub(crate) const fn out_of_band(prefix_len: u8) -> Self {
         Self {
             prefix_len,

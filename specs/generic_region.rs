@@ -12,6 +12,13 @@ pub(crate) use framing::{
     final_marker_result, generic_header_length, observed_marker_result,
 };
 
+#[path = "generic_region/refinement.rs"]
+mod refinement;
+pub(crate) use refinement::{
+    bitmap_pixel_at, refinement_adaptive_fields, refinement_adaptive_selected,
+    refinement_predicted_pixel, refinement_reference_pixel, signed_offset_value,
+};
+
 verus! {
 
 // Model navigation: spec::contexts_valid [representation-invariant]
@@ -234,7 +241,7 @@ pub(crate) open spec fn pow2(exponent: nat) -> nat
 // Purpose: Context banks, decoder sessions, snapshots and preceding adaptive-pixel invariants.
 // Mapping: no registered requirement/locator mapping.
 // Fidelity: unresolved; no independent normative approval.
-pub(super) open spec fn target_adaptive_valid(
+pub(crate) open spec fn target_adaptive_valid(
     offset: super::TemplateOffset,
 ) -> bool {
     offset.y < 0 || (offset.y == 0 && offset.x < 0)
