@@ -58,7 +58,7 @@
       "stream_sha256": "ea78ede485450ad3e5a2274ce05f81d9763ad232651642057c00b9b131cab493",
       "source_files_sha256": {
         "src/mmr.rs": "939bdd232275bf07a8d776bacd891001dacdd49c828cfbb0abcbd40fa4adf5bb",
-        "src/mmr/codes.rs": "266b90c1dedbf4821838e6e52c0a4f117ba74bc3ae82ce7d1101f02857ac3b21",
+        "src/mmr/codes.rs": "f1e3d8087d016455be98bdaba38fc29015b5648c4eee2d3c1809a18077a616a0",
         "src/mmr/memory.rs": "831beca92c98f7923b6548c2f93eb9edd77b24a63bf74d48a5050c3e28745ea2",
         "src/mmr/raster.rs": "bd03d34f4154e629fce76707fae6dc06c12d2077a3e56fafd0198b6ae8176e4b",
         "src/mmr/reference.rs": "f188b7e27296b8449df1aa17d5d48678977ac195fe381824626618ce5da7c818",

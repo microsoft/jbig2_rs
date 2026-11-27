@@ -662,7 +662,6 @@ pub(super) open spec fn run_code_eof_result(
         }
 }
 
-#[verifier::opaque]
 // Model navigation: spec::bounded_run_result [project-policy]
 // Purpose: Row-remainder bounding and overshoot rejection for decoded T.6 runs.
 // Audit: mmr-bounded-run-result

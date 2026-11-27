@@ -24,7 +24,7 @@
   "model_classifications": {
     "review": "author-navigation-only-not-independent-normative-approval",
     "registry_sha256": "f82c2d491f73f68346f2e8648d7f77e4c1901f8baa52042feb16b5e8f185be34",
-    "project_source_sha256": "65cb0564d3476e8409c5be73615a30c8b7291f93774d558f8d97ddb525597829",
+    "project_source_sha256": "d9da0ff87aadeae781634b0e64870647d33269b01fcc185d13d1eabcf6624c0f",
     "families": [
       {
         "file": "specs/huffman_lookup.rs",
@@ -2418,7 +2418,7 @@
     "specs/huffman.rs": "599ccf5cb555006962434d18bbb6dad8021d72bb3fed223be40c6705ed46a6cb",
     "specs/huffman/encoded.rs": "7387ed85b522e6e96e03c12902fe8dc0383baf847511750fb9b51985ff39b07a",
     "specs/huffman_lookup.rs": "4349cd280f9afb9bc95f3895193ff44e55389811645996c7b8034005d437691c",
-    "specs/mmr.rs": "e4ae196de1fd8ada20c40606ff97a8e7c5e1e49a58aff528df3f9f8ff2783fa0",
+    "specs/mmr.rs": "6f62690b11ba1404306e64c211bb7b93605e6f0102c5c8910dde334e34fe7354",
     "specs/mod.rs": "34f81994f8b77e618a7d48d4552175d09cf3be633307166227c13ce94a06ba21",
     "specs/readers.rs": "ee10b54a7ee8dce323488bf8ef5229fbbf1d5811888a3364cda8f2cc187ba251",
     "specs/segments.rs": "e68fde26b0e2781621c8bc7b8b58db851d2605347fcb9d743bbd139ffe680831",
@@ -2489,7 +2489,7 @@
     "src/huffman/wide.rs": "4f37abac40efc66f0c3eaa2637d211eaca5a5ea4fa7a14d7aadb07fbe2a8f0b0",
     "src/lib.rs": "dfc6fc903517de7b5dbb685d73b49b43333dec4d44af7e2f00c7cf3ca9e4bb6f",
     "src/mmr.rs": "939bdd232275bf07a8d776bacd891001dacdd49c828cfbb0abcbd40fa4adf5bb",
-    "src/mmr/codes.rs": "266b90c1dedbf4821838e6e52c0a4f117ba74bc3ae82ce7d1101f02857ac3b21",
+    "src/mmr/codes.rs": "f1e3d8087d016455be98bdaba38fc29015b5648c4eee2d3c1809a18077a616a0",
     "src/mmr/raster.rs": "bd03d34f4154e629fce76707fae6dc06c12d2077a3e56fafd0198b6ae8176e4b",
     "src/mmr/reference.rs": "f188b7e27296b8449df1aa17d5d48678977ac195fe381824626618ce5da7c818",
     "src/mmr/spans.rs": "75b86fc99088936b2596ba6b5810a414f331caeec38a3c0dbc19518ac38857cc",
