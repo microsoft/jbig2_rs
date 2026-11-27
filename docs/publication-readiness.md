@@ -1,5 +1,34 @@
 # Release validation
 
+## 0.3.1 performance maintenance release scope
+
+The 0.3.1 candidate on `release/0.3` packages all eight Verus-verified decoder
+performance optimizations backported from `main` (#247–#254 via #256 and #258):
+1-byte packed `ArithmeticContext` with 128-entry probability tables (#247),
+single-shot `leading_zeros()` renormalization and 3-register cached MQ fast
+paths (#248, #254), safe `split_at_mut` direct packed-byte generic and
+refinement decoders with 8-pixel MPS/LTP skips (#249, #250), operator- and
+alignment-specialized bitmap composition (#251), compact `HuffmanTable` with
+`.rodata` `const` Annex B standard tables A–O, linear bucket placement,
+inlined multi-path `BitReader::read_bits`, exact segment-type pre-reservation
+(#252), and document-scoped `GenericContexts` scratch reuse across generic,
+pattern, and halftone segments plus pristine-page `XOR` direct decode (#253).
+
+All runtime, spec, proof, and test bytes are unchanged from accepted
+`release/0.3` commit `1dda8845f4ccf9d71648a4ca55c9c381efd82228` (byte-identical
+to `main` `8a82866a4fd373098df6a5a99b055b9c5ec379ff`). Whole-crate pinned Verus
+verifies 1,732 obligations (0 errors), 799 directly verified production
+functions, and the same 20 reviewed limitations with zero `unsafe` code and
+zero runtime-proof divergences; runtime LLVM coverage is 93.58% lines / 88.21%
+regions / 86.43% branches.
+
+Rust 1.88.0 MSRV, the dependency-free runtime, strict/compatibility/RGB8
+semantics, 65 semantic groups / 510 contrasts, and the 1,050-second guard
+remain unchanged. The image companion remains separate and unpublished. Issue
+#135 remains open: exhaustive statement coverage, full JBIG2/Annex F
+conformance, and suitability for untrusted production documents are not
+claimed.
+
 ## 0.3.0 candidate scope
 
 The [0.3.0 candidate](release-0.3.0.md) includes strict decoder corrections,
