@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "verified_exact_project_scope_with_reviewed_limits",
   "source_revision": "3e275d1a2bfddb95a25c801ae37a277500849ce8",
-  "scope": "Fresh pinned whole-crate Verus verification including 9 additional non-arithmetic state_preservation requirements upgraded to functional_contract across MMR, halftone, pattern extraction, intermediate auxiliary storage, symbol dictionary height-class state, and clipped text composition (173 functional_contract / 93 state_preservation / 0 safety_only across all 266 requirements). Zero unsafe code, zero runtime-proof divergences, unchanged 20 reviewed verifier limitations, and all 799 verified production functions / 1,732 obligations pass with 0 errors.",
+  "scope": "Fresh pinned whole-crate Verus verification adding role-appropriate ensures contracts across 60 additional verified non-trait Exec production functions (842/885 Exec functions with non-vacuous postconditions; 173 functional_contract / 93 state_preservation / 0 safety_only across all 266 requirements). Zero unsafe code, zero runtime-proof divergences, unchanged 20 reviewed verifier limitations, and all 799 verified production functions / 1,739 obligations pass with 0 errors.",
   "toolchain": {
     "manifest": "config/toolchain.json",
     "verus_version": "0.2026.10.04.426d8b0",
@@ -11,7 +11,7 @@
   },
   "command": "PATH=/workspace/jbig2-pinned-verus:$PATH CARGO_TARGET_DIR=target/verus-issue135-fields CARGO_INCREMENTAL=0 cargo +1.98.1 verus build --manifest-path verification/Cargo.toml --locked --offline -- --rlimit 30 --triggers-mode silent --num-threads 2 --log vir --log-dir \"$PWD/target/issue135-20261125/final/expanded\" --output-json",
   "result": {
-    "verified_obligations": 1732,
+    "verified_obligations": 1739,
     "verified_production_functions": 799,
     "errors": 0,
     "proof_build_compiles": true,
@@ -24,8 +24,8 @@
     "runtime_proof_divergences": 0,
     "incomplete_functions": 0
   },
-  "production_proof_coverage_sha256": "98b4b021a88603b8d56900f5a68da79bf3fd721118bb0fa230b40dff6739ed23",
-  "proof_dispositions_sha256": "6cad7e1291ff8da5fe39b56cc47ed00fc8de23f8a3a67b0e7090c3cd5d9d1843",
+  "production_proof_coverage_sha256": "f8fa27042d655a5b90d61009182c84ec398415477d408936d7dc5d733c23fc6e",
+  "proof_dispositions_sha256": "aa1090e1fd4fdfe400f5d1a4cd751142d58fd7b7e8b546d31b793cdfb528ee0c",
   "standard_library_boundary": {
     "manifest": "verification/stdlib/review.json",
     "manifest_sha256": "5f007f853c6caad16d6d318bde996373c6a6f886e8949cd0df62612e5408a92c",
@@ -33,7 +33,7 @@
     "review_kind": "delegated_engineering_review",
     "normative_approval": false
   },
-  "current_evidence_note": "799 direct verified production functions and unchanged 20 reviewed limitations pass fresh pinned whole-crate Verus (1,732 verified obligations, 0 errors, 0 runtime-proof divergences) and expanded_project_function_inventory_reconciled (702 Spec / 280 Proof / 902 Exec). Require complete same-run protected CI on the final PR head.",
+  "current_evidence_note": "799 direct verified production functions and unchanged 20 reviewed limitations pass fresh pinned whole-crate Verus (1,739 verified obligations, 0 errors, 0 runtime-proof divergences) and expanded_project_function_inventory_reconciled (705 Spec / 280 Proof / 902 Exec, 842/885 Exec functions contracted). Require complete same-run protected CI on the final PR head.",
   "host_build_dependency_ci_repair": {
     "baseline_source": "470aaa6e556443872a77784dece82ebab0bafb4f",
     "preserved_rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/45410252328",

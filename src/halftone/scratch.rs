@@ -104,7 +104,14 @@ pub(crate) fn new_halftone_state_from_scratch<'a>(
 
 impl GenericRegionState<'_> {
     /// Returns any owned generic context buffer to `generic_scratch` for reuse.
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(
+        ensures match self {
+            Self::Arithmetic { session, .. } =>
+                final(generic_scratch)@ == session.contexts.contexts@,
+            _ => final(generic_scratch)@ == old(generic_scratch)@,
+        },
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     pub(crate) fn into_scratch(self, generic_scratch: &mut Vec<ArithmeticContext>) {
         if let Self::Arithmetic { session, .. } = self {
             session.into_scratch(generic_scratch);

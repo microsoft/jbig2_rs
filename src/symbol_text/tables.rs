@@ -227,7 +227,15 @@ pub(super) fn bind_tables<'a>(
 }
 
 impl StandardHuffmanTables {
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures
+            out.a.is_none() && out.b.is_none() && out.c.is_none()
+            && out.d.is_none() && out.e.is_none() && out.f.is_none()
+            && out.g.is_none() && out.h.is_none() && out.i.is_none()
+            && out.j.is_none() && out.k.is_none() && out.l.is_none()
+            && out.m.is_none() && out.n.is_none() && out.o.is_none(),
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     pub(super) const fn empty() -> Self {
         Self {
             a: None,
@@ -248,7 +256,12 @@ impl StandardHuffmanTables {
         }
     }
 
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures
+            out.is_ok() ==> symbol_text_spec::selected_standard_table(final(self), table).is_some(),
+            out.is_err() ==> *final(self) == *old(self),
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     pub(super) fn materialize(
         &mut self,
         table: StandardHuffmanTable,
@@ -310,7 +323,21 @@ impl StandardHuffmanTables {
     }
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match choice {
+        None => out == Ok(None) && *final(standard) == *old(standard),
+        Some(BoundHuffmanTable::Custom(table)) =>
+            out == Ok(Some(MaterializedHuffmanTable::Custom(table)))
+            && *final(standard) == *old(standard),
+        Some(BoundHuffmanTable::Standard(table)) => match out {
+            Ok(Some(MaterializedHuffmanTable::Standard(selected))) =>
+                selected == table
+                && symbol_text_spec::selected_standard_table(final(standard), table).is_some(),
+            Ok(_) => false,
+            Err(_) => *final(standard) == *old(standard),
+        },
+    },
+))]
 pub(super) fn materialize_huffman_table<'a>(
     choice: Option<BoundHuffmanTable<'a>>,
     standard: &mut StandardHuffmanTables,
@@ -372,7 +399,23 @@ pub(super) fn find_table_binding<'a>(
 }
 
 impl HuffmanFieldChoices<'_> {
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures
+            out.aggregation_instances.is_none()
+            && out.height_delta.is_none()
+            && out.width_delta.is_none()
+            && out.export_run.is_none()
+            && out.strip_delta.is_none()
+            && out.first_s.is_none()
+            && out.subsequent_s.is_none()
+            && out.refinement_width.is_none()
+            && out.refinement_height.is_none()
+            && out.refinement_x.is_none()
+            && out.refinement_y.is_none()
+            && out.refinement_size.is_none()
+            && out.dictionary_bitmap_size.is_none(),
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     pub(super) const fn empty() -> Self {
         Self {
             aggregation_instances: None,

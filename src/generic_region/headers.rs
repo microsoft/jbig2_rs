@@ -258,7 +258,13 @@ pub(super) fn validate_target_adaptive(
     })
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out.is_ok() == forall|i: int|
+        0 <= i < (match template {
+            GenericTemplate::Template0 => if extended_template { 12int } else { 4int },
+            _ => 1int,
+        }) ==> generic_region_spec::target_adaptive_valid(adaptive@[i]),
+))]
 #[allow(clippy::cast_possible_truncation)]
 pub(super) fn validate_generic_adaptive_values(
     template: GenericTemplate,
@@ -275,6 +281,12 @@ pub(super) fn validate_generic_adaptive_values(
         invariant
             count <= adaptive@.len(),
             index <= count,
+            count == match template {
+                GenericTemplate::Template0 => if extended_template { 12usize } else { 4usize },
+                _ => 1usize,
+            },
+            forall|i: int| 0 <= i < index ==>
+                generic_region_spec::target_adaptive_valid(adaptive@[i]),
         decreases count - index,
     ))]
     while index < count {

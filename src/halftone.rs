@@ -144,7 +144,12 @@ where
     }
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match error {
+        GenericRegionError::Decode(inner) => out == inner,
+        _ => matches!(out, DecodeError::Malformed(MalformedError::InvalidGenericRegion(_))),
+    },
+))]
 fn generic_error_into_decode(error: GenericRegionError) -> DecodeError {
     let kind = match error {
         GenericRegionError::Decode(error) => return error,
@@ -170,7 +175,17 @@ fn generic_error_into_decode(error: GenericRegionError) -> DecodeError {
     DecodeError::Malformed(MalformedError::InvalidGenericRegion(kind))
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match error {
+        MmrError::Reader(inner) => out == DecodeError::Malformed(inner),
+        MmrError::Bitmap(inner) => out == inner,
+        MmrError::Allocation { requested_bytes } =>
+            out == DecodeError::Allocation { requested_bytes },
+        MmrError::IntegerOverflow =>
+            out == DecodeError::Malformed(MalformedError::IntegerOverflow),
+        _ => matches!(out, DecodeError::Malformed(MalformedError::InvalidMmr(_))),
+    },
+))]
 fn mmr_error_into_decode(error: MmrError) -> DecodeError {
     let kind = match error {
         MmrError::Reader(error) => return DecodeError::Malformed(error),

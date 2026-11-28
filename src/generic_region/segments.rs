@@ -523,7 +523,20 @@ pub(super) fn decode_known_length_arithmetic_generic_into_with_scratch(
     )
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match out {
+        Ok(split) =>
+            split.rows <= declared_height
+            && split.consumed <= data@.len()
+            && split.coded@.len() <= data@.len()
+            && (!mmr ==> (
+                split.coded@.len() >= 2
+                && split.coded@[split.coded@.len() - 2] == 0xff
+                && split.coded@[split.coded@.len() - 1] == 0xac
+            )),
+        Err(_) => true,
+    },
+))]
 pub(super) fn split_unknown_length_data<'a>(
     data: &'a [u8],
     mmr: bool,

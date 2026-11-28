@@ -102,7 +102,23 @@ fn append(bytes: &mut Vec<u8>, input: &[u8], start: usize, end: usize) -> Result
     Ok(())
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out == matches!(
+        kind,
+        SegmentType::IntermediateTextRegion
+            | SegmentType::ImmediateTextRegion
+            | SegmentType::ImmediateLosslessTextRegion
+            | SegmentType::IntermediateHalftoneRegion
+            | SegmentType::ImmediateHalftoneRegion
+            | SegmentType::ImmediateLosslessHalftoneRegion
+            | SegmentType::IntermediateGenericRegion
+            | SegmentType::ImmediateGenericRegion
+            | SegmentType::ImmediateLosslessGenericRegion
+            | SegmentType::IntermediateGenericRefinementRegion
+            | SegmentType::ImmediateGenericRefinementRegion
+            | SegmentType::ImmediateLosslessGenericRefinementRegion
+    ),
+))]
 fn is_region(kind: SegmentType) -> bool {
     matches!(
         kind,
@@ -473,7 +489,12 @@ fn scanner_storage(
     Ok(used)
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out.is_ok() == match previous {
+        Some(prev) => current > prev,
+        None => true,
+    },
+))]
 fn check_number(previous: Option<u32>, current: u32) -> Result<(), DecodeError> {
     if let Some(previous) = previous {
         if current <= previous {

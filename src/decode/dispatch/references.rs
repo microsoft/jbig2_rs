@@ -184,7 +184,12 @@ pub(super) fn check_borrowed_symbol_memory(
     Ok(requested_bytes)
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match out {
+        Ok(result) => result@.len() <= segment.header.referred_segments@.len(),
+        Err(_) => true,
+    },
+))]
 pub(in crate::decode) fn collect_referred_tables<'a>(
     segment: &ParsedSegment<'_>,
     tables: &'a HuffmanTables,
@@ -211,7 +216,9 @@ pub(in crate::decode) fn collect_referred_tables<'a>(
     }
     reference_index = 0;
     #[cfg_attr(verus_keep_ghost, verus_spec(
-        invariant reference_index <= segment.header.referred_segments@.len(),
+        invariant
+            reference_index <= segment.header.referred_segments@.len(),
+            result@.len() <= reference_index,
         decreases segment.header.referred_segments@.len() - reference_index,
     ))]
     while reference_index < segment.header.referred_segments.len() {

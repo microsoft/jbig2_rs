@@ -13,7 +13,12 @@ pub(super) const WHITE_RUN_INDEX: [u8; RUN_INDEX_SIZE] = build_run_index(false);
 #[cfg_attr(verus_keep_ghost, verus_spec(ensures true))]
 pub(super) const BLACK_RUN_INDEX: [u8; RUN_INDEX_SIZE] = build_run_index(true);
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(res =>
+    ensures forall|i: int| 0 <= i < RUN_INDEX_SIZE
+        && (code.length > 13 || code.bits > 255
+            || i != code.length as int * 256 + code.bits as int)
+        ==> res@[i] == out@[i],
+))]
 #[allow(clippy::cast_lossless, clippy::cast_possible_truncation)]
 const fn index_run_code(
     mut out: [u8; RUN_INDEX_SIZE],

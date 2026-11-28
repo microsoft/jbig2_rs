@@ -501,7 +501,15 @@ pub(in crate::symbol_text) fn normalized_bounded_arithmetic<'a>(
 
 /// Validates that any marker the decoder actually observed is the declared
 /// final `FF AC`, after a successful bounded decode.
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out.is_ok() == match decoder.marker {
+        None => true,
+        Some(marker) =>
+            data_len >= 2
+            && marker.code == BOUNDED_ARITHMETIC_TERMINATOR[1]
+            && marker.offset == data_len - 2,
+    },
+))]
 pub(in crate::symbol_text) fn validate_bounded_arithmetic_marker(
     decoder: &ArithmeticDecoder<'_>,
     data_len: usize,

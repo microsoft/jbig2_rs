@@ -256,7 +256,10 @@ pub(super) fn validate_reference_links(
     Ok(())
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out.is_ok() ==> forall|i: int| 0 <= i < segments@.len() ==>
+        segments@[i].header.retention_flags.values@.len() > 0,
+))]
 pub(super) fn validate_retention(
     segments: &[ParsedSegment<'_>],
     indexes: &SegmentIndexes,
@@ -302,14 +305,20 @@ pub(super) fn validate_retention(
     validate_retention_flags(segments, &last_references)
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out.is_ok() ==> forall|i: int| 0 <= i < segments@.len() ==>
+        segments@[i].header.retention_flags.values@.len() > 0,
+))]
 pub(super) fn validate_retention_flags(
     segments: &[ParsedSegment<'_>],
     last_references: &[(u32, u32)],
 ) -> Result<(), DecodeError> {
     let mut segment_index = 0_usize;
     #[cfg_attr(verus_keep_ghost, verus_spec(
-        invariant segment_index <= segments@.len(),
+        invariant
+            segment_index <= segments@.len(),
+            forall|i: int| 0 <= i < segment_index ==>
+                segments@[i].header.retention_flags.values@.len() > 0,
         decreases segments@.len() - segment_index,
     ))]
     while segment_index < segments.len() {
