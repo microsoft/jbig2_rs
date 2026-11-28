@@ -12,14 +12,14 @@
     {
       "id": "decode::PageSink::write_page",
       "file": "src/decode.rs",
-      "file_sha256": "e6725ca53c31b734aad9baefc5113e1256ae9013d28511de521e9d532d94dd41",
+      "file_sha256": "4cba8777cc9bd7c8275cbd201fe0db07bb71a7b920bca16523e2c4e664b8ec07",
       "status": "reviewed-verifier-limitation",
       "reason": "This public or composed path depends on arbitrary caller-provided PageSink/FnMut callbacks and their error, side-effect and resource behavior. Those external implementations and the complete composed orchestration are not directly proved. Individually verified owned collection/allocation helpers do not remove this boundary; no blanket absence of fallible-allocation models is claimed."
     },
     {
       "id": "decode::F::write_page",
       "file": "src/decode.rs",
-      "file_sha256": "e6725ca53c31b734aad9baefc5113e1256ae9013d28511de521e9d532d94dd41",
+      "file_sha256": "4cba8777cc9bd7c8275cbd201fe0db07bb71a7b920bca16523e2c4e664b8ec07",
       "status": "reviewed-verifier-limitation",
       "reason": "This public or composed path depends on arbitrary caller-provided PageSink/FnMut callbacks and their error, side-effect and resource behavior. Those external implementations and the complete composed orchestration are not directly proved. Individually verified owned collection/allocation helpers do not remove this boundary; no blanket absence of fallible-allocation models is claimed."
     },
@@ -47,7 +47,7 @@
     {
       "id": "decode::write_page_to_sink",
       "file": "src/decode.rs",
-      "file_sha256": "e6725ca53c31b734aad9baefc5113e1256ae9013d28511de521e9d532d94dd41",
+      "file_sha256": "4cba8777cc9bd7c8275cbd201fe0db07bb71a7b920bca16523e2c4e664b8ec07",
       "status": "reviewed-verifier-limitation",
       "reason": "This public or composed path depends on arbitrary caller-provided PageSink/FnMut callbacks and their error, side-effect and resource behavior. Those external implementations and the complete composed orchestration are not directly proved. Individually verified owned collection/allocation helpers do not remove this boundary; no blanket absence of fallible-allocation models is claimed."
     },

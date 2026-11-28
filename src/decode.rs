@@ -70,7 +70,12 @@ use resources::{
     release_referred_tables, runtime_page_index, structural_work, symbol_index,
 };
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match error {
+        GenericRegionError::Decode(inner) => out == inner,
+        _ => matches!(out, DecodeError::Malformed(MalformedError::InvalidGenericRegion(_))),
+    },
+))]
 pub(crate) fn generic_error_into_decode(error: GenericRegionError) -> DecodeError {
     let kind = match error {
         GenericRegionError::Decode(error) => return error,
@@ -96,7 +101,16 @@ pub(crate) fn generic_error_into_decode(error: GenericRegionError) -> DecodeErro
     DecodeError::Malformed(MalformedError::InvalidGenericRegion(kind))
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match error {
+        SymbolTextError::Decode(inner) => out == inner,
+        SymbolTextError::InvalidDimensions =>
+            out == DecodeError::Malformed(MalformedError::InvalidSymbolDimensions),
+        SymbolTextError::SymbolIdOutOfRange { id, available } =>
+            out == DecodeError::Malformed(MalformedError::SymbolIdOutOfRange { id, available }),
+        _ => matches!(out, DecodeError::Malformed(MalformedError::InvalidSymbolText(_))),
+    },
+))]
 fn symbol_text_error_into_decode(error: SymbolTextError) -> DecodeError {
     match error {
         SymbolTextError::Decode(error) => error,
@@ -121,7 +135,13 @@ fn symbol_text_error_into_decode(error: SymbolTextError) -> DecodeError {
     }
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match error {
+        HuffmanError::Decode(inner) => out == inner,
+        HuffmanError::InvalidTable(kind) =>
+            out == DecodeError::Malformed(MalformedError::InvalidHuffman(kind)),
+    },
+))]
 fn huffman_error_into_decode(error: HuffmanError) -> DecodeError {
     match error {
         HuffmanError::Decode(error) => error,

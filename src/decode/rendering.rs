@@ -315,6 +315,10 @@ pub(super) fn seal_stripe_on_page(page: &mut RuntimePage, row: u32) -> Result<()
 
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires decode_spec::runtime_pages_valid(pages),
+    ensures out.is_ok() ==> exists|index: int|
+        0 <= index < pages@.len()
+        && pages@[index].0 == segment.header.page_association
+        && pages@[index].1.auxiliary_allowed,
 ))]
 pub(super) fn require_auxiliary_page(
     segment: &ParsedSegment<'_>,

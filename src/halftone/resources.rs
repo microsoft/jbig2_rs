@@ -48,7 +48,11 @@ pub(super) fn checked_memory_sum(first: u64, second: u64, third: u64, fourth: u6
         .checked_add(fourth)
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out.is_ok() ==>
+        header.grid_width as nat * header.grid_height as nat * 4
+            <= limits.max_decoder_managed_memory_bytes as nat,
+))]
 pub(super) fn enforce_halftone_memory(
     region_width: u32,
     region_height: u32,

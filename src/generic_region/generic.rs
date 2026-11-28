@@ -98,7 +98,10 @@ impl<'a> GenericArithmeticSession<'a> {
     }
 
     /// Return the session's context buffer to `scratch` for reuse.
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(
+        ensures final(scratch)@ == self.contexts.contexts@,
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     pub(crate) fn into_scratch(self, scratch: &mut Vec<ArithmeticContext>) {
         self.contexts.into_scratch(scratch);
     }

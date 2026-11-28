@@ -135,7 +135,9 @@ pub(super) const GENERIC_TEMPLATE_3: [GenericSlot; 10] = [
     generic_slot_const!(-1, 0),
 ];
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out == if 1 <= number && number <= 12 { adaptive@[(number - 1) as int] } else { nominal },
+))]
 pub(super) fn generic_adaptive_offset(
     adaptive: &[TemplateOffset; 12],
     number: u8,
@@ -366,7 +368,11 @@ impl GenericContextDescriptor {
     }
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures
+        *final(remaining) == if *old(remaining) == 0 { 0u8 } else { (*old(remaining) - 1) as u8 },
+        out == (*final(remaining) == 0),
+))]
 #[inline]
 pub(super) fn queue_exhausted(remaining: &mut u8) -> bool {
     if *remaining == 0 {
@@ -599,7 +605,9 @@ pub(super) fn sample_cached(bitmap: &Bitmap, x: u32, y: u32, offset: TemplateOff
 }
 
 #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures (x < 0 || y < 0 || x >= bitmap.width as i64 || y >= bitmap.height as i64) ==> !out,
+))]
 pub(super) fn packed_pixel(bitmap: &Bitmap, x: i64, y: i64) -> bool {
     if x < 0 || y < 0 || x >= i64::from(bitmap.width) || y >= i64::from(bitmap.height) {
         return false;
@@ -628,7 +636,14 @@ pub(super) fn packed_pixel(bitmap: &Bitmap, x: i64, y: i64) -> bool {
     }
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures
+        (row < 0 || row >= bitmap.height as i64) ==> out.is_none(),
+        match out {
+            Some(start) => 0 <= row < bitmap.height as i64 && start as nat == row as nat * bitmap.stride as nat,
+            None => true,
+        },
+))]
 #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
 pub(super) fn packed_row_start(bitmap: &Bitmap, row: i64) -> Option<usize> {
     if row < 0 || row >= i64::from(bitmap.height) {
@@ -637,7 +652,9 @@ pub(super) fn packed_row_start(bitmap: &Bitmap, row: i64) -> Option<usize> {
     (row as usize).checked_mul(bitmap.stride)
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures (row_start.is_none() || x < 0 || x >= bitmap.width as i64) ==> out == 0u8,
+))]
 #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
 pub(super) fn packed_row_byte(bitmap: &Bitmap, row_start: Option<usize>, x: i64) -> u8 {
     let Some(row_start) = row_start else {

@@ -130,7 +130,16 @@ pub(super) fn allocation_size<T>(count: usize) -> Result<u64, MalformedError> {
     Ok(bytes)
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match out {
+        Ok(bytes) =>
+            bytes as nat >= core::mem::size_of::<HuffmanTable>() as nat
+                + line_count as nat
+                    * (core::mem::size_of::<HuffmanLine>() as nat
+                        + core::mem::size_of::<u32>() as nat),
+        Err(_) => true,
+    },
+))]
 pub(super) fn table_memory(line_count: usize, prefix_lookup: bool) -> Result<u64, MalformedError> {
     let Ok(fixed) = u64::try_from(size_of::<HuffmanTable>()) else {
         return Err(MalformedError::IntegerOverflow);
@@ -205,7 +214,10 @@ pub(super) fn line_count_fits_u32(line_count: usize) -> bool {
 }
 
 #[allow(clippy::too_many_lines)]
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures (huffman_spec::is_raw(lines) && huffman_spec::raw_lines(lines).len() == 0) ==>
+        out == Err(HuffmanError::InvalidTable(HuffmanTableError::NoCodes)),
+))]
 #[allow(clippy::cast_lossless, clippy::manual_let_else)]
 pub(super) fn validate_lines(lines: HuffmanLines<'_>) -> Result<(), HuffmanError> {
     let line_count = lines.len();
@@ -226,6 +238,8 @@ pub(super) fn validate_lines(lines: HuffmanLines<'_>) -> Result<(), HuffmanError
     #[cfg_attr(verus_keep_ghost, verus_spec(
         invariant
             index <= line_count,
+            line_count > 0,
+            huffman_spec::is_raw(lines) ==> line_count == huffman_spec::raw_lines(lines).len(),
         decreases line_count - index,
     ))]
     while index < line_count {

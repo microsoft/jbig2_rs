@@ -5,7 +5,14 @@ use crate::{Bitmap, DecodeError, LimitExceeded, LimitKind, Limits, MalformedErro
 #[cfg(verus_keep_ghost)]
 use vstd::prelude::*;
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out == match index {
+        0 => (word >> 24) as u8,
+        1 => (word >> 16) as u8,
+        2 => (word >> 8) as u8,
+        _ => word as u8,
+    },
+))]
 #[allow(clippy::cast_possible_truncation)]
 pub(crate) fn word_byte(word: u32, index: usize) -> u8 {
     match index {
@@ -16,8 +23,11 @@ pub(crate) fn word_byte(word: u32, index: usize) -> u8 {
     }
 }
 
-#[cfg_attr(verus_keep_ghost, verus_spec(
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires crate::spec::bitmap::storage_valid(bitmap),
+    ensures out == generic_region_spec::bitmap_pixel_at(
+        bitmap, x as int + offset.x as int, y as int + offset.y as int,
+    ),
 ))]
 #[allow(clippy::cast_lossless)]
 pub(super) fn sample_bitmap(bitmap: &Bitmap, x: u32, y: u32, offset: TemplateOffset) -> bool {

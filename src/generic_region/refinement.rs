@@ -426,10 +426,14 @@ pub(super) fn refinement_adaptive_offset(
     }
 }
 
-#[cfg_attr(verus_keep_ghost, verus_spec(
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires
         crate::spec::bitmap::storage_valid(target),
         crate::spec::bitmap::storage_valid(reference),
+    ensures out < match template {
+        RefinementTemplate::Template0 => 8192usize,
+        RefinementTemplate::Template1 => 1024usize,
+    },
 ))]
 #[allow(clippy::bool_to_int_with_if)]
 pub(super) fn refinement_context(
@@ -447,10 +451,15 @@ pub(super) fn refinement_context(
     };
     let mut context = 0_usize;
     let mut index = 0_usize;
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        assert(0usize < (1usize << 0usize)) by (bit_vector);
+    }
     #[cfg_attr(verus_keep_ghost, verus_spec(
         invariant
             index <= count,
             count <= 13,
+            context < (1usize << index),
             count == match template {
                 RefinementTemplate::Template0 => 13usize,
                 RefinementTemplate::Template1 => 10usize,
@@ -472,14 +481,44 @@ pub(super) fn refinement_context(
             RefinementPlane::Target => sample_bitmap(target, x, y, offset),
             RefinementPlane::Reference => sample_reference(reference, x, y, offset, parameters),
         };
-        context = (context << 1) | if value { 1 } else { 0 };
+        let bit = if value { 1 } else { 0 };
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            let c = context;
+            let i = index;
+            let b = bit;
+            assert(((c << 1usize) | b) < (1usize << (i + 1usize))) by (bit_vector)
+                requires i < 13usize, c < (1usize << i), b <= 1usize;
+        }
+        context = (context << 1) | bit;
         index += 1;
+    }
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        assert((1usize << 13usize) == 8192usize) by (bit_vector);
+        assert((1usize << 10usize) == 1024usize) by (bit_vector);
     }
     context
 }
 
 impl RefinementContextDescriptor {
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures match template {
+            RefinementTemplate::Template1 => out == Self::Template1,
+            RefinementTemplate::Template0 =>
+                if adaptive@[0].x == -1 && adaptive@[0].y == -1
+                    && adaptive@[1].x == -1 && adaptive@[1].y == -1
+                {
+                    out == Self::NominalTemplate0
+                } else {
+                    out == Self::Template0 {
+                        target: adaptive@[0],
+                        reference: adaptive@[1],
+                    }
+                },
+        },
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     pub(super) const fn new(template: RefinementTemplate, adaptive: [TemplateOffset; 2]) -> Self {
         match template {
             RefinementTemplate::Template0 => {

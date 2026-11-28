@@ -71,16 +71,40 @@ verus! {
     pub(crate) closed spec fn recovery_view(prepared: &PreparedEmbedded) -> Seq<EmbeddedRecovery> {
         prepared.recoveries@
     }
+
+    pub(crate) closed spec fn limits_view(prepared: &PreparedEmbedded) -> Limits {
+        prepared.limits
+    }
+
+    pub(crate) closed spec fn bytes_view(prepared: &PreparedEmbedded) -> Option<Seq<u8>> {
+        match prepared.bytes {
+            Some(ref bytes) => Some(bytes@),
+            None => None,
+        }
+    }
 }
 
 impl PreparedEmbedded {
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures out == limits_view(self),
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     pub(crate) fn limits(&self) -> Limits {
+        #[cfg(verus_keep_ghost)]
+        proof! { reveal(limits_view); }
         self.limits
     }
 
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures out@ == match bytes_view(self) {
+            Some(bytes) => bytes,
+            None => original@,
+        },
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     pub(crate) fn input<'a>(&'a self, original: &'a [u8]) -> &'a [u8] {
+        #[cfg(verus_keep_ghost)]
+        proof! { reveal(bytes_view); }
         match self.bytes.as_ref() {
             Some(bytes) => bytes,
             None => original,
@@ -109,7 +133,9 @@ impl PreparedEmbedded {
     }
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out.is_ok() == (actual <= limit),
+))]
 fn budget(kind: LimitKind, actual: u64, limit: u64) -> Result<(), DecodeError> {
     if actual > limit {
         return Err(LimitExceeded {
@@ -122,7 +148,12 @@ fn budget(kind: LimitKind, actual: u64, limit: u64) -> Result<(), DecodeError> {
     Ok(())
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match out {
+        Ok(()) => final(recoveries)@ == old(recoveries)@.push(recovery),
+        Err(_) => final(recoveries)@ == old(recoveries)@,
+    },
+))]
 fn record(
     recoveries: &mut Vec<EmbeddedRecovery>,
     recovery: EmbeddedRecovery,
@@ -156,18 +187,26 @@ fn record(
     Ok(())
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures (out & !0x22u8) == 0u8,
+))]
 fn required_flags(segments: &[super::ParsedSegment<'_>], page: u32) -> u8 {
     let mut required = 0_u8;
     let mut index = 0_usize;
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        assert((0u8 & !0x22u8) == 0u8) by (bit_vector);
+    }
     #[cfg_attr(verus_keep_ghost, verus_spec(
-        invariant index <= segments@.len(),
+        invariant
+            index <= segments@.len(),
+            (required & !0x22u8) == 0u8,
         decreases segments@.len() - index,
     ))]
     while index < segments.len() {
         let region = &segments[index].header;
         if region.page_association == page {
-            required |= match region.segment_type {
+            let add = match region.segment_type {
                 SegmentType::IntermediateTextRegion
                 | SegmentType::IntermediateHalftoneRegion
                 | SegmentType::IntermediateGenericRegion => 0x20,
@@ -176,13 +215,25 @@ fn required_flags(segments: &[super::ParsedSegment<'_>], page: u32) -> u8 {
                 | SegmentType::ImmediateLosslessGenericRefinementRegion => 0x02,
                 _ => 0,
             };
+            #[cfg(verus_keep_ghost)]
+            proof! {
+                assert(((required | add) & !0x22u8) == 0u8) by (bit_vector)
+                    requires (required & !0x22u8) == 0u8,
+                        add == 0u8 || add == 0x02u8 || add == 0x20u8 || add == 0x22u8;
+            }
+            required |= add;
         }
         index += 1;
     }
     required
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match out {
+        Ok(bytes) => bytes@.len() == input@.len(),
+        Err(_) => true,
+    },
+))]
 fn normalized_bytes(input: &[u8], recoveries: &[EmbeddedRecovery]) -> Result<Vec<u8>, DecodeError> {
     let input_bytes = u64::try_from(input.len()).map_err(|_| MalformedError::IntegerOverflow)?;
     let mut bytes = Vec::new();
@@ -202,7 +253,9 @@ fn normalized_bytes(input: &[u8], recoveries: &[EmbeddedRecovery]) -> Result<Vec
     }
     let mut index = 0_usize;
     #[cfg_attr(verus_keep_ghost, verus_spec(
-        invariant index <= recoveries@.len(),
+        invariant
+            index <= recoveries@.len(),
+            bytes@.len() == input@.len(),
         decreases recoveries@.len() - index,
     ))]
     while index < recoveries.len() {
@@ -222,7 +275,11 @@ fn normalized_bytes(input: &[u8], recoveries: &[EmbeddedRecovery]) -> Result<Vec
     Ok(bytes)
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures
+        final(recoveries)@.len() >= old(recoveries)@.len(),
+        final(recoveries)@.len() <= old(recoveries)@.len() + 2,
+))]
 fn record_page_flags(
     recoveries: &mut Vec<EmbeddedRecovery>,
     header: &super::SegmentHeader,
@@ -261,7 +318,11 @@ fn record_page_flags(
     Ok(())
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures
+        final(recoveries)@.len() >= old(recoveries)@.len(),
+        final(recoveries)@.len() <= old(recoveries)@.len() + 1,
+))]
 fn record_arithmetic_marker(
     recoveries: &mut Vec<EmbeddedRecovery>,
     segment: &super::ParsedSegment<'_>,
@@ -311,19 +372,45 @@ fn record_arithmetic_marker(
     Ok(())
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match out {
+        Ok(prepared) =>
+            (policy == EmbeddedPolicy::Strict ==> (
+                bytes_view(&prepared).is_none()
+                && recovery_view(&prepared).len() == 0
+                && limits_view(&prepared) == *limits
+            ))
+            && limits_view(&prepared).max_work_units <= limits.max_work_units
+            && limits_view(&prepared).max_retained_state_bytes <= limits.max_retained_state_bytes
+            && limits_view(&prepared).max_decoder_managed_memory_bytes
+                <= limits.max_decoder_managed_memory_bytes
+            && match bytes_view(&prepared) {
+                Some(bytes) => bytes.len() == input@.len(),
+                None => true,
+            },
+        Err(_) => true,
+    },
+))]
+#[allow(clippy::too_many_lines)]
 pub(crate) fn prepare(
     input: &[u8],
     globals: Option<&GlobalSegments>,
     policy: EmbeddedPolicy,
     limits: &Limits,
 ) -> Result<PreparedEmbedded, DecodeError> {
-    if policy == EmbeddedPolicy::Strict {
-        return Ok(PreparedEmbedded {
+    if let EmbeddedPolicy::Strict = policy {
+        let prepared = PreparedEmbedded {
             bytes: None,
             recoveries: Vec::new(),
             limits: *limits,
-        });
+        };
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            reveal(bytes_view);
+            reveal(recovery_view);
+            reveal(limits_view);
+        }
+        return Ok(prepared);
     }
     // Validate the original framing, references and page lifecycle before any change.
     let (info, segments) = parse_embedded_document(input, limits, globals)?;
@@ -413,11 +500,17 @@ pub(crate) fn prepare(
         .max_decoder_managed_memory_bytes
         .checked_sub(retained)
         .ok_or(MalformedError::IntegerOverflow)?;
-    Ok(PreparedEmbedded {
+    let prepared = PreparedEmbedded {
         bytes,
         recoveries,
         limits: remaining,
-    })
+    };
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        reveal(bytes_view);
+        reveal(limits_view);
+    }
+    Ok(prepared)
 }
 
 impl Decoder {

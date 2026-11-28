@@ -136,7 +136,10 @@ impl GenericContexts {
 
     /// Return the underlying context buffer to `scratch` for reuse within the
     /// same document decode.
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(
+        ensures final(scratch)@ == self.contexts@,
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     pub(crate) fn into_scratch(self, scratch: &mut Vec<ArithmeticContext>) {
         *scratch = self.contexts;
     }

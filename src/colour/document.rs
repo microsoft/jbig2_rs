@@ -24,11 +24,15 @@ pub(super) fn limit(kind: LimitKind, actual: u64, maximum: u64) -> Result<(), De
     Ok(())
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out == exists|i: int| 0 <= i < pages@.len() && pages@[i].number == number,
+))]
 fn contains_page(pages: &[ColourPage], number: u32) -> bool {
     let mut index = 0_usize;
     #[cfg_attr(verus_keep_ghost, verus_spec(
-        invariant index <= pages@.len(),
+        invariant
+            index <= pages@.len(),
+            forall|i: int| 0 <= i < index ==> pages@[i].number != number,
         decreases pages@.len() - index,
     ))]
     while index < pages.len() {
@@ -82,7 +86,20 @@ fn scratch_used(
     Ok(used)
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures
+        out.is_ok() ==> used <= reservation,
+        match out {
+            Ok(result) =>
+                used <= reservation
+                && result == Limits {
+                    max_decoder_managed_memory_bytes: (reservation - used) as u64,
+                    max_retained_state_bytes: (reservation - used) as u64,
+                    ..*limits
+                },
+            Err(_) => true,
+        },
+))]
 fn pool_limits(limits: &Limits, reservation: u64, used: u64) -> Result<Limits, DecodeError> {
     limit(LimitKind::Memory, used, reservation)?;
     let mut result = *limits;

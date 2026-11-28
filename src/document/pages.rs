@@ -309,11 +309,16 @@ pub(super) fn validate_implicit_stripes(
     Ok(())
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out.is_ok() ==> forall|i: int| 0 <= i < pages@.len() ==>
+        pages@[i].number as int == i + 1,
+))]
 pub(super) fn validate_public_page_numbers(pages: &[PageInfo]) -> Result<(), DecodeError> {
     let mut index = 0_usize;
     #[cfg_attr(verus_keep_ghost, verus_spec(
-        invariant index <= pages@.len(),
+        invariant
+            index <= pages@.len(),
+            forall|i: int| 0 <= i < index ==> pages@[i].number as int == i + 1,
         decreases pages@.len() - index,
     ))]
     while index < pages.len() {
@@ -331,11 +336,21 @@ pub(super) fn validate_public_page_numbers(pages: &[PageInfo]) -> Result<(), Dec
     Ok(())
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out.is_ok() ==> forall|i: int| 0 <= i < segments@.len()
+        && segments@[i].header.segment_type == SegmentType::Profiles ==> (
+            (i == 0 ==> segments@[i].header.page_association == 0)
+            && (i > 0 ==> segments@[i].header.page_association != 0
+                && segments@[0].header.segment_type == SegmentType::Profiles)
+        ),
+))]
 pub(super) fn validate_profiles(segments: &[ParsedSegment<'_>]) -> Result<(), DecodeError> {
     let mut first_index = 0_usize;
     #[cfg_attr(verus_keep_ghost, verus_spec(
-        invariant first_index <= segments@.len(),
+        invariant
+            first_index <= segments@.len(),
+            forall|i: int| 0 <= i < first_index ==>
+                segments@[i].header.segment_type != SegmentType::Profiles,
         decreases segments@.len() - first_index,
     ))]
     while first_index < segments.len()
@@ -371,8 +386,11 @@ pub(super) fn validate_profiles(segments: &[ParsedSegment<'_>]) -> Result<(), De
     )
 }
 
-#[cfg_attr(verus_keep_ghost, verus_spec(
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires start <= segments@.len(),
+    ensures out.is_ok() ==> forall|i: int| start <= i < segments@.len()
+        && segments@[i].header.segment_type == SegmentType::Profiles ==>
+            segments@[i].header.page_association != 0,
 ))]
 pub(super) fn validate_page_profiles(
     segments: &[ParsedSegment<'_>],
@@ -382,7 +400,11 @@ pub(super) fn validate_page_profiles(
 ) -> Result<(), DecodeError> {
     let mut segment_index = start;
     #[cfg_attr(verus_keep_ghost, verus_spec(
-        invariant start <= segment_index <= segments@.len(),
+        invariant
+            start <= segment_index <= segments@.len(),
+            forall|i: int| start <= i < segment_index
+                && segments@[i].header.segment_type == SegmentType::Profiles ==>
+                    segments@[i].header.page_association != 0,
         decreases segments@.len() - segment_index,
     ))]
     while segment_index < segments.len() {
@@ -414,11 +436,15 @@ pub(super) fn validate_page_profiles(
     Ok(())
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out == exists|i: int| 0 <= i < profiles@.len() && profiles@[i] == wanted,
+))]
 pub(super) fn contains_profile(profiles: &[u32], wanted: u32) -> bool {
     let mut index = 0_usize;
     #[cfg_attr(verus_keep_ghost, verus_spec(
-        invariant index <= profiles@.len(),
+        invariant
+            index <= profiles@.len(),
+            forall|i: int| 0 <= i < index ==> profiles@[i] != wanted,
         decreases profiles@.len() - index,
     ))]
     while index < profiles.len() {

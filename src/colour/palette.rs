@@ -192,14 +192,30 @@ pub(super) fn find(palettes: &[Palette], number: u32) -> Option<usize> {
     None
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out.is_ok() ==> forall|i: int| 0 <= i < header.referred_segments@.len() ==> (
+        header.referred_segments@[i] < header.number
+            && exists|j: int| 0 <= j < palettes@.len()
+                && palettes@[j].number == header.referred_segments@[i]
+                && palettes@[j].live
+                && (palettes@[j].page == 0 || palettes@[j].page == header.page_association)
+    ),
+))]
 pub(super) fn validate_references(
     header: &SegmentHeader,
     palettes: &[Palette],
 ) -> Result<(), DecodeError> {
     let mut index = 0_usize;
     #[cfg_attr(verus_keep_ghost, verus_spec(
-        invariant index <= header.referred_segments@.len(),
+        invariant
+            index <= header.referred_segments@.len(),
+            forall|i: int| 0 <= i < index ==> (
+                header.referred_segments@[i] < header.number
+                    && exists|j: int| 0 <= j < palettes@.len()
+                        && palettes@[j].number == header.referred_segments@[i]
+                        && palettes@[j].live
+                        && (palettes@[j].page == 0 || palettes@[j].page == header.page_association)
+            ),
         decreases header.referred_segments@.len() - index,
     ))]
     while index < header.referred_segments.len() {
@@ -218,7 +234,11 @@ pub(super) fn validate_references(
     Ok(())
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures
+        out.is_ok() ==> forall|i: int| 0 <= i < header.referred_segments@.len() ==>
+            header.referred_segments@[i] < header.number,
+))]
 pub(super) fn resolve(
     header: &SegmentHeader,
     palettes: &[Palette],
@@ -232,7 +252,10 @@ pub(super) fn resolve(
     remaining -= DEFAULT.len();
     let mut index = 0_usize;
     #[cfg_attr(verus_keep_ghost, verus_spec(
-        invariant index <= header.referred_segments@.len(),
+        invariant
+            index <= header.referred_segments@.len(),
+            forall|i: int| 0 <= i < header.referred_segments@.len() ==>
+                header.referred_segments@[i] < header.number,
         decreases header.referred_segments@.len() - index,
     ))]
     while index < header.referred_segments.len() {
@@ -248,11 +271,28 @@ pub(super) fn resolve(
     Err(MalformedError::InvalidPageState("colour palette index out of range").into())
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures
+        final(palettes)@.len() == old(palettes)@.len(),
+        forall|j: int| 0 <= j < old(palettes)@.len() ==> (
+            final(palettes)@[j].number == old(palettes)@[j].number
+                && final(palettes)@[j].page == old(palettes)@[j].page
+                && final(palettes)@[j].colours@ == old(palettes)@[j].colours@
+                && (final(palettes)@[j].live ==> old(palettes)@[j].live)
+        ),
+))]
 pub(super) fn release(header: &SegmentHeader, palettes: &mut [Palette]) -> Result<(), DecodeError> {
     let mut index = 0_usize;
     #[cfg_attr(verus_keep_ghost, verus_spec(
-        invariant index <= header.referred_segments@.len(),
+        invariant
+            index <= header.referred_segments@.len(),
+            palettes@.len() == old(palettes)@.len(),
+            forall|j: int| 0 <= j < old(palettes)@.len() ==> (
+                palettes@[j].number == old(palettes)@[j].number
+                    && palettes@[j].page == old(palettes)@[j].page
+                    && palettes@[j].colours@ == old(palettes)@[j].colours@
+                    && (palettes@[j].live ==> old(palettes)@[j].live)
+            ),
         decreases header.referred_segments@.len() - index,
     ))]
     while index < header.referred_segments.len() {

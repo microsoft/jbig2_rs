@@ -40,8 +40,14 @@ pub(super) fn runtime_page_index(pages: &[(u32, RuntimePage)], number: u32) -> O
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires decode_spec::runtime_pages_valid(pages),
     ensures match out {
-        Some(page) => crate::spec::bitmap::storage_valid(&page.bitmap),
-        None => true,
+        Some(page) =>
+            crate::spec::bitmap::storage_valid(&page.bitmap)
+            && exists|index: int| 0 <= index < pages@.len()
+                && pages@[index].0 == number
+                && &pages@[index].1 == page,
+        None =>
+            forall|index: int| 0 <= index < pages@.len() ==>
+                pages@[index].0 != number,
     },
 ))]
 pub(super) fn get_runtime_page(pages: &RuntimePages, number: u32) -> Option<&RuntimePage> {
@@ -196,13 +202,20 @@ pub(super) fn huffman_table_index(tables: &[(u32, HuffmanTable)], number: u32) -
     None
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures out.is_some() == exists|i: int| 0 <= i < tables@.len() && tables@[i].0 == number,
+))]
 pub(super) fn get_huffman_table(tables: &HuffmanTables, number: u32) -> Option<&HuffmanTable> {
     let index = huffman_table_index(tables, number)?;
     Some(&tables[index].1)
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures
+        out == !(exists|i: int| 0 <= i < old(tables)@.len() && old(tables)@[i].0 == number),
+        out ==> final(tables)@ == old(tables)@.push((number, table)),
+        !out ==> final(tables)@ == old(tables)@,
+))]
 pub(super) fn insert_huffman_table(
     tables: &mut HuffmanTables,
     number: u32,
@@ -325,14 +338,19 @@ impl DecodeWork {
         Ok(())
     }
 
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures out == (
+            self.used as nat + first as nat + second as nat <= u64::MAX as nat
+            && self.used as nat + first as nat + second as nat <= limits.max_work_units as nat
+        ),
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     pub(super) fn can_charge_pair(&self, first: u64, second: u64, limits: &Limits) -> bool {
-        match self
-            .used
-            .checked_add(first)
-            .and_then(|used| used.checked_add(second))
-        {
-            Some(used) => used <= limits.max_work_units,
+        match self.used.checked_add(first) {
+            Some(subtotal) => match subtotal.checked_add(second) {
+                Some(used) => used <= limits.max_work_units,
+                None => false,
+            },
             None => false,
         }
     }
@@ -629,11 +647,15 @@ pub(super) fn release_referred_symbols(
     Ok(())
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(
+    ensures final(tables)@.len() <= old(tables)@.len(),
+))]
 pub(super) fn release_referred_tables(segment: &ParsedSegment<'_>, tables: &mut HuffmanTables) {
     let mut index = 0_usize;
     #[cfg_attr(verus_keep_ghost, verus_spec(
-        invariant index <= segment.header.referred_segments@.len(),
+        invariant
+            index <= segment.header.referred_segments@.len(),
+            tables@.len() <= old(tables)@.len(),
         decreases segment.header.referred_segments@.len() - index,
     ))]
     while index < segment.header.referred_segments.len() {
@@ -668,7 +690,12 @@ pub(super) fn allocation_size<T>(count: usize) -> Result<u64, DecodeError> {
     Ok(bytes)
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match out {
+        Ok(total) => total as nat >= input_length as nat + segments@.len(),
+        Err(_) => true,
+    },
+))]
 pub(super) fn structural_work(
     input_length: usize,
     segments: &[ParsedSegment<'_>],

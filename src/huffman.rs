@@ -461,7 +461,10 @@ enum StandardLines {
 }
 
 impl StandardLines {
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures 4 <= out <= 22,
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     const fn len(self) -> usize {
         match self {
             Self::A => 4,
@@ -478,7 +481,22 @@ impl StandardLines {
         }
     }
 
-    #[cfg_attr(verus_keep_ghost, verus_verify)]
+    #[cfg_attr(verus_keep_ghost, verus_spec(out =>
+        ensures out.is_some() == match self {
+            Self::A => index < 4,
+            Self::B => index < 7,
+            Self::C => index < 9,
+            Self::D => index < 6,
+            Self::E => index < 8,
+            Self::F => index < 14,
+            Self::G => index < 15,
+            Self::H | Self::J => index < 21,
+            Self::I => index < 22,
+            Self::K | Self::L | Self::M | Self::O => index < 13,
+            Self::N => index < 5,
+        },
+    ))]
+    #[cfg_attr(verus_keep_ghost, allow(unused, verus_impl_method_marker))]
     fn line(self, index: usize) -> Option<HuffmanLine> {
         macro_rules! get {
             ($table:expr) => {
@@ -509,7 +527,25 @@ impl StandardLines {
     }
 }
 
-#[cfg_attr(verus_keep_ghost, verus_verify)]
+#[cfg_attr(verus_keep_ghost, verus_spec(out =>
+    ensures match table {
+        StandardHuffmanTable::A => out == StandardLines::A,
+        StandardHuffmanTable::B => out == StandardLines::B,
+        StandardHuffmanTable::C => out == StandardLines::C,
+        StandardHuffmanTable::D => out == StandardLines::D,
+        StandardHuffmanTable::E => out == StandardLines::E,
+        StandardHuffmanTable::F => out == StandardLines::F,
+        StandardHuffmanTable::G => out == StandardLines::G,
+        StandardHuffmanTable::H => out == StandardLines::H,
+        StandardHuffmanTable::I => out == StandardLines::I,
+        StandardHuffmanTable::J => out == StandardLines::J,
+        StandardHuffmanTable::K => out == StandardLines::K,
+        StandardHuffmanTable::L => out == StandardLines::L,
+        StandardHuffmanTable::M => out == StandardLines::M,
+        StandardHuffmanTable::N => out == StandardLines::N,
+        StandardHuffmanTable::O => out == StandardLines::O,
+    },
+))]
 fn standard_lines(table: StandardHuffmanTable) -> StandardLines {
     match table {
         StandardHuffmanTable::A => StandardLines::A,
