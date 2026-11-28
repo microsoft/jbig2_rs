@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "verified_exact_project_scope_with_reviewed_limits",
   "source_revision": "3e275d1a2bfddb95a25c801ae37a277500849ce8",
-  "scope": "Fresh pinned whole-crate Verus verification including all 12 former safety_only requirements upgraded to functional_contract (0 safety_only remaining across all 266 requirements: 164 functional_contract / 102 state_preservation / 0 safety_only). Zero unsafe code, zero runtime-proof divergences, unchanged 20 reviewed verifier limitations, and all 799 verified production functions / 1,732 obligations pass with 0 errors.",
+  "scope": "Fresh pinned whole-crate Verus verification including 9 additional non-arithmetic state_preservation requirements upgraded to functional_contract across MMR, halftone, pattern extraction, intermediate auxiliary storage, symbol dictionary height-class state, and clipped text composition (173 functional_contract / 93 state_preservation / 0 safety_only across all 266 requirements). Zero unsafe code, zero runtime-proof divergences, unchanged 20 reviewed verifier limitations, and all 799 verified production functions / 1,732 obligations pass with 0 errors.",
   "toolchain": {
     "manifest": "config/toolchain.json",
     "verus_version": "0.2026.10.04.426d8b0",
@@ -24,7 +24,7 @@
     "runtime_proof_divergences": 0,
     "incomplete_functions": 0
   },
-  "production_proof_coverage_sha256": "e72aee5d09a0512998c5b13a050da8672e614a72aebc465b914f0485839114f5",
+  "production_proof_coverage_sha256": "98b4b021a88603b8d56900f5a68da79bf3fd721118bb0fa230b40dff6739ed23",
   "proof_dispositions_sha256": "6cad7e1291ff8da5fe39b56cc47ed00fc8de23f8a3a67b0e7090c3cd5d9d1843",
   "standard_library_boundary": {
     "manifest": "verification/stdlib/review.json",
@@ -33,7 +33,7 @@
     "review_kind": "delegated_engineering_review",
     "normative_approval": false
   },
-  "current_evidence_note": "799 direct verified production functions and unchanged 20 reviewed limitations pass fresh pinned whole-crate Verus (1,732 verified obligations, 0 errors, 0 runtime-proof divergences) and expanded_project_function_inventory_reconciled. MSRV 1.88.0 tests (651 tests + 1 doctest), Rust 1.89.0 clippy -D warnings, rustfmt, runtime audit, traceability, provenance, and pinned LLVM coverage (93.59% lines / 88.21% regions / 86.43% branches) all pass. Require complete same-run protected CI on the final PR head.",
+  "current_evidence_note": "799 direct verified production functions and unchanged 20 reviewed limitations pass fresh pinned whole-crate Verus (1,732 verified obligations, 0 errors, 0 runtime-proof divergences) and expanded_project_function_inventory_reconciled (702 Spec / 280 Proof / 902 Exec). Require complete same-run protected CI on the final PR head.",
   "host_build_dependency_ci_repair": {
     "baseline_source": "470aaa6e556443872a77784dece82ebab0bafb4f",
     "preserved_rejected_run": "https://github.com/microsoft/jbig2_rs/actions/runs/45410252328",

@@ -34,7 +34,7 @@ pub(super) use symbol_ids::{checked_symbol_id_transition, symbol_id_request_matc
 pub(super) use symbol_ids::segment_symbol_width_matches;
 
 #[path = "symbol_text/dictionary.rs"]
-mod dictionary;
+pub(crate) mod dictionary;
 pub(super) use dictionary::{
     bounded_arithmetic_source_tail, bounded_arithmetic_terminator_result,
     dictionary_context_models_match, dictionary_context_validation, normalized_arithmetic_bytes,

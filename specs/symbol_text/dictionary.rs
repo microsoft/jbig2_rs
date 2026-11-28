@@ -160,4 +160,79 @@ pub(crate) open spec fn dictionary_state_valid(
         && state.width <= state.total_width
 }
 
+#[verifier::opaque]
+// Model navigation: spec::dictionary_add_symbol_transition [project-result-model]
+// Purpose: Height-class open-state guard, symbol-count bound and width/total-width recurrences.
+// Audit: dictionary-add-symbol-transition
+// REQUIREMENT CONTEXT: T88-DICTIONARY-HEIGHT-CLASS-STATE | ITU-T T.88 (08/2018) | 6.5.5 step 4; 6.5.6-6.5.7
+// Fidelity: unresolved; no independent normative approval.
+pub(crate) open spec fn dictionary_add_symbol_transition(
+    before: &crate::symbol_text::DictionaryClassState,
+    after: &crate::symbol_text::DictionaryClassState,
+    width_delta: i64,
+    limits: &crate::Limits,
+    result: Result<(u32, u32), crate::symbol_text::SymbolTextError>,
+) -> bool {
+    (!before.class_open ==> (
+        result == Err(crate::symbol_text::SymbolTextError::InvalidState("no open height class"))
+        && *after == *before
+    ))
+        && ((before.class_open && before.decoded_symbols >= before.declared_new_symbols) ==> (
+            result == Err(crate::symbol_text::SymbolTextError::InvalidCount("too many new symbols"))
+            && *after == *before
+        ))
+        && match result {
+            Ok((width, height)) =>
+                before.class_open
+                    && after.class_open
+                    && after.declared_new_symbols == before.declared_new_symbols
+                    && after.decoded_symbols == before.decoded_symbols + 1
+                    && after.decoded_symbols <= after.declared_new_symbols
+                    && after.height == before.height
+                    && width == after.width
+                    && height == after.height
+                    && after.width as int == before.width as int + width_delta as int
+                    && after.total_width as int == before.total_width as int + after.width as int
+                    && after.total_width <= limits.max_width,
+            Err(_) => true,
+        }
+}
+
+#[verifier::opaque]
+// Model navigation: spec::clipped_composition_frame [project-result-model]
+// Purpose: Clipped text symbol placement work accounting, dimension preservation and empty-overlap frame.
+// Audit: text-clipped-composition-frame
+// REQUIREMENT CONTEXT: T88-TEXT-CLIPPED-COMPOSITION | ITU-T T.88 (08/2018) | 6.4.5 steps 3c viii-x
+// Fidelity: unresolved; no independent normative approval.
+pub(crate) open spec fn clipped_composition_frame(
+    before: &crate::bitmap::Bitmap,
+    source: &crate::bitmap::Bitmap,
+    placement: crate::symbol_text::Placement,
+    before_resources: &crate::symbol_text::ResourceTracker,
+    after: &crate::bitmap::Bitmap,
+    after_resources: &crate::symbol_text::ResourceTracker,
+    limits: &crate::Limits,
+    result: Result<(), crate::symbol_text::SymbolTextError>,
+) -> bool {
+    let (_, _, width, height) = crate::symbol_text::symbol_text_spec::placement_overlap(
+        before, source, placement,
+    );
+    let work = width * height;
+    match result {
+        Ok(()) =>
+            crate::spec::bitmap::storage_valid(after)
+                && crate::views::bitmap_width(after) == crate::views::bitmap_width(before)
+                && crate::views::bitmap_height(after) == crate::views::bitmap_height(before)
+                && crate::symbol_text::symbol_text_spec::work_units(after_resources)
+                    == crate::symbol_text::symbol_text_spec::work_units(before_resources) + work
+                && crate::symbol_text::symbol_text_spec::work_units(after_resources)
+                    <= limits.max_work_units
+                && crate::symbol_text::symbol_text_spec::bitmap_bytes(after_resources)
+                    == crate::symbol_text::symbol_text_spec::bitmap_bytes(before_resources)
+                && ((width == 0 || height == 0) ==>
+                    crate::views::bitmap_data(after) == crate::views::bitmap_data(before)),
+        Err(_) => true,
+    }
+}
+
 }

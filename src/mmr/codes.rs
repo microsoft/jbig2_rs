@@ -205,6 +205,10 @@ pub(super) fn decode_horizontal_runs(
         mmr_spec::reader_valid(final(reader)),
         final(reader).bytes@ == old(reader).bytes@,
         old(reader).bit_position <= final(reader).bit_position,
+        mmr_spec::bounded_run_result(
+            black, old(reader).bytes@, old(reader).bit_position as nat,
+            final(reader).bit_position as nat, remaining, out,
+        ),
         match out {
             Ok(total) => total <= remaining
                 && exists|codes: Seq<RunCode>| mmr_spec::complete_run(
@@ -219,6 +223,10 @@ pub(super) fn decode_run(
     black: bool,
     remaining: u32,
 ) -> Result<u32, MmrError> {
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        reveal(mmr_spec::bounded_run_error_valid);
+    }
     let mut total = 0_u32;
     let mut makeup_count = 0_u32;
     #[cfg(verus_keep_ghost)]
@@ -247,6 +255,11 @@ pub(super) fn decode_run(
         decreases max_makeups + 1 - makeup_count,
     ))]
     loop {
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            reveal(mmr_spec::bounded_run_error_valid);
+            reveal(mmr_spec::run_code_eof_result);
+        }
         #[cfg(verus_keep_ghost)]
         proof_decl! {
             let ghost before_codes = codes;
@@ -297,6 +310,10 @@ pub(super) fn decode_run(
         old(reader).bit_position <= final(reader).bit_position,
         final(reader).bit_position as nat
             <= old(reader).bit_position as nat + MAX_RUN_CODE_BITS as nat,
+        mmr_spec::run_code_eof_result(
+            black, old(reader).bytes@, old(reader).bit_position as nat,
+            final(reader).bit_position as nat, out,
+        ),
         match out {
             Ok(code) =>
                 mmr_spec::run_code_in_implementation_tables(black, code)
@@ -308,10 +325,15 @@ pub(super) fn decode_run(
             Err(_) => true,
         },
 ))]
+#[allow(clippy::question_mark)]
 pub(super) fn decode_run_code(
     reader: &mut BitReader<'_>,
     black: bool,
 ) -> Result<RunCode, MmrError> {
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        reveal(mmr_spec::run_code_eof_result);
+    }
     let run_index = if black {
         &BLACK_RUN_INDEX
     } else {
@@ -335,11 +357,26 @@ pub(super) fn decode_run_code(
     ))]
     while length <= MAX_RUN_CODE_BITS {
         #[cfg(verus_keep_ghost)]
+        proof! {
+            reveal(mmr_spec::run_code_eof_result);
+        }
+        #[cfg(verus_keep_ghost)]
         proof_decl! {
             let ghost previous_prefix = prefix;
         }
-        let bit =
-            u16::try_from(reader.read_bits(1)?).map_err(|_error| MmrError::IntegerOverflow)?;
+        let raw_bit = match reader.read_bits(1) {
+            Ok(value) => value,
+            Err(error) => return Err(MmrError::Reader(error)),
+        };
+        #[cfg(verus_keep_ghost)]
+        proof! {
+            crate::reader_properties::bits_value_bound(
+                reader.bytes@, (start + (length - 1) as usize) as nat, 1,
+            );
+            reveal_with_fuel(crate::reader_properties::bits_limit, 2);
+            assert(raw_bit <= 1);
+        }
+        let bit = u16::try_from(raw_bit).map_err(|_error| MmrError::IntegerOverflow)?;
         prefix = append_code_bit(prefix, bit)?;
         #[cfg(verus_keep_ghost)]
         proof! {
@@ -357,6 +394,10 @@ pub(super) fn decode_run_code(
             return Ok(code);
         }
         length = length.checked_add(1).ok_or(MmrError::IntegerOverflow)?;
+    }
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        reveal(mmr_spec::run_code_eof_result);
     }
     Err(MmrError::InvalidRunCode {
         bit_offset: start,

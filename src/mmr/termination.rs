@@ -11,6 +11,10 @@ use super::{BitReader, EofbPolicy, MmrError, EOFB};
         mmr_spec::reader_valid(final(reader)),
         final(reader).bytes@ == old(reader).bytes@,
         old(reader).bit_position <= final(reader).bit_position,
+        mmr_spec::finish_block_eofb_policy(
+            old(reader).bytes@, old(reader).bit_position as nat,
+            final(reader).bit_position as nat, policy, out,
+        ),
         match out {
             Ok(()) => match policy {
                 EofbPolicy::Optional =>
@@ -30,6 +34,10 @@ use super::{BitReader, EofbPolicy, MmrError, EOFB};
         },
 ))]
 pub(super) fn finish_block(reader: &mut BitReader<'_>, policy: EofbPolicy) -> Result<(), MmrError> {
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        reveal(mmr_spec::finish_block_eofb_policy);
+    }
     if let EofbPolicy::Optional = policy {
         return Ok(());
     }
@@ -62,6 +70,10 @@ pub(super) fn finish_block(reader: &mut BitReader<'_>, policy: EofbPolicy) -> Re
         mmr_spec::reader_valid(final(reader)),
         final(reader).bytes@ == old(reader).bytes@,
         old(reader).bit_position <= final(reader).bit_position,
+        mmr_spec::finish_prefix_eofb_policy(
+            old(reader).bytes@, old(reader).bit_position as nat,
+            final(reader).bit_position as nat, out,
+        ),
         match out {
             Ok(()) =>
                 old(reader).bit_position as nat + 24
@@ -81,6 +93,10 @@ pub(super) fn finish_block(reader: &mut BitReader<'_>, policy: EofbPolicy) -> Re
         },
 ))]
 pub(super) fn finish_required_prefix(reader: &mut BitReader<'_>) -> Result<(), MmrError> {
+    #[cfg(verus_keep_ghost)]
+    proof! {
+        reveal(mmr_spec::finish_prefix_eofb_policy);
+    }
     if remaining_bits(reader)? < 24 {
         return Err(MmrError::MissingEofb);
     }
@@ -110,11 +126,13 @@ pub(super) fn finish_required_prefix(reader: &mut BitReader<'_>) -> Result<(), M
 
 #[cfg_attr(verus_keep_ghost, verus_spec(out =>
     requires mmr_spec::reader_valid(reader),
-    ensures match out {
-        Ok(remaining) =>
-            remaining == reader.bytes@.len() * 8 - reader.bit_position,
-        Err(_) => true,
-    },
+    ensures
+        out == Ok((reader.bytes@.len() * 8 - reader.bit_position) as usize),
+        match out {
+            Ok(remaining) =>
+                remaining == reader.bytes@.len() * 8 - reader.bit_position,
+            Err(_) => true,
+        },
 ))]
 pub(super) fn remaining_bits(reader: &BitReader<'_>) -> Result<usize, MmrError> {
     let total = reader

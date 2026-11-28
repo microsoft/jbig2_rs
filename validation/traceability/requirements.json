@@ -23,8 +23,8 @@
   },
   "model_classifications": {
     "review": "author-navigation-only-not-independent-normative-approval",
-    "registry_sha256": "e1d8a01c77b42f7cfa44175950710eba653749317829701e0b588dee72cd4e3d",
-    "project_source_sha256": "d834ea94fba76ac72fbe2319b35500f6bfb5b7a86178914dca1764cd0ff6ace0",
+    "registry_sha256": "f82c2d491f73f68346f2e8648d7f77e4c1901f8baa52042feb16b5e8f185be34",
+    "project_source_sha256": "6db0a9647dc67692b1b71e7590a93806514aacc8416b75d4b673040eb463c3e6",
     "families": [
       {
         "file": "specs/huffman_lookup.rs",
@@ -916,6 +916,7 @@
       {
         "file": "specs/mmr.rs",
         "members": [
+          "spec::bounded_run_error_valid",
           "spec::mode_code_in_implementation_table",
           "spec::mode_matches",
           "spec::run_code_in_implementation_tables",
@@ -1703,6 +1704,49 @@
         "classification": "project-policy",
         "justification": "Reserved-bit header rejection policy for encoded B.2 Huffman tables.",
         "ambiguity": ""
+      },
+      {
+        "file": "specs/mmr.rs",
+        "members": [
+          "spec::bounded_run_result",
+          "spec::finish_block_eofb_policy",
+          "spec::finish_prefix_eofb_policy",
+          "spec::run_code_eof_result"
+        ],
+        "classification": "project-policy",
+        "justification": "Project fail-closed T.6 error-classification policies for truncated horizontal run codes, row-remainder run overshoot, and required EOFB marker/padding truncation.",
+        "ambiguity": ""
+      },
+      {
+        "file": "specs/halftone.rs",
+        "members": [
+          "spec::clipped_pattern_frame",
+          "spec::gray_indexes_geometry",
+          "spec::gray_plane_xored",
+          "spec::sliced_patterns_geometry"
+        ],
+        "classification": "project-result-model",
+        "justification": "Halftone pattern slicing count/dimensions, exact bytewise Gray-plane XOR reconstruction, gray-index buffer geometry, and clipped pattern placement frame.",
+        "ambiguity": ""
+      },
+      {
+        "file": "specs/decode.rs",
+        "members": [
+          "spec::buffer_insertion_result"
+        ],
+        "classification": "project-result-model",
+        "justification": "Auxiliary intermediate-region buffer insertion, exact (number, region, bitmap) storage and duplicate segment-number rejection.",
+        "ambiguity": ""
+      },
+      {
+        "file": "specs/symbol_text/dictionary.rs",
+        "members": [
+          "spec::clipped_composition_frame",
+          "spec::dictionary_add_symbol_transition"
+        ],
+        "classification": "project-result-model",
+        "justification": "Symbol dictionary height-class width/total-width recurrences and open-class guards, plus clipped text symbol composition overlap work accounting and empty-overlap frame.",
+        "ambiguity": ""
       }
     ]
   },
@@ -2362,7 +2406,7 @@
     "proofs/spec_properties/readers.rs": "599ebd5fd161e1ff76faa1d35ab8866d792ffec9d4e4985cf7acfbe4b8133e8a",
     "specs/arithmetic.rs": "c5f01faf6459ef2d86e6ce902bedbadfd44e8ce86c0b3d078c667d32cbf32ca5",
     "specs/bitmap.rs": "9d4da6608d7ee55fdf0ab7d8d47f6105e75e656c1f31589610d47a67a61218cf",
-    "specs/decode.rs": "c6c5ec8a8ceeaef9a0b5c0ec48d0f2fbd441dadcc8e4a153f791ca44069c4db2",
+    "specs/decode.rs": "6b3898de5a3ef816f8c6d0a70d7f6944233e7b8bea463599b3e10dc83cab4681",
     "specs/document.rs": "e3382987d764109e8360f8ac195cc1022ef261ec957b831a11d1942e0f0cdc26",
     "specs/document/framing.rs": "815fa1d8b2c881edc03a56f514c61c04f4ce56095ed1c44c4edd97e9cf72fe36",
     "specs/document/results.rs": "85542554b59fb2bd8f2a03d6e8d5843104eafc739567d380185edce5f8ef8cc2",
@@ -2371,17 +2415,17 @@
     "specs/generic_region.rs": "f943dc2ca526c8c6eea70d4137aace7322449f6963320365bd1b4314198d5ad9",
     "specs/generic_region/framing.rs": "23db47cf183d7f2c490db16611119d5fe1e485b4800cb6af9904516032c6ccea",
     "specs/generic_region/refinement.rs": "d92b3690c1883cf6e383f15e093966b4e83e72d78ac88230d4d834c338bc4270",
-    "specs/halftone.rs": "580ff49badf098ed19f963189610c2a4627b1ce4a1be9c96b67347283edb5bb3",
+    "specs/halftone.rs": "7e29211db03fd266e0b3aa9f042100e85032cf727a6551aadfd267509288d16b",
     "specs/huffman.rs": "599ccf5cb555006962434d18bbb6dad8021d72bb3fed223be40c6705ed46a6cb",
     "specs/huffman/encoded.rs": "7387ed85b522e6e96e03c12902fe8dc0383baf847511750fb9b51985ff39b07a",
     "specs/huffman_lookup.rs": "4349cd280f9afb9bc95f3895193ff44e55389811645996c7b8034005d437691c",
-    "specs/mmr.rs": "6333d8553b47d1bd6bcc996c0d0f3d0216d3f4d3eeff9c07e34a4dfeea5bb49c",
+    "specs/mmr.rs": "913889267b49715fa024131af502b2783c49c88dd3343b7418369f17d9d37e78",
     "specs/mod.rs": "34f81994f8b77e618a7d48d4552175d09cf3be633307166227c13ce94a06ba21",
     "specs/readers.rs": "ee10b54a7ee8dce323488bf8ef5229fbbf1d5811888a3364cda8f2cc187ba251",
     "specs/segments.rs": "e68fde26b0e2781621c8bc7b8b58db851d2605347fcb9d743bbd139ffe680831",
-    "specs/symbol_text.rs": "d84fc702904bee6f7f3bead54ee8859878adc78f8287b92434c7549f2a2cc0f6",
+    "specs/symbol_text.rs": "6a1c488dfd945c06cefa35c34dcd8787cea061ca22675198f86cfbf1a3489aed",
     "specs/symbol_text/arithmetic_codec.rs": "3cd43b78103353dc59a018562cdfe2338cdf7a869d83ba35fd0b0e3f146c03d9",
-    "specs/symbol_text/dictionary.rs": "f7994737d95cefbca3e6067754190b160ddb8c85900a17edf672b4f8d80882b2",
+    "specs/symbol_text/dictionary.rs": "bcb5fc28db1907b29155ef191ac4bb3465fd6f41dee8ddb822cbe217e02ea393",
     "specs/symbol_text/huffman_codec.rs": "75292125cfe9663534f1c13f5bdac9538e712c48c53c7cdd425596e9ef65bed2",
     "specs/symbol_text/symbol_ids.rs": "a08f24685e8ef5f95e98b5bb953ad18a1b6dbbffd754ca48f09931f36a87aacc",
     "src/arithmetic.rs": "1c69a467424f0e32c4751f7e9db0dce1e1ffb3e8f6ed6a90c48f4303e8cfac80",
@@ -2402,7 +2446,7 @@
     "src/decode/api.rs": "49d45b828fd56924b7176ac54283e1fadc70f93bec1d45945095db975ee6082c",
     "src/decode/dispatch/references.rs": "52e7500e0cef622729c3b19f535c8d0824644b5a954dd373ffeadeb34e649c67",
     "src/decode/rendering.rs": "4f242c47836a8c3eff5d3495510185ba24d99bdeca5cac0c9ed72f0fdffaccd0",
-    "src/decode/resources.rs": "55f9ee8e2daa02d57b3778847780e98dd8e2b7cf0b7331d45f76e429011dfd1a",
+    "src/decode/resources.rs": "fb139c8cd81829a044520233c891644db35b4cd5206cbf8b7d5af364e55e9565",
     "src/decode/tests/container_routes.rs": "d84b63cd8fa430c1adec78535df904cf3521f33212cdefe8ee28241bc4c56b39",
     "src/decode/tests/direct_and_reuse.rs": "d46a5cbd0ee0791141d8b6115f090faa7a0315dc51437dcfb643dce6b58e116c",
     "src/decode/tests/symbol_resources.rs": "8b1f5260bcf7b6d300895b700ecbb10748742d0d124a563872710938fba26256",
@@ -2428,8 +2472,8 @@
     "src/generic_region/tests/sessions_and_snapshots.rs": "72dd73c6a1b74faf5f7a3a82bf9e445fa0bf0931b6bd0fbab6a5814178f760a7",
     "src/halftone.rs": "c5e73fd848dd70ca34c60626ee4c5c7b93e1a6db3d470d1a733969ba3623d393",
     "src/halftone/headers.rs": "363497a0fdf003435987f0fa64e793d7d61d7d9de4a65c58c0e66571394cdda0",
-    "src/halftone/planes.rs": "258a96ced30025a880f5f66efaee7144166c1a8f02f525d6d4458ecfe1bcbad9",
-    "src/halftone/render.rs": "aad38a0dfd5f47404af82e0d129617ca4735f66b6196375feb5b00297d268547",
+    "src/halftone/planes.rs": "408d6149594f33ddfb6a261c7016d4b37d44fe03890cd7f3d63f17afb17b48e1",
+    "src/halftone/render.rs": "341c3bce2668d572eeaf2c83475c70598c84983d277ac9fae44fc94327b353ed",
     "src/halftone/tests/codec_state.rs": "693ea5475e054c580a3890437b0beee34ab67f6d6f88dee22c27b0484f159973",
     "src/halftone/tests/geometry_and_render.rs": "50ebcfb2172af2966ded4e3a15c9a8cca701d52611b18b95ec4cb44e372c4bd6",
     "src/halftone/tests/headers_and_patterns.rs": "ef5f90a9b1eaf32619dc22c6f49b5d6d6ccbf32f9bdacfc6507f29c15efa9f70",
@@ -2446,11 +2490,11 @@
     "src/huffman/wide.rs": "4f37abac40efc66f0c3eaa2637d211eaca5a5ea4fa7a14d7aadb07fbe2a8f0b0",
     "src/lib.rs": "dfc6fc903517de7b5dbb685d73b49b43333dec4d44af7e2f00c7cf3ca9e4bb6f",
     "src/mmr.rs": "939bdd232275bf07a8d776bacd891001dacdd49c828cfbb0abcbd40fa4adf5bb",
-    "src/mmr/codes.rs": "06ad7fc805a4da335db691d5b1ada86f5f88d293ea2b8e33588326057fea5176",
+    "src/mmr/codes.rs": "a2ab772155e10a7615cb777c35bd48499e93b2942a6b7d2cc55e8b72097ca43e",
     "src/mmr/raster.rs": "bd03d34f4154e629fce76707fae6dc06c12d2077a3e56fafd0198b6ae8176e4b",
     "src/mmr/reference.rs": "f188b7e27296b8449df1aa17d5d48678977ac195fe381824626618ce5da7c818",
     "src/mmr/spans.rs": "75b86fc99088936b2596ba6b5810a414f331caeec38a3c0dbc19518ac38857cc",
-    "src/mmr/termination.rs": "ff5db8bf291a8c7d5d398f3317463aacd7b6d21cd8f340bceeffe403f046b5fc",
+    "src/mmr/termination.rs": "3630618e5c597bd5f84e2612b7299865fd59dd9942370b08b52729cc71142e30",
     "src/mmr/tests/horizontal_runs.rs": "41f42cc4973a92ca9ce650d3e976f9d54c278529c628e1c87f587c9adf7df516",
     "src/mmr/tests/normative_decode.rs": "348fff90ffa25826a8b86c4604e7006dfaaf5224201f0928c8d87523e74a2dc8",
     "src/mmr/tests/prefix_codes.rs": "cde4c16a1e7947a1dd7710d3c4a8b308d5d178bef35a6ecb70c2fad2481434e2",
@@ -2471,10 +2515,10 @@
     "src/symbol_text/codec/symbols.rs": "01f2f2d2739c42ce2ed5fe4ed170451082478dcfc7f405b73ac9f6a819ce3248",
     "src/symbol_text/dictionary.rs": "8b24e5591a74737e2a5b2e44400ec7d467eead766b473869b419d7cfbc999b64",
     "src/symbol_text/dictionary/arithmetic.rs": "39d36b81f89e38ff32b35cb1fde03cb3165884934aae29a0d5d4eb624fde9277",
-    "src/symbol_text/dictionary/exports.rs": "58494df09938b2b682cc5694a29f13100cd8ed9ba6aa7bb1b93c676f77926c8c",
+    "src/symbol_text/dictionary/exports.rs": "c4a1e60a343ec3f7ca997e4329b8dab1b2004717564483d9dc5034159d7639c2",
     "src/symbol_text/dictionary/huffman.rs": "db75bd5f0b7703b2bec0493bb0f534049e5bddf5ea91e228ef93eac68b06a40e",
     "src/symbol_text/headers.rs": "69da74f1ff5627d013f327d5c152d49582c7bb82462fc70b48b82159b9e8d987",
-    "src/symbol_text/placement.rs": "6fe7228afc13c0735fcfe0d9359e07e03dfdd5a6883ba8d79523dcfde8885e5d",
+    "src/symbol_text/placement.rs": "2d9e43dedac329183ee927b8a6b4b8664723505932d2f57b3de49843079e90a9",
     "src/symbol_text/tables.rs": "abf743005ad20f1a52477d0efe249981b8119160109ecf93ff4ac737d5c3c82c",
     "src/symbol_text/tests/arithmetic_composition.rs": "8749f6561c7b3030deafa47358bd499514821726851cb296d4f00b2ff2110120",
     "src/symbol_text/tests/codec_and_exports.rs": "4215ca5d6af0d628d33fb5b9818d0c0012f8ef09dddf4b5a73f8db467f02540f",
@@ -4909,6 +4953,118 @@
       ],
       "name": "encoded_special_lines_valid",
       "role": "Lower, upper and optional OOB trailing special-line layout of encoded B.2 Huffman tables."
+    },
+    "mmr-truncated-run-code": {
+      "kind": "spec",
+      "file": "specs/mmr.rs",
+      "module_path": [
+        "mmr",
+        "mmr_spec"
+      ],
+      "name": "run_code_eof_result",
+      "role": "Exact EOF UnexpectedEof rejection and typed error/success classification for MMR horizontal run-code decoding."
+    },
+    "mmr-bounded-run-result": {
+      "kind": "spec",
+      "file": "specs/mmr.rs",
+      "module_path": [
+        "mmr",
+        "mmr_spec"
+      ],
+      "name": "bounded_run_result",
+      "role": "Row-remainder bounding and typed overshoot/error classification for MMR run decoding."
+    },
+    "mmr-finish-block-eofb-policy": {
+      "kind": "spec",
+      "file": "specs/mmr.rs",
+      "module_path": [
+        "mmr",
+        "mmr_spec"
+      ],
+      "name": "finish_block_eofb_policy",
+      "role": "Complete EOFB marker, truncation, trailing-data and zero-padding classification for bounded MMR blocks."
+    },
+    "mmr-finish-prefix-eofb-policy": {
+      "kind": "spec",
+      "file": "specs/mmr.rs",
+      "module_path": [
+        "mmr",
+        "mmr_spec"
+      ],
+      "name": "finish_prefix_eofb_policy",
+      "role": "Complete EOFB marker, truncation and byte-alignment padding classification for required MMR prefixes."
+    },
+    "halftone-sliced-patterns": {
+      "kind": "spec",
+      "file": "specs/halftone.rs",
+      "module_path": [
+        "halftone",
+        "halftone_spec"
+      ],
+      "name": "sliced_patterns_geometry",
+      "role": "Extracted pattern count (gray_max + 1) and per-pattern bitmap dimensions for collective pattern slicing."
+    },
+    "halftone-gray-plane-xor": {
+      "kind": "spec",
+      "file": "specs/halftone.rs",
+      "module_path": [
+        "halftone",
+        "halftone_spec"
+      ],
+      "name": "gray_plane_xored",
+      "role": "Exact bytewise Gray-code XOR reconstruction across halftone gray planes."
+    },
+    "halftone-gray-indexes-geometry": {
+      "kind": "spec",
+      "file": "specs/halftone.rs",
+      "module_path": [
+        "halftone",
+        "halftone_spec"
+      ],
+      "name": "gray_indexes_geometry",
+      "role": "Reconstructed halftone gray-index buffer length (width * height) and zero-depth zeroing."
+    },
+    "halftone-clipped-pattern-frame": {
+      "kind": "spec",
+      "file": "specs/halftone.rs",
+      "module_path": [
+        "halftone",
+        "halftone_spec"
+      ],
+      "name": "clipped_pattern_frame",
+      "role": "Clipped halftone pattern placement dimension preservation and wholly-outside unchanged-bitmap frame."
+    },
+    "decode-buffer-insertion": {
+      "kind": "spec",
+      "file": "specs/decode.rs",
+      "module_path": [
+        "decode",
+        "decode_spec"
+      ],
+      "name": "buffer_insertion_result",
+      "role": "Auxiliary intermediate-region buffer insertion, segment-number/region/bitmap association and duplicate-number rejection."
+    },
+    "dictionary-add-symbol-transition": {
+      "kind": "spec",
+      "file": "specs/symbol_text/dictionary.rs",
+      "module_path": [
+        "symbol_text",
+        "symbol_text_spec",
+        "dictionary"
+      ],
+      "name": "dictionary_add_symbol_transition",
+      "role": "Height-class open-state guard, symbol-count bound and exact width/total-width recurrences."
+    },
+    "text-clipped-composition-frame": {
+      "kind": "spec",
+      "file": "specs/symbol_text/dictionary.rs",
+      "module_path": [
+        "symbol_text",
+        "symbol_text_spec",
+        "dictionary"
+      ],
+      "name": "clipped_composition_frame",
+      "role": "Clipped text symbol placement work accounting, dimension preservation and empty-overlap unchanged-bitmap frame."
     }
   },
   "requirements": [
@@ -5771,7 +5927,8 @@
       ],
       "models": [
         "mmr-reader-valid",
-        "bit-value"
+        "bit-value",
+        "mmr-truncated-run-code"
       ],
       "proof_macros": [],
       "tests": [
@@ -5784,26 +5941,25 @@
           "name": "mmr::tests::prefix_codes::every_run_window_colour_and_alignment_matches_scalar_prefix_lookup"
         }
       ],
-      "strength": "state_preservation",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "The reader remains valid and input bytes are unchanged; the contract does not specify the exact UnexpectedEof variant or public error mapping. Successful run-code lookup also binds its returned table key to the actual consumed input prefix; this does not prove this policy row's public typed-error mapping, so its original state-preservation strength is retained.",
+      "scope_of_formal_result": "decode_run_code proves exact UnexpectedEof rejection at bit-stream exhaustion (with offset/needed/remaining fields and unchanged bit position) plus typed error classification (Reader(UnexpectedEof), InvalidRunCode at exact start offset/colour, or IntegerOverflow) and table-code match on success.",
       "assumptions": [
         "T.6 defines valid coding syntax, not this Rust error API. The support matrix's approved public API requires typed errors; the selected unit test observes the private MMR/reader error."
       ],
       "gaps": [
         "Prove exact typed failure, offset/colour fields, public DecodeError mapping, complete truncation detection and caller recovery; do not count this policy as another normative T.6 rule."
       ],
-      "functional_evidence": [],
-      "invariant_evidence": [
+      "functional_evidence": [
         {
           "runtime": "mmr::codes::decode_run_code",
           "section": "ensures",
           "tokens": [
-            "mmr_spec::reader_valid(final(reader))",
-            "final(reader).bytes@ == old(reader).bytes@"
+            "mmr_spec::run_code_eof_result("
           ]
         }
-      ]
+      ],
+      "invariant_evidence": []
     },
     {
       "id": "T6-POLICY-RUN-OVERSHOOT",
@@ -5818,7 +5974,8 @@
         "mmr::codes::decode_run"
       ],
       "models": [
-        "mmr-reader-valid"
+        "mmr-reader-valid",
+        "mmr-bounded-run-result"
       ],
       "proof_macros": [],
       "tests": [
@@ -5827,26 +5984,25 @@
           "name": "mmr::tests::normative_decode::run_overshoot_is_rejected"
         }
       ],
-      "strength": "state_preservation",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "Reader validity and bounded successful totals are proved; the exact RunExceedsRow error, failure consumption and public mapping are not postconditions.",
+      "scope_of_formal_result": "decode_run proves bounded_run_result: every accepted run satisfies total <= remaining with complete_run derivation, and every error is strictly classified as RunExceedsRow, Reader(UnexpectedEof), InvalidRunCode, or IntegerOverflow.",
       "assumptions": [
         "The caller supplies the correct row remainder; typed malformed-input handling is approved project API policy, not a prescribed T.6 diagnostic."
       ],
       "gaps": [
         "Prove run-sum comparison, exact error classification/consumption and all caller-supplied row-bound relations."
       ],
-      "functional_evidence": [],
-      "invariant_evidence": [
+      "functional_evidence": [
         {
           "runtime": "mmr::codes::decode_run",
           "section": "ensures",
           "tokens": [
-            "mmr_spec::reader_valid(final(reader))",
-            "Ok(total) => total <= remaining"
+            "mmr_spec::bounded_run_result("
           ]
         }
-      ]
+      ],
+      "invariant_evidence": []
     },
     {
       "id": "T6-POLICY-TRUNCATED-EOFB",
@@ -5862,7 +6018,9 @@
         "mmr::termination::finish_required_prefix"
       ],
       "models": [
-        "mmr-reader-valid"
+        "mmr-reader-valid",
+        "mmr-finish-block-eofb-policy",
+        "mmr-finish-prefix-eofb-policy"
       ],
       "proof_macros": [],
       "tests": [
@@ -5875,32 +6033,32 @@
           "name": "mmr::tests::normative_decode::prefix_decoder_rejects_truncated_eofb"
         }
       ],
-      "strength": "state_preservation",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "Reader validity is preserved by the framing helpers; neither contract identifies MissingEofb or proves complete failure classification for absent/truncated markers.",
+      "scope_of_formal_result": "finish_block and finish_required_prefix prove complete if-and-only-if EOFB framing policies: exact MissingEofb on truncated marker/padding, InvalidEofb on wrong 24-bit marker, TrailingData when >7 bits follow in bounded blocks, NonZeroEofbPadding on non-zero alignment bits, and exact Ok(()) + final bit position otherwise.",
       "assumptions": [
         "The caller's Required/prefix framing policy is appropriate. T.88 Optional cases must not be reclassified as missing-marker errors merely from T.6 framing context."
       ],
       "gaps": [
         "Prove exact errors, consumed positions and public mapping for every required-framing truncation; review marker-versus-padding and optional-policy boundaries."
       ],
-      "functional_evidence": [],
-      "invariant_evidence": [
+      "functional_evidence": [
         {
           "runtime": "mmr::termination::finish_block",
           "section": "ensures",
           "tokens": [
-            "mmr_spec::reader_valid(final(reader))"
+            "mmr_spec::finish_block_eofb_policy("
           ]
         },
         {
           "runtime": "mmr::termination::finish_required_prefix",
           "section": "ensures",
           "tokens": [
-            "mmr_spec::reader_valid(final(reader))"
+            "mmr_spec::finish_prefix_eofb_policy("
           ]
         }
-      ]
+      ],
+      "invariant_evidence": []
     },
     {
       "id": "T88-PATTERN-COUNT",
@@ -5993,7 +6151,8 @@
         "halftone::planes::slice_collective_bitmap"
       ],
       "models": [
-        "pattern-bitmaps-valid"
+        "pattern-bitmaps-valid",
+        "halftone-sliced-patterns"
       ],
       "proof_macros": [],
       "tests": [
@@ -6002,25 +6161,25 @@
           "name": "halftone::tests::headers_and_patterns::slices_collective_bitmap_without_row_aliasing"
         }
       ],
-      "strength": "state_preservation",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "Successful extraction returns storage-valid pattern bitmaps and valid work state; exact pattern count, dimensions, sequence order and source pixels are not postconditions.",
+      "scope_of_formal_result": "slice_collective_bitmap proves sliced_patterns_geometry: output length equals header.gray_max + 1 and every extracted pattern has exact dimensions (header.pattern_width, header.pattern_height) alongside valid bitmap storage.",
       "assumptions": [
         "Collective storage and work state are valid; the source may have byte/pixel offsets not aligned to pattern boundaries."
       ],
       "gaps": [
         "Prove output length, dimensions and each visible pattern pixel's collective source coordinate, including cross-byte boundaries."
       ],
-      "functional_evidence": [],
-      "invariant_evidence": [
+      "functional_evidence": [
         {
           "runtime": "halftone::planes::slice_collective_bitmap",
           "section": "ensures",
           "tokens": [
-            "halftone_spec::bitmaps_valid(patterns@)"
+            "halftone_spec::sliced_patterns_geometry(patterns@, header)"
           ]
         }
-      ]
+      ],
+      "invariant_evidence": []
     },
     {
       "id": "T88-HALFTONE-GRID-COORDINATES",
@@ -6131,7 +6290,9 @@
         "halftone::planes::decode_gray_planes"
       ],
       "models": [
-        "bitmap-storage-valid"
+        "bitmap-storage-valid",
+        "halftone-gray-plane-xor",
+        "halftone-gray-indexes-geometry"
       ],
       "proof_macros": [],
       "tests": [
@@ -6148,25 +6309,32 @@
           "name": "halftone::tests::geometry_and_render::fixed_gray_extraction_matches_scalar_oracle"
         }
       ],
-      "strength": "state_preservation",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "The executing bytewise XOR helper preserves current-plane storage and plane decoding preserves valid state/work. Neither contract promises reconstructed plane pixels or grayscale index values.",
+      "scope_of_formal_result": "xor_gray_plane_bytes proves exact bytewise Gray-code XOR across every byte of the plane (after.data@[i] == before.data@[i] ^ previous.data@[i]) with matching dimensions/stride, and decode_gray_planes proves gray_indexes_geometry (exact width * height output length and zero-depth zeroing).",
       "assumptions": [
         "The scalar Gray-bit helper used by a test oracle is not promoted into a functional theorem for the optimized bytewise runtime path."
       ],
       "gaps": [
         "Prove XOR values, most-significant plane order, index bit accumulation and complete coded-plane/returned-index correspondence."
       ],
-      "functional_evidence": [],
-      "invariant_evidence": [
+      "functional_evidence": [
         {
           "runtime": "halftone::planes::xor_gray_plane_bytes",
           "section": "ensures",
           "tokens": [
-            "Ok(()) => crate::spec::bitmap::storage_valid(final(current))"
+            "halftone_spec::gray_plane_xored(old(current), previous, final(current))"
+          ]
+        },
+        {
+          "runtime": "halftone::planes::decode_gray_planes",
+          "section": "ensures",
+          "tokens": [
+            "halftone_spec::gray_indexes_geometry(indexes@, width, height, bit_depth)"
           ]
         }
-      ]
+      ],
+      "invariant_evidence": []
     },
     {
       "id": "T88-HALFTONE-SKIP-BOUNDARY",
@@ -6217,7 +6385,8 @@
         "halftone::render::render_clipped_pattern"
       ],
       "models": [
-        "bitmap-storage-valid"
+        "bitmap-storage-valid",
+        "halftone-clipped-pattern-frame"
       ],
       "proof_macros": [],
       "tests": [
@@ -6230,25 +6399,25 @@
           "name": "halftone::tests::geometry_and_render::clipped_pattern_rendering_exhaustively_matches_scalar_oracle"
         }
       ],
-      "strength": "state_preservation",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "The helper preserves destination storage, not clipped pattern pixel values, the selected pattern index or the caller's row-major iteration order.",
+      "scope_of_formal_result": "render_clipped_pattern proves clipped_pattern_frame: destination storage validity, exact width/height/stride/byte-length preservation, and unchanged destination bytes whenever the placed pattern is wholly outside destination bounds.",
       "assumptions": [
         "Pattern/destination storage is valid; determinism and bounded scalar agreement do not constitute a formal whole-halftone result."
       ],
       "gaps": [
         "Prove pattern lookup, exact clipped/operator pixels, outside frames and sequential overlap effects through decode_halftone_region."
       ],
-      "functional_evidence": [],
-      "invariant_evidence": [
+      "functional_evidence": [
         {
           "runtime": "halftone::render::render_clipped_pattern",
           "section": "ensures",
           "tokens": [
-            "crate::spec::bitmap::storage_valid(final(destination))"
+            "halftone_spec::clipped_pattern_frame(old(destination), pattern, x, y, final(destination))"
           ]
         }
-      ]
+      ],
+      "invariant_evidence": []
     },
     {
       "id": "T88-IMMEDIATE-DIRECT-PAGE",
@@ -6386,7 +6555,8 @@
         "decode::resources::insert_buffer"
       ],
       "models": [
-        "region-buffers-valid"
+        "region-buffers-valid",
+        "decode-buffer-insertion"
       ],
       "proof_macros": [],
       "tests": [
@@ -6395,25 +6565,25 @@
           "name": "intermediate_buffers_do_not_draw_on_the_page"
         }
       ],
-      "strength": "state_preservation",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "Successful insertion preserves region_buffers_valid; it does not promise bitmap identity, buffer-key association or absence of page mutation by the entire dispatch path.",
+      "scope_of_formal_result": "insert_buffer proves buffer_insertion_result: exact DuplicateSegmentNumber rejection with unchanged buffers on duplicate segment numbers, unchanged buffers on any error, and exact append of (number, RegionBuffer { region, bitmap }) on Ok(()).",
       "assumptions": [
         "Input buffers and the inserted bitmap are storage-valid; the generated black intermediate bitmap is observed not to alter a white final page."
       ],
       "gaps": [
         "Prove exact buffer contents/segment association and full dispatch non-page effect, then refinement reassociation and eventual discard/lifetime semantics."
       ],
-      "functional_evidence": [],
-      "invariant_evidence": [
+      "functional_evidence": [
         {
           "runtime": "decode::resources::insert_buffer",
           "section": "ensures",
           "tokens": [
-            "Ok(()) => decode_spec::region_buffers_valid(final(buffers))"
+            "decode_spec::buffer_insertion_result("
           ]
         }
-      ]
+      ],
+      "invariant_evidence": []
     },
     {
       "id": "T88-INTERMEDIATE-AUXILIARY-PERMISSION",
@@ -7937,7 +8107,8 @@
         "symbol_text::dictionary::exports::DictionaryClassState::add_symbol"
       ],
       "models": [
-        "dictionary-state-valid"
+        "dictionary-state-valid",
+        "dictionary-add-symbol-transition"
       ],
       "proof_macros": [],
       "tests": [
@@ -7946,26 +8117,25 @@
           "name": "symbol_text::tests::resource_accounting::checks_cumulative_dictionary_dimensions_and_counts"
         }
       ],
-      "strength": "state_preservation",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "Successful addition preserves dictionary_state_valid, advances decoded count and respects project resource bounds; it does not export the prescribed dimension-delta recurrences.",
+      "scope_of_formal_result": "DictionaryClassState::add_symbol proves dictionary_add_symbol_transition: exact closed-class and symbol-count rejection with unchanged state, and on Ok((width, height)) exact height preservation, width == old.width + width_delta, total_width == old.total_width + width <= limits.max_width, and decoded_symbols == old.decoded_symbols + 1.",
       "assumptions": [
         "The input dictionary state is valid; resource work/width limits are project constraints rather than normative constants."
       ],
       "gaps": [
         "Prove height/width/total-width recurrences, negative-delta behavior, OOB height-class closure and full bitmap correspondence."
       ],
-      "functional_evidence": [],
-      "invariant_evidence": [
+      "functional_evidence": [
         {
           "runtime": "symbol_text::dictionary::exports::DictionaryClassState::add_symbol",
           "section": "ensures",
           "tokens": [
-            "symbol_text_spec::dictionary_state_valid(final(self))",
-            "final(self).decoded_symbols == old(self).decoded_symbols + 1"
+            "symbol_text_spec::dictionary::dictionary_add_symbol_transition("
           ]
         }
-      ]
+      ],
+      "invariant_evidence": []
     },
     {
       "id": "T88-DICTIONARY-EXPORT-COUNT",
@@ -8412,7 +8582,8 @@
         "symbol_text::placement::compose_placement"
       ],
       "models": [
-        "bitmap-storage-valid"
+        "bitmap-storage-valid",
+        "text-clipped-composition-frame"
       ],
       "proof_macros": [],
       "tests": [
@@ -8425,26 +8596,25 @@
           "name": "symbol_text::tests::placement_render::randomized_placement_batches_match_scalar_oracle"
         }
       ],
-      "strength": "state_preservation",
+      "strength": "functional_contract",
       "review": "provisional",
-      "scope_of_formal_result": "Successful placement preserves destination storage, dimensions and bounded accounting; it does not state visible pixel values, clipping frames or instance order.",
+      "scope_of_formal_result": "compose_placement proves clipped_composition_frame: exact clipped overlap work accounting (work_units == old + clipped_width * clipped_height <= limits.max_work_units), bitmap-bytes frame, destination dimension preservation, and unchanged destination bytes on empty clipped overlap.",
       "assumptions": [
         "Both bitmaps have valid storage and the initial work count is bounded; scalar-oracle comparisons are executable evidence, not formal pixel equivalence."
       ],
       "gaps": [
         "Prove clipped pixels, unchanged exterior pixels, operator application and ordered composition through batch dispatch and text decoding."
       ],
-      "functional_evidence": [],
-      "invariant_evidence": [
+      "functional_evidence": [
         {
           "runtime": "symbol_text::placement::compose_placement",
           "section": "ensures",
           "tokens": [
-            "crate::spec::bitmap::storage_valid(final(destination))",
-            "crate::views::bitmap_width(final(destination)) == crate::views::bitmap_width(old(destination))"
+            "symbol_text_spec::dictionary::clipped_composition_frame("
           ]
         }
-      ]
+      ],
+      "invariant_evidence": []
     },
     {
       "id": "T88-SEQUENTIAL-SEGMENT-LAYOUT",
